@@ -33,8 +33,8 @@ export default {
     onSubmit () {
       this.$refs.myForm.validate().then(success => {
         if (success) {
-          this.$emit('formData', this.confirmName)
-          this.$emit('validateChild', true)
+          this.$emit('dataFromBusinessName', this.confirmName, false)
+          // this.$emit('validateChild', true)
           alert('Send')
         }
       })
