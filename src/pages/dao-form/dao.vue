@@ -26,9 +26,9 @@ export default {
     return {
       step: 1,
       validate: {
-        businessName: true,
-        detail: true,
-        agent: true,
+        businessName: false,
+        detail: false,
+        agent: false,
         adresses: false,
         organizers: false,
         additionalArticles: false,
@@ -38,17 +38,59 @@ export default {
 
       },
       form: {
-        step1: {
+        businessName: {
           businessName: '',
           additionalDesignation: 'DAO'
+        },
+        detail: {
+          periodOfDuration: '',
+          expirationDate: '',
+          delayedEffectiveDate: ''
+        },
+        agent: {
+        },
+        addresses: {
+        },
+        organizers: {
+        },
+        additionalArticles: {
+        },
+        confirmation: {
+        },
+        signature: {
+        },
+        payment: {
         }
+
       }
     }
   },
   methods: {
-    messageFromChild (businessName, validate) {
-      this.form.step1.businessName = businessName
+    messageFrombusinessNameComponent (businessName, validate) {
+      this.form.businessName.businessName = businessName
       this.validate.businessName = validate
+    },
+    messageFromDetailComponent (_form, validate) {
+      // console.log(form)
+      this.form.detail.periodOfDuration = _form.periodOfDuration
+      this.form.detail.expirationDate = _form.expirationDate
+      this.form.detail.delayedEffectiveDate = _form.delayedEffectiveDate
+      this.validate.detail = validate
+      // console.log(this.form.detail)
+    },
+    messageFromAgentComponent () {
+    },
+    messageFromAddressesComponent () {
+    },
+    messageFromOrganizersComponent () {
+    },
+    messageFromAdditionalArticlesComponent () {
+    },
+    messageFromConfirmationComponent () {
+    },
+    messageFromSignatureComponent () {
+    },
+    messageFromPaymentComponent () {
     }
   },
   computed: {
@@ -70,12 +112,12 @@ export default {
       )
         q-step( :name="1" title="1. Business Name" :done="step > 1" :header-nav="step > 1")
           div.container
-            businessName(@dataFromBusinessName="messageFromChild")
+            businessName(@dataFromBusinessName="messageFrombusinessNameComponent")
           q-stepper-navigation
             q-btn(@click = "()=>{done1 = true; step = 2}" color="primary" label="continue" :disabled="validate.businessName")
         q-step( :name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
-            detail
+            detail(@dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
             q-btn(@click = "() => {done2 = true; step = 3}" color="primary" label="continue" :disabled="validate.detail")
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")

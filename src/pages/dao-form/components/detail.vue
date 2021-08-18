@@ -76,9 +76,10 @@ export default {
     setPeriodOfDuration () {
       this.form.periodOfDuration = this.selectValue.label
     },
-    send () {
-      this.$refs.formDetailPeriodOfDuration.validate().then(success => {
+    sendToParentComponent () {
+      this.$refs.formDetail.validate().then(success => {
         if (success) {
+          this.$emit('dataFromDetail', this.form, false)
           // this.$emit('formData', this.confirmName)
           // this.$emit('validateChild', true)
           alert('Send')
@@ -93,101 +94,55 @@ export default {
 // TODO# Validate data in form. Send to component DAO
 <template lang="pug">
 div
-  p.
-    Provide additional information related to the Limited Liability Company as it applies.
-  p {{selectValue}}
-  br
-  p Form to send :.{{form}}
   p
+    | Provide additional information related to the Limited Liability Company as it applies.
+
+  q-form(@submit='sendToParentComponent', ref='formDetail' class=q-gutter-md)
+    p
     strong.
       Period of duration:
     strong(style="color:red") *
-    div.row
-      div.cols-8
-        q-form(
-            @submit="send"
-            class=q-gutter-md
-            ref="formDetailPeriodOfDuration"
-        )
-          q-select(
-            filled
-            v-model="selectValue"
-            :options="options"
-            map-options
-            @change="calculateDate"
-            :rules="[rules.required]"
-          )
-    label.
-      (select 'Perpetual' if the entity does not expire.)
-    div.q-pa-md
-    //- `Casos 30, 50, 99
-    div(
-      v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') "
-    )
-      p
-        strong.
-          Expiration Date (mm/dd/yyyy)
-        strong(style="color:red") *
-        p  {{calculateDate}}
-    //- Caso Expires
-    div(
-      v-else-if="(selectValue.value === '0')"
-    )
-      strong.
-        Expiration Date (mm/dd/yyyy)
-      strong(style="color:red") *
-      div.row
-        div.cols-6
-          q-input(
-            v-model="form.expirationDate"
-            filled
-            mask="##/##/####"
-          )
-            template(v-slot:append='')
-              q-icon(name="event" class="cursor-pointer" )
-                q-popup-proxy(ref="qDateProxy" transition-show="scale" transition-hide="scale" )
-                  q-date(v-model="form.expirationDate" today-btn mask="MM/DD/YYYY")
-                    div(class="row items-center justify-end")
-                      q-btn(v-close-popup label="Close" color="primary" flat)
-    //- Perpetuo
-    div(
-      v-else
-    )
-      p
-        strong.
-          Expiration Date (mm/dd/yyyy)
-        strong(style="color:red") *
-        p  {{calculateDate}}
-  //- TODO Delayed debe ser posterior
-  p
-    b Delayed Effective Date : (mm/dd/yyyy)
-
-    div.row
-      div.cols-6
-        q-form(
-            @submit="send"
-            class=q-gutter-md
-            ref="formDetailDelayed"
-        )
-          q-input(
-            filled
-            v-model ="form.delayedEffectiveDate"
-            :rules="[rules.required]"
-            mask="##/##/####"
-          )
-            template(v-slot:append='')
-              q-icon(name="event" class="cursor-pointer" )
-                q-popup-proxy(ref="qDateProxy" transition-show="scale" transition-hide="scale" )
-                  q-date(v-model="form.delayedEffectiveDate" today-btn mask="MM/DD/YYYY")
-                    div(class="row items-center justify-end")
-                      q-btn(v-close-popup label="Close" color="primary" flat)
-        div.q-pa-sm
-          q-btn(
-            label="Validate"
-            type="submit"
-            color="primary"
-          )
-    p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
-  div.q-pa-md
+    .row
+      .cols-8
+          q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
+          label (select &apos;Perpetual&apos; if the entity does not expire.)
+          .q-pa-md
+          div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
+            p
+              strong Expiration Date (mm/dd/yyyy)
+              strong(style='color:red') *
+            p  {{calculateDate}}
+            p
+          div(v-else-if="(selectValue.value === '0')")
+            strong Expiration Date (mm/dd/yyyy)
+            strong(style='color:red') *
+            .row
+              .cols-6
+                q-input(v-model='form.expirationDate', filled, mask='##/##/####' :rules='[rules.required]')
+                  template(v-slot:append='')
+                    q-icon.cursor-pointer(name='event' class="cursor-pointer")
+                      q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                        q-date(v-model='form.expirationDate', today-btn, mask='MM/DD/YYYY')
+                          .row.items-center.justify-end
+                            q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+          div(v-else)
+            p
+              strong Expiration Date (mm/dd/yyyy)
+              strong(style='color:red') *
+            p  {{calculateDate}}
+          p
+            b Delayed Effective Date : (mm/dd/yyyy)
+            .row
+              .cols-6
+                q-input(filled, v-model='form.delayedEffectiveDate', mask='##/##/####' )
+                  template(v-slot:append='')
+                    q-icon.cursor-pointer(name='event')
+                      q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                        q-date(v-model='form.delayedEffectiveDate', today-btn, mask='MM/DD/YYYY')
+                          .row.items-center.justify-end
+                            q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+                p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
+                .q-pa-sm
+                  q-btn(label='Validate', type='submit', color='primary')
 
 </template>

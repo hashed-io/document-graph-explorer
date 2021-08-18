@@ -28,7 +28,8 @@ export default {
       positiveInteger: 'The value must be greater than 0',
       required: 'This field is required',
       token: 'The field must contain between 2 and 6 characters',
-      tokenDecimals: 'The decimals must be between 2 and 9'
+      tokenDecimals: 'The decimals must be between 2 and 9',
+      email: 'Invalid email'
     }
   },
   menu: {
