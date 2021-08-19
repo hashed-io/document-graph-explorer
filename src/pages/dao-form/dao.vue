@@ -24,7 +24,7 @@ export default {
   },
   data () {
     return {
-      step: 6,
+      step: 7,
       validate: {
         businessName: false,
         detail: false,
@@ -40,7 +40,7 @@ export default {
       form: {
         businessName: {
           businessName: '',
-          additionalDesignation: 'DAO'
+          additionalDesignation: 'Decentralized Autonomous Organization'
         },
         detail: {
           periodOfDuration: '',
@@ -48,20 +48,51 @@ export default {
           delayedEffectiveDate: ''
         },
         agent: {
+          firstName: null,
+          middleName: null,
+          lastName: null,
+          organization: null,
+          country: 'USA',
+          address: {
+            line1: null,
+            line2: null,
+            line3: null
+          },
+          city: null,
+          state: 'WY',
+          postalCode: null,
+          phone: null,
+          email: null
         },
         addresses: {
+          principalAddress: {
+            country: null,
+            address: {
+              line1: null,
+              line2: null,
+              line3: null
+            },
+            city: null,
+            state: null,
+            postalCode: null,
+            phone: null,
+            fax: null,
+            email: null
+          },
+          mailingAddress: {
+            country: null,
+            address: {
+              line1: null,
+              line2: null,
+              line3: null
+            },
+            city: null,
+            state: null,
+            postalCode: null
+          }
         },
-        organizers: {
-        },
-        additionalArticles: {
-        },
-        confirmation: {
-        },
-        signature: {
-        },
-        payment: {
-        }
-
+        organizers: [],
+        additionalArticles: []
       }
     }
   },
