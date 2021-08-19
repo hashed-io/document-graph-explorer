@@ -20,6 +20,7 @@ export default {
       organizer: {
         name: null,
         officerType: 'Organizer',
+        typeName: null,
         addressInfo: null
       },
       selectOptions: ['Organizer']
@@ -56,15 +57,36 @@ export default {
       }
     },
     onSubmit () {
+      let _typeName = null
       if (this.organization === null) {
-        this.organizer.name = this.firstName + ' ' + this.middleName + ' ' + this.lastName
+        if (this.middleName === null) {
+          this.organizer.name = this.firstName + ' ' + this.lastName
+        } else {
+          this.organizer.name = this.firstName + ' ' + this.middleName + ' ' + this.lastName
+        }
+        _typeName = 'fullName'
+      } else {
+        this.organizer.name = this.organization
+        _typeName = 'organization'
       }
       let _interface = {
         'name': this.organizer.name,
         'officerType': this.organizer.officerType,
+        'typeName': _typeName,
         'addressInfo': this.organizer.addressInfo
       }
-      this.organizers.push(_interface)
+      // Crear
+      if (this.idEdit === null) {
+        this.organizers.push(_interface)
+      // Editar
+      } else {
+        // alert(this.idEdit)
+        this.organizers[this.idEdit] = _interface
+        this.idEdit = null
+      }
+      this.resetInfo()
+    },
+    resetInfo () {
       // Reset organizer
       const object = this.organizer
       for (var key in object) {
@@ -87,11 +109,30 @@ export default {
     onReset () {
       // this.$refs.organizerForm.reset()
     },
-    deleteAgent (_id) {
-      // this.organizers
+    deleteOrganizer (_id) {
+      const organizerArray = this.organizers
+      organizerArray.splice(_id, 1)
+      this.organizers = organizerArray
+      this.$refs.organizerForm.reset()
     },
-    updateAgent (_id) {
-      alert(_id)
+    editOrganizer (_id, _objectOrganizer) {
+      this.$refs.organizerForm.reset()
+      this.idEdit = _id
+      for (var key in _objectOrganizer) {
+        this.organizer[key] = _objectOrganizer[key]
+      }
+      // typeName
+      if (_objectOrganizer.typeName === 'fullName') {
+        const nameArr = _objectOrganizer.name.split(' ')
+        this.firstName = nameArr[0]
+        this.middleName = nameArr[1]
+        this.lastName = nameArr[2]
+      } else {
+        this.organization = this.organizer.name
+      }
+    },
+    updateOrganizer (_id) {
+      this.onSubmit()
     }
   }
 }
@@ -121,9 +162,12 @@ export default {
             .col.q-pa-md.col-xs-12.col-sm-12.col-md-12
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
           .row.justify-end.q-pa-md
+            div(v-if='idEdit === null')
               q-btn(label="ADD" type="submit" color="primary")
-              .q-pa-sm
-              q-btn(label="CLEAR" type="reset" color="primary")
+            div(v-else)
+              q-btn(label="UPDATE" @click='onSubmit' color="primary")
+            .q-pa-sm
+            //- q-btn(label="CLEAR" type="reset" color="primary")
   template
     .q-pa-md
       .text-h6 Organizers
@@ -149,9 +193,8 @@ export default {
                       b {{organizer.addressInfo}}
                 q-item-section(top='', side='')
                   .text-grey-8.q-gutter-xs
-                    q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteAgent(index)')
-                    q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='done' @click='updateAgent(index)')
-                    q-btn(size='12px', flat='', dense='', round='', icon='more_vert')
+                    q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
+                    q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
 </template>
 
 <style lang="">
