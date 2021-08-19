@@ -24,7 +24,7 @@ export default {
   },
   data () {
     return {
-      step: 5,
+      step: 6,
       validate: {
         businessName: false,
         detail: false,
@@ -99,9 +99,9 @@ export default {
 </script>
 <template lang="pug">
   div.q-pa-md
-    div {{form}}
+    //- div {{form}}
     br
-    div {{validate}}
+    div
       q-stepper.full-width(
         v-model="step"
         ref="stepper"
