@@ -1,6 +1,7 @@
 <script>
 import { date } from 'quasar'
 import { validation } from '~/mixins/validation'
+import TimeUtil from '~/utils/TimeUtil'
 export default {
   name: 'detail',
   mixins: [validation],
@@ -45,8 +46,10 @@ export default {
       // Caso Perpetuo
       const value = this.selectValue.value
       this.setPeriodOfDuration()
+      console.log('test')
       if (value === 'none') {
         this.setExpirationDate('none')
+        // this.selectValue.label = 'EXPIRES TEST'
         return 'none'
       // Caso expires
       } else if (value === '0') {
@@ -63,6 +66,10 @@ export default {
       this.setExpirationDate(formattedString)
       return formattedString
     }
+  },
+  mounted () {
+    const baseDate = new Date('1970-01-01')
+    console.log(TimeUtil.toUTCDate(baseDate))
   },
   methods: {
     getCurrentDate () {

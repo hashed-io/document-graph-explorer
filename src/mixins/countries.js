@@ -11,6 +11,7 @@ export const countriesLang = {
   },
   beforeMount () {
     this.countriesLang = CountriesNPM.getNames(this.language)
+    console.log(this.countriesLang)
   },
   computed: {
     language () {

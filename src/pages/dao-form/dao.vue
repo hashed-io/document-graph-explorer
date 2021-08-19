@@ -24,7 +24,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 5,
       validate: {
         businessName: false,
         detail: false,

@@ -5,7 +5,7 @@ export default {
   mixins: [validation],
   data () {
     return {
-      validate: false,
+      validateComponent: false,
       agentFound: true,
       agree: false,
       agentForm: {
@@ -97,7 +97,7 @@ export default {
         .container.q-pa-md
           q-btn(label='Search' type='submit' color='primary')
           q-btn(label='Clear' type='reset' flat class='q-ml-sm' color='primary')
-  q-responsive(class='col')
+  .col
     q-card(class='column')
       q-card-section.bg-primary.text-white
         div(v-if="agentForm.firstName !== null && agentFound")
@@ -108,7 +108,7 @@ export default {
           | Enter Agent Information
       q-separator
       .container
-        q-form(@submit="onSubmitAgent" @reset="onResetAgent" ref="dataAgentForm")
+        q-form(@submit="onSubmitAgent" ref="dataAgentForm")
           .row.justify-center
             .col.q-pa-md.col-xs-12.col-sm-4
               q-input(v-model='agentForm.firstName', filled, label='First Name : *', label-stacked :rules='[rules.required]')
