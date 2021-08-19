@@ -28,7 +28,7 @@ export default {
       q-separator
       p.q-pa-md
         | Please use the form below to add additional articles if necessary. Press 'Add' after entering the information for each article.
-      .q-pa-md(style='color:red')
+      p.q-pa-md(style='color:red')
         | An LLC or any LLC subtype (DAO, Series, Close) does not file an operating agreement with the Secretary of State.
       .container
         q-form(@submit='onSubmit', @reset='onReset' ref="organizerForm")
