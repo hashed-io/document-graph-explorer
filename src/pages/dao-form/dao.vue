@@ -130,7 +130,6 @@ export default {
 </script>
 <template lang="pug">
   div.q-pa-md
-    //- div {{form}}
     br
     div
       q-stepper.full-width(
@@ -176,7 +175,7 @@ export default {
             confirmationComponent
           q-stepper-navigation
             q-btn(@click = "() => {done7 = true; step = 8}" color="primary" label="continue" :disabled="validate.confirmation")
-        q-step(:name="8" title="8, Signature" :done="step>8" :header-nav="step > 8")
+        q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent
           q-stepper-navigation
@@ -186,24 +185,5 @@ export default {
             paymentComponent
           q-stepper-navigation
             q-btn(@click = "() => {done9 = true; step = 1}" color="primary" label="continue" :disabled="validate.payment")
-        //-
-                Footer Stepper
-          //
-        template(
-          v-slot:navigation
-        )
-          //- q-stepper-navigation
-          //-   q-btn(
-          //-     :disabled="validateChild"
-          //-     @click="$refs.stepper.next()"
-          //-     color="primary"
-          //-     :label="step === 9 ? 'Finish' : 'Continue'"
-          //-   )
-          //-   q-btn.q-ml-sm(
-          //-     v-if="step > 1"
-          //-     flat color="primary"
-          //-     @click="$refs.stepper.previous()"
-          //-     label="Back"
-          //-   )
 
 </template>
