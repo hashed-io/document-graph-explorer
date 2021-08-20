@@ -102,6 +102,8 @@ export default {
 div
   .text-h6.q-pb-md
     | Confirmation
+  p Please confirm the business entity information is entered correctly.
+  p Warning : Please review your filing and click 'Continue' to file your registration electronically.
   .row.justify-center
     .col.left
       div
