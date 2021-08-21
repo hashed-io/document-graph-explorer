@@ -10,7 +10,7 @@ export default {
       options: [],
       form: {
         principalAddress: {
-          country: null,
+          country: 'USA',
           address: {
             line1: null,
             line2: null,
@@ -24,7 +24,7 @@ export default {
           email: null
         },
         mailingAddress: {
-          country: null,
+          country: 'USA',
           address: {
             line1: null,
             line2: null,
@@ -39,11 +39,17 @@ export default {
   },
   methods: {
     onSubmit () {
+      this.$emit('dataFromAddresses', this.form, false)
+      console.log(this.form)
       console.log('Send to parent...')
+    },
+    getPostalCode () {
+
     }
   },
   beforeMount () {
-    this.options = [this.countriesLang]
+    // Map
+    // this.options = [this.countriesLang]
     console.log(this.options)
   }
 }
@@ -101,23 +107,24 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
       .q-px-xl
         .row
             .col.q-px-sm.col-xs-12.col-sm-6
-              q-select(filled v-model='form.principalAddress.country' :options='options' map-options :rules="[rules.required]" lazy-rules label="Choose country *")
+              q-select(filled v-model='form.mailingAddress.country' :options='options' map-options :rules="[rules.required]" lazy-rules label="Choose country *")
         .row.justify-center
           .col.q-px-sm.col-xs-12.col-sm-12
-            q-input(v-model='form.principalAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
+            q-input(v-model='form.mailingAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
         .row.justify-center
           .col.q-px-sm.col-xs-12.col-sm-12
-            q-input(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
+            q-input(v-model='form.mailingAddress.address.line2', filled, label="Address Line 2", label-stacked)
         .row.justify-center.q-pt-md
           .col.q-px-sm.col-xs-12.col-sm-12
-            q-input(v-model='form.principalAddress.address.line3', filled, label="Address Line 3", label-stacked)
+            q-input(v-model='form.mailingAddress.address.line3', filled, label="Address Line 3", label-stacked)
         .row.justify-center.q-pt-md
           .col.q-px-sm.col-xs-12.col-sm-6
-            q-input(v-model='form.principalAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+            q-input(v-model='form.mailingAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
           .col.q-px-sm.col-xs-12.col-sm-2
-            q-input(v-model='form.principalAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
+            q-input(v-model='form.mailingAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
           .col.q-px-sm.col-xs-12.col-sm-4
-            q-input(v-model='form.principalAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
+            q-input(v-model='form.mailingAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
+  q-btn(type='submit' label='validate' color='primary')
 </template>
 
 <style lang="">

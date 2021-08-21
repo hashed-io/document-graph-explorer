@@ -57,6 +57,7 @@ export default {
       agentForm.validate().then(success => {
         if (success) {
           if (self.agree) {
+            this.$emit('dataFromAgent', this.agentForm, false)
             alert('send to parent')
           } else {
             alert('Accept the agree.')
@@ -102,7 +103,6 @@ export default {
       q-card-section.bg-primary.text-white
         div(v-if="agentForm.firstName !== null && agentFound")
           .row
-            p {{agentForm.firstName}}
             p Selected Agent: {{responseSearch.selectedAgent}}
         div(v-else)
           | Enter Agent Information
@@ -118,7 +118,7 @@ export default {
               q-input(v-model='agentForm.lastName', filled, label='Last Name : *', label-stacked :rules='[rules.required]' lazy-rules)
           .row.justify-center
             .col-q-pa-md.col-xs-12.col-sm-12
-              q-input.q-pa-md(v-model='agentForm.organization', filled, label="Organization Name", label-stacked)
+              q-input.q-pa-md(v-model='agentForm.organization', filled, label="Organization Name", label-stacked disable bg-color="grey-5")
           .row.justify-left
             .col.q-pa-md.col-xs-12.col-sm-8
               q-input(v-model='agentForm.country', filled, label="Country", label-stacked :disable='true' bg-color="grey-5")

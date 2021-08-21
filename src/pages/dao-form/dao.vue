@@ -29,7 +29,7 @@ export default {
         businessName: false,
         detail: false,
         agent: false,
-        adresses: false,
+        addresses: false,
         organizers: false,
         additionalArticles: false,
         confirmation: false,
@@ -109,9 +109,17 @@ export default {
       this.validate.detail = validate
       // console.log(this.form.detail)
     },
-    messageFromAgentComponent () {
+    messageFromAgentComponent (_form, validate) {
+      for (var key in this.form.agent) {
+        this.form.agent[key] = _form[key]
+      }
+      this.validate.agent = validate
     },
-    messageFromAddressesComponent () {
+    messageFromAddressesComponent (_form, validate) {
+      for (var key in this.form.addresses) {
+        this.form.addresses[key] = _form[key]
+      }
+      this.validate.addresses = validate
     },
     messageFromOrganizersComponent () {
     },
@@ -130,6 +138,7 @@ export default {
 </script>
 <template lang="pug">
   div.q-pa-md
+    | {{form}}
     br
     div
       q-stepper.full-width(
@@ -152,12 +161,12 @@ export default {
             q-btn(@click = "() => {done2 = true; step = 3}" color="primary" label="continue" :disabled="validate.detail")
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
           div.container
-            agentComponent
+            agentComponent(@dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
             q-btn(@click = "() => {done3 = true; step = 4}" color="primary" label="continue" :disabled="validate.agent")
         q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
           div.container
-            addressesComponent
+            addressesComponent(@dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
             q-btn(@click = "() => {done4 = true; step = 5}" color="primary" label="continue" :disabled="validate.addresses")
         q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")

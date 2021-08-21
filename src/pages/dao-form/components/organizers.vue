@@ -195,6 +195,7 @@ export default {
                   .text-grey-8.q-gutter-xs
                     q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
                     q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
+
 </template>
 
 <style lang="">
