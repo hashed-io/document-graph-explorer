@@ -24,7 +24,8 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 1,
+      triggerValidation: false,
       validate: {
         businessName: false,
         detail: false,
@@ -130,6 +131,14 @@ export default {
     messageFromSignatureComponent () {
     },
     messageFromPaymentComponent () {
+    },
+    nextForm (currentStepName, currentStep) {
+      if (!this.validate[currentStepName]) {
+        this.step = currentStep
+      } else {
+        this.step = this.step + 1
+      }
+      this.triggerValidation = !this.triggerValidation
     }
   },
   computed: {
@@ -138,7 +147,7 @@ export default {
 </script>
 <template lang="pug">
   div.q-pa-md
-    | {{form}}
+    | {{validate}}
     br
     div
       q-stepper.full-width(
@@ -151,48 +160,48 @@ export default {
       )
         q-step( :name="1" title="1. Business Name" :done="step > 1" :header-nav="step > 1")
           div.container
-            businessName(@dataFromBusinessName="messageFrombusinessNameComponent")
+            businessName(@dataFromBusinessName="messageFrombusinessNameComponent" :validateprop="triggerValidation")
           q-stepper-navigation
-            q-btn(@click = "()=>{done1 = true; step = 2}" color="primary" label="continue" :disabled="validate.businessName")
+            q-btn(@click ="() => {triggerValidation=!triggerValidation;(validate.businessName)? step=2:step=1;}" color="primary" label="continue" )
         q-step( :name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(@dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
-            q-btn(@click = "() => {done2 = true; step = 3}" color="primary" label="continue" :disabled="validate.detail")
+            q-btn(@click = "() => {done = true; step++;}" color="primary" label="continue" :disabled="validate.detail")
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(@dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
-            q-btn(@click = "() => {done3 = true; step = 4}" color="primary" label="continue" :disabled="validate.agent")
+            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.agent")
         q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(@dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
-            q-btn(@click = "() => {done4 = true; step = 5}" color="primary" label="continue" :disabled="validate.addresses")
+            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.addresses")
         q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
           div.container
-            organizersComponent
+            organizersComponent(@dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
-            q-btn(@click = "() => {done5 = true; step = 6}" color="primary" label="continue" :disabled="validate.organizers")
+            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.organizers")
         q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent
           q-stepper-navigation
-            q-btn(@click = "() => {done6 = true; step = 7}" color="primary" label="continue" :disabled="validate.additionalArticles")
+            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.additionalArticles")
         q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent
           q-stepper-navigation
-            q-btn(@click = "() => {done7 = true; step = 8}" color="primary" label="continue" :disabled="validate.confirmation")
+            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.confirmation")
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent
           q-stepper-navigation
-            q-btn(@click = "() => {done8 = true; step = 9}" color="primary" label="continue" :disabled="validate.signature")
+            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.signature")
         q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
           div.container
             paymentComponent
           q-stepper-navigation
-            q-btn(@click = "() => {done9 = true; step = 1}" color="primary" label="continue" :disabled="validate.payment")
+            q-btn(@click = "() => {done = true; step = 1}" color="primary" label="continue" :disabled="validate.payment")
 
 </template>

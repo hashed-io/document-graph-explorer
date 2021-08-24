@@ -3,6 +3,11 @@ import { validation } from '~/mixins/validation'
 export default {
   name: 'businessname',
   mixins: [validation],
+  props: {
+    validateprop: {
+      type: Boolean
+    }
+  },
   data () {
     return {
       formData: {
@@ -33,11 +38,18 @@ export default {
     onSubmit () {
       this.$refs.myForm.validate().then(success => {
         if (success) {
-          this.$emit('dataFromBusinessName', this.confirmName, false)
+          this.$emit('dataFromBusinessName', this.confirmName, true)
           // this.$emit('validateChild', true)
-          alert('Send')
+          // alert('Send')
+        } else {
+          this.$emit('dataFromBusinessName', this.confirmName, false)
         }
       })
+    }
+  },
+  watch: {
+    'validateprop': function () {
+      this.onSubmit()
     }
   }
 }
@@ -90,11 +102,11 @@ div.container
     div.q-pa-sm
     p(v-if="errorBusinessName" style="color:red").
       The Entity Name must contain one of the following designations: DAO L.C., DAO L.L.C., DAO LC, DAO LIMITED COMPANY, DAO LIMITED LIABILITY CO., DAO LIMITED LIABILITY COMPANY, DAO LIMITED LIABILITY COMPANY, DAO LLC, DAO LTD. LIABILITY CO., DAO LTD. LIABILITY COMPANY, DECENTRALIZED AUTONOMOUS ORGANIZATION L.C., DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C., DECENTRALIZED AUTONOMOUS ORGANIZATION LC, DECENTRALIZED AUTONOMOUS ORGANIZATION LLC, LAO L.C., LAO L.L.C., LAO LC, LAO LIMITED COMPANY, LAO LIMITED LIABILITY CO., LAO LIMITED LIABILITY COMPANY, LAO LLC, LAO LTD. LIABILITY CO., LAO LTD. LIABILITY COMPANY
-    q-btn(
-      label="Save"
-      type="submit"
-      color="primary"
-    )
+    //- q-btn(
+    //-   label="Save"
+    //-   type="submit"
+    //-   color="primary"
+    //- )
   br
 </template>
 <style lang="sass" scoped>
