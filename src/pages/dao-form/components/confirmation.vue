@@ -1,11 +1,16 @@
 <script>
 export default {
   name: 'confirmationComponent',
+  props: {
+    form: {
+      type: Object
+    }
+  },
   data () {
     return {
       type: 'Limited Liability Company',
       formedIn: 'Wyoming',
-      form: {
+      form2: {
         price: 100,
         businessName: {
           businessName: 'DAO LC TESTER',
@@ -83,13 +88,7 @@ export default {
             articleNumber: '6',
             articleDetail: 'Voluptatem est numquam amet non ipsum. Est velit amet porro modi etincidunt quisquam neque. Modi consectetur consectetur neque ipsum voluptatem. Magnam numquam velit aliquam. Labore consectetur voluptatem quaerat etincidunt tempora tempora. Dolor porro neque labore quiquia etincidunt. Eius sed voluptatem dolore sit. Consectetur neque magnam porro porro.'
           }
-        ],
-        confirmation: {
-        },
-        signature: {
-        },
-        payment: {
-        }
+        ]
       }
     }
   },

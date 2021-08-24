@@ -61,14 +61,17 @@ div.container
       Warning:
   label.
     If you have not conducted a search for your business entity name
-  label.blackRedColor
-    b (Business Entity Name Statutory Requirements)
+  a(href='https://sos.wyo.gov/Forms/WyoBiz/LLC%20-%20Name%20Statutes%2017-29-108%20-%2017-16-401.pdf' target="_blank").blackRedColor
+      |(Business Entity Name Statutory Requirements)
   label to ensure that there are no entities on record which contain the singular or plural form of the name you wish to register, please visit the
-  label.blackRedColor
-    b Search Tool
+  a(href='https://wyobiz.wyo.gov/Business/FilingSearch.aspx' target='_blank').blackRedColor
+      | Search Tool
   label before proceeding.
   div.q-pa-md
-  label Please be advised that subtype designations (DAO, LAO, L3C) are not considered distinguishable. Please visit How To Choose a Company Name for information.
+  label Please be advised that subtype designations (DAO, LAO, L3C) are not considered distinguishable. Please visit
+  a(href='http://sos.wyo.gov/Business/Docs/HowToChooseACompanyName.pdf' target="_blank").blackRedColor
+    |How To Choose a Company Name
+  labe for information.
   div.q-pa-md
   label
     b
@@ -79,7 +82,7 @@ div.container
     u.
       you must make the appropriate designation in the "Additional Designation" field below.
   q-form(
-    @submit="onSubmit"
+    @validation-success="onSubmit"
     class=q-gutter-md
     ref="myForm"
   )
@@ -112,5 +115,8 @@ div.container
 <style lang="sass" scoped>
 .blackRedColor
   color: #AC2734
+  font-weight: bold
+  text-decoration: none
+  padding: 0.5%
 
 </style>

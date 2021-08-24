@@ -6,11 +6,16 @@ export default {
       businessName: 'DAO L.C tester',
       filingFee: 100.00,
       convenienceFee: 2.00,
-      totalOnlinePayment: 102.00
+      totalOnlinePayment: null
     }
   },
   methods: {
-
+    calculateTotal () {
+      this.totalOnlinePayment = parseInt(this.filingFee) + parseInt(this.convenienceFee)
+      return this.totalOnlinePayment
+    }
+  },
+  computed: {
   }
 }
 </script>
@@ -20,26 +25,31 @@ div
     | Payment
   p.q-pt-md YOU WILL BE DIRECTED TO THE BUSINESS DIVISION PAYMENT PROCESSING SITE TO COLLECT YOUR PAYMENT INFORMATION AND TO COMPLETE THE REGISTRATION FILING.
   hr
-  p
-    strong
-      | Registration For
-  p
-    |  {{businessName}}
-  p
-    strong
-      | Filing Fee
-  p
-    |  ${{filingFee}}
-  p
-    strong
-      | Convenience Fee
-  p
-    |  ${{convenienceFee}}
-  p
-    strong
-      | Total Online Payment
-  p
-    |  ${{totalOnlinePayment}}
+  .row
+    .col
+      p
+        strong
+          | Registration For
+      p
+        |  {{businessName}}
+    .col
+      p
+        strong
+          | Filing Fee
+      p
+        |  ${{filingFee}}
+    .col
+      p
+        strong
+          | Convenience Fee
+      p
+        |  ${{convenienceFee}}
+    .col
+      p
+        strong
+          | Total Online Payment
+      p
+        |  ${{calculateTotal()}}
   .row.justify-center
     q-btn(label='Start Payment Process' color='primary')
   p.q-pt-xl

@@ -24,7 +24,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 3,
       triggerValidation: false,
       validate: {
         businessName: false,
@@ -39,6 +39,7 @@ export default {
 
       },
       form: {
+        price: 100,
         businessName: {
           businessName: '',
           additionalDesignation: 'Decentralized Autonomous Organization'
@@ -147,7 +148,7 @@ export default {
 </script>
 <template lang="pug">
   div.q-pa-md
-    | {{validate}}
+    | {{form}}
     br
     div
       q-stepper.full-width(
@@ -190,7 +191,7 @@ export default {
             q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.additionalArticles")
         q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
-            confirmationComponent
+            confirmationComponent(:form="form")
           q-stepper-navigation
             q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.confirmation")
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
@@ -201,7 +202,5 @@ export default {
         q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
           div.container
             paymentComponent
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step = 1}" color="primary" label="continue" :disabled="validate.payment")
 
 </template>

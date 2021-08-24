@@ -18,7 +18,7 @@ export default {
         'articleNumber': _article.articleNumber,
         'articleDetail': _article.articleDetail
       }
-      if (this.idEdit === null) {
+      if (this.idEdit === null && this.article.articleDetail !== null) {
         this.articles.push(_articleObj)
       } else {
         this.articles[this.idEdit] = _articleObj
@@ -69,9 +69,11 @@ export default {
           li Any additional provisions related to W.S. 17-31-106(c).
       q-form(@submit='onSubmit', @reset='onReset' ref="articleForm")
         div.q-pa-xl(style='max-width:100%')
-          .q-pb-md
-            q-input(v-model='article.articleNumber' input-class='text-center' outlined disable=true label='Article #' )
-          q-input(v-model='article.articleDetail'  outlined counter maxlength='1000' type="textarea" label='Article detail')
+          .row.q-gutter-md.justify-center
+            .col-xs-12.col-sm-1
+              q-input(v-model='article.articleNumber' input-class='text-center' outlined disable=true label='Article #' )
+            .col-xs-12.col-sm-10
+              q-input(v-model='article.articleDetail'  outlined counter maxlength='1000' type="textarea" label='Article detail')
           div(v-if='idEdit === null')
             q-btn(label="ADD" type="submit" color="primary")
           div(v-else)
@@ -98,7 +100,7 @@ export default {
               q-item-section(top class="col-10")
                 q-item-label(caption='', lines='30')
                   span.text-subtitle1
-                    strong
+                    strong(style='color:black;')
                       | Detail: &nbsp;
                     b {{article.articleDetail}}
               q-item-section(top='', side='')
