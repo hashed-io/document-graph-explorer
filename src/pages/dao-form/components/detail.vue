@@ -82,15 +82,15 @@ export default {
     setPeriodOfDuration () {
       this.form.periodOfDuration = this.selectValue.label
     },
-    sendToParentComponent () {
+    onSubmit () {
       this.$refs.formDetail.validate().then(success => {
         if (success) {
           this.$emit('dataFromDetail', this.form, false)
           // this.$emit('formData', this.confirmName)
           // this.$emit('validateChild', true)
-          alert('Send')
+          // alert('Send')
         } else {
-          console.log('FAIL')
+          // console.log('FAIL')
         }
       })
     }
@@ -103,7 +103,7 @@ div
   p
     | Provide additional information related to the Limited Liability Company as it applies.
 
-  q-form(@submit='sendToParentComponent', ref='formDetail' class=q-gutter-md)
+  q-form(@submit='onSubmit', ref='formDetail' class=q-gutter-md)
     p
     strong.
       Period of duration:
@@ -148,7 +148,7 @@ div
                           .row.items-center.justify-end
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                 p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
-                .q-pa-sm
-                  q-btn(label='Validate', type='submit', color='primary')
+                //- .q-pa-sm
+                //-   q-btn(label='Validate', type='submit', color='primary')
 
 </template>
