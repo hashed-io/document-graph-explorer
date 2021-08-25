@@ -6,12 +6,7 @@ export default {
   data () {
     return {
       idEdit: null,
-      disable: {
-        fullName: false,
-        colorFullname: 'grey-3',
-        colorOrganization: 'grey-3',
-        organization: false
-      },
+      checkbox: null,
       firstName: null,
       middleName: null,
       lastName: null,
@@ -23,37 +18,27 @@ export default {
         typeName: null,
         addressInfo: null
       },
+      options: [
+        {
+          label: 'physical person',
+          value: 'physical'
+        },
+        {
+          label: 'Legal person',
+          value: 'legal'
+        }
+      ],
       selectOptions: ['Organizer']
     }
   },
   methods: {
-    disableInput (_input) {
-      // Se desactiva el input de organización
-      if (_input === 'organization') {
-        // Se llenan los campos de nombre
-        if (this.firstName !== '' || this.middleName !== '' || this.lastName !== '') {
-          this.disable.colorOrganization = 'grey-7'
-          this.disable.organization = true
-          this.organization = null
-        // Se reactiva el campo de organización debido a que se vacian los campos
-        } else {
-          this.disable.colorOrganization = 'grey-3'
-          this.disable.organization = false
-        }
-      // Se desactivan los datos de nombre
+    deleteData () {
+      if (this.checkbox === 'physical') {
+        this.organization = null
       } else {
-        // Se llena el campo de organización
-        if (this.organization !== '') {
-          this.disable.colorFullname = 'grey-8'
-          this.firstName = null
-          this.middleName = null
-          this.lastName = null
-          this.disable.fullName = true
-        // Se reactivan los campos
-        } else {
-          this.disable.colorFullname = 'grey-3'
-          this.disable.fullName = false
-        }
+        this.firstName = null
+        this.middleName = null
+        this.lastName = null
       }
     },
     onSubmit () {
@@ -78,13 +63,15 @@ export default {
       // Crear
       if (this.idEdit === null) {
         this.organizers.push(_interface)
+        this.resetInfo()
       // Editar
       } else {
         // alert(this.idEdit)
+        // console.log(_interface)
         this.organizers[this.idEdit] = _interface
         this.idEdit = null
+        this.resetInfo()
       }
-      this.resetInfo()
     },
     resetInfo () {
       // Reset organizer
@@ -93,18 +80,14 @@ export default {
         if (key === 'officerType') {
           object[key] = 'Organizer'
         } else {
-          object[key] = ''
+          object[key] = null
         }
       }
-      this.$refs.organizerForm.reset()
       this.firstName = null
       this.middleName = null
       this.lastName = null
       this.organization = null
-      this.disable.colorFullname = 'grey-3'
-      this.disable.colorOrganization = 'grey-3'
-      this.disable.fullName = false
-      this.disable.organization = false
+      this.$refs.organizerForm.reset()
     },
     onReset () {
       // this.$refs.organizerForm.reset()
@@ -116,20 +99,22 @@ export default {
       this.$refs.organizerForm.reset()
     },
     editOrganizer (_id, _objectOrganizer) {
-      this.$refs.organizerForm.reset()
       this.idEdit = _id
       for (var key in _objectOrganizer) {
         this.organizer[key] = _objectOrganizer[key]
       }
       // typeName
       if (_objectOrganizer.typeName === 'fullName') {
+        this.checkbox = 'physical'
         const nameArr = _objectOrganizer.name.split(' ')
         this.firstName = nameArr[0]
         this.middleName = nameArr[1]
         this.lastName = nameArr[2]
       } else {
+        this.checkbox = 'legal'
         this.organization = this.organizer.name
       }
+      // this.$refs.organizerForm.reset()
     },
     updateOrganizer (_id) {
       this.onSubmit()
@@ -141,25 +126,32 @@ export default {
 .q-pa-md
   template
     q-card(flat bordered)
-      q-separator
-      p.q-pa-md
+      .text-h4.q-pa-md
+        | Organizers
+      p.q-pa-md.text-subtitle1
         | Please use the form below to add the name and address of the organizers. Press 'Add' after entering information.
       .container
         q-form(@submit='onSubmit', @reset='onReset' ref="organizerForm")
+          div.q-px-md Choose one type of person
+          q-field(ref='toggle' borderless v-model="checkbox" :rules="[v => !!v || 'Choose one option']").q-pl-md
+            template(v-slot:control)
+              q-option-group(v-model='checkbox' :options='options' color='primary' @input='deleteData' :rules="[rules.required]" inline)
+          div(v-if="checkbox === 'physical'")
+            .row.justify-center
+              .col.q-px-md.col-xs-12.col-sm-12.col-md-4
+                q-input(v-model='firstName',filled, label="First Name: *" ,label-stacked :rules="[rules.required]")
+              .col.q-px-md.col-xs-12.col-sm-12.col-md-4
+                q-input(v-model='middleName',filled, label="Middle Name: ",label-stacked).q-pb-md
+              .col.q-px-md.col-xs-12.col-sm-12.col-md-4
+                q-input(v-model='lastName',filled, label="Last Name: *",label-stacked, :rules="[rules.required]")
           .row.justify-center
-            .col.q-pa-md.col-xs-12.col-sm-12.col-md-4
-              q-input(v-model='firstName', @input="disableInput('organization')", debounce="500", :bg-color="disable.colorFullname",filled, label="First Name: *", label-stacked :disable="disable.fullName" :rules="[rules.required]")
-            .col.q-pa-md.col-xs-12.col-sm-12.col-md-4
-              q-input(v-model='middleName',@input="disableInput('organization')", debounce="500" , :bg-color="disable.colorFullname",filled, label="Middle Name: ", ,label-stacked, :disable="disable.fullName" )
-            .col.q-pa-md.col-xs-12.col-sm-12.col-md-4
-              q-input(v-model='lastName',@input="disableInput('organization')", debounce="500", :bg-color="disable.colorFullname",filled, label="Last Name: *", label-stacked, :disable="disable.fullName" :rules="[rules.required]")
-          .row.justify-center
-            .col.q-pa-md.col-xs-12.col-sm-8.col-md-8
-              q-input(v-model='organization',@input="disableInput('fullName')",debounce="500", :bg-color="disable.colorOrganization" ,filled, label="Organization: *", label-stacked, :disable="disable.organization" :rules="[rules.required]")
-            .col.q-pa-md.col-xs-12.col-sm-4.col-md-4
+            .col.q-px-md.col-xs-12.col-sm-12.col-md-12
+              div(v-if="checkbox === 'legal'")
+                q-input(v-model='organization', filled, label="Organization: *", label-stacked, :rules="[rules.required]")
+            .col.q-px-md.col-xs-12.col-sm-12.col-md-12
               q-select(v-model='organizer.officerType', :options="selectOptions" filled, label="Officer type: *", label-stacked :rules="[rules.required]")
           .row.justify-center
-            .col.q-pa-md.col-xs-12.col-sm-12.col-md-12
+            .col.q-px-md.col-xs-12.col-sm-12.col-md-12
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
           .row.justify-end.q-pa-md
             div(v-if='idEdit === null')

@@ -24,7 +24,7 @@ export default {
   },
   data () {
     return {
-      step: 3,
+      step: 5,
       triggerValidation: false,
       validate: {
         businessName: false,
@@ -197,10 +197,10 @@ export default {
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.signature")
-        q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
-          div.container
-            paymentComponent
+        //-   q-stepper-navigation
+        //-     q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.signature")
+        //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
+        //-   div.container
+        //-     paymentComponent
 
 </template>

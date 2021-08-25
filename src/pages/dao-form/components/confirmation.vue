@@ -99,7 +99,7 @@ export default {
 </script>
 <template lang="pug">
 div
-  .text-h6.q-pb-md
+  .text-h4.q-pb-md
     | Confirmation
   p Please confirm the business entity information is entered correctly.
   p Warning : Please review your filing and click 'Continue' to file your registration electronically.

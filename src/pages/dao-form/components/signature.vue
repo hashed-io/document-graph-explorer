@@ -149,7 +149,6 @@ div
     p(style='color:red;')
       strong
         | This form and any related instructions are not intended to provide legal, business or tax advice, and are furnished without representation or warranty. While this form is believed to satisfy minimum legal requirements as of its revision date, compliance with applicable law, as the same may be amended from time to time, remains the responsibility of the user of this form. Questions should be addressed to the user's legal, business or tax advisor(s).
-    q-btn(label="validate" @click='onSubmit')
 </template>
 
 <style lang="sass">
