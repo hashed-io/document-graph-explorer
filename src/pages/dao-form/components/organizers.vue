@@ -157,7 +157,7 @@ export default {
             div(v-if='idEdit === null')
               q-btn(label="ADD" type="submit" color="primary")
             div(v-else)
-              q-btn(label="UPDATE" type="submit" @click='onSubmit' color="primary")
+              q-btn(label="UPDATE" @click='onSubmit' color="primary")
             .q-pa-sm
             //- q-btn(label="CLEAR" type="reset" color="primary")
   template
