@@ -7,6 +7,7 @@ export default {
     return {
       validateComponent: false,
       agentFound: true,
+      dialog: false,
       agree: false,
       agentForm: {
         firstName: null,
@@ -33,7 +34,72 @@ export default {
       },
       responseSearch: {
         selectedAgent: '15781'
-      }
+      },
+      agentsData: [
+        {
+          'number': '0186605',
+          'name': {
+            'firstName': 'Aaron',
+            'lastName': 'Martin'
+          },
+          'address': {
+            'line1': '3896 CR 203'
+          },
+          'city': 'Cheyenne',
+          'postCode': '82001',
+          'state': 'WY',
+          'phone': '(307)640-3551',
+          'email': 'amartin_7362@yahoo.com'
+        },
+        {
+          'number': '0184358',
+          'name': {
+            'firstName': 'Abrianne',
+            'lastName': 'Thoman'
+          },
+          'address': {
+            'line1': '65 Jones Dr',
+            'line2': 'PO Box 86'
+          },
+          'city': 'LaBarge',
+          'postCode': '83123',
+          'state': 'WY',
+          'phone': '(307)386-2194',
+          'email': 'abrianne_@hotmail.com'
+        },
+        {
+          'number': '0184230',
+          'name': {
+            'firstName': 'Agnes',
+            'middleName': 'A',
+            'lastName': 'Hanson'
+          },
+          'address': {
+            'line1': '22 Old Hwy 85'
+          },
+          'city': 'Newcastle',
+          'postCode': '82701',
+          'state': 'WY',
+          'phone': '(307)746-9604',
+          'email': 'agnes_hanson@msn.com'
+        },
+        {
+          'number': '0184187',
+          'name': {
+            'firstName': 'Aimee',
+            'middleName': '',
+            'lastName': 'Dendrinos'
+          },
+          'address': {
+            'line1': '1200 E 20th St Ste A'
+          },
+          'city': 'Cheyenne',
+          'postCode': '82001',
+          'state': 'WY',
+          'phone': '(307)773-1337',
+          'email': 'adendrinos@winhealthpartners.org'
+        }
+      ]
     }
   },
   methods: {
@@ -66,6 +132,9 @@ export default {
 
         }
       })
+    },
+    selectedAgent (id) {
+
     }
   }
 }
@@ -96,7 +165,7 @@ export default {
           .col
             q-input.q-pa-md(v-model='dataForSearch.organization', filled, label="Organization Name", label-stacked)
         .container.q-pa-md
-          q-btn(label='Search' type='submit' color='primary')
+          q-btn(label='Search' type='submit' color='primary' @click='dialog =!dialog')
           q-btn(label='Clear' type='reset' flat class='q-ml-sm' color='primary')
   .col
     q-card(class='column')
@@ -148,6 +217,21 @@ export default {
                 q-checkbox(v-model='agree' label="I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
               br
               q-btn(label='Validate' type='submit' color='primary' style="margin-top:1%;")
+  .dialog
+    q-dialog(v-model='dialog' full-width)
+      q-card
+        q-toolbar
+          q-toolbar-title
+            span.text-weight-bold Select an Agent
+          q-btn(dense flat icon='close' v-close-popup)
+            q-tooltip Close
+        q-card-section
+        div(v-for='(agent,indexAgent) in agentsData' :key='agent.number')
+          .itemsList
+            q-item(clickable v-ripple @click='selectedAgent(indexAgent)')
+              q-item-section(top)
+                q-item-label  {{agent.number}}
+
 </template>
 
 <style lang="">

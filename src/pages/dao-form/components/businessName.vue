@@ -22,13 +22,18 @@ export default {
     containsDesignations () {
       const str = this.formData.businessName
       const substrings = ['DAO L.C.', 'DAO L.L.C.', 'DAO LC', 'DAO LIMITED COMPANY', 'DAO LIMITED LIABILITY CO.', 'DAO LIMITED LIABILITY COMPANY', 'DAO LIMITED LIABILITY COMPANY', 'DAO LLC', 'DAO LTD. LIABILITY CO.', 'DAO LTD. LIABILITY COMPANY', 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.C.', 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C.', 'DECENTRALIZED AUTONOMOUS ORGANIZATION LC', 'DECENTRALIZED AUTONOMOUS ORGANIZATION LLC', 'LAO L.C.', 'LAO L.L.C.', 'LAO LC', 'LAO LIMITED COMPANY', 'LAO LIMITED LIABILITY CO.', 'LAO LIMITED LIABILITY COMPANY', 'LAO LLC', 'LAO LTD. LIABILITY CO.', 'LAO LTD. LIABILITY COMPANY']
-      if (substrings.some(function (v) { return str.indexOf(v) >= 0 })) {
-        this.changeStateError(false)
-        return true
-      } else {
-        this.changeStateError(true)
-        return false
+      var flag = false
+      this.changeStateError(true)
+      for (const element of substrings) {
+        let boolCheck = str.includes(element)
+        if (boolCheck) {
+          flag = true
+          this.changeStateError(false)
+          break
+        }
       }
+
+      return flag
     }
   },
   methods: {
@@ -71,7 +76,7 @@ div.container
   label Please be advised that subtype designations (DAO, LAO, L3C) are not considered distinguishable. Please visit
   a(href='http://sos.wyo.gov/Business/Docs/HowToChooseACompanyName.pdf' target="_blank").blackRedColor
     |How To Choose a Company Name
-  labe for information.
+  label for information.
   div.q-pa-md
   label
     b

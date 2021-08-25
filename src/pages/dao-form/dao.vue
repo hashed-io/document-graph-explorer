@@ -148,7 +148,7 @@ export default {
 </script>
 <template lang="pug">
   div.q-pa-md
-    | {{form}}
+    //- | {{form}}
     br
     div
       q-stepper.full-width(
