@@ -87,7 +87,7 @@ div.container
     u.
       you must make the appropriate designation in the "Additional Designation" field below.
   q-form(
-    @validation-success="onSubmit"
+    @submit="onSubmit"
     class=q-gutter-md
     ref="myForm"
   )

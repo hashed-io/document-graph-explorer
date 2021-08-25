@@ -42,11 +42,16 @@ export default {
     }
   },
   computed: {
+  },
+  mounted () {
+    const baseDate = new Date('1970-01-01')
+    console.log(TimeUtil.toUTCDate(baseDate))
+  },
+  methods: {
     calculateDate () {
       // Caso Perpetuo
       const value = this.selectValue.value
       this.setPeriodOfDuration()
-      console.log('test')
       if (value === 'none') {
         this.setExpirationDate('none')
         // this.selectValue.label = 'EXPIRES TEST'
@@ -65,13 +70,7 @@ export default {
       formattedString = date.formatDate(formattedString, 'MM/DD/YYYY')
       this.setExpirationDate(formattedString)
       return formattedString
-    }
-  },
-  mounted () {
-    const baseDate = new Date('1970-01-01')
-    console.log(TimeUtil.toUTCDate(baseDate))
-  },
-  methods: {
+    },
     getCurrentDate () {
       const timeStamp = Date.now()
       this.date = date.formatDate(timeStamp, 'MM/DD/YYYY')
@@ -111,14 +110,14 @@ div
     strong(style="color:red") *
     .row
       .cols-8
-          q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
+          q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
           label (select &apos;Perpetual&apos; if the entity does not expire.)
           .q-pa-md
           div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
             p
               strong Expiration Date (mm/dd/yyyy)
               strong(style='color:red') *
-            p  {{calculateDate}}
+            p  {{calculateDate()}}
             p
           div(v-else-if="(selectValue.value === '0')")
             strong Expiration Date (mm/dd/yyyy)
@@ -136,7 +135,7 @@ div
             p
               strong Expiration Date (mm/dd/yyyy)
               strong(style='color:red') *
-            p  {{calculateDate}}
+            p  {{calculateDate()}}
           p
             b Delayed Effective Date : (mm/dd/yyyy)
             .row

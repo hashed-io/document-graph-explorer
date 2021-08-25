@@ -1,11 +1,13 @@
 <script>
+import { validation } from '~/mixins/validation'
 export default {
   name: 'additionalArticlesComponent',
+  mixins: [validation],
   data () {
     return {
       articles: [],
       article: {
-        articleNumber: '6',
+        articleNumber: null,
         articleDetail: null
       },
       idEdit: null
@@ -28,7 +30,7 @@ export default {
     },
     clearForm () {
       this.article.articleDetail = null
-      this.article.articleNumber = '6'
+      this.article.articleNumber = null
     },
     onReset () {
     },
@@ -47,6 +49,8 @@ export default {
 .q-pa-md
   template
     q-card(flat bordered)
+      .text-h4.q-pa-md
+        | Additional Articles
       q-separator
       div.q-px-lg.text-subtitle1.q-pt-md
         | Please use the form below to add additional articles if necessary. Press 'Add' after entering the information for each article.
@@ -71,9 +75,9 @@ export default {
         div.q-pa-xl(style='max-width:100%')
           .row.q-gutter-md.justify-center
             .col-xs-12.col-sm-1
-              q-input(v-model='article.articleNumber' input-class='text-center' outlined disable=true label='Article #' )
+              q-input(v-model='article.articleNumber'  mask='##' input-class='text-center' outlined  label='Article #' :rules="[rules.required]" )
             .col-xs-12.col-sm-10
-              q-input(v-model='article.articleDetail'  outlined counter maxlength='1000' type="textarea" label='Article detail')
+              q-input(v-model='article.articleDetail'  outlined counter maxlength='1000' type="textarea" label='Article detail' :rules="[rules.required]")
           div(v-if='idEdit === null')
             q-btn(label="ADD" type="submit" color="primary")
           div(v-else)
@@ -93,17 +97,17 @@ export default {
             q-item(clickable)
               q-item-section(top)
                 q-item-label(lines='5')
-                  span.text-subtitle1
+                  span.text-subtitle2
                     strong
                       | Article: &nbsp; #
-                    b {{index}}
+                    b {{article.articleNumber}}
               q-item-section(top class="col-10")
                 q-item-label(caption='', lines='30')
-                  span.text-subtitle1
+                  span.text-subtitle2
                     strong(style='color:black;')
                       | Detail: &nbsp;
                     b {{article.articleDetail}}
-              q-item-section(top='', side='')
+              q-item-section(side)
                 .text-grey-8.q-gutter-xs
                   q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteArticle(index)')
                   q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editArticle(index, article)')
