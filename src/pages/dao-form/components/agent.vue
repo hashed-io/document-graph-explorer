@@ -36,77 +36,85 @@ export default {
       responseSearch: {
         selectedAgent: null
       },
-      agentsData: [
-        {
-          'number': '0186605',
-          'name': {
-            'firstName': 'Aaron',
-            'lastName': 'Martin'
-          },
-          'address': {
-            'line1': '3896 CR 203'
-          },
-          'city': 'Cheyenne',
-          'postCode': '82001',
-          'state': 'WY',
-          'phone': '(307)640-3551',
-          'email': 'amartin_7362@yahoo.com'
-        },
-        {
-          'number': '0184358',
-          'name': {
-            'firstName': 'Abrianne',
-            'lastName': 'Thoman'
-          },
-          'address': {
-            'line1': '65 Jones Dr',
-            'line2': 'PO Box 86'
-          },
-          'city': 'LaBarge',
-          'postCode': '83123',
-          'state': 'WY',
-          'phone': '(307)386-2194',
-          'email': 'abrianne_@hotmail.com'
-        },
-        {
-          'number': '0184230',
-          'name': {
-            'firstName': 'Agnes',
-            'middleName': 'A',
-            'lastName': 'Hanson'
-          },
-          'address': {
-            'line1': '22 Old Hwy 85'
-          },
-          'city': 'Newcastle',
-          'postCode': '82701',
-          'state': 'WY',
-          'phone': '(307)746-9604',
-          'email': 'agnes_hanson@msn.com'
-        },
-        {
-          'number': '0184187',
-          'name': {
-            'firstName': 'Aimee',
-            'middleName': '',
-            'lastName': 'Dendrinos'
-          },
-          'address': {
-            'line1': '1200 E 20th St Ste A'
-          },
-          'city': 'Cheyenne',
-          'postCode': '82001',
-          'state': 'WY',
-          'phone': '(307)773-1337',
-          'email': 'adendrinos@winhealthpartners.org'
-        }
-      ]
+      agentsData: []
     }
   },
   methods: {
-    onSubmit () {
+    async onSubmit () {
+      this.agentsData = []
       const searchForm = this.dataForSearch
       console.log(searchForm)
+      console.log('Datos solicitados')
+      this.agentsData = await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve([
+            {
+              'number': '0186605',
+              'name': {
+                'firstName': 'Aaron',
+                'lastName': 'Martin'
+              },
+              'address': {
+                'line1': '3896 CR 203'
+              },
+              'city': 'Cheyenne',
+              'postCode': '82001',
+              'state': 'WY',
+              'phone': '(307)640-3551',
+              'email': 'amartin_7362@yahoo.com'
+            },
+            {
+              'number': '0184358',
+              'name': {
+                'firstName': 'Abrianne',
+                'lastName': 'Thoman'
+              },
+              'address': {
+                'line1': '65 Jones Dr',
+                'line2': 'PO Box 86'
+              },
+              'city': 'LaBarge',
+              'postCode': '83123',
+              'state': 'WY',
+              'phone': '(307)386-2194',
+              'email': 'abrianne_@hotmail.com'
+            },
+            {
+              'number': '0184230',
+              'name': {
+                'firstName': 'Agnes',
+                'middleName': 'A',
+                'lastName': 'Hanson'
+              },
+              'address': {
+                'line1': '22 Old Hwy 85'
+              },
+              'city': 'Newcastle',
+              'postCode': '82701',
+              'state': 'WY',
+              'phone': '(307)746-9604',
+              'email': 'agnes_hanson@msn.com'
+            },
+            {
+              'number': '0184187',
+              'name': {
+                'firstName': 'Aimee',
+                'middleName': '',
+                'lastName': 'Dendrinos'
+              },
+              'address': {
+                'line1': '1200 E 20th St Ste A'
+              },
+              'city': 'Cheyenne',
+              'postCode': '82001',
+              'state': 'WY',
+              'phone': '(307)773-1337',
+              'email': 'adendrinos@winhealthpartners.org'
+            }
+          ])
+        }, 1500)
+      })
+      console.log('Datos obtenidos')
     },
     onReset () {
       const object = this.dataForSearch
@@ -135,6 +143,8 @@ export default {
       })
     },
     selectedAgent (id) {
+      this.idAgentSelect = id
+      this.dialog = false
       let selectedAgentData = this.agentsData[id]
       let agentForm = this.agentForm
       this.responseSearch.selectedAgent = selectedAgentData.number
@@ -233,22 +243,35 @@ export default {
   .dialog
     q-dialog(v-model='dialog' full-width)
       q-card
-        q-toolbar
+        q-toolbar(style='background-color: #4839F9; color:white;')
           q-toolbar-title
             span.text-weight-bold Select an Agent
           q-btn(dense flat icon='close' v-close-popup)
             q-tooltip Close
         q-card-section
-        div(v-for='(agent,indexAgent) in agentsData' :key='agent.number')
-          .itemsList
-            q-item(clickable v-ripple @click='selectedAgent(indexAgent); idAgentSelect=indexAgent;' :active="idAgentSelect === indexAgent" active-class='menuLinkActive')
-              q-item-section(top)
-                q-item-label  {{agent.number}}
+        div(v-if='agentsData.length === 0')
+          .row.justify-center.q-pa-xl
+              q-spinner(color='primary' size='5em')
+        div(v-else)
+          div(v-for='(agent,indexAgent) in agentsData' :key='agent.number')
+            .itemsList
+              q-item(clickable v-ripple @click='selectedAgent(indexAgent)' :active="idAgentSelect === indexAgent"  active-class='menuLinkActive')
+                q-item-section(top)
+                  q-item-label
+                    strong.item {{agent.number}}
+                q-item-section(top)
+                  q-item-label
+                    p.item {{agent.name.firstName}}{{agent.name.lastName}}
+                q-item-section(top)
+                  q-item-label
+                  p.item {{agent.address.line1}}, {{agent.city}},{{agent.postCode}}
 
 </template>
 
 <style lang="sass">
 .menuLinkActive
   color: blue
-  background: #eee
+  background: #ddd
+.item
+  color: #808080
 </style>
