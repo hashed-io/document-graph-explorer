@@ -7,6 +7,7 @@ export default {
     return {
       validateComponent: false,
       agentFound: true,
+      idAgentSelect: null,
       dialog: false,
       agree: false,
       agentForm: {
@@ -33,7 +34,7 @@ export default {
         Organization: null
       },
       responseSearch: {
-        selectedAgent: '15781'
+        selectedAgent: null
       },
       agentsData: [
         {
@@ -134,7 +135,19 @@ export default {
       })
     },
     selectedAgent (id) {
-
+      let selectedAgentData = this.agentsData[id]
+      let agentForm = this.agentForm
+      this.responseSearch.selectedAgent = selectedAgentData.number
+      agentForm.firstName = selectedAgentData.name.firstName
+      agentForm.middleName = selectedAgentData.name.middleName
+      agentForm.lastName = selectedAgentData.name.lastName
+      agentForm.address.line1 = selectedAgentData.address.line1
+      agentForm.address.line2 = selectedAgentData.address.line2
+      agentForm.city = selectedAgentData.city
+      agentForm.postalCode = selectedAgentData.postCode
+      agentForm.state = selectedAgentData.state
+      agentForm.phone = selectedAgentData.phone
+      agentForm.email = selectedAgentData.email
     }
   }
 }
@@ -228,12 +241,14 @@ export default {
         q-card-section
         div(v-for='(agent,indexAgent) in agentsData' :key='agent.number')
           .itemsList
-            q-item(clickable v-ripple @click='selectedAgent(indexAgent)')
+            q-item(clickable v-ripple @click='selectedAgent(indexAgent); idAgentSelect=indexAgent;' :active="idAgentSelect === indexAgent" active-class='menuLinkActive')
               q-item-section(top)
                 q-item-label  {{agent.number}}
 
 </template>
 
-<style lang="">
-
+<style lang="sass">
+.menuLinkActive
+  color: blue
+  background: #eee
 </style>
