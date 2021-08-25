@@ -130,7 +130,8 @@ module.exports = function (ctx) {
         WEBSERVICES_URL: process.env.WEBSERVICES_URL,
         WEBSERVICES_API_KEY: process.env.WEBSERVICES_API_KEY,
         BLOCKCHAIN_EXPLORER: process.env.BLOCKCHAIN_EXPLORER,
-        GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS
+        GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
+        IPFS_URL: process.env.IPFS_URL
       },
       scopeHoisting: true,
       vueRouterMode: 'history',
