@@ -46,9 +46,10 @@ export default {
           this.$emit('dataFromBusinessName', this.confirmName, true)
           // this.$emit('validateChild', true)
           // alert('Send')
-        } else {
-          this.$emit('dataFromBusinessName', this.confirmName, false)
         }
+        // else {
+        //   this.$emit('dataFromBusinessName', this.confirmName, false)
+        // }
       })
     }
   },

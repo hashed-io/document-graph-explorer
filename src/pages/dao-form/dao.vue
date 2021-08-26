@@ -1,3 +1,62 @@
+<template lang="pug">
+  div.q-pa-md
+    div
+      q-stepper.full-width(
+        v-model="step"
+        ref="stepper"
+        color="primary"
+        animated
+        header-nav
+        keep-alive
+      )
+        q-step( :name="1" title="1. Business Name" :done="step > 1" :header-nav="step > 1")
+          div.container
+            businessName(ref="businessStepComponent" @dataFromBusinessName="messageFrombusinessNameComponent" :validateprop="triggerValidation")
+          q-stepper-navigation
+             q-btn(@click="validateStep" color="primary" label="continue" )
+              //- q-btn(@click="() => {triggerValidation=!triggerValidation;(validate.businessName) ? step=2 : step=1;}" color="primary" label="continue" )
+        q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
+          div.container
+            detail(ref="detailStepComponent" @click="validateStep" @dataFromDetail="messageFromDetailComponent")
+          q-stepper-navigation
+            q-btn(@click="validateStep" color="primary" label="continue" )
+            //- q-btn(@click="() => {done = true; step++;}" color="primary" label="continue" :disabled="validate.detail")
+        q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
+          div.container
+            agentComponent(@dataFromAgent='messageFromAgentComponent')
+          q-stepper-navigation
+            q-btn(@click="() => {done = true; step++}" color="primary" label="continue" :disabled="validate.agent")
+        q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
+          div.container
+            addressesComponent(@dataFromAddresses='messageFromAddressesComponent')
+          q-stepper-navigation
+            q-btn(@click ="() => {done = true; step++}" color="primary" label="continue" :disabled="validate.addresses")
+        q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
+          div.container
+            organizersComponent(@dataFromOrganizers='messageFromOrganizersComponent')
+          q-stepper-navigation
+            q-btn(@click ="() => {done = true; step++}" color="primary" label="continue" :disabled="validate.organizers")
+        q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
+          div.container
+            additionalArticlesComponent
+          q-stepper-navigation
+            q-btn(@click ="() => {done = true; step++}" color="primary" label="continue" :disabled="validate.additionalArticles")
+        q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
+          div.container
+            confirmationComponent(:form="form")
+          q-stepper-navigation
+            q-btn(@click ="() => {done = true; step++}" color="primary" label="continue" :disabled="validate.confirmation")
+        q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
+          div.container
+            signatureComponent
+        //-   q-stepper-navigation
+        //-     q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.signature")
+        //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
+        //-   div.container
+        //-     paymentComponent
+
+</template>
+
 <script>
 import businessName from './components/businessName.vue'
 import detail from './components/detail.vue'
@@ -24,7 +83,7 @@ export default {
   },
   data () {
     return {
-      step: 5,
+      step: 1,
       triggerValidation: false,
       validate: {
         businessName: false,
@@ -99,9 +158,21 @@ export default {
     }
   },
   methods: {
+    validateStep () {
+      console.log('validateStep', this.step)
+      switch (this.step) {
+        case 1:
+          this.$refs.businessStepComponent.onSubmit()
+          break
+        case 2:
+          this.$refs.detailStepComponent.onSubmit()
+          break
+      }
+    },
     messageFrombusinessNameComponent (businessName, validate) {
       this.form.businessName.businessName = businessName
       this.validate.businessName = validate
+      this.step = 2
     },
     messageFromDetailComponent (_form, validate) {
       // console.log(form)
@@ -109,6 +180,7 @@ export default {
       this.form.detail.expirationDate = _form.expirationDate
       this.form.detail.delayedEffectiveDate = _form.delayedEffectiveDate
       this.validate.detail = validate
+      this.step = 3
       // console.log(this.form.detail)
     },
     messageFromAgentComponent (_form, validate) {
@@ -146,61 +218,3 @@ export default {
   }
 }
 </script>
-<template lang="pug">
-  div.q-pa-md
-    //- | {{form}}
-    br
-    div
-      q-stepper.full-width(
-        v-model="step"
-        ref="stepper"
-        color="primary"
-        animated
-        header-nav
-        keep-alive
-      )
-        q-step( :name="1" title="1. Business Name" :done="step > 1" :header-nav="step > 1")
-          div.container
-            businessName(@dataFromBusinessName="messageFrombusinessNameComponent" :validateprop="triggerValidation")
-          q-stepper-navigation
-            q-btn(@click ="() => {triggerValidation=!triggerValidation;(validate.businessName)? step=2:step=1;}" color="primary" label="continue" )
-        q-step( :name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
-          div.container
-            detail(@dataFromDetail="messageFromDetailComponent")
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++;}" color="primary" label="continue" :disabled="validate.detail")
-        q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
-          div.container
-            agentComponent(@dataFromAgent='messageFromAgentComponent')
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.agent")
-        q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
-          div.container
-            addressesComponent(@dataFromAddresses='messageFromAddressesComponent')
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.addresses")
-        q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
-          div.container
-            organizersComponent(@dataFromOrganizers='messageFromOrganizersComponent')
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.organizers")
-        q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
-          div.container
-            additionalArticlesComponent
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.additionalArticles")
-        q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
-          div.container
-            confirmationComponent(:form="form")
-          q-stepper-navigation
-            q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.confirmation")
-        q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
-          div.container
-            signatureComponent
-        //-   q-stepper-navigation
-        //-     q-btn(@click = "() => {done = true; step++}" color="primary" label="continue" :disabled="validate.signature")
-        //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
-        //-   div.container
-        //-     paymentComponent
-
-</template>

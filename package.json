@@ -1,10 +1,10 @@
 {
-  "name": "VenifyVarex",
+  "name": "DAO-LLC",
   "version": "0.0.1",
-  "description": "Venify Varex",
-  "productName": "Venify Varex",
+  "description": "DAO LLC",
+  "productName": "DAO LLC",
   "cordovaId": "org.cordova.quasar.app",
-  "author": "gregory-latinier <jmgayosso@m1ghty.com>",
+  "author": "jmgayosso <jmgayosso@m1ghty.com>",
   "private": true,
   "scripts": {
     "dev": "quasar dev -m spa",
