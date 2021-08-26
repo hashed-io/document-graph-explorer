@@ -31,12 +31,15 @@
       q-card-section.bg-primary.text-white
         div(v-if="agentForm.firstName !== null && agentFound")
           .row
-            p Selected Agent: {{responseSearch.selectedAgent}}
+            .col
+              p Selected Agent: {{responseSearch.selectedAgent}}
         div(v-else)
           | Enter Agent Information
       q-separator
       .container
-        q-form(@submit="onSubmit" ref="dataAgentForm")
+        q-form(@submit="onSubmit" @reset='clearAgent' ref="dataAgentForm")
+          .col(style='text-align:right').q-pt-sm
+            q-btn(label='clear agent' outline type='reset')
           .row.justify-center
             .col.q-pa-md.col-xs-12.col-sm-4
               q-input(v-model='agentForm.firstName', filled, label='First Name : *', label-stacked :rules='[rules.required]')
@@ -46,10 +49,10 @@
               q-input(v-model='agentForm.lastName', filled, label='Last Name : *', label-stacked :rules='[rules.required]' lazy-rules)
           .row.justify-center
             .col-q-pa-md.col-xs-12.col-sm-12
-              q-input.q-pa-md(v-model='agentForm.organization', filled, label="Organization Name", label-stacked disable bg-color="grey-5")
+              q-input.q-pa-md(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
           .row.justify-left
             .col.q-pa-md.col-xs-12.col-sm-8
-              q-input(v-model='agentForm.country', filled, label="Country", label-stacked :disable='true' bg-color="grey-5")
+              q-input(v-model='agentForm.country', filled, label="Country", label-stacked :readonly='true' bg-color="grey-5")
           .row.justify-center
             .col.q-pa-md.col-xs-12.col-sm-12
               q-input(v-model='agentForm.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
@@ -63,9 +66,9 @@
             .col.q-pa-md.col-xs-12.col-sm-6
               q-input(v-model='agentForm.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
             .col.q-pa-md.col-xs-12.col-sm-2
-              q-input(v-model='agentForm.state', filled, label='State: *', label-stacked disable bg-color="grey-5" :rules='[rules.required]')
+              q-input(v-model='agentForm.state', filled, label='State: *', label-stacked readonly bg-color="grey-5" :rules='[rules.required]')
             .col.q-pa-md.col-xs-12.col-sm-4
-              q-input(v-model='agentForm.postalCode', filled, label='Postal Code: *', label-stacked disable bg-color="grey-5" :rules='[rules.required]')
+              q-input(v-model='agentForm.postalCode' filled, label='Postal Code: *', label-stacked  readonly bg-color="grey-5" :rules='[rules.required]')
           .row.justify-center
             .col.q-pa-md.col-xs-12.col-sm-12
               q-input(v-model='agentForm.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
@@ -87,6 +90,16 @@
           .row.justify-center.q-pa-xl
               q-spinner(color='primary' size='5em')
         div(v-else)
+          q-item.q-pb-md
+            q-item-section(top)
+              q-item-label
+                strong.text-h6 Agent Code
+            q-item-section(top)
+              q-item-label
+                strong.text-h6 Agent Name
+            q-item-section(top)
+              q-item-label
+                strong.text-h6 Agent Address
           div(v-for='(agent,indexAgent) in agentsData' :key='agent.number')
             .itemsList
               q-item(clickable v-ripple @click='selectedAgent(indexAgent)' :active="idAgentSelect === indexAgent"  active-class='menuLinkActive')
@@ -95,7 +108,7 @@
                     strong.item {{agent.number}}
                 q-item-section(top)
                   q-item-label
-                    p.item {{agent.name.firstName}}{{agent.name.lastName}}
+                    p.item {{agent.name.firstName}}&nbsp;{{agent.name.lastName}}
                 q-item-section(top)
                   q-item-label
                   p.item {{agent.address.line1}}, {{agent.city}},{{agent.postCode}}
@@ -225,7 +238,7 @@ export default {
               'email': 'adendrinos@winhealthpartners.org'
             }
           ])
-        }, 750)
+        }, 300)
       })
       console.log('Datos obtenidos')
     },
@@ -271,6 +284,19 @@ export default {
       agentForm.state = selectedAgentData.state
       agentForm.phone = selectedAgentData.phone
       agentForm.email = selectedAgentData.email
+    },
+    clearAgent () {
+      this.agentForm.postalCode = null
+      this.agentForm.firstName = null
+      this.agentForm.middleName = null
+      this.agentForm.lastName = null
+      this.agentForm.organization = null
+      this.agentForm.city = null
+      this.agentForm.phone = null
+      this.agentForm.email = null
+      for (let key in this.agentForm.address) {
+        this.agentForm.address[key] = null
+      }
     }
   }
 }

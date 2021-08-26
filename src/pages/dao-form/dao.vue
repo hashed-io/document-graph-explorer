@@ -1,20 +1,5 @@
 <template lang="pug">
   div.q-pa-md
-    div
-      p {{form.businessName}}
-      hr
-      p {{form.detail}}
-      hr
-      p {{form.agent}}
-      hr
-      p {{form.addresses}}
-      hr
-      p {{form.organizers}}
-      hr
-      p {{form.additionalArticles}}
-      hr
-      p {{form.fillerInformation}}
-      hr
       q-stepper.full-width(
         v-model="step"
         ref="stepper"
@@ -95,7 +80,7 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 2,
       form: {
         price: 100,
         businessName: {

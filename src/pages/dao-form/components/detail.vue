@@ -40,11 +40,11 @@ div
             b Delayed Effective Date : (mm/dd/yyyy)
             .row
               .cols-6
-                q-input(filled, v-model='form.delayedEffectiveDate', mask='##/##/####' )
+                q-input(filled, v-model='form.delayedEffectiveDate', mask='##/##/####')
                   template(v-slot:append='')
                     q-icon.cursor-pointer(name='event')
                       q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                        q-date(v-model='form.delayedEffectiveDate', today-btn, mask='MM/DD/YYYY')
+                        q-date(v-model='datePicker', today-btn, mask='MM/DD/YYYY' :options='optionsFn' @input='changesDate')
                           .row.items-center.justify-end
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                 p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
@@ -59,6 +59,9 @@ export default {
   data () {
     return {
       date: null,
+      datePicker: null,
+      datePickerEnd: null,
+      daysOfInterval: 89,
       form: {
         periodOfDuration: null,
         expirationDate: null,
@@ -93,6 +96,16 @@ export default {
     }
   },
   computed: {
+  },
+  beforeMount () {
+    const timeStamp = Date.now()
+    this.datePicker = date.formatDate(timeStamp, 'YYYY/MM/DD')
+    const newDate = new Date()
+    const day = newDate.getDate() + this.daysOfInterval
+    const month = newDate.getMonth()
+    const years = newDate.getFullYear()
+    let formattedString = new Date(years, month, day)
+    this.datePickerEnd = date.formatDate(formattedString, 'YYYY/MM/DD')
   },
   methods: {
     calculateDate () {
@@ -134,6 +147,12 @@ export default {
           this.$emit('dataFromDetail', this.form)
         }
       })
+    },
+    optionsFn (date) {
+      return date >= this.datePicker && date <= this.datePickerEnd
+    },
+    changesDate () {
+      this.form.delayedEffectiveDate = this.datePicker
     }
   }
 }
