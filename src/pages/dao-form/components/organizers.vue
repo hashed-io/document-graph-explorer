@@ -42,6 +42,14 @@ export default {
       }
     },
     onSubmit () {
+      var self = this
+      this.$refs.organizerForm.validate().then(success => {
+        if (success) {
+          self.addOrEditAgent()
+        }
+      })
+    },
+    addOrEditAgent () {
       let _typeName = null
       if (this.organization === null) {
         if (this.middleName === null) {
@@ -155,7 +163,7 @@ export default {
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
           .row.justify-end.q-pa-md
             div(v-if='idEdit === null')
-              q-btn(label="ADD" type="submit" color="primary")
+              q-btn(label="ADD" @click='onSubmit' color="primary")
             div(v-else)
               q-btn(label="UPDATE" @click='onSubmit' color="primary")
             .q-pa-sm
