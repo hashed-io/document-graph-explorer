@@ -44,7 +44,7 @@ div
                   template(v-slot:append='')
                     q-icon.cursor-pointer(name='event')
                       q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                        q-date(v-model='datePicker', today-btn, mask='MM/DD/YYYY' :options='optionsFn' @input='changesDate')
+                        q-date(v-model='date', today-btn, mask='YYYY/MM/DD' :options='optionsFn' @input='changesDate')
                           .row.items-center.justify-end
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                 p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
@@ -59,7 +59,7 @@ export default {
   data () {
     return {
       date: null,
-      datePicker: null,
+      datePickerStart: null,
       datePickerEnd: null,
       daysOfInterval: 89,
       form: {
@@ -99,7 +99,7 @@ export default {
   },
   beforeMount () {
     const timeStamp = Date.now()
-    this.datePicker = date.formatDate(timeStamp, 'YYYY/MM/DD')
+    this.datePickerStart = date.formatDate(timeStamp, 'YYYY/MM/DD')
     const newDate = new Date()
     const day = newDate.getDate() + this.daysOfInterval
     const month = newDate.getMonth()
@@ -149,10 +149,12 @@ export default {
       })
     },
     optionsFn (date) {
-      return date >= this.datePicker && date <= this.datePickerEnd
+      return date >= this.datePickerStart && date <= this.datePickerEnd
     },
     changesDate () {
-      this.form.delayedEffectiveDate = this.datePicker
+      const arr = this.date.split('/')
+      let dateFormatted = arr[1] + '/' + arr[2] + '/' + arr[0]
+      this.form.delayedEffectiveDate = dateFormatted
     }
   }
 }
