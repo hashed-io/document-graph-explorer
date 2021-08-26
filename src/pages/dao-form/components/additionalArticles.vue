@@ -1,50 +1,3 @@
-<script>
-import { validation } from '~/mixins/validation'
-export default {
-  name: 'additionalArticlesComponent',
-  mixins: [validation],
-  data () {
-    return {
-      articles: [],
-      article: {
-        articleNumber: null,
-        articleDetail: null
-      },
-      idEdit: null
-    }
-  },
-  methods: {
-    onSubmit () {
-      let _article = this.article
-      let _articleObj = {
-        'articleNumber': _article.articleNumber,
-        'articleDetail': _article.articleDetail
-      }
-      if (this.idEdit === null && this.article.articleDetail !== null) {
-        this.articles.push(_articleObj)
-      } else {
-        this.articles[this.idEdit] = _articleObj
-        this.idEdit = null
-      }
-      this.clearForm()
-    },
-    clearForm () {
-      this.article.articleDetail = null
-      this.article.articleNumber = null
-    },
-    onReset () {
-    },
-    editArticle (index, data) {
-      // Load data
-      this.idEdit = index
-      this.article = data
-    },
-    deleteArticle (index) {
-      this.articles.splice(index, 1)
-    }
-  }
-}
-</script>
 <template lang="pug">
 .q-pa-md
   template
@@ -71,13 +24,13 @@ export default {
         ul
           li Pursuant to W.S. 17-31-104(e), whether the DAO is member managed or algorithmically managed; and
           li Any additional provisions related to W.S. 17-31-106(c).
-      q-form(@submit='onSubmit', @reset='onReset' ref="articleForm")
+      q-form(@submit='onSubmit'  ref="articleForm")
         div.q-pa-xl(style='max-width:100%')
           .row.q-gutter-md.justify-center
             .col-xs-12.col-sm-1
-              q-input(v-model='article.articleNumber'  mask='##' input-class='text-center' outlined  label='Article #' :rules="[rules.required]" )
+              q-input(v-model='article.number'  mask='##' input-class='text-center' outlined  label='Article #' :rules="[rules.required]" )
             .col-xs-12.col-sm-10
-              q-input(v-model='article.articleDetail'  outlined counter maxlength='1000' type="textarea" label='Article detail' :rules="[rules.required]")
+              q-input(v-model='article.detail'  outlined counter maxlength='1000' type="textarea" label='Article detail' :rules="[rules.required]")
           div(v-if='idEdit === null')
             q-btn(label="ADD" type="submit" color="primary")
           div(v-else)
@@ -100,13 +53,13 @@ export default {
                   span.text-subtitle2
                     strong
                       | Article: &nbsp; #
-                    b {{article.articleNumber}}
+                    b {{article.number}}
               q-item-section(top class="col-10")
                 q-item-label(caption='', lines='30')
                   span.text-subtitle2
                     strong(style='color:black;')
                       | Detail: &nbsp;
-                    b {{article.articleDetail}}
+                    b {{article.detail}}
               q-item-section(side)
                 .text-grey-8.q-gutter-xs
                   q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteArticle(index)')
@@ -117,3 +70,57 @@ export default {
 <style lang="">
 
 </style>
+
+<script>
+import { validation } from '~/mixins/validation'
+export default {
+  name: 'additionalArticlesComponent',
+  mixins: [validation],
+  data () {
+    return {
+      articles: [],
+      article: {
+        number: null,
+        detail: null
+      },
+      idEdit: null
+    }
+  },
+  methods: {
+    onSubmitArticles () {
+      if (this.articles.length === 0) {
+        this.$q.notify({
+          type: 'negative',
+          message: `At least one article`
+        })
+      } else {
+        this.$emit('dataFromAdditionalArticles', this.articles)
+      }
+    },
+    onSubmit () {
+      let _article = this.article
+      let _articleObj = {
+        'number': _article.number,
+        'detail': _article.detail
+      }
+      if (this.idEdit === null && this.article.detail !== null) {
+        this.articles.push(_articleObj)
+      } else {
+        this.articles[this.idEdit] = _articleObj
+        this.idEdit = null
+      }
+      this.article.detail = null
+      this.article.number = null
+      this.$refs.articleForm.reset()
+    },
+    editArticle (index, data) {
+      // Load data
+      this.idEdit = index
+      this.article = data
+    },
+    deleteArticle (index) {
+      this.articles.splice(index, 1)
+    }
+  }
+}
+</script>

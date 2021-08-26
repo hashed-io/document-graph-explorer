@@ -1,65 +1,3 @@
-<script>
-import { validation } from '~/mixins/validation'
-export default {
-  name: 'businessname',
-  mixins: [validation],
-  props: {
-    validateprop: {
-      type: Boolean
-    }
-  },
-  data () {
-    return {
-      formData: {
-        businessName: null,
-        additionalDesination: 'DAO'
-      },
-      confirmName: null,
-      errorBusinessName: false
-    }
-  },
-  computed: {
-    containsDesignations () {
-      const str = this.formData.businessName
-      const substrings = ['DAO L.C.', 'DAO L.L.C.', 'DAO LC', 'DAO LIMITED COMPANY', 'DAO LIMITED LIABILITY CO.', 'DAO LIMITED LIABILITY COMPANY', 'DAO LIMITED LIABILITY COMPANY', 'DAO LLC', 'DAO LTD. LIABILITY CO.', 'DAO LTD. LIABILITY COMPANY', 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.C.', 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C.', 'DECENTRALIZED AUTONOMOUS ORGANIZATION LC', 'DECENTRALIZED AUTONOMOUS ORGANIZATION LLC', 'LAO L.C.', 'LAO L.L.C.', 'LAO LC', 'LAO LIMITED COMPANY', 'LAO LIMITED LIABILITY CO.', 'LAO LIMITED LIABILITY COMPANY', 'LAO LLC', 'LAO LTD. LIABILITY CO.', 'LAO LTD. LIABILITY COMPANY']
-      var flag = false
-      this.changeStateError(true)
-      for (const element of substrings) {
-        let boolCheck = str.includes(element)
-        if (boolCheck) {
-          flag = true
-          this.changeStateError(false)
-          break
-        }
-      }
-
-      return flag
-    }
-  },
-  methods: {
-    changeStateError (state) {
-      this.errorBusinessName = state
-    },
-    onSubmit () {
-      this.$refs.myForm.validate().then(success => {
-        if (success) {
-          this.$emit('dataFromBusinessName', this.confirmName, true)
-          // this.$emit('validateChild', true)
-          // alert('Send')
-        }
-        // else {
-        //   this.$emit('dataFromBusinessName', this.confirmName, false)
-        // }
-      })
-    }
-  },
-  watch: {
-    'validateprop': function () {
-      this.onSubmit()
-    }
-  }
-}
-</script>
 <template lang="pug">
 div.container
   strong
@@ -109,13 +47,8 @@ div.container
         :rules="[rules.required, v => v === this.formData.businessName || 'The Business Entity Name and Confirm Name must match exactly.']"
       )
     div.q-pa-sm
-    p(v-if="errorBusinessName" style="color:red").
+    strong(v-if="errorBusinessName" style="color:red").
       The Entity Name must contain one of the following designations: DAO L.C., DAO L.L.C., DAO LC, DAO LIMITED COMPANY, DAO LIMITED LIABILITY CO., DAO LIMITED LIABILITY COMPANY, DAO LIMITED LIABILITY COMPANY, DAO LLC, DAO LTD. LIABILITY CO., DAO LTD. LIABILITY COMPANY, DECENTRALIZED AUTONOMOUS ORGANIZATION L.C., DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C., DECENTRALIZED AUTONOMOUS ORGANIZATION LC, DECENTRALIZED AUTONOMOUS ORGANIZATION LLC, LAO L.C., LAO L.L.C., LAO LC, LAO LIMITED COMPANY, LAO LIMITED LIABILITY CO., LAO LIMITED LIABILITY COMPANY, LAO LLC, LAO LTD. LIABILITY CO., LAO LTD. LIABILITY COMPANY
-    //- q-btn(
-    //-   label="Save"
-    //-   type="submit"
-    //-   color="primary"
-    //- )
   br
 </template>
 <style lang="sass" scoped>
@@ -126,3 +59,50 @@ div.container
   padding: 0.5%
 
 </style>
+<script>
+import { validation } from '~/mixins/validation'
+export default {
+  name: 'businessname',
+  mixins: [validation],
+  data () {
+    return {
+      formData: {
+        businessName: null,
+        additionalDesination: 'DAO'
+      },
+      confirmName: null,
+      errorBusinessName: false
+    }
+  },
+  computed: {
+    containsDesignations () {
+      const str = this.formData.businessName
+      const substrings = ['DAO L.C.', 'DAO L.L.C.', 'DAO LC', 'DAO LIMITED COMPANY', 'DAO LIMITED LIABILITY CO.', 'DAO LIMITED LIABILITY COMPANY', 'DAO LIMITED LIABILITY COMPANY', 'DAO LLC', 'DAO LTD. LIABILITY CO.', 'DAO LTD. LIABILITY COMPANY', 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.C.', 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C.', 'DECENTRALIZED AUTONOMOUS ORGANIZATION LC', 'DECENTRALIZED AUTONOMOUS ORGANIZATION LLC', 'LAO L.C.', 'LAO L.L.C.', 'LAO LC', 'LAO LIMITED COMPANY', 'LAO LIMITED LIABILITY CO.', 'LAO LIMITED LIABILITY COMPANY', 'LAO LLC', 'LAO LTD. LIABILITY CO.', 'LAO LTD. LIABILITY COMPANY']
+      var flag = false
+      this.changeStateError(true)
+      for (const element of substrings) {
+        let boolCheck = str.includes(element)
+        if (boolCheck) {
+          flag = true
+          this.changeStateError(false)
+          break
+        }
+      }
+
+      return flag
+    }
+  },
+  methods: {
+    changeStateError (state) {
+      this.errorBusinessName = state
+    },
+    onSubmit () {
+      this.$refs.myForm.validate().then(success => {
+        if (success) {
+          this.$emit('dataFromBusinessName', this.confirmName)
+        }
+      })
+    }
+  }
+}
+</script>

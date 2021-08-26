@@ -1,59 +1,3 @@
-<script>
-import { validation } from '~/mixins/validation'
-import { countriesLang } from '~/mixins/countries'
-
-export default {
-  name: 'addressesComponent',
-  mixins: [ validation, countriesLang ],
-  data () {
-    return {
-      options: [],
-      form: {
-        principalAddress: {
-          country: 'USA',
-          address: {
-            line1: null,
-            line2: null,
-            line3: null
-          },
-          city: null,
-          state: null,
-          postalCode: null,
-          phone: null,
-          fax: null,
-          email: null
-        },
-        mailingAddress: {
-          country: 'USA',
-          address: {
-            line1: null,
-            line2: null,
-            line3: null
-          },
-          city: null,
-          state: null,
-          postalCode: null
-        }
-      }
-    }
-  },
-  methods: {
-    onSubmit () {
-      this.$emit('dataFromAddresses', this.form, false)
-      console.log(this.form)
-      console.log('Send to parent...')
-    },
-    getPostalCode () {
-
-    }
-  },
-  beforeMount () {
-    // Map
-    // this.options = [this.countriesLang]
-    console.log(this.options)
-  }
-}
-</script>
 <template lang="pug">
 q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
   .q-pa-md.row.items-start.q-gutter-md.full-width
@@ -66,7 +10,7 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
         .q-px-xl
           .row
             .col.q-px-md.col-xs-12.col-sm-6
-              q-select(filled v-model='form.principalAddress.country' :options='options' emit-value :rules="[rules.required]" lazy-rules label="Choose country *")
+              q-select(filled v-model='form.principalAddress.country' :options='options' emit-value @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
           .row.justify-center
             .col.q-px-md.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
@@ -107,7 +51,7 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
       .q-px-xl
         .row
             .col.q-px-sm.col-xs-12.col-sm-6
-              q-select(filled v-model='form.mailingAddress.country' :options='options' map-options :rules="[rules.required]" lazy-rules label="Choose country *")
+              q-select(filled v-model='form.mailingAddress.country' :options='options'  @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
         .row.justify-center
           .col.q-px-sm.col-xs-12.col-sm-12
             q-input(v-model='form.mailingAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
@@ -124,9 +68,77 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
             q-input(v-model='form.mailingAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
           .col.q-px-sm.col-xs-12.col-sm-4
             q-input(v-model='form.mailingAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
-  q-btn(type='submit' label='validate' color='primary')
 </template>
 
 <style lang="">
 
 </style>
+
+<script>
+import { validation } from '~/mixins/validation'
+import { countriesLang } from '~/mixins/countries'
+
+export default {
+  name: 'addressesComponent',
+  mixins: [ validation, countriesLang ],
+  data () {
+    return {
+      options: [],
+      countries: [],
+      form: {
+        principalAddress: {
+          country: 'United States of America',
+          address: {
+            line1: null,
+            line2: null,
+            line3: null
+          },
+          city: null,
+          state: null,
+          postalCode: null,
+          phone: null,
+          fax: null,
+          email: null
+        },
+        mailingAddress: {
+          country: 'United States of America',
+          address: {
+            line1: null,
+            line2: null,
+            line3: null
+          },
+          city: null,
+          state: null,
+          postalCode: null
+        }
+      }
+    }
+  },
+  methods: {
+    onSubmit () {
+      this.$emit('dataFromAddresses', this.form)
+    },
+    filterFn (val, update) {
+      if (val === '') {
+        update(() => {
+          this.options = this.countries
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.options = this.countries.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+    getPostalCode () {
+
+    }
+  },
+  beforeMount () {
+    // Map
+    let countries = this.countriesLang
+    this.countries = Object.values(countries)
+  }
+}
+</script>

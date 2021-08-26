@@ -1,68 +1,3 @@
-<script>
-import { validation } from '~/mixins/validation'
-export default {
-  name: 'signatureComponent',
-  mixins: [validation],
-  data () {
-    return {
-      checkbox: {
-        personSignature: false,
-        fillingAgree: false,
-        understandAgree: false,
-        intendAgree: false,
-        appropriateSearchAgree: false,
-        consentAgree: false,
-        ack: false,
-        filerIs: null
-      },
-      checkboxMessage: {
-        personSignature: '* I am the person whose signature appears on the filing; that I am authorized to file these documents on behalf of the business entity to which they pertain; and that the information I am submitting is true and correct to the best of my knowledge.',
-        fillingAgree: '* I am filing in accordance with the provisions of the Wyoming Limited Liability Company Act, (W.S. 17-29-101 through 17-29-1105) and Registered Offices and Agents Act (W.S. 17-28-101 through 17-28-111).',
-        understandAgree: '* I understand that the information submitted electronically by me will be used to generate Articles of Organization that will be filed with the Wyoming Secretary of State.',
-        intendAgree: '* I intend and agree that the electronic submission of the information set forth herein constitutes my signature for this filing.',
-        appropriateSearchAgree: '* I have conducted the appropriate name searches to ensure compliance with W.S. 17-16-401.',
-        consentAgree: '* I consent on behalf of the business entity to accept electronic service of process at the email address provided with Article IV, Principal Office Address, under the circumstances specified in W.S. 17-28-104(e).',
-        ack: '* I acknowledge having read W.S. 6-5-308.'
-      },
-      options: [
-        {
-          label: 'An individual',
-          value: 'individual'
-        },
-        {
-          label: 'An organization',
-          value: 'organization'
-        }
-      ],
-      fillerInformation: {
-        firstName: null,
-        middleName: null,
-        lastName: null,
-        title: null,
-        contactPhone: null,
-        confirmPhone: null,
-        contactEmail: null,
-        confirmEmail: null
-      }
-    }
-  },
-  methods: {
-    onSubmit () {
-      this.$refs.toggle.validate()
-      this.$refs.signatureForm.validate().then(success => {
-        if (success) {
-          alert('okey')
-        } else {
-          alert('fail')
-        }
-      })
-    },
-    onReset () {
-
-    }
-  }
-}
-</script>
 <template lang="pug">
 div
   .text-h4.q-pb-md
@@ -138,12 +73,12 @@ div
       .col.q-pa-md
         q-input(v-model='fillerInformation.phone', filled, label="Contact Phone *", mask="phone" label-stacked :rules="[rules.required]")
       .col.q-pa-md
-        q-input(v-model='fillerInformation.confirmPhone', filled, label="Confirm Phone *", mask="phone" label-stacked :rules="[rules.required, v => v === this.fillerInformation.phone || 'The phone must match exactly.']")
+        q-input(v-model='confirmPhone', filled, label="Confirm Phone *", mask="phone" label-stacked :rules="[rules.required, v => v === this.fillerInformation.phone || 'The phone must match exactly.']")
     .row
       .col.q-pa-md
         q-input(v-model='fillerInformation.email', filled, label="Contact Email *", label-stacked :rules="[rules.required, rules.isEmail]")
       .col.q-pa-md
-        q-input(v-model='fillerInformation.confirmEmail', filled, label="Confirm Email *", label-stacked :rules="[rules.required,rules.isEmail, v => v === this.fillerInformation.email || 'The email must match exactly.']")
+        q-input(v-model='confirmEmail', filled, label="Confirm Email *", label-stacked :rules="[rules.required,rules.isEmail, v => v === this.fillerInformation.email || 'The email must match exactly.']")
     p(style='color:red;')
       | Disclaimer:
     p(style='color:red;')
@@ -157,3 +92,67 @@ div
   border-width: 2px;
   border-color: black;
 </style>
+
+<script>
+import { validation } from '~/mixins/validation'
+export default {
+  name: 'signatureComponent',
+  mixins: [validation],
+  data () {
+    return {
+      confirmPhone: null,
+      confirmEmail: null,
+      checkbox: {
+        personSignature: false,
+        fillingAgree: false,
+        understandAgree: false,
+        intendAgree: false,
+        appropriateSearchAgree: false,
+        consentAgree: false,
+        ack: false,
+        filerIs: null
+      },
+      checkboxMessage: {
+        personSignature: '* I am the person whose signature appears on the filing; that I am authorized to file these documents on behalf of the business entity to which they pertain; and that the information I am submitting is true and correct to the best of my knowledge.',
+        fillingAgree: '* I am filing in accordance with the provisions of the Wyoming Limited Liability Company Act, (W.S. 17-29-101 through 17-29-1105) and Registered Offices and Agents Act (W.S. 17-28-101 through 17-28-111).',
+        understandAgree: '* I understand that the information submitted electronically by me will be used to generate Articles of Organization that will be filed with the Wyoming Secretary of State.',
+        intendAgree: '* I intend and agree that the electronic submission of the information set forth herein constitutes my signature for this filing.',
+        appropriateSearchAgree: '* I have conducted the appropriate name searches to ensure compliance with W.S. 17-16-401.',
+        consentAgree: '* I consent on behalf of the business entity to accept electronic service of process at the email address provided with Article IV, Principal Office Address, under the circumstances specified in W.S. 17-28-104(e).',
+        ack: '* I acknowledge having read W.S. 6-5-308.'
+      },
+      options: [
+        {
+          label: 'An individual',
+          value: 'individual'
+        },
+        {
+          label: 'An organization',
+          value: 'organization'
+        }
+      ],
+      fillerInformation: {
+        firstName: null,
+        middleName: null,
+        lastName: null,
+        title: null,
+        phone: null,
+        email: null
+      }
+    }
+  },
+  methods: {
+    onSubmit () {
+      this.$refs.toggle.validate()
+      this.$refs.signatureForm.validate().then(success => {
+        if (success) {
+          this.$emit('dataFromSignature', this.fillerInformation)
+        }
+      })
+    },
+    onReset () {
+
+    }
+  }
+}
+</script>

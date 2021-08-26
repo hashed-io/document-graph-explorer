@@ -1,103 +1,3 @@
-<script>
-import { date } from 'quasar'
-import { validation } from '~/mixins/validation'
-import TimeUtil from '~/utils/TimeUtil'
-export default {
-  name: 'detail',
-  mixins: [validation],
-  data () {
-    return {
-      date: null,
-      form: {
-        periodOfDuration: null,
-        expirationDate: null,
-        delayedEffectiveDate: null
-      },
-      selectValue: {
-        label: null,
-        value: null
-      },
-      options: [
-        {
-          label: 'Expires',
-          value: '0'
-        },
-        {
-          label: 'Expires - 30 years',
-          value: '30'
-        },
-        {
-          label: 'Expires - 50 years',
-          value: '50'
-        },
-        {
-          label: 'Expires - 99 years',
-          value: '99'
-        },
-        {
-          label: 'Perpetual',
-          value: 'none'
-        }
-      ]
-    }
-  },
-  computed: {
-  },
-  mounted () {
-    const baseDate = new Date('1970-01-01')
-    console.log(TimeUtil.toUTCDate(baseDate))
-  },
-  methods: {
-    calculateDate () {
-      // Caso Perpetuo
-      const value = this.selectValue.value
-      this.setPeriodOfDuration()
-      if (value === 'none') {
-        this.setExpirationDate('none')
-        // this.selectValue.label = 'EXPIRES TEST'
-        return 'none'
-      // Caso expires
-      } else if (value === '0') {
-        this.setExpirationDate(null)
-        return ''
-      }
-      // Caso en los que se añaden años
-      const newDate = new Date()
-      const day = newDate.getDate()
-      const month = newDate.getMonth()
-      const years = newDate.getFullYear() + parseInt(this.selectValue.value)
-      let formattedString = new Date(years, month, day)
-      formattedString = date.formatDate(formattedString, 'MM/DD/YYYY')
-      this.setExpirationDate(formattedString)
-      return formattedString
-    },
-    getCurrentDate () {
-      const timeStamp = Date.now()
-      this.date = date.formatDate(timeStamp, 'MM/DD/YYYY')
-      return date.formatDate(timeStamp, 'MM/DD/YYYY')
-    },
-    setExpirationDate (value) {
-      this.form.expirationDate = value
-    },
-    setPeriodOfDuration () {
-      this.form.periodOfDuration = this.selectValue.label
-    },
-    onSubmit () {
-      this.$refs.formDetail.validate().then(success => {
-        if (success) {
-          this.$emit('dataFromDetail', this.form, false)
-          // this.$emit('formData', this.confirmName)
-          // this.$emit('validateChild', true)
-          // alert('Send')
-        } else {
-          // console.log('FAIL')
-        }
-      })
-    }
-  }
-}
-</script>
-// TODO# Validate data in form. Send to component DAO
 <template lang="pug">
 div
   p
@@ -148,7 +48,93 @@ div
                           .row.items-center.justify-end
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                 p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
-                //- .q-pa-sm
-                //-   q-btn(label='Validate', type='submit', color='primary')
-
 </template>
+
+<script>
+import { date } from 'quasar'
+import { validation } from '~/mixins/validation'
+export default {
+  name: 'detail',
+  mixins: [validation],
+  data () {
+    return {
+      date: null,
+      form: {
+        periodOfDuration: null,
+        expirationDate: null,
+        delayedEffectiveDate: null
+      },
+      selectValue: {
+        label: null,
+        value: null
+      },
+      options: [
+        {
+          label: 'Expires',
+          value: '0'
+        },
+        {
+          label: 'Expires - 30 years',
+          value: '30'
+        },
+        {
+          label: 'Expires - 50 years',
+          value: '50'
+        },
+        {
+          label: 'Expires - 99 years',
+          value: '99'
+        },
+        {
+          label: 'Perpetual',
+          value: 'none'
+        }
+      ]
+    }
+  },
+  computed: {
+  },
+  methods: {
+    calculateDate () {
+      // Caso Perpetuo
+      const value = this.selectValue.value
+      this.setPeriodOfDuration()
+      if (value === 'none') {
+        this.setExpirationDate('none')
+        return 'none'
+      // Caso expires
+      } else if (value === '0') {
+        this.setExpirationDate(null)
+        return ''
+      }
+      // Caso en los que se añaden años
+      const newDate = new Date()
+      const day = newDate.getDate()
+      const month = newDate.getMonth()
+      const years = newDate.getFullYear() + parseInt(this.selectValue.value)
+      let formattedString = new Date(years, month, day)
+      formattedString = date.formatDate(formattedString, 'MM/DD/YYYY')
+      this.setExpirationDate(formattedString)
+      return formattedString
+    },
+    getCurrentDate () {
+      const timeStamp = Date.now()
+      this.date = date.formatDate(timeStamp, 'MM/DD/YYYY')
+      return date.formatDate(timeStamp, 'MM/DD/YYYY')
+    },
+    setExpirationDate (value) {
+      this.form.expirationDate = value
+    },
+    setPeriodOfDuration () {
+      this.form.periodOfDuration = this.selectValue.label
+    },
+    onSubmit () {
+      this.$refs.formDetail.validate().then(success => {
+        if (success) {
+          this.$emit('dataFromDetail', this.form)
+        }
+      })
+    }
+  }
+}
+</script>
