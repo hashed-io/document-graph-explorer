@@ -64,6 +64,7 @@ import additionalArticlesComponent from './components/additionalArticles.vue'
 import confirmationComponent from './components/confirmation.vue'
 import signatureComponent from './components/signature.vue'
 import paymentComponent from './components/payment.vue'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'home',
@@ -80,7 +81,7 @@ export default {
   },
   data () {
     return {
-      step: 2,
+      step: 1,
       form: {
         price: 100,
         businessName: {
@@ -150,6 +151,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions('dao', ['saveDaoData']),
+    ...mapState('accounts', ['account']),
     validateStep () {
       console.log('validateStep', this.step)
       switch (this.step) {
@@ -176,6 +179,7 @@ export default {
           // this.$refs.addressStepComponent.onSubmit()
           break
         case 8:
+          // this.saveData()
           this.$refs.signatureStepComponent.onSubmit()
           break
         // Guardar archivo JSON FILE
@@ -219,19 +223,28 @@ export default {
       }
       this.saveData()
     },
-    saveData () {
+    async saveData () {
       //
       // Make JSON File to send IPFS
       console.log('Saving data...')
-      const data = JSON.stringify(this.form)
-      const blob = new Blob([data], { type: 'text/json' })
-      const e = document.createEvent('MouseEvents'),
-        a = document.createElement('a')
-      a.download = 'formData.json'
-      a.href = window.URL.createObjectURL(blob)
-      a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
-      e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-      a.dispatchEvent(e)
+      // try {
+      //   await this.saveDaoData({
+      //     dao: 'tester',
+      //     creator: 'alejandroga1',
+      //     ipfs: 'QmeYEECTpUTLAGnSdGEvSvd1PMor4NgNEZPHbjzhxiSh1n'
+      //   })
+      // } catch (e) {
+      //   console.log(e)
+      // }
+      // const data = JSON.stringify(this.form)
+      // const blob = new Blob([data], { type: 'text/json' })
+      // const e = document.createEvent('MouseEvents'),
+      //   a = document.createElement('a')
+      // a.download = 'formData.json'
+      // a.href = window.URL.createObjectURL(blob)
+      // a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+      // e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+      // a.dispatchEvent(e)
     }
   },
   computed: {

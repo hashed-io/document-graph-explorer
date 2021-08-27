@@ -1,5 +1,5 @@
 import { Api, JsonRpc } from 'eosjs'
-
+import { DaoApi } from '~/services'
 const signTransaction = async function (actions) {
   actions.forEach(action => {
     if (!action.authorization || !action.authorization.length) {
@@ -45,8 +45,18 @@ export default ({ store }) => {
   const rpc = new JsonRpc(`${process.env.NETWORK_PROTOCOL}://${process.env.NETWORK_HOST}:${process.env.NETWORK_PORT}`)
   store['$defaultApi'] = new Api({ rpc, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
 
-  store['$api'] = {
+  // store['$api'] = {
+  //   signTransaction: signTransaction.bind(store),
+  //   getTableRows: getTableRows.bind(store)
+  // }
+  const api = {
     signTransaction: signTransaction.bind(store),
     getTableRows: getTableRows.bind(store)
   }
+  const daoApi = new DaoApi({
+    eosApi: api
+  })
+
+  store['$api'] = api
+  store['$daoApi'] = daoApi
 }
