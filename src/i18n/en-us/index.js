@@ -55,6 +55,10 @@ export default {
       getApp: 'Download the app',
       title: 'Select your wallet',
       selectAccount: 'Please select an account'
+    },
+    daos: {
+      titleForm: 'test',
+      createDao: 'Authorize DAO'
     }
   }
 }
