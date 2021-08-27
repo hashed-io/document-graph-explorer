@@ -48,6 +48,15 @@ export default {
         q-item-section(avatar)
           q-icon(name="app:chats")
         q-item-section {{ $t('menu.manageContract') }}
+      q-item(
+        v-if="isAuthenticated"
+        to="/ipfs"
+        clickable
+        v-ripple
+      )
+        q-item-section(avatar)
+          q-icon(name="app:chats")
+        q-item-section IPFS
 </template>
 
 <style lang="stylus">
