@@ -34,7 +34,10 @@ export default {
   },
   menu: {
     transfer: 'Transfer',
-    example: 'Example Dashboard'
+    example: 'Example Dashboard',
+    registerDao: 'Register dao',
+    listDao: 'List Dao',
+    manageContract: 'Manage Contracts'
   },
   pages: {
     index: {

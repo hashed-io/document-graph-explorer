@@ -55,19 +55,19 @@
 </template>
 
 <script>
-import businessName from './components/businessName.vue'
-import detail from './components/detail.vue'
-import agentComponent from './components/agent.vue'
-import addressesComponent from './components/addresses.vue'
-import organizersComponent from './components/organizers.vue'
-import additionalArticlesComponent from './components/additionalArticles.vue'
-import confirmationComponent from './components/confirmation.vue'
-import signatureComponent from './components/signature.vue'
-import paymentComponent from './components/payment.vue'
+import businessName from '../add/components/businessName.vue'
+import detail from '../add/components/detail.vue'
+import agentComponent from '../add/components/agent.vue'
+import addressesComponent from '../add/components/addresses.vue'
+import organizersComponent from '../add/components/organizers.vue'
+import additionalArticlesComponent from '../add/components/additionalArticles.vue'
+import confirmationComponent from '../add/components/confirmation.vue'
+import signatureComponent from '../add/components/signature.vue'
+import paymentComponent from '../add/components/payment.vue'
 import { mapActions, mapState } from 'vuex'
 
 export default {
-  name: 'home',
+  name: 'registerdao',
   components: {
     businessName,
     detail,

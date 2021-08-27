@@ -30,6 +30,24 @@ export default {
         q-item-section(avatar)
           q-icon(name="app:chats")
         q-item-section {{ $t('menu.example') }}
+      q-item(
+        v-if="isAuthenticated"
+        to="/registerDao"
+        clickable
+        v-ripple
+      )
+        q-item-section(avatar)
+          q-icon(name="app:chats")
+        q-item-section {{ $t('menu.registerDao') }}
+      q-item(
+        v-if="isAuthenticated"
+        to="/manageContract"
+        clickable
+        v-ripple
+      )
+        q-item-section(avatar)
+          q-icon(name="app:chats")
+        q-item-section {{ $t('menu.manageContract') }}
 </template>
 
 <style lang="stylus">
