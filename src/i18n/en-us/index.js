@@ -10,7 +10,8 @@ export default {
       mint: 'Mint',
       register: 'Register',
       save: 'Save',
-      confirm: 'Confirm'
+      confirm: 'Confirm',
+      download: 'Download'
     },
     defaultTitle: 'Title'
   },
@@ -52,6 +53,7 @@ export default {
       confirmActions: 'Do you want confirm this action?',
       noAccountsFound: 'No accounts found',
       actions: 'Actions',
+      download: 'Download',
       dao: 'DAO',
       ipfs: 'IPFS'
     },

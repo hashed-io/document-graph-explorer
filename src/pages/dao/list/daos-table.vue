@@ -57,6 +57,16 @@
               v-if="!selectable"
             )
               q-tooltip {{ $t('common.buttons.edit') }}
+          template(v-if="col.name == 'download'")
+            q-icon.animated-icon(
+              name="download"
+              v-ripple
+              size="sm"
+              color="positive"
+              @click="onClickDownload(props.row)"
+              v-if="!selectable"
+            )
+              q-tooltip {{ $t('common.buttons.download') }}
 </template>
 
 <script>
@@ -125,7 +135,15 @@ export default {
           align: 'center',
           field: row => row.actions,
           sortable: true
+        },
+        {
+          name: 'download',
+          label: this.$t('pages.general.download'),
+          align: 'center',
+          field: row => row.download,
+          sortable: true
         }
+
       ],
       params: {
         offset: 0,
@@ -189,6 +207,16 @@ export default {
         // this.resetPagination()
         console.error('An error occurred while trying to getAccounts onScroll', e)
       }
+    },
+    onClickDownload (row) {
+      // const fs = require('fs')
+      // const http = require('http')
+      // // let ipfsURL = 'https://ipfs.io/ipfs/' + row.ipfs
+      // const file = fs.createWriteStream('file.jpg')
+      // const request = http.get('http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg', function (response) {
+      //   response.pipe(file)
+      // })
+      // console.log(request)
     }
   }
 }
