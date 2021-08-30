@@ -81,6 +81,12 @@ import { countriesLang } from '~/mixins/countries'
 export default {
   name: 'addressesComponent',
   mixins: [ validation, countriesLang ],
+  props: {
+    addressesObject: Object
+  },
+  created () {
+    this.form = this.addressesObject
+  },
   data () {
     return {
       options: [],

@@ -57,21 +57,22 @@
               v-if="!selectable"
             )
               q-tooltip {{ $t('common.buttons.edit') }}
-          template(v-if="col.name == 'download'")
+          template(v-if="col.name == 'editDao'")
             q-icon.animated-icon(
-              name="download"
+              name="edit"
               v-ripple
               size="sm"
               color="positive"
-              @click="onClickDownload(props.row)"
+              @click="onClickEditDao(props.row)"
               v-if="!selectable"
             )
-              q-tooltip {{ $t('common.buttons.download') }}
+              q-tooltip {{ $t('common.buttons.editDao') }}
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import { validation } from '~/mixins/validation'
+import axios from 'axios'
 export default {
   name: 'listdao',
   mixins: [validation],
@@ -137,13 +138,12 @@ export default {
           sortable: true
         },
         {
-          name: 'download',
-          label: this.$t('pages.general.download'),
+          name: 'editDao',
+          label: this.$t('pages.general.editDao'),
           align: 'center',
-          field: row => row.download,
+          field: row => row.editDao,
           sortable: true
         }
-
       ],
       params: {
         offset: 0,
@@ -156,6 +156,7 @@ export default {
   },
   methods: {
     ...mapActions('dao', ['getDaos']),
+    ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     async loadDaos () {
       this.daos = await this.getDaos(this.params)
       console.log(this.daos)
@@ -163,7 +164,6 @@ export default {
     onClickEdit (row) {
       // Send toggle modal
       this.$emit('onManageContract', row)
-      console.log({ row })
     },
     resetPagination () {
       // this.$refs.table.resetVirtualScroll()
@@ -208,15 +208,22 @@ export default {
         console.error('An error occurred while trying to getAccounts onScroll', e)
       }
     },
-    onClickDownload (row) {
-      // const fs = require('fs')
-      // const http = require('http')
-      // // let ipfsURL = 'https://ipfs.io/ipfs/' + row.ipfs
-      // const file = fs.createWriteStream('file.jpg')
-      // const request = http.get('http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg', function (response) {
-      //   response.pipe(file)
-      // })
-      // console.log(request)
+    async onClickEditDao (row) {
+      var self = this
+      let daoName = row.dao
+      var url = 'https://ipfs.io/ipfs/' + row.ipfs
+      await axios({
+        method: 'get',
+        url: url
+      }).then(function (response) {
+        self.changeStateDAO(response.data.data, daoName)
+      })
+    },
+    changeStateDAO (_form, daoName) {
+      this.setIsEdit(true)
+      this.setDataForm(_form)
+      this.setDaoName(daoName)
+      this.$router.push('/registerDAO')
     }
   }
 }

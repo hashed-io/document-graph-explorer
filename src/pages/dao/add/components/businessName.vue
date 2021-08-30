@@ -64,6 +64,12 @@ import { validation } from '~/mixins/validation'
 export default {
   name: 'businessname',
   mixins: [validation],
+  props: {
+    bussinessObject: Object
+  },
+  beforeMount () {
+    this.matchData()
+  },
   data () {
     return {
       formData: {
@@ -93,6 +99,10 @@ export default {
     }
   },
   methods: {
+    matchData () {
+      this.formData = this.bussinessObject
+      this.confirmName = this.bussinessObject.businessName
+    },
     changeStateError (state) {
       this.errorBusinessName = state
     },

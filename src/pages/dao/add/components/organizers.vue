@@ -75,6 +75,12 @@ import { validation } from '~/mixins/validation'
 export default {
   name: 'organizersComponent',
   mixins: [validation],
+  props: {
+    organizerArray: Array
+  },
+  created () {
+    this.organizers = this.organizerArray
+  },
   data () {
     return {
       idEdit: null,

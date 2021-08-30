@@ -11,7 +11,8 @@ export default {
       register: 'Register',
       save: 'Save',
       confirm: 'Confirm',
-      download: 'Download'
+      download: 'Download',
+      editDao: 'Edit DAO'
     },
     defaultTitle: 'Title'
   },
@@ -55,7 +56,8 @@ export default {
       actions: 'Actions',
       download: 'Download',
       dao: 'DAO',
-      ipfs: 'IPFS'
+      ipfs: 'IPFS',
+      editDao: 'Edit'
     },
     login: {
       getApp: 'Download the app',
@@ -64,7 +66,7 @@ export default {
     },
     daos: {
       titleForm: 'DAOS',
-      createDao: 'DAO Form'
+      createDao: 'Create new DAO'
     }
   }
 }

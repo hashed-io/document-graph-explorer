@@ -39,6 +39,7 @@ export default {
     }
   },
   methods: {
+
     onConfirmRemoveDao () {
     },
     onClickCreateDao () {

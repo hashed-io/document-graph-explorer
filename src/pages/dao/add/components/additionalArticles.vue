@@ -76,6 +76,9 @@ import { validation } from '~/mixins/validation'
 export default {
   name: 'additionalArticlesComponent',
   mixins: [validation],
+  props: {
+    articlesArray: Array
+  },
   data () {
     return {
       articles: [],
@@ -85,6 +88,9 @@ export default {
       },
       idEdit: null
     }
+  },
+  created () {
+    this.articles = this.articlesArray
   },
   methods: {
     onSubmitArticles () {

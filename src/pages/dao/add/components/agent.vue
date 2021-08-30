@@ -129,6 +129,9 @@ import { validation } from '~/mixins/validation'
 export default {
   name: 'agentComponent',
   mixins: [validation],
+  props: {
+    agentObject: Object
+  },
   data () {
     return {
       validateComponent: false,
@@ -164,6 +167,9 @@ export default {
       },
       agentsData: []
     }
+  },
+  created () {
+    this.agentForm = this.agentObject
   },
   methods: {
     async searchAgent () {

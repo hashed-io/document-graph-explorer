@@ -10,7 +10,7 @@
       )
         q-step( :name="1" title="1. Business Name" :done="step > 1" :header-nav="step > 1")
           div.container
-            businessName(ref="businessStepComponent" @dataFromBusinessName="messageFrombusinessNameComponent" )
+            businessName(ref="businessStepComponent" :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
             .row
               .col
@@ -19,7 +19,7 @@
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
-            detail(ref="detailStepComponent" @click="validateStep" @dataFromDetail="messageFromDetailComponent")
+            detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
             .row
               .col
@@ -28,7 +28,7 @@
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
           div.container
-            agentComponent(ref='agentStepComponent' @dataFromAgent='messageFromAgentComponent')
+            agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
             .row
               .col
@@ -37,7 +37,7 @@
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
           div.container
-            addressesComponent(ref='addressStepComponent' @dataFromAddresses='messageFromAddressesComponent')
+            addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
             .row
               .col
@@ -46,7 +46,7 @@
                 q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
           div.container
-            organizersComponent(ref='organizersStepComponent' @dataFromOrganizers='messageFromOrganizersComponent')
+            organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
             .row
               .col
@@ -55,7 +55,7 @@
                 q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
           div.container
-            additionalArticlesComponent(ref='articleStepComponent' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
+            additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
             .row
               .col
@@ -73,7 +73,7 @@
                 q-btn(@click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
           div.container
-            signatureComponent(ref='signatureStepComponent' @dataFromSignature='messageFromSignatureComponent')
+            signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
             .row
               .col
@@ -110,8 +110,15 @@ export default {
     signatureComponent,
     paymentComponent
   },
+  beforeMount () {
+    if (this.isEdit) {
+      this.daoName = this.daoNameStore
+      this.editData()
+    }
+  },
   computed: {
-    ...mapState('accounts', ['account'])
+    ...mapState('accounts', ['account']),
+    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
   },
   data () {
     return {
@@ -176,6 +183,7 @@ export default {
         organizers: [],
         additionalArticles: [],
         fillerInformation: {
+          filerIs: null,
           firstName: null,
           middleName: null,
           lastName: null,
@@ -189,7 +197,6 @@ export default {
   methods: {
     ...mapActions('dao', ['saveDaoData']),
     validateStep () {
-      console.log('validateStep', this.step)
       switch (this.step) {
         case 1:
           this.$refs.businessStepComponent.onSubmit()
@@ -214,7 +221,7 @@ export default {
           // this.$refs.addressStepComponent.onSubmit()
           break
         case 8:
-          // this.$refs.signatureStepComponent.onSubmit()
+          this.$refs.signatureStepComponent.onSubmit()
           this.saveData()
           break
         // Guardar archivo JSON FILE
@@ -287,6 +294,12 @@ export default {
       // a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
       // e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
       // a.dispatchEvent(e)
+    },
+    editData () {
+      for (var key in this.form) {
+        console.log(key)
+        this.form[key] = this.formStore[key]
+      }
     }
   }
 }

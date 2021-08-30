@@ -56,6 +56,9 @@ import { validation } from '~/mixins/validation'
 export default {
   name: 'detail',
   mixins: [validation],
+  props: {
+    detailObject: Object
+  },
   data () {
     return {
       date: null,
@@ -97,7 +100,15 @@ export default {
   },
   computed: {
   },
+  created () {
+    // this.matchData()
+    // this.form.periodOfDuration = { label: 'Expires', value: '0' }
+    this.form.periodOfDuration = this.detailObject.periodOfDuration
+    this.form.delayedEffectiveDate = this.detailObject.delayedEffectiveDate
+    this.form.expirationDate = this.detailObject.expirationDate
+  },
   beforeMount () {
+    // this.matchData()
     const timeStamp = Date.now()
     this.datePickerStart = date.formatDate(timeStamp, 'YYYY/MM/DD')
     const newDate = new Date()
@@ -108,6 +119,11 @@ export default {
     this.datePickerEnd = date.formatDate(formattedString, 'YYYY/MM/DD')
   },
   methods: {
+    matchData () {
+      for (var key in this.form) {
+        this.form[key] = this.detailObject[key]
+      }
+    },
     calculateDate () {
       // Caso Perpetuo
       const value = this.selectValue.value
