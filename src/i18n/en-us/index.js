@@ -3,6 +3,7 @@ export default {
     appName: 'Telos Communities',
     buttons: {
       cancel: 'Cancel',
+      edit: 'Edit',
       continue: 'Continue',
       create: 'Create',
       logout: 'Logout',
@@ -49,7 +50,10 @@ export default {
     general: {
       search: 'Search',
       confirmActions: 'Do you want confirm this action?',
-      noAccountsFound: 'No accounts found'
+      noAccountsFound: 'No accounts found',
+      actions: 'Actions',
+      dao: 'DAO',
+      ipfs: 'IPFS'
     },
     login: {
       getApp: 'Download the app',
@@ -57,8 +61,8 @@ export default {
       selectAccount: 'Please select an account'
     },
     daos: {
-      titleForm: 'test',
-      createDao: 'Authorize DAO'
+      titleForm: 'DAOS',
+      createDao: 'DAO Form'
     }
   }
 }

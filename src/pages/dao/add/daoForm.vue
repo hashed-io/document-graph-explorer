@@ -12,46 +12,77 @@
           div.container
             businessName(ref="businessStepComponent" @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
-            q-btn(@click="validateStep" color="primary" label="continue" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" @click="validateStep" @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
-            q-btn(@click="validateStep" color="primary" label="continue" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
-            q-btn(@click="validateStep" color="primary" label="continue" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue")
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
-            q-btn(@click='validateStep' color="primary" label="Finish" )
+            .row
+              .col
+                q-input(v-model='daoName' label='Dao Name')
+              .col(style='text-align:end;')
+                q-btn(@click='validateStep' color="primary" label="Finish" )
         //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
         //-   div.container
         //-     paymentComponent
-
 </template>
 
 <script>
@@ -65,7 +96,7 @@ import confirmationComponent from '../add/components/confirmation.vue'
 import signatureComponent from '../add/components/signature.vue'
 import paymentComponent from '../add/components/payment.vue'
 import { mapActions, mapState } from 'vuex'
-
+import BrowserIpfs from '~/services/BrowserIpfs'
 export default {
   name: 'registerdao',
   components: {
@@ -79,9 +110,14 @@ export default {
     signatureComponent,
     paymentComponent
   },
+  computed: {
+    ...mapState('accounts', ['account'])
+  },
   data () {
     return {
       step: 1,
+      typeCid: undefined,
+      daoName: null,
       form: {
         price: 100,
         businessName: {
@@ -152,7 +188,6 @@ export default {
   },
   methods: {
     ...mapActions('dao', ['saveDaoData']),
-    ...mapState('accounts', ['account']),
     validateStep () {
       console.log('validateStep', this.step)
       switch (this.step) {
@@ -179,8 +214,8 @@ export default {
           // this.$refs.addressStepComponent.onSubmit()
           break
         case 8:
-          // this.saveData()
-          this.$refs.signatureStepComponent.onSubmit()
+          // this.$refs.signatureStepComponent.onSubmit()
+          this.saveData()
           break
         // Guardar archivo JSON FILE
         case 9:
@@ -227,17 +262,24 @@ export default {
       //
       // Make JSON File to send IPFS
       console.log('Saving data...')
-      // try {
-      //   await this.saveDaoData({
-      //     dao: 'tester',
-      //     creator: 'alejandroga1',
-      //     ipfs: 'QmeYEECTpUTLAGnSdGEvSvd1PMor4NgNEZPHbjzhxiSh1n'
-      //   })
-      // } catch (e) {
-      //   console.log(e)
-      // }
-      // const data = JSON.stringify(this.form)
-      // const blob = new Blob([data], { type: 'text/json' })
+      try {
+        if (this.form !== '') {
+          let data = this.form
+          this.typeCid = await BrowserIpfs.addAsJson({ data })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      try {
+        await this.saveDaoData({
+          dao: this.daoName.toLowerCase(),
+          creator: this.account,
+          ipfs: this.typeCid
+        })
+      } catch (e) {
+        console.log(e)
+      }
+
       // const e = document.createEvent('MouseEvents'),
       //   a = document.createElement('a')
       // a.download = 'formData.json'
@@ -246,8 +288,6 @@ export default {
       // e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
       // a.dispatchEvent(e)
     }
-  },
-  computed: {
   }
 }
 </script>

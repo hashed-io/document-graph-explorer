@@ -1,9 +1,18 @@
 <template lang="pug">
-p [Manage Contract]
+#container
+  p {{dao.dao}}
+  p {{dao.ipfs}}
+  p {{dao.creator}}
 </template>
 
 <script>
 export default {
-  name: 'managecontract'
+  name: 'managecontract',
+  props: {
+    dao: {
+      type: Object,
+      required: true
+    }
+  }
 }
 </script>

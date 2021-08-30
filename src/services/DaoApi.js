@@ -30,11 +30,8 @@ class DaoApi extends BaseEosApi {
    * @returns
    */
   async saveDaoData ({ dao, creator, ipfs, accountName }) {
-    // console.log('DAOAPI.JS')
-    // console.log({ dao, creator, ipfs, accountName })
-    // console.log('DAOAPI.JS')
     const actions = [{
-      account: 'daoregistry1',
+      account: Contracts.CONTRACT_DAO,
       name: 'create',
       data: {
         dao: dao,
@@ -44,6 +41,21 @@ class DaoApi extends BaseEosApi {
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
+  }
+  async getDaos ({ limit, search, customOffset }) {
+    let upperBound = search || ''
+    if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
+
+    const rounds = await this._getTableRows({
+      scope: Contracts.CONTRACT_DAO,
+      // indexPosition: 3,
+      lowerBound: customOffset,
+      upperBound,
+      limit,
+      keyType: 'i64',
+      table: 'daos'
+    })
+    return rounds
   }
 }
 
