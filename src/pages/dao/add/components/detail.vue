@@ -101,9 +101,27 @@ export default {
   computed: {
   },
   created () {
+    // this.selectValue = { label: 'Expires', value: '0' }
     // this.matchData()
     // this.form.periodOfDuration = { label: 'Expires', value: '0' }
+    var _object = null
+    switch (this.detailObject.periodOfDuration) {
+      case 'Expires':
+        _object = { label: 'Expires', value: '0' }
+        break
+      case 'Expires - 30 years':
+        _object = { label: 'Expires - 30 years', value: '30' }
+        break
+      case 'Expires - 50 years':
+        _object = { label: 'Expires - 50 years', value: '50' }
+        break
+      case 'Expires - 99 years':
+        _object = { label: 'Expires - 99 years', value: '99' }
+        break
+    }
+    this.selectValue = _object
     this.form.periodOfDuration = this.detailObject.periodOfDuration
+    this.calculateDate()
     this.form.delayedEffectiveDate = this.detailObject.delayedEffectiveDate
     this.form.expirationDate = this.detailObject.expirationDate
   },
