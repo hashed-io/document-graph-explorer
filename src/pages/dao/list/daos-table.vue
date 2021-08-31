@@ -98,6 +98,9 @@ export default {
     }
   },
   mounted () {
+    this.setIsEdit(false)
+    this.setDataForm(null)
+    this.setDaoName(null)
   },
   watch: {
     'params.search' (value) {

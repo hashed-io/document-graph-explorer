@@ -153,15 +153,7 @@ export default {
   },
   methods: {
     onSubmit () {
-      this.$refs.toggle.validate().then(success => {
-        if (!success) {
-          alert('test')
-          this.$q.notify({
-            type: 'negative',
-            message: `Accept the agree`
-          })
-        }
-      })
+      this.$refs.toggle.validate()
       this.$refs.signatureForm.validate().then(success => {
         if (success) {
           this.$emit('dataFromSignature', this.fillerInformation)
