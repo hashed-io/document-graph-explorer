@@ -95,7 +95,7 @@ import additionalArticlesComponent from '../add/components/additionalArticles.vu
 import confirmationComponent from '../add/components/confirmation.vue'
 import signatureComponent from '../add/components/signature.vue'
 import paymentComponent from '../add/components/payment.vue'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs'
 export default {
   name: 'registerdao',
@@ -122,7 +122,7 @@ export default {
   },
   data () {
     return {
-      step: 2,
+      step: 8,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -196,6 +196,7 @@ export default {
   },
   methods: {
     ...mapActions('dao', ['saveDaoData']),
+    ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
         case 1:
@@ -222,7 +223,7 @@ export default {
           break
         case 8:
           this.$refs.signatureStepComponent.onSubmit()
-          this.saveData()
+          // this.saveData()
           break
         // Guardar archivo JSON FILE
         case 9:
@@ -267,26 +268,29 @@ export default {
     },
     async saveData () {
       //
+      if (this.isEdit) {
+        alert('editando!')
+      } else {
       // Make JSON File to send IPFS
-      console.log('Saving data...')
-      try {
-        if (this.form !== '') {
-          let data = this.form
-          this.typeCid = await BrowserIpfs.addAsJson({ data })
+        console.log('Saving data...')
+        try {
+          if (this.form !== '') {
+            let data = this.form
+            this.typeCid = await BrowserIpfs.addAsJson({ data })
+          }
+        } catch (e) {
+          console.log(e)
         }
-      } catch (e) {
-        console.log(e)
+        try {
+          await this.saveDaoData({
+            dao: this.daoName.toLowerCase(),
+            creator: this.account,
+            ipfs: this.typeCid
+          })
+        } catch (e) {
+          console.log(e)
+        }
       }
-      try {
-        await this.saveDaoData({
-          dao: this.daoName.toLowerCase(),
-          creator: this.account,
-          ipfs: this.typeCid
-        })
-      } catch (e) {
-        console.log(e)
-      }
-
       // const e = document.createEvent('MouseEvents'),
       //   a = document.createElement('a')
       // a.download = 'formData.json'

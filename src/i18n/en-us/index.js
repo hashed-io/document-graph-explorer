@@ -12,7 +12,8 @@ export default {
       save: 'Save',
       confirm: 'Confirm',
       download: 'Download',
-      editDao: 'Edit DAO'
+      editDao: 'Edit DAO',
+      viewData: 'View Data on IPFS'
     },
     defaultTitle: 'Title'
   },
@@ -57,7 +58,8 @@ export default {
       download: 'Download',
       dao: 'DAO',
       ipfs: 'IPFS',
-      editDao: 'Edit'
+      editDao: 'Edit',
+      viewData: 'See data in IPFS'
     },
     login: {
       getApp: 'Download the app',

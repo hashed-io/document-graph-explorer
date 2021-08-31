@@ -67,6 +67,16 @@
               v-if="!selectable"
             )
               q-tooltip {{ $t('common.buttons.editDao') }}
+          template(v-if="col.name == 'viewData'")
+            q-icon.animated-icon(
+              name="search"
+              v-ripple
+              size="sm"
+              color="positive"
+              @click="onClickSee(props.row)"
+              v-if="!selectable"
+            )
+              q-tooltip {{ $t('common.buttons.viewData') }}
 </template>
 
 <script>
@@ -88,7 +98,6 @@ export default {
     }
   },
   mounted () {
-    this.loadDaos()
   },
   watch: {
     'params.search' (value) {
@@ -135,14 +144,21 @@ export default {
           label: this.$t('pages.general.actions'),
           align: 'center',
           field: row => row.actions,
-          sortable: true
+          sortable: false
         },
         {
           name: 'editDao',
           label: this.$t('pages.general.editDao'),
           align: 'center',
           field: row => row.editDao,
-          sortable: true
+          sortable: false
+        },
+        {
+          name: 'viewData',
+          label: this.$t('pages.general.viewData'),
+          align: 'center',
+          field: row => row.viewData,
+          sortable: false
         }
       ],
       params: {
@@ -157,10 +173,6 @@ export default {
   methods: {
     ...mapActions('dao', ['getDaos']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
-    async loadDaos () {
-      this.daos = await this.getDaos(this.params)
-      console.log(this.daos)
-    },
     onClickEdit (row) {
       // Send toggle modal
       this.$emit('onManageContract', row)
@@ -224,6 +236,10 @@ export default {
       this.setDataForm(_form)
       this.setDaoName(daoName)
       this.$router.push('/registerDAO')
+    },
+    onClickSee (row) {
+      let url = 'https://ipfs.io/ipfs/' + row.ipfs
+      window.open(url, '_blank')
     }
   }
 }

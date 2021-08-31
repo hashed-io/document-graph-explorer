@@ -46,9 +46,9 @@ div
           q-checkbox(v-model="checkbox.ack" :label='checkboxMessage.ack' :rules="[rules.required]")
     .row.justify-left.q-py-md
       p Filer is: *
-      q-field(ref='toggle' borderless v-model="checkbox.filerIs" :rules="[v => !!v || 'Choose one option']")
+      q-field(ref='toggle' borderless v-model="fillerInformation.filerIs" :rules="[v => !!v || 'Choose one option']")
         template(v-slot:control)
-          q-option-group(v-model='fillerInformation.filerIs' :options='options' color='primary' :rules="[rules.required]" inline)
+          q-option-group(v-model='fillerInformation.filerIs' :options='options' color='primary' inline)
       div.row.justify-center(v-if="fillerInformation.filerIs === 'organization'")
         strong(style='color:blue')
           | The Wyoming Secretary of State requires a natural person to sign on behalf of a business entity acting as an incorporator, organizer, or partner. The following individual is signing on behalf of all Organizers, Incorporators, or Partners.
