@@ -42,6 +42,23 @@ class DaoApi extends BaseEosApi {
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
+  /**
+   *
+   * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
+   * @returns
+   */
+  async updateDaoData ({ dao, ipfs, accountName }) {
+    const actions = [{
+      account: Contracts.CONTRACT_DAO,
+      name: 'update',
+      data: {
+        dao: dao,
+        ipfs: ipfs
+      }
+    }]
+    console.log('actions: ', actions)
+    return this.eosApi.signTransaction(actions)
+  }
   async getDaos ({ limit, search, customOffset }) {
     let upperBound = search || ''
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')

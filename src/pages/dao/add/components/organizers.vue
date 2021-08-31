@@ -79,7 +79,7 @@ export default {
     organizerArray: Array
   },
   created () {
-    this.organizers = this.organizerArray
+    this.organizers = JSON.parse(JSON.stringify(this.organizerArray))
   },
   data () {
     return {

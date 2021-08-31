@@ -90,7 +90,7 @@ export default {
     }
   },
   created () {
-    this.articles = this.articlesArray
+    this.articles = JSON.parse(JSON.stringify(this.articlesArray))
   },
   methods: {
     onSubmitArticles () {

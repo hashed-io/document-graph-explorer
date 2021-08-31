@@ -145,14 +145,23 @@ export default {
     }
   },
   created () {
-    this.fillerInformation = this.signatureObject
-    this.confirmPhone = this.signatureObject.phone
-    this.confirmEmail = this.signatureObject.email
-    this.fillerInformation.filerIs = this.signatureObject.filerIs
+    let signatureObjectNonReactive = JSON.parse(JSON.stringify(this.signatureObject))
+    this.fillerInformation = signatureObjectNonReactive
+    this.confirmPhone = signatureObjectNonReactive.phone
+    this.confirmEmail = signatureObjectNonReactive.email
+    this.fillerInformation.filerIs = signatureObjectNonReactive.filerIs
   },
   methods: {
     onSubmit () {
-      this.$refs.toggle.validate()
+      this.$refs.toggle.validate().then(success => {
+        if (!success) {
+          alert('test')
+          this.$q.notify({
+            type: 'negative',
+            message: `Accept the agree`
+          })
+        }
+      })
       this.$refs.signatureForm.validate().then(success => {
         if (success) {
           this.$emit('dataFromSignature', this.fillerInformation)

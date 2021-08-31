@@ -14,7 +14,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
@@ -23,7 +23,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
@@ -32,7 +32,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
@@ -41,7 +41,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
@@ -50,7 +50,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
@@ -59,7 +59,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
@@ -68,7 +68,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
@@ -77,7 +77,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
               .col(style='text-align:end;')
                 q-btn(@click='validateStep' color="primary" label="Finish" )
         //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
@@ -110,10 +110,11 @@ export default {
     signatureComponent,
     paymentComponent
   },
-  beforeMount () {
+  created () {
     if (this.isEdit) {
       this.daoName = this.daoNameStore
-      this.editData()
+      this.form = JSON.parse(JSON.stringify(this.formStore))
+      // this.editData()
     }
   },
   computed: {
@@ -122,7 +123,7 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 1,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -195,7 +196,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveDaoData']),
+    ...mapActions('dao', ['saveDaoData', 'updateDaoData']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
@@ -219,11 +220,9 @@ export default {
           break
         case 7:
           this.step = 8
-          // this.$refs.addressStepComponent.onSubmit()
           break
         case 8:
           this.$refs.signatureStepComponent.onSubmit()
-          // this.saveData()
           break
         // Guardar archivo JSON FILE
         case 9:
@@ -266,44 +265,63 @@ export default {
       }
       this.saveData()
     },
-    async saveData () {
+    saveData () {
       //
       if (this.isEdit) {
-        alert('editando!')
+        this.updateDataContract()
       } else {
-      // Make JSON File to send IPFS
-        console.log('Saving data...')
-        try {
-          if (this.form !== '') {
-            let data = this.form
-            this.typeCid = await BrowserIpfs.addAsJson({ data })
-          }
-        } catch (e) {
-          console.log(e)
-        }
-        try {
-          await this.saveDaoData({
-            dao: this.daoName.toLowerCase(),
-            creator: this.account,
-            ipfs: this.typeCid
-          })
-        } catch (e) {
-          console.log(e)
-        }
+        this.saveDataContract()
       }
-      // const e = document.createEvent('MouseEvents'),
-      //   a = document.createElement('a')
-      // a.download = 'formData.json'
-      // a.href = window.URL.createObjectURL(blob)
-      // a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
-      // e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-      // a.dispatchEvent(e)
+    },
+    async saveDataContract () {
+      // Make JSON File to send IPFS
+      console.log('Saving data...')
+      try {
+        if (this.form !== '') {
+          let data = this.form
+          this.typeCid = await BrowserIpfs.addAsJson({ data })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      try {
+        await this.saveDaoData({
+          dao: this.daoName.toLowerCase(),
+          creator: this.account,
+          ipfs: this.typeCid
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async updateDataContract () {
+      console.log('Edit on blockchain')
+      try {
+        if (this.form !== '') {
+          let data = this.form
+          this.typeCid = await BrowserIpfs.addAsJson({ data })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      var self = this
+      try {
+        await this.updateDaoData({
+          dao: this.daoName.toLowerCase(),
+          ipfs: this.typeCid
+        })
+        self.setIsEdit = false
+        self.setDataForm = null
+        self.setDaoName = null
+        self.$router.push('dashboard')
+      } catch (e) {
+        console.log(e)
+      }
     },
     editData () {
-      for (var key in this.form) {
-        console.log(key)
-        this.form[key] = this.formStore[key]
-      }
+      // for (var key in this.form) {
+      //   this.form[key] = this.formStore[key]
+      // }
     }
   }
 }

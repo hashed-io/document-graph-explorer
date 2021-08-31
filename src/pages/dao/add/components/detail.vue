@@ -104,8 +104,9 @@ export default {
     // this.selectValue = { label: 'Expires', value: '0' }
     // this.matchData()
     // this.form.periodOfDuration = { label: 'Expires', value: '0' }
+    let objectNonReactive = JSON.parse(JSON.stringify(this.detailObject))
     var _object = null
-    switch (this.detailObject.periodOfDuration) {
+    switch (objectNonReactive.periodOfDuration) {
       case 'Expires':
         _object = { label: 'Expires', value: '0' }
         break
@@ -120,10 +121,10 @@ export default {
         break
     }
     this.selectValue = _object
-    this.form.periodOfDuration = this.detailObject.periodOfDuration
+    this.form.periodOfDuration = objectNonReactive.periodOfDuration
     this.calculateDate()
-    this.form.delayedEffectiveDate = this.detailObject.delayedEffectiveDate
-    this.form.expirationDate = this.detailObject.expirationDate
+    this.form.delayedEffectiveDate = objectNonReactive.delayedEffectiveDate
+    this.form.expirationDate = objectNonReactive.expirationDate
   },
   beforeMount () {
     // this.matchData()

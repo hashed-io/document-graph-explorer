@@ -168,8 +168,8 @@ export default {
       agentsData: []
     }
   },
-  created () {
-    this.agentForm = this.agentObject
+  beforeMount () {
+    this.agentForm = JSON.parse(JSON.stringify(this.agentObject))
   },
   methods: {
     async searchAgent () {

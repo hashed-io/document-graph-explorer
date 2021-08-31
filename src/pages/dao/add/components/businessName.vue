@@ -100,7 +100,7 @@ export default {
   },
   methods: {
     matchData () {
-      this.formData = this.bussinessObject
+      this.formData = Object.assign({}, this.bussinessObject)
       this.confirmName = this.bussinessObject.businessName
     },
     changeStateError (state) {

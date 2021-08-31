@@ -85,7 +85,7 @@ export default {
     addressesObject: Object
   },
   created () {
-    this.form = this.addressesObject
+    this.form = JSON.parse(JSON.stringify(this.addressesObject))
   },
   data () {
     return {

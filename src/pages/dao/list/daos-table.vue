@@ -221,13 +221,19 @@ export default {
       }
     },
     async onClickEditDao (row) {
+      // this.loading = true
       var self = this
       let daoName = row.dao
       var url = 'https://ipfs.io/ipfs/' + row.ipfs
+      this.$q.loading.show({
+        message: 'Getting Dao Data <b>process</b> is in progress.<br/><span class="text-orange text-weight-bold">Hang on...</span>'
+      })
       await axios({
         method: 'get',
         url: url
       }).then(function (response) {
+        self.loading = false
+        self.$q.loading.hide()
         self.changeStateDAO(response.data.data, daoName)
       })
     },
