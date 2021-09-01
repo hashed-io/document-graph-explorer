@@ -125,6 +125,7 @@ module.exports = function (ctx) {
         APP_NAME: process.env.APP_NAME, // Used by scatter
         NETWORK_PROTOCOL: process.env.NETWORK_PROTOCOL,
         CONTRACT_DAO: process.env.CONTRACT_DAO,
+        CONTRACT_DOC: process.env.CONTRACT_DOC,
         NETWORK_HOST: process.env.NETWORK_HOST,
         NETWORK_PORT: process.env.NETWORK_PORT,
         NETWORK_CHAIN_ID: process.env.NETWORK_CHAIN_ID,
