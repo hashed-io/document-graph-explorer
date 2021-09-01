@@ -24,7 +24,7 @@
         q-select(v-model='contract.value[0]' :options='options' emit-value map-options outlined label='Type')
       q-item-section(top)
         div(v-if="contract.value[0] === 'time_point'")
-          q-input(filled v-model='contract.value[1]' lazy-model)
+          q-input(outlined v-model='contract.value[1]')
             template(v-slot:append='')
               q-icon.cursor-pointer(name='event')
                 q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
@@ -33,10 +33,10 @@
                       q-btn(v-close-popup, label='Close', color='primary', flat='flat')
 
         div(v-else-if="contract.value[0] === 'file'")
-          q-file(v-model='contract.value[1]' filled bottom-slots label='Upload file')
+          q-file(v-model='contract.value[1]' ref='file' id='file' @input='handleFileUpload(contract)' filled bottom-slots label='Upload file')
             template(v-slot:before)
               q-icon(name='folder_open')
-        q-input(v-else v-model='contract.value[1]' outlined label='Value')
+        q-input(v-else v-model='contract.value[1]' counter outlined label='Value')
 
   .row.justify-end.q-gutter-md
     q-btn(label='Add Field' @click='addRow()' color="primary")
@@ -122,6 +122,9 @@ export default {
       let dateFormatted = arr[1] + '/' + arr[2] + '/' + arr[0]
       this.manageContract[index].value[1] = dateFormatted
       this.$forceUpdate()
+    },
+    handleFileUpload (row) {
+      console.log(row.value[1])
     }
   }
 }
