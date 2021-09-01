@@ -13,8 +13,7 @@
         )
       #modals
         q-dialog(v-model="openCreateDao")
-          q-card.q-pa-md.responsive-modal
-            managedao(:dao="selectedDao" @success='onManageDao')
+          managedao(:dao="selectedDao" @success='onManageDao')
             //- form-create-user(@success="onCreatedDao" :dao="selectedDao")
         //- confirm-dialog(
         //-   v-model="showConfirmRemove"
