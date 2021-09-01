@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import accounts from './accounts'
 import dao from './DAO'
+import documents from './documents'
 import transfers from './transfers'
 import general from './general'
 
@@ -19,6 +20,7 @@ export default function (/* { ssrContext } */) {
       accounts,
       transfers,
       dao,
+      documents,
       general
     },
 

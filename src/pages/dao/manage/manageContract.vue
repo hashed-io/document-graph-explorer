@@ -51,61 +51,10 @@
 
           q-input(v-else v-model='contract.value[1]' counter outlined label='Value')
 
-  //- .row.justify-end.q-gutter-md
-  //-   q-btn(label='Add Field' @click='addRow()' color="primary")
-  //-   q-btn(label='Save' @click='saveData()' color="primary")
+  .row.justify-end.q-gutter-md
+    q-btn(label='Add Field' @click='addRow()' color="primary")
+    q-btn(label='Save' @click='saveData()' color="primary")
 
-  q-card.q-pa-md.medium-width
-    q-card-section(if="fields")
-      div(v-for="field in fields")
-        .row
-          .col
-            .text {{ field.fieldName }}
-          .col
-            .text {{ field.type }}
-          .col
-            .text {{ field.value }}
-        q-separator
-    q-form(@submit="onAddField" @reset="onReset" ref="form")
-      q-card-section
-        .row
-          .col.q-mr-sm
-            q-input(
-              outlined
-              stack-label
-              v-model="params.fieldName"
-              label="Field Name"
-              :rules="[rules.required]"
-            )
-          .col.q-mr-sm
-            q-input(
-              outlined
-              stack-label
-              v-model="params.type"
-              label="Type"
-              :rules="[rules.required]"
-            )
-          .col
-            q-input(
-              outlined
-              stack-label
-              v-model="params.value"
-              label="Value"
-              :rules="[rules.required]"
-            )
-      .q-card-actions(vertical align="right")
-        q-btn(
-          label="Add Field"
-          outline
-          color="primary"
-          type="submit"
-        ).q-mr-sm
-        q-btn(
-          label="Save"
-          outline
-          color="primary"
-          @click="onSave"
-        )
 </template>
 
 <script>

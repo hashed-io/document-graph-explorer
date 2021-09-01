@@ -1,7 +1,5 @@
 import BaseEosApi from './BaseEosApi'
-import {
-  Contracts
-} from '~/const/Contracts'
+import { Contracts } from '~/const/Contracts'
 class DaoApi extends BaseEosApi {
   constructor ({
     eosApi,
