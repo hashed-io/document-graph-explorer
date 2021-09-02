@@ -1,6 +1,9 @@
-export const addEntry = async function ({ commit, dispatch }, params) {
+export const storeEntry = async function ({ commit, dispatch }, params) {
   try {
-    const response = await this.$documentApi.AddEntry({ ...params })
+    console.log('*********************')
+    console.log({ ...params })
+    console.log('*********************')
+    const response = await this.$documentApi.StoreEntry(params)
     return response
   } catch (e) {
     console.error('An error ocurred while trying to add Entry', e)
@@ -16,16 +19,6 @@ export const delEntry = async function ({ commit, dispatch }, params) {
     throw new Error(e)
   }
 }
-export const editEntry = async function ({ commit, dispatch }, params) {
-  try {
-    const response = await this.$documentApi.EditEntry({ ...params })
-    return response
-  } catch (e) {
-    console.error('An error ocurred while trying to edit Entry', e)
-    throw new Error(e)
-  }
-}
-
 export const initDao = async function ({ commit, dispatch }, params) {
   try {
     const response = await this.$documentApi.InitDao({ ...params })

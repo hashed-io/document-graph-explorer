@@ -5,7 +5,7 @@
   //- p {{dao.creator}}
   q-toolbar
     q-toolbar-title
-      span.text-weight-bold Manage Contracts
+      span.text-weight-bold Manage Contracts for {{dao.dao}}
     q-btn(flat round dense icon="close" v-close-popup)
   q-card-section
   q-item.q-pb-md
@@ -18,48 +18,55 @@
     q-item-section(top)
       q-item-label
         strong.text-subtitle1 Value
-  q-form()
+  q-form(ref='labelForm' @submit='addRow')
     #contracts(v-for='(contract, index) in this.manageContract')
       q-item.q-pb-md
         q-item-section(top)
-          q-input(v-model='contract.label' outlined label='Field Name')
+          q-input(v-model='contract.label' outlined label='Field Name' :rules='[rules.required]')
         q-item-section(top)
-          q-select(v-model='contract.value[0]' :options='options' emit-value map-options outlined label='Type')
+          q-select(v-model='contract.value[0]' @input='changeType(contract)' :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
         q-item-section(top)
-          div(v-if="contract.value[0] === 'time_point'")
-            q-input(outlined v-model='contract.value[1]')
-              template(v-slot:append='')
-                q-icon.cursor-pointer(name='event')
-                  q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                    q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate(index)')
-                      .row.items-center.justify-end
-                        q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+          .row.justify-start
+            .col-xs-11.col-sm-11
+              div(v-if="contract.value[0] === 'time_point'")
+                q-input(outlined v-model='contract.value[1]' :rules='[rules.required]')
+                  template(v-slot:append='')
+                    q-icon.cursor-pointer(name='event')
+                      q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                        q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate(index)')
+                          .row.items-center.justify-end
+                            q-btn(v-close-popup, label='Close', color='primary', flat='flat')
 
-          div(v-else-if="contract.value[0] === 'file'")
-            .row.justify-center
-              .col.q-px-md.col-xs-10.col-sm-10
-                q-file(v-model='contract.value[1]' :loading='contract.loadingState' ref='file' id='file' @input='handleFileUpload(contract,index)' filled bottom-slots label='Upload file')
-                  template(v-slot:before)
-                    q-icon(name='folder_open')
-              .col.col-xs-2.col-sm-2
-                template(v-if="typeof(contract.value[2]) === 'string'")
-                  q-icon(name="check" class="text-green" style="font-size: 2rem;")
-                p {{contract.value[2]}}
-                template(v-if="contract.value[2] === undefined" )
-                  q-icon(name="error" class="text-red" style="font-size: 2rem;")
-                  //- p Fail Upload
-
-          q-input(v-else v-model='contract.value[1]' counter outlined label='Value')
+              div(v-else-if="contract.value[0] === 'file'")
+                .row.justify-center
+                  .col.q-px-md.col-xs-10.col-sm-10
+                    q-file(v-model='contract.value[1]' :loading='contract.loadingState' ref='file' id='file' @input='handleFileUpload(contract,index)' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                      template(v-slot:before)
+                        q-icon(name='folder_open')
+                  .col.col-xs-2.col-sm-2
+                    template(v-if="typeof(contract.ipfs) === 'string'")
+                      q-icon(name="check" class="text-green" style="font-size: 2rem;")
+                    //- p {{contract.ipfs}}
+                    template(v-if="contract.ipfs === undefined" )
+                      q-icon(name="error" class="text-red" style="font-size: 2rem;")
+                      //- p Fail Upload
+              q-input(v-else-if="contract.value[0] === 'asset'" v-model='contract.value[1]'  outlined label='Ammount' input-class="text-right"  :rules='[rules.required]')
+              q-input(v-else v-model='contract.value[1]' counter outlined label='Value' :rules='[rules.required]')
+            .cols-xs-1.col-sm-1
+              #button.q-pl-md
+                q-btn( color='red' icon='delete' round size='md' @click='deleteRow(index)')
 
   .row.justify-end.q-gutter-md
     q-btn(label='Add Field' @click='addRow()' color="primary")
-    q-btn(label='Save' @click='saveData()' color="primary")
+    q-btn(label='Save' @click='modifiedData()' color="primary")
 
 </template>
 
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
+// import { DocumentsApi } from '~/services/DocumentsApi'
 import { validation } from '~/mixins/validation'
+import { mapActions } from 'vuex'
 export default {
   name: 'managecontract',
   mixins: [validation],
@@ -69,15 +76,19 @@ export default {
       required: true
     }
   },
+  mounted () {
+    console.log('load data if there are')
+    this.loadData()
+  },
   data () {
     return {
       date: null,
       manageContract: [
         {
           loadingState: false,
+          ipfs: undefined,
           label: null,
           value: [
-            null,
             null,
             null
           ]
@@ -112,22 +123,31 @@ export default {
           label: 'File',
           value: 'file'
         }
-      ]
+      ],
+      params: {
+        offset: 0,
+        limit: 5,
+        search: undefined,
+        customOffset: undefined,
+        nextKey: undefined
+      }
     }
   },
   methods: {
-    addRow () {
-      this.manageContract.push(
-        {
+    ...mapActions('documents', ['storeEntry', 'delEntry', 'getDocuments', 'getEdges']),
+    async addRow () {
+      if (await this.$refs.labelForm.validate()) {
+        this.manageContract.push({
           loadingState: false,
+          ipfs: undefined,
           label: null,
           value: [
             null,
-            null,
             null
           ]
-        }
-      )
+        })
+      }
+      console.log(this.manageContract)
     },
     async onAddField () {
       console.log()
@@ -152,12 +172,12 @@ export default {
         let blob = new Blob([new Uint8Array(_row.target.result)], { type: _row.type })
         try {
           let typeCid = await BrowserIpfs.addFile(blob)
-          self.manageContract[index].value[2] = typeCid
+          self.manageContract[index].ipfs = typeCid
           self.manageContract[index].loadingState = false
-          self.getFileFromIPFS(self.manageContract[index].value[2], _row.type)
+          self.getFileFromIPFS(self.manageContract[index].ipfs, _row.type)
         } catch (e) {
           alert(e)
-          self.manageContract[index].value[2] = undefined
+          self.manageContract[index].ipfs = undefined
           self.manageContract[index].loadingState = false
         }
       }
@@ -176,6 +196,64 @@ export default {
       link.click()
       document.body.removeChild(link)
       console.log(blob)
+    },
+    changeType (contract) {
+      contract.value[1] = undefined
+      contract.ipfs = undefined
+    },
+    deleteRow (index) {
+      this.manageContract.splice(index, 1)
+    },
+    async modifiedData () {
+      if (await this.$refs.labelForm.validate()) {
+        let rawData = JSON.parse(JSON.stringify(this.manageContract))
+        rawData.forEach(function (entry) {
+          console.log(entry)
+          if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
+            entry.value[1] = entry.value[1].toLowerCase()
+          }
+          if (entry.ipfs === undefined) {
+            delete entry.ipfs
+          } else {
+            let ipfsCID = entry.ipfs
+            entry.value[1] = ipfsCID
+            delete entry.ipfs
+          }
+          delete entry.loadingState
+        })
+        this.saveData(rawData)
+      }
+    },
+    async saveData (values) {
+      try {
+        await this.storeEntry({
+          values
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async loadData () {
+      // const documentsApi = new DocumentsApi()
+      // documentsApi.storeEntry()
+      this.manageContract = []
+      try {
+        let data = await this.getDocuments({
+          ...this.params,
+          search: this.params.search ? this.params.search.toLowerCase() : undefined
+        })
+        let tableRows = data.rows[1].content_groups
+        if (tableRows.length === 2) {
+          tableRows[1].forEach(element => {
+            this.manageContract.push(element)
+          })
+        }
+      } catch (e) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Fail to load Dao information'
+        })
+      }
     }
   }
 }

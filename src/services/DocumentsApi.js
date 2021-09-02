@@ -20,13 +20,13 @@ class DocumentsApi extends BaseEosApi {
    * @param { value (content) }
    * @returns
    */
-  async AddEntry ({ _value }) {
+  async StoreEntry ({ values }) {
     const actions = [
       {
         account: Contracts.CONTRACT_DOC,
-        name: 'addentry',
+        name: 'storeentry',
         data: {
-          value: _value
+          values: values
         }
       }
     ]
@@ -51,24 +51,7 @@ class DocumentsApi extends BaseEosApi {
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
-  /**
-   *
-   * @param { value (Content) }
-   * @returns
-   */
-  async EditEntry ({ _value }) {
-    const actions = [
-      {
-        account: Contracts.CONTRACT_DOC,
-        name: 'editentry',
-        data: {
-          value: _value
-        }
-      }
-    ]
-    console.log('actions: ', actions)
-    return this.eosApi.signTransaction(actions)
-  }
+
   /**
    *
    * @param { creator (name) }
@@ -114,7 +97,7 @@ class DocumentsApi extends BaseEosApi {
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
 
     const rounds = await this._getTableRows({
-      scope: Contracts.CONTRACT_DOC,
+      scope: 'daoinfor1111',
       // indexPosition: 3,
       lowerBound: customOffset,
       upperBound,

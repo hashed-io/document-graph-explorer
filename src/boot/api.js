@@ -59,7 +59,6 @@ export default ({ store }) => {
   const documentsApi = new DocumentsApi({
     eosApi: api
   })
-
   store['$api'] = api
   store['$daoApi'] = daoApi
   store['$documentApi'] = documentsApi

@@ -50,7 +50,6 @@ export default {
     onClickManage () {
       this.openCreateDao = true
       this.selectedDao = arguments[0]
-      console.log(arguments[0])
     },
     onManageDao () {
 
