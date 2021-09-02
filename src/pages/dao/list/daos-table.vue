@@ -229,7 +229,7 @@ export default {
       let daoName = row.dao
       var url = 'https://ipfs.io/ipfs/' + row.ipfs
       this.$q.loading.show({
-        message: 'Getting Dao Data <b>process</b> is in progress.<br/><span class="text-orange text-weight-bold">Hang on...</span>'
+        message: 'Getting Dao Data <b>process</b> is in progress.<br/><span class="text-green text-weight-bold">Please Wait...</span>'
       })
       await axios({
         method: 'get',

@@ -14,7 +14,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
+                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit' )
               .col(style='text-align:end;')
                 q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
@@ -77,7 +77,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
+                q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
               .col(style='text-align:end;')
                 q-btn(@click='validateStep' color="primary" label="Finish" )
         //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { validation } from '~/mixins/validation'
 import businessName from '../add/components/businessName.vue'
 import detail from '../add/components/detail.vue'
 import agentComponent from '../add/components/agent.vue'
@@ -99,6 +100,7 @@ import { mapActions, mapMutations, mapState } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs'
 export default {
   name: 'registerdao',
+  mixins: [validation],
   components: {
     businessName,
     detail,
@@ -114,7 +116,6 @@ export default {
     if (this.isEdit) {
       this.daoName = this.daoNameStore
       this.form = JSON.parse(JSON.stringify(this.formStore))
-      // this.editData()
     }
   },
   computed: {
@@ -275,23 +276,32 @@ export default {
     },
     async saveDataContract () {
       // Make JSON File to send IPFS
-      console.log('Saving data...')
-      try {
-        if (this.form !== '') {
-          let data = this.form
-          this.typeCid = await BrowserIpfs.addAsJson({ data })
+      const valid = this.$refs.daoNameInput.validate()
+      if (valid) {
+        console.log('Saving data...')
+        try {
+          if (this.form !== '') {
+            let data = this.form
+            this.typeCid = await BrowserIpfs.addAsJson({ data })
+          }
+        } catch (e) {
+          console.log(e)
         }
-      } catch (e) {
-        console.log(e)
-      }
-      try {
-        await this.saveDaoData({
-          dao: this.daoName.toLowerCase(),
-          creator: this.account,
-          ipfs: this.typeCid
+        try {
+          await this.saveDaoData({
+            dao: this.daoName.toLowerCase(),
+            creator: this.account,
+            ipfs: this.typeCid
+          })
+          this.$router.push('dashboard')
+        } catch (e) {
+          console.log(e)
+        }
+      } else {
+        this.$q.notify({
+          type: 'negative',
+          message: 'Fill the Dao Name'
         })
-      } catch (e) {
-        console.log(e)
       }
     },
     async updateDataContract () {
@@ -317,11 +327,6 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    },
-    editData () {
-      // for (var key in this.form) {
-      //   this.form[key] = this.formStore[key]
-      // }
     }
   }
 }
