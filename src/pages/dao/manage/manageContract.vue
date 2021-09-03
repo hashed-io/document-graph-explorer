@@ -225,9 +225,11 @@ export default {
       }
     },
     async saveData (values) {
+      let _contractAccount = this.dao.dao
       try {
         await this.storeEntry({
-          values
+          values,
+          _contractAccount
         })
       } catch (e) {
         console.log(e)
@@ -250,10 +252,8 @@ export default {
           })
         }
       } catch (e) {
-        this.$q.notify({
-          type: 'negative',
-          message: 'Fail to load Dao information'
-        })
+        this.showErrorMsg('Fail to load DAO info')
+        console.error('An error ocurred when DAO Load data', e)
       }
     }
   }

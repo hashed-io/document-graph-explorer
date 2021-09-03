@@ -26,11 +26,12 @@ class DocumentsApi extends BaseEosApi {
    *
    * @param { value (content) }
    * @returns
+   * contractAccount
    */
-  async StoreEntry ({ values }) {
+  async StoreEntry ({ values, _contractAccount }) {
     const actions = [
       {
-        account: Contracts.CONTRACT_DOC,
+        account: _contractAccount,
         name: 'storeentry',
         data: {
           values: values
