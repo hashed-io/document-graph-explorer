@@ -22,7 +22,7 @@
     #contracts(v-for='(contract, index) in this.manageContract')
       q-item.q-pb-md
         q-item-section(top)
-          q-input(v-model='contract.label' outlined label='Field Name' :rules='[rules.required]')
+          q-input(v-model='contract.label' readonly disabled outlined label='Field Name' :rules='[rules.required]')
         q-item-section(top)
           q-select(v-model='contract.value[0]' @input='changeType(contract)' :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
         q-item-section(top)
@@ -54,7 +54,7 @@
               q-input(v-else v-model='contract.value[1]' counter outlined label='Value' :rules='[rules.required]')
             .cols-xs-1.col-sm-1
               #button.q-pl-md
-                q-btn( color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
+                q-btn( v-if='index>1' color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
 
   .row.justify-end.q-gutter-md
     q-btn(label='Add Field' @click='addRow()' color="primary")
@@ -214,9 +214,11 @@ export default {
             _label
           })
           this.showSuccessMsg('Label delete correctly')
+          this.manageContract.splice(index, 1)
         } catch (e) {
           console.error('An error ocurred while trying to delete label')
           this.showErrorMsg('Error removing label')
+          return
         }
       }
       this.manageContract.splice(index, 1)
@@ -238,6 +240,7 @@ export default {
           delete entry.loadingState
         })
         this.saveData(rawData)
+        console.log(rawData)
       }
     },
     async saveData (values) {
