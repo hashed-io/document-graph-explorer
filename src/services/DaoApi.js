@@ -1,5 +1,8 @@
+/* eslint-disable no-undef */
 import BaseEosApi from './BaseEosApi'
 import { Contracts } from '~/const/Contracts'
+import eosjsAccountName from 'eosjs-account-name'
+
 class DaoApi extends BaseEosApi {
   constructor ({
     eosApi,
@@ -57,17 +60,20 @@ class DaoApi extends BaseEosApi {
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
-  async getDaos ({ limit, search, customOffset }) {
-    let upperBound = search || ''
-    if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
+  async getDaos ({ limit, accountName, nextKey }) {
+    let start = nextKey || (BigInt(eosjsAccountName.nameToUint64(accountName)) * (BigInt(2 ** 64))).toString()
+    let end = (BigInt(eosjsAccountName.nameToUint64(accountName)) * BigInt(2 ** 64) + BigInt('18446744073709551615')).toString()
+    console.log('getDaos', { start, accountName, nextKey })
+    // let upperBound = search || ''
+    // if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
 
     const rounds = await this._getTableRows({
       scope: Contracts.CONTRACT_DAO,
-      // indexPosition: 3,
-      lowerBound: customOffset,
-      upperBound,
+      indexPosition: 2,
+      lowerBound: start,
+      upperBound: end,
       limit,
-      keyType: 'i64',
+      keyType: 'i128',
       table: 'daos'
     })
     return rounds
