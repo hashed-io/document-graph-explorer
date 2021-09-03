@@ -27,7 +27,6 @@ class BrowserIpfs extends BaseIpfs {
    * @returns {String} cid of the stored file
    */
   async addFile (file) {
-    console.log(file)
     const data = new Uint8Array(await file.arrayBuffer())
     return this.add(data)
   }

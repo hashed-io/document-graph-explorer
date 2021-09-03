@@ -12,7 +12,6 @@ class BaseEosApi {
     isParsedSortField = false,
     workflowPayloadType
   }) {
-    // console.log('Contract account:  ', contractAccount)
     this.eosApi = eosApi
     this.notifier = notifier
     this.contractAccount = contractAccount
@@ -415,9 +414,7 @@ class BaseEosApi {
       reverse
     }
     console.log('For params:', params)
-    console.log(await this.eosApi.getTableRows(params))
     const results = await this.eosApi.getTableRows(params)
-    // const results = await this.eosApi.getTableRows(params)
     console.log('Table rows results:', JSON.stringify(results, null, 4))
     return results
   }

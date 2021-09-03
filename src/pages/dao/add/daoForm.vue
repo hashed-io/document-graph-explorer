@@ -298,10 +298,7 @@ export default {
           console.log(e)
         }
       } else {
-        this.$q.notify({
-          type: 'negative',
-          message: 'Fill the Dao Name'
-        })
+        this.showErrorMsg('Fill the DAO Name')
       }
     },
     async updateDataContract () {

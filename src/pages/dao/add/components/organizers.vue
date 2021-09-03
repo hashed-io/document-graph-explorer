@@ -159,8 +159,6 @@ export default {
         this.resetInfo()
       // Editar
       } else {
-        // alert(this.idEdit)
-        // console.log(_interface)
         this.organizers[this.idEdit] = _interface
         this.idEdit = null
         this.resetInfo()

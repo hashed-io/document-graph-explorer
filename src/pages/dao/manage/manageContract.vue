@@ -77,7 +77,6 @@ export default {
     }
   },
   async mounted () {
-    console.log('load data if there are')
     let _contractAccount = this.dao.dao
     let _api = this.$store.$apiMethods
     const documentsApi = await new DocumentsApi({ eosApi: _api }, _contractAccount)
@@ -152,15 +151,6 @@ export default {
           ]
         })
       }
-      console.log(this.manageContract)
-    },
-    async onAddField () {
-      console.log()
-      if (await this.$refs.form.validate()) {
-        this.fields.push({ ...this.params })
-        this.onReset()
-        this.$refs.form.reset()
-      }
     },
     changesDate (index) {
       const arr = this.date.split('/')
@@ -191,7 +181,6 @@ export default {
     async getFileFromIPFS (index, type) {
       // application/vnd.oasis.opendocument.text
       let filename = 'documentFromIPFS'
-      console.log(index)
       let blob = await BrowserIpfs.getFile(index, filename, type)
       let link = document.createElement('a')
       link.href = window.URL.createObjectURL(blob)
@@ -200,7 +189,6 @@ export default {
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
-      console.log(blob)
     },
     changeType (contract) {
       contract.value[1] = undefined
@@ -215,6 +203,7 @@ export default {
           })
           this.showSuccessMsg('Label delete correctly')
           this.manageContract.splice(index, 1)
+          this.loadData()
         } catch (e) {
           console.error('An error ocurred while trying to delete label')
           this.showErrorMsg('Error removing label')
@@ -240,7 +229,6 @@ export default {
           delete entry.loadingState
         })
         this.saveData(rawData)
-        console.log(rawData)
       }
     },
     async saveData (values) {
@@ -249,13 +237,13 @@ export default {
           values
         })
         this.showSuccessMsg('Data stored correctly')
+        this.loadData()
       } catch (e) {
         this.showErrorMsg('Fail to save DAO information')
         console.error('An error ocurred while trying to save Data', e)
       }
     },
     async loadData () {
-      console.log(this.DocumentApi.eosApi)
       this.manageContract = []
       try {
         let data = await this.DocumentApi.getDocuments({
@@ -275,6 +263,9 @@ export default {
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information')
         console.error('An error ocurred while trying to load DAO data', e)
+        console.log('***************************')
+        console.log(e)
+        console.log('***************************')
       }
     }
   }
