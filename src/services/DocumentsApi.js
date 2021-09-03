@@ -13,7 +13,7 @@ class DocumentsApi extends BaseEosApi {
         tableId: 'id'
       }
     )
-    this.account = _contractAccount
+    this.contractAccount = _contractAccount
   }
 
   /** *
@@ -31,7 +31,7 @@ class DocumentsApi extends BaseEosApi {
   async StoreEntry ({ values }) {
     const actions = [
       {
-        account: this.account,
+        account: this.contractAccount,
         name: 'storeentry',
         data: {
           values: values
@@ -105,7 +105,7 @@ class DocumentsApi extends BaseEosApi {
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
     // alert(this.account)
     const rounds = await this._getTableRows({
-      scope: this.account,
+      scope: this.contractAccount,
       // indexPosition: 3,
       lowerBound: customOffset,
       upperBound,
