@@ -228,16 +228,14 @@ export default {
       var self = this
       let daoName = row.dao
       var url = 'https://ipfs.io/ipfs/' + row.ipfs
-      this.$q.loading.show({
-        message: 'Getting Dao Data <b>process</b> is in progress.<br/><span class="text-green text-weight-bold">Please Wait...</span>'
-      })
+      this.showIsLoading(true)
       await axios({
         method: 'get',
         url: url
       }).then(function (response) {
         self.loading = false
-        self.$q.loading.hide()
         self.changeStateDAO(response.data.data, daoName)
+        self.showIsLoading(false)
       })
     },
     changeStateDAO (_form, daoName) {

@@ -266,10 +266,7 @@ export default {
           if (self.agree) {
             this.$emit('dataFromAgent', this.agentForm)
           } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Accept the agree`
-            })
+            this.showErrorMsg('Accept the agree')
           }
         }
       })

@@ -121,10 +121,7 @@ export default {
     },
     onSubmitOrganizer () {
       if (this.organizers.length === 0) {
-        this.$q.notify({
-          type: 'negative',
-          message: `At least one organizer`
-        })
+        this.showErrorMsg('At least one organizer')
       } else {
         this.$emit('dataFromOrganizers', this.organizers)
       }
