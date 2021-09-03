@@ -54,7 +54,7 @@
               q-input(v-else v-model='contract.value[1]' counter outlined label='Value' :rules='[rules.required]')
             .cols-xs-1.col-sm-1
               #button.q-pl-md
-                q-btn( color='red' icon='delete' round size='md' @click='deleteRow(index)')
+                q-btn( v-if='index>0' color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
 
   .row.justify-end.q-gutter-md
     q-btn(label='Add Field' @click='addRow()' color="primary")
@@ -76,13 +76,18 @@ export default {
       required: true
     }
   },
-  mounted () {
+  async mounted () {
     console.log('load data if there are')
+    let _contractAccount = this.dao.dao
+    let _api = this.$store.$apiMethods
+    const documentsApi = await new DocumentsApi({ eosApi: _api }, _contractAccount)
+    this.DocumentApi = documentsApi
     this.loadData()
   },
   data () {
     return {
       date: null,
+      DocumentApi: null,
       manageContract: [
         {
           loadingState: false,
@@ -201,14 +206,27 @@ export default {
       contract.value[1] = undefined
       contract.ipfs = undefined
     },
-    deleteRow (index) {
+    async deleteRow (contract, index) {
+      if (contract.label !== null) {
+        try {
+          let _label = this.manageContract[index].label
+          await this.DocumentApi.DelEntry({
+            _label
+          })
+          this.showSuccessMsg('Label delete correctly')
+          this.manageContract.splice(index, 1)
+        } catch (e) {
+          console.error('An error ocurred while trying to delete label')
+          this.showErrorMsg('Error removing label')
+          return
+        }
+      }
       this.manageContract.splice(index, 1)
     },
     async modifiedData () {
       if (await this.$refs.labelForm.validate()) {
         let rawData = JSON.parse(JSON.stringify(this.manageContract))
         rawData.forEach(function (entry) {
-          console.log(entry)
           if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
             entry.value[1] = entry.value[1].toLowerCase()
           }
@@ -222,38 +240,41 @@ export default {
           delete entry.loadingState
         })
         this.saveData(rawData)
+        console.log(rawData)
       }
     },
     async saveData (values) {
       try {
-        await this.storeEntry({
+        await this.DocumentApi.StoreEntry({
           values
         })
+        this.showSuccessMsg('Data stored correctly')
       } catch (e) {
-        console.log(e)
+        this.showErrorMsg('Fail to save DAO information')
+        console.error('An error ocurred while trying to save Data', e)
       }
     },
     async loadData () {
-      let _contractAccount = this.dao.dao
-      const documentsApi = new DocumentsApi({ eosApi: this.$store.$api }, _contractAccount)
+      console.log(this.DocumentApi.eosApi)
       this.manageContract = []
       try {
-        let data = await documentsApi.getDocuments({
+        let data = await this.DocumentApi.getDocuments({
           ...this.params,
-          contractAccount: _contractAccount,
           search: this.params.search ? this.params.search.toLowerCase() : undefined
         })
+        var flag = true
         let tableRows = data.rows[1].content_groups
         if (tableRows.length === 2) {
           tableRows[1].forEach(element => {
-            this.manageContract.push(element)
+            if (!flag) {
+              this.manageContract.push(element)
+            }
+            flag = false
           })
         }
       } catch (e) {
-        this.$q.notify({
-          type: 'negative',
-          message: 'Fail to load Dao information'
-        })
+        this.showErrorMsg('Fail to load DAO information')
+        console.error('An error ocurred while trying to load DAO data', e)
       }
     }
   }

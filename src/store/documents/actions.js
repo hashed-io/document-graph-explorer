@@ -1,16 +1,14 @@
 export const storeEntry = async function ({ commit, dispatch }, params) {
   try {
-    console.log('*********************')
-    console.log({ ...params })
-    console.log('*********************')
-    const response = await this.$documentApi.StoreEntry(params)
+    const response = await this.$documentApi.StoreEntry({ ...params })
     return response
   } catch (e) {
-    console.error('An error ocurred while trying to add Entry', e)
+    console.error('An error ocurred while trying to store Entry', e)
     throw new Error(e)
   }
 }
 export const delEntry = async function ({ commit, dispatch }, params) {
+  console.log(params)
   try {
     const response = await this.$documentApi.DelEntry({ ...params })
     return response

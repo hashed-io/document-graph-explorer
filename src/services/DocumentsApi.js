@@ -1,5 +1,4 @@
 import BaseEosApi from './BaseEosApi'
-import { Contracts } from '~/const/Contracts'
 class DocumentsApi extends BaseEosApi {
   constructor ({
     eosApi,
@@ -27,6 +26,7 @@ class DocumentsApi extends BaseEosApi {
    *
    * @param { value (content) }
    * @returns
+   * contractAccount
    */
   async StoreEntry ({ values }) {
     const actions = [
@@ -49,7 +49,7 @@ class DocumentsApi extends BaseEosApi {
   async DelEntry ({ _label }) {
     const actions = [
       {
-        account: Contracts.CONTRACT_DOC,
+        account: this.contractAccount,
         name: 'delentry',
         data: {
           label: _label
@@ -68,7 +68,7 @@ class DocumentsApi extends BaseEosApi {
   async InitDao ({ _creator }) {
     const actions = [
       {
-        account: Contracts.CONTRACT_DOC,
+        account: this.account,
         name: 'initdao',
         data: {
           creator: _creator
@@ -86,7 +86,7 @@ class DocumentsApi extends BaseEosApi {
   async Reset () {
     const actions = [
       {
-        account: Contracts.CONTRACT_DOC,
+        account: this.account,
         name: 'reset',
         data: {
         }
@@ -101,12 +101,9 @@ class DocumentsApi extends BaseEosApi {
    * @returns
    */
   async getDocuments ({ limit, search, customOffset }) {
-    console.log('*********************')
-    console.log({ limit, search, customOffset, contractAccount: this.contractAccount })
-    console.log('*********************')
     let upperBound = search || ''
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
-
+    // alert(this.account)
     const rounds = await this._getTableRows({
       scope: this.contractAccount,
       // indexPosition: 3,
@@ -128,7 +125,7 @@ class DocumentsApi extends BaseEosApi {
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
 
     const rounds = await this._getTableRows({
-      scope: Contracts.CONTRACT_DOC,
+      scope: this.account,
       // indexPosition: 3,
       lowerBound: customOffset,
       upperBound,

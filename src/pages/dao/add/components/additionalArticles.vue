@@ -95,10 +95,7 @@ export default {
   methods: {
     onSubmitArticles () {
       if (this.articles.length === 0) {
-        this.$q.notify({
-          type: 'negative',
-          message: `At least one article`
-        })
+        this.showErrorMsg('At least one article')
       } else {
         this.$emit('dataFromAdditionalArticles', this.articles)
       }
