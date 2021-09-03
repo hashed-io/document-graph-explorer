@@ -49,7 +49,7 @@ class DocumentsApi extends BaseEosApi {
   async DelEntry ({ _label }) {
     const actions = [
       {
-        account: this.account,
+        account: this.contractAccount,
         name: 'delentry',
         data: {
           label: _label

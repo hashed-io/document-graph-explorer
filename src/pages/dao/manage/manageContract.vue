@@ -22,7 +22,7 @@
     #contracts(v-for='(contract, index) in this.manageContract')
       q-item.q-pb-md
         q-item-section(top)
-          q-input(v-model='contract.label' readonly disabled outlined label='Field Name' :rules='[rules.required]')
+          q-input(v-model='contract.label' outlined label='Field Name' :rules='[rules.required]')
         q-item-section(top)
           q-select(v-model='contract.value[0]' @input='changeType(contract)' :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
         q-item-section(top)
@@ -54,7 +54,7 @@
               q-input(v-else v-model='contract.value[1]' counter outlined label='Value' :rules='[rules.required]')
             .cols-xs-1.col-sm-1
               #button.q-pl-md
-                q-btn( v-if='index>1' color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
+                q-btn( v-if='index>0' color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
 
   .row.justify-end.q-gutter-md
     q-btn(label='Add Field' @click='addRow()' color="primary")
@@ -79,7 +79,7 @@ export default {
   async mounted () {
     console.log('load data if there are')
     let _contractAccount = this.dao.dao
-    let _api = this.$store.$api
+    let _api = this.$store.$apiMethods
     const documentsApi = await new DocumentsApi({ eosApi: _api }, _contractAccount)
     this.DocumentApi = documentsApi
     this.loadData()
@@ -262,10 +262,14 @@ export default {
           ...this.params,
           search: this.params.search ? this.params.search.toLowerCase() : undefined
         })
+        var flag = true
         let tableRows = data.rows[1].content_groups
         if (tableRows.length === 2) {
           tableRows[1].forEach(element => {
-            this.manageContract.push(element)
+            if (!flag) {
+              this.manageContract.push(element)
+            }
+            flag = false
           })
         }
       } catch (e) {
