@@ -11643,7 +11643,7 @@ promise@^8.0.1:
 
 property-path@^1.0.0:
   version "1.0.0"
-  resolved "https://registry.npmjs.org/property-path/-/property-path-1.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/property-path/-/property-path-1.0.0.tgz#0ef37633e625a8fa167ff9f592e182fb809d4e7f"
   integrity sha512-q6XmVvqBc/4rY3NvZMK9z66ctkxY9SDekgMksKiHTgxELPdCrnB/J1loX95ei9cnPtyLwWNpEMXRvUiTjy77tQ==
   dependencies:
     is2 "2.0.1"

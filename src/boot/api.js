@@ -62,6 +62,7 @@ export default ({ store }) => {
   }, Contracts.CONTRACT_DOC)
 
   store['$api'] = api
+  store['$apiMethods'] = api
   store['$daoApi'] = daoApi
   store['$documentApi'] = documentsApi
 }
