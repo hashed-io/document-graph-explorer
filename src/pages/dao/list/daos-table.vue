@@ -19,6 +19,7 @@
     @virtual-scroll="onScroll"
     table-header-class="hdTable"
     :hide-pagination="true"
+    :filter="params.search"
   )
     template(v-slot:top-right v-if="!selectable")
       q-input.q-mb-sm(
@@ -103,15 +104,15 @@ export default {
     this.setDaoName(null)
   },
   watch: {
-    'params.search' (value) {
-      // if (value && value.length <= 12) {
-      //   }
-      console.log('search changing')
-      if (value) {
-        this.params.search = value.toLowerCase()
-      }
-      this.resetPagination()
-    }
+    // 'params.search' (value) {
+    //   // if (value && value.length <= 12) {
+    //   //   }
+    //   console.log('search changing')
+    //   if (value) {
+    //     this.params.search = value.toLowerCase()
+    //   }
+    //   this.resetPagination()
+    // }
   },
   data () {
     return {
@@ -201,9 +202,9 @@ export default {
             ...this.params,
             search: this.params.search ? this.params.search.toLowerCase() : undefined
           })
-          if (this.nextPage > 2) {
-            newRows.rows.shift()
-          }
+          // if (this.nextPage > 2) {
+          //   newRows.rows.shift()
+          // }
           this.daos.rows = this.daos.rows.concat(newRows.rows)
           this.daos.more = newRows.more
           this.nextPage = this.nextPage + 1

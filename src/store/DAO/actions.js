@@ -21,8 +21,14 @@ export const updateDaoData = async function ({ commit, dispatch }, params) {
 
 export const getDaos = async function ({ commit }, params) {
   try {
-    const response = await this.$daoApi.getDaos(params)
-    return response
+    commit('general/setIsLoading', true, { root: true })
+    const accountName = this.getters['accounts/account']
+    console.log(params)
+    return this.$daoApi.getDaos({
+      ...params,
+      accountName
+    })
+    // return response
   } catch (e) {
     console.error('An error ocurred while trying to get users action:', e)
     commit('general/setErrorMsg', e.message || e, { root: true })
