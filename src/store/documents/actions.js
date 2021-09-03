@@ -58,3 +58,13 @@ export const getEdges = async function ({ commit, dispatch }, params) {
     throw new Error(e)
   }
 }
+
+export const getApiStore = async function () {
+  try {
+    const response = await this.$api.state
+    console.log(response)
+  } catch (e) {
+    console.error('An error ocurred while trying to get Api Store', e)
+    throw new Error(e)
+  }
+}

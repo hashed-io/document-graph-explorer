@@ -414,9 +414,11 @@ class BaseEosApi {
       limit,
       reverse
     }
-    const results = await this.eosApi.getTableRows(params)
-    console.log('Table rows results:', JSON.stringify(results, null, 4))
     console.log('For params:', params)
+    console.log(await this.eosApi.getTableRows(params))
+    const results = await this.eosApi.getTableRows(params)
+    // const results = await this.eosApi.getTableRows(params)
+    console.log('Table rows results:', JSON.stringify(results, null, 4))
     return results
   }
 

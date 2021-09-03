@@ -1,12 +1,19 @@
 import BaseEosApi from './BaseEosApi'
 import { Contracts } from '~/const/Contracts'
 class DocumentsApi extends BaseEosApi {
-  constructor ({ eosApi, notifier }) {
-    super(eosApi, notifier, {
-      contractAccount: Contracts.CONTRACT_DOC,
-      table: 'documents',
-      tableId: 'id'
-    })
+  constructor ({
+    eosApi,
+    notifier
+  }, _contractAccount) {
+    super(
+      eosApi,
+      notifier,
+      {
+        contractAccount: _contractAccount,
+        table: 'documents',
+        tableId: 'id'
+      }
+    )
   }
 
   /** *
@@ -92,12 +99,15 @@ class DocumentsApi extends BaseEosApi {
    * @param {limit , search[Input to search], customOffset} param0
    * @returns
    */
-  async getDocuments ({ limit, search, customOffset }) {
+  async getDocuments ({ limit, search, customOffset, contractAccount }) {
+    console.log('*********************')
+    console.log({ limit, search, customOffset, contractAccount })
+    console.log('*********************')
     let upperBound = search || ''
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
 
     const rounds = await this._getTableRows({
-      scope: 'daoinfor1111',
+      scope: contractAccount,
       // indexPosition: 3,
       lowerBound: customOffset,
       upperBound,

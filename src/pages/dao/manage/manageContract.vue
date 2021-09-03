@@ -64,7 +64,7 @@
 
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
-// import { DocumentsApi } from '~/services/DocumentsApi'
+import { DocumentsApi } from '~/services'
 import { validation } from '~/mixins/validation'
 import { mapActions } from 'vuex'
 export default {
@@ -134,7 +134,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('documents', ['storeEntry', 'delEntry', 'getDocuments', 'getEdges']),
+    ...mapActions('documents', ['storeEntry', 'delEntry', 'getDocuments', 'getEdges', 'getApiStore']),
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
         this.manageContract.push({
@@ -234,12 +234,13 @@ export default {
       }
     },
     async loadData () {
-      // const documentsApi = new DocumentsApi()
-      // documentsApi.storeEntry()
+      let _contractAccount = this.dao.dao
+      const documentsApi = new DocumentsApi({ eosApi: this.$store.$api }, _contractAccount)
       this.manageContract = []
       try {
-        let data = await this.getDocuments({
+        let data = await documentsApi.getDocuments({
           ...this.params,
+          contractAccount: _contractAccount,
           search: this.params.search ? this.params.search.toLowerCase() : undefined
         })
         let tableRows = data.rows[1].content_groups
