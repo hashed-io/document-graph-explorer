@@ -14,6 +14,7 @@ class DocumentsApi extends BaseEosApi {
         tableId: 'id'
       }
     )
+    this.contractAccount = _contractAccount
   }
 
   /** *
@@ -30,7 +31,7 @@ class DocumentsApi extends BaseEosApi {
   async StoreEntry ({ values }) {
     const actions = [
       {
-        account: Contracts.CONTRACT_DOC,
+        account: this.contractAccount,
         name: 'storeentry',
         data: {
           values: values
@@ -99,15 +100,15 @@ class DocumentsApi extends BaseEosApi {
    * @param {limit , search[Input to search], customOffset} param0
    * @returns
    */
-  async getDocuments ({ limit, search, customOffset, contractAccount }) {
+  async getDocuments ({ limit, search, customOffset }) {
     console.log('*********************')
-    console.log({ limit, search, customOffset, contractAccount })
+    console.log({ limit, search, customOffset, contractAccount: this.contractAccount })
     console.log('*********************')
     let upperBound = search || ''
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
 
     const rounds = await this._getTableRows({
-      scope: contractAccount,
+      scope: this.contractAccount,
       // indexPosition: 3,
       lowerBound: customOffset,
       upperBound,
