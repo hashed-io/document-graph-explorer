@@ -177,9 +177,11 @@ export default {
     },
     async saveData (values) {
       console.log(values)
+      var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
         await this.DocumentApi.StoreEntry({
-          values
+          values,
+          deleteLabels
         })
         this.showSuccessMsg('Data stored correctly')
         this.loadData()
