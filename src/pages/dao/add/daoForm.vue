@@ -12,65 +12,37 @@
           div.container
             businessName(ref="businessStepComponent" :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit' )
-              .col(style='text-align:end;')
-                q-btn(@click="validateStep" color="primary" label="continue" )
+            q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
-              .col(style='text-align:end;')
-                q-btn(@click="validateStep" color="primary" label="continue" )
+            q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
-              .col(style='text-align:end;')
-                q-btn(@click="validateStep" color="primary" label="continue" )
+            q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
-              .col(style='text-align:end;')
-                q-btn(@click ="validateStep" color="primary" label="continue" )
+            q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
-              .col(style='text-align:end;')
-                q-btn(@click ="validateStep" color="primary" label="continue" )
+            q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
-              .col(style='text-align:end;')
-                q-btn(@click ="validateStep" color="primary" label="continue" )
+            q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
-            .row
-              .col
-                q-input(v-model='daoName' label='Dao Name' :readonly='isEdit')
-              .col(style='text-align:end;')
-                q-btn(@click ="validateStep" color="primary" label="continue")
+            q-btn(@click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')

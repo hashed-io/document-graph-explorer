@@ -11,21 +11,9 @@
       li
         strong
           a(href='https://sos.wyo.gov/Forms/WyoBiz/Registered_Offices_and_Agents_Act_Chapter_28.pdf' style="color:#AC2734;") Registered Offices and Agents Act
-    .container
-      q-form(@submit='searchAgent', @reset='onReset' ref="searchAgent")
-        .row.justify-center
-          .col.q-pa-md
-            q-input(v-model='dataForSearch.firstName', filled, label="First Name", label-stacked)
-          .col.q-pa-md
-            q-input(v-model='dataForSearch.middleName', filled, label="Middle Name", label-stacked)
-          .col.q-pa-md
-            q-input(v-model='dataForSearch.lastName', filled, label="Last Name", label-stacked)
-        .row.justify-center
-          .col
-            q-input.q-pa-md(v-model='dataForSearch.organization', filled, label="Organization Name", label-stacked)
-        .container.q-pa-md
-          q-btn(label='Search' type='submit' color='primary' @click='dialog =!dialog')
-          q-btn(label='Clear' type='reset' flat class='q-ml-sm' color='primary')
+    .container.q-pa-md
+      q-btn(label='Search' type='submit' color='primary' @click='searchAgent')
+
   .col
     q-card(class='column')
       q-card-section.bg-primary.text-white
@@ -86,32 +74,27 @@
           q-btn(dense flat icon='close' v-close-popup)
             q-tooltip Close
         q-card-section
-        div(v-if='agentsData.length === 0')
-          .row.justify-center.q-pa-xl
-              q-spinner(color='primary' size='5em')
-        div(v-else)
-          q-item.q-pb-md
-            q-item-section(top)
-              q-item-label
-                strong.text-h6 Agent Code
-            q-item-section(top)
-              q-item-label
-                strong.text-h6 Agent Name
-            q-item-section(top)
-              q-item-label
-                strong.text-h6 Agent Address
-          div(v-for='(agent,indexAgent) in agentsData' :key='agent.number')
-            .itemsList
-              q-item(clickable v-ripple @click='selectedAgent(indexAgent)' :active="idAgentSelect === indexAgent"  active-class='menuLinkActive')
-                q-item-section(top)
-                  q-item-label
-                    strong.item {{agent.number}}
-                q-item-section(top)
-                  q-item-label
-                    p.item {{agent.name.firstName}}&nbsp;{{agent.name.lastName}}
-                q-item-section(top)
-                  q-item-label
-                  p.item {{agent.address.line1}}, {{agent.city}},{{agent.postCode}}
+        #container.q-px-xl.q-pb-md
+          q-table.q-mb-sm(
+            title: 'Agents'
+            :data="agentsData"
+            :columns="columns"
+            :loading = "loading"
+            row-key="number"
+            flat
+            dense
+            :rows-per-page-options="[0]"
+            class="sticky-virtscroll-table"
+            ref="table"
+            table-header-class="hdTable"
+            :hide-pagination="true"
+            :filter="search"
+            @row-click='selectRow'
+          )
+            template(v-slot:top-right)
+              q-input(borderless, dense, debounce='300', v-model='search', placeholder='Search')
+                template(v-slot:append)
+                  q-icon(name='search')
 
 </template>
 
@@ -165,14 +148,48 @@ export default {
       responseSearch: {
         selectedAgent: null
       },
-      agentsData: []
+      agentsData: [],
+      columns: [
+        {
+          name: 'number',
+          label: 'Number',
+          align: 'left',
+          field: row => row.number,
+          sortable: true
+        },
+        {
+          name: 'name',
+          label: 'Name',
+          align: 'left',
+          field: row => row.name.firstName + ' ' + row.name.lastName,
+          sortable: true
+        },
+        {
+          name: 'address',
+          label: 'Address',
+          align: 'left',
+          field: row => row.address.line1 + ',' + row.city + ',' + row.postCode,
+          style: 'max-width: 200px',
+          sortable: true
+        }
+      ],
+      search: '',
+      loading: false
     }
   },
   beforeMount () {
     this.agentForm = JSON.parse(JSON.stringify(this.agentObject))
   },
   methods: {
+    selectRow (evt, row) {
+      console.log(row)
+      const isEqual = (element) => element.number === row.number
+      let id = this.agentsData.findIndex(isEqual)
+      this.selectedAgent(id)
+    },
     async searchAgent () {
+      this.dialog = !this.dialog
+      this.loading = true
       this.agentsData = []
       const searchForm = this.dataForSearch
       console.log(searchForm)
@@ -247,6 +264,7 @@ export default {
         }, 300)
       })
       console.log('Datos obtenidos')
+      this.loading = false
     },
     onReset () {
       const object = this.dataForSearch

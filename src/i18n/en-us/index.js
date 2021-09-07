@@ -61,6 +61,11 @@ export default {
       editDao: 'Edit',
       viewData: 'See data in IPFS'
     },
+    agent: {
+      name: 'Name',
+      field: 'Address 1',
+      address: 'Address 2'
+    },
     login: {
       getApp: 'Download the app',
       title: 'Select your wallet',

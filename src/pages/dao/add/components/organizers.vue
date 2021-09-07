@@ -55,7 +55,7 @@
                   q-item-label(caption='', lines='1')
                     span.text-subtitle1
                       | type: &nbsp;
-                      b {{organizer.officerType}}
+                      b {{organizer.typeName}}
                   q-item-label.q-mt-xs.text-body2.text-weight-bold.text-primary.text-uppercase(lines='1')
                     span Address:  &nbsp;
                       b {{organizer.addressInfo}}
@@ -98,7 +98,7 @@ export default {
       },
       options: [
         {
-          label: 'physical person',
+          label: 'Physical person',
           value: 'physical'
         },
         {
@@ -142,10 +142,10 @@ export default {
         } else {
           this.organizer.name = this.firstName + ' ' + this.middleName + ' ' + this.lastName
         }
-        _typeName = 'fullName'
+        _typeName = 'Physical person'
       } else {
         this.organizer.name = this.organization
-        _typeName = 'organization'
+        _typeName = 'Legal person'
       }
       let _interface = {
         'name': this.organizer.name,
@@ -195,12 +195,18 @@ export default {
         this.organizer[key] = _objectOrganizer[key]
       }
       // typeName
-      if (_objectOrganizer.typeName === 'fullName') {
+      if (_objectOrganizer.typeName === 'Physical person') {
         this.checkbox = 'physical'
         const nameArr = _objectOrganizer.name.split(' ')
-        this.firstName = nameArr[0]
-        this.middleName = nameArr[1]
-        this.lastName = nameArr[2]
+        if (nameArr.length === 3) {
+          this.firstName = nameArr[0]
+          this.middleName = nameArr[1]
+          this.lastName = nameArr[2]
+        } else {
+          this.firstName = nameArr[0]
+          this.middleName = ''
+          this.lastName = nameArr[1]
+        }
       } else {
         this.checkbox = 'legal'
         this.organization = this.organizer.name
