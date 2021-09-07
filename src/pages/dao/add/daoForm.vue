@@ -68,7 +68,7 @@ import additionalArticlesComponent from '../add/components/additionalArticles.vu
 import confirmationComponent from '../add/components/confirmation.vue'
 import signatureComponent from '../add/components/signature.vue'
 import paymentComponent from '../add/components/payment.vue'
-import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs'
 export default {
   name: 'registerdao',
@@ -92,8 +92,8 @@ export default {
   },
   computed: {
     ...mapState('accounts', ['account']),
-    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore']),
-    ...mapGetters('accounts', ['account'])
+    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
+    // ...mapGetters('accounts', ['account'])
   },
   data () {
     return {
@@ -251,7 +251,7 @@ export default {
       // Make JSON File to send IPFS
       const valid = this.$refs.daoNameInput.validate()
       if (valid) {
-        console.log('Saving data...')
+        console.log('Saving data...', this.form)
         try {
           if (this.form !== '') {
             let data = this.form
@@ -264,7 +264,7 @@ export default {
             ipfs: this.typeCid
           })
           // asdsfa
-          this.deployContract({ deployContract: this.account })
+          await this.deployContract({ deployContract: this.account })
           this.$router.push('dashboard')
         } catch (e) {
           console.log(e)
