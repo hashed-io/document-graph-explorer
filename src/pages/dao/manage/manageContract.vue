@@ -184,13 +184,30 @@ export default {
     },
     async saveData (values) {
       console.log(values)
-      var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
+      var labels = JSON.parse(JSON.stringify(this.deleteLabels))
+      console.log(labels)
       try {
-        await this.DocumentApi.StoreEntry({
-          values,
-          deleteLabels
-        })
+        if (this.deleteLabels.length > 0 && values.length > 0) {
+          console.log('two')
+          await this.DocumentApi.StoreAndDeleteEntry({
+            values,
+            labels
+          })
+        } else if (this.deleteLabels.length === 0 && values.length > 0) {
+          console.log('only store')
+          await this.DocumentApi.StoreEntry({
+            values
+          })
+        } else if (this.deleteLabels.length > 0 && values.length === 0) {
+          console.log('only delete')
+          await this.DocumentApi.DelEntry({
+            labels
+          })
+        }
         this.showSuccessMsg('Data stored correctly')
+        this.newLabels = []
+        this.updateLabels = []
+        this.deleteLabels = []
         this.loadData()
       } catch (e) {
         this.showErrorMsg('Fail to save DAO information')
@@ -278,7 +295,9 @@ export default {
       this.$refs.labelForm.reset()
     },
     async modifiedData () {
-      let rawData = JSON.parse(JSON.stringify(this.manageContract))
+      // join newLabels and updateLabels
+      Array.prototype.push.apply(this.newLabels, this.updateLabels)
+      let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
         if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
           entry.value[1] = entry.value[1].toLowerCase()
