@@ -1,7 +1,17 @@
 import BaseEosApi from './BaseEosApi'
+import fs from 'fs'
+import { join } from 'path'
+import { Serialize } from 'eosjs'
+// import {} from 'eos'
+// const { Serialize } = require('eosjs')
+
+// const fs = require('fs')
+// const { join } = require('path')
+
 class DocumentsApi extends BaseEosApi {
   constructor ({
     eosApi,
+    mEosApi,
     notifier
   }, _contractAccount) {
     super(
@@ -13,7 +23,8 @@ class DocumentsApi extends BaseEosApi {
         tableId: 'id'
       }
     )
-    this.contractAccount = _contractAccount
+    this.mEosApi = mEosApi
+    // this.contractAccount = _contractAccount
   }
 
   /** *
@@ -141,6 +152,161 @@ class DocumentsApi extends BaseEosApi {
       table: 'documents'
     })
     return rounds
+  }
+  /**
+   * ============================ DEPLOY CONTRACT ================
+   */
+
+  /**
+   * GetWasmAbi
+   * @param {accountName} contractName
+   * @returns
+   */
+  async getWasmAbi (contractName) {
+    const codePath = join(__dirname, `../compiled/${contractName}.wasm`)
+    const abiPath = join(__dirname, `../compiled/${contractName}.abi`)
+
+    const code = new Promise(resolve => {
+      fs.readFile(codePath, (_, r) => resolve(r))
+    })
+    const abi = new Promise(resolve => {
+      fs.readFile(abiPath, (_, r) => resolve(r))
+    })
+
+    return Promise.all([code, abi]).then(([code, abi]) => ({ code, abi }))
+  }
+
+  /**
+   * Set Code
+   * @returns
+   */
+  async setCode ({ account, code, vmtype, vmversion }, { authorization }) {
+    const wasmHexString = code.toString('hex')
+    // let [actor, permission] = authorization.split('@')
+
+    const actions = [{
+      account: 'eosio',
+      name: 'setcode',
+      // authorization: [{
+      //   actor,
+      //   permission
+      // }],
+      data: {
+        account,
+        code: wasmHexString,
+        vmtype,
+        vmversion
+      }
+    }]
+
+    const res = await this.eosApi.signTransaction(actions)
+
+    // const res = await api.transact({
+    //   actions: [{
+    //     account: 'eosio',
+    //     name: 'setcode',
+    //     authorization: [{
+    //       actor,
+    //       permission
+    //     }],
+    //     data: {
+    //       account,
+    //       code: wasmHexString,
+    //       vmtype,
+    //       vmversion
+    //     }
+    //   }]
+    // },
+    // {
+    //   blocksBehind: 3,
+    //   expireSeconds: 30
+    // })
+
+    return res
+  }
+
+  /**
+   * Set Abi
+   * @returns
+   */
+  async setAbi ({ account, abi }, { authorization }) {
+    const buffer = new Serialize.SerialBuffer({
+      textEncoder: this.mEosApi.textEncoder,
+      textDecoder: this.mEosApi.textDecoder
+    })
+
+    const abiDefinitions = this.mEosApi.abiTypes.get('abi_def')
+    abi = abiDefinitions.fields.reduce(
+      (acc, { name: fieldName }) =>
+        Object.assign(acc, { [fieldName]: acc[fieldName] || [] }),
+      abi
+    )
+
+    abiDefinitions.serialize(buffer, abi)
+    const serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
+
+    // let [actor, permission] = authorization.split('@')
+
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'setabi',
+        // authorization: [{
+        //   actor,
+        //   permission
+        // }],
+        data: {
+          account,
+          abi: serializedAbiHexString
+        }
+      }
+    ]
+
+    const res = await this.eosApi.signTransaction(actions)
+
+    // const res = await api.transact({
+    //   actions: [{
+    //     account: 'eosio',
+    //     name: 'setabi',
+    //     authorization: [{
+    //       actor,
+    //       permission
+    //     }],
+    //     data: {
+    //       account,
+    //       abi: serializedAbiHexString
+    //     }
+    //   }]
+    // },
+    // {
+    //   blocksBehind: 3,
+    //   expireSeconds: 30
+    // })
+
+    return res
+  }
+
+  /**
+   * Deploy contract
+   */
+  async deployContract () {
+    const { code: wasm, abi } = await this.getWasmAbi(this.contractAccount)
+
+    await this.setCode({
+      account: this.contractAccount,
+      code: wasm,
+      vmtype: 0,
+      vmversion: 0
+    }, {
+      authorization: `${this.contractAccount}@active`
+    })
+
+    await this.setAbi({
+      account: this.contractAccount,
+      abi: JSON.parse(abi)
+    }, {
+      authorization: `${this.contractAccount}@active`
+    })
   }
 }
 

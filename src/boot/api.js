@@ -44,8 +44,8 @@ const getTableRows = async function (options) {
 
 export default ({ store }) => {
   const rpc = new JsonRpc(`${process.env.NETWORK_PROTOCOL}://${process.env.NETWORK_HOST}:${process.env.NETWORK_PORT}`)
-  store['$defaultApi'] = new Api({ rpc, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
-
+  const mEosApi = new Api({ rpc, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
+  store['$defaultApi'] = mEosApi
   // store['$api'] = {
   //   signTransaction: signTransaction.bind(store),
   //   getTableRows: getTableRows.bind(store)
@@ -58,7 +58,8 @@ export default ({ store }) => {
     eosApi: api
   })
   const documentsApi = new DocumentsApi({
-    eosApi: api
+    eosApi: api,
+    mEosApi
   }, Contracts.CONTRACT_DOC)
 
   store['$api'] = api
