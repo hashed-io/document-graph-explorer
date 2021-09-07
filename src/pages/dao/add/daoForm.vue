@@ -93,6 +93,7 @@ export default {
   computed: {
     ...mapState('accounts', ['account']),
     ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
+    // ...mapGetters('accounts', ['account'])
   },
   data () {
     return {
@@ -169,7 +170,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveDaoData', 'updateDaoData']),
+    ...mapActions('dao', ['saveDaoData', 'updateDaoData', 'deployContract']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
@@ -250,21 +251,20 @@ export default {
       // Make JSON File to send IPFS
       const valid = this.$refs.daoNameInput.validate()
       if (valid) {
-        console.log('Saving data...')
+        console.log('Saving data...', this.form)
         try {
           if (this.form !== '') {
             let data = this.form
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
-        } catch (e) {
-          console.log(e)
-        }
-        try {
+
           await this.saveDaoData({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
           })
+          // asdsfa
+          await this.deployContract({ deployContract: this.account })
           this.$router.push('dashboard')
         } catch (e) {
           console.log(e)

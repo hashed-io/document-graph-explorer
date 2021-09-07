@@ -91,11 +91,18 @@ export default {
     }
   },
   async mounted () {
-    let _contractAccount = this.dao.dao
-    let _api = this.$store.$apiMethods
-    const documentsApi = await new DocumentsApi({ eosApi: _api }, _contractAccount)
-    this.DocumentApi = documentsApi
-    this.loadData()
+    try {
+      let _contractAccount = this.dao.dao
+      let _api = this.$store.$apiMethods
+      let mEosApi = this.$store.$defaultApi
+      const documentsApi = await new DocumentsApi({ eosApi: _api, mEosApi }, _contractAccount)
+      this.DocumentApi = documentsApi
+      console.log('documentApi created', this.DocumentApi)
+      this.loadData()
+    } catch (e) {
+      console.error('An error ocurred while trying to create Document Api', e)
+      this.showErrorMsg(e || e.message)
+    }
   },
   data () {
     return {

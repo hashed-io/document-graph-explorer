@@ -1,7 +1,17 @@
 import BaseEosApi from './BaseEosApi'
+// import fs from 'fs'
+// import { join } from 'path'
+// import { Serialize } from 'eosjs'
+// import {} from 'eos'
+// const { Serialize } = require('eosjs')
+
+// const fs = require('fs')
+// const { join } = require('path')
+
 class DocumentsApi extends BaseEosApi {
   constructor ({
     eosApi,
+    mEosApi,
     notifier
   }, _contractAccount) {
     super(
@@ -13,7 +23,8 @@ class DocumentsApi extends BaseEosApi {
         tableId: 'id'
       }
     )
-    this.contractAccount = _contractAccount
+    this.mEosApi = mEosApi
+    // this.contractAccount = _contractAccount
   }
 
   /** *
