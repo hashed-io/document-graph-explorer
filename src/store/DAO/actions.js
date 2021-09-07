@@ -37,3 +37,15 @@ export const getDaos = async function ({ commit }, params) {
     commit('general/setIsLoading', false, { root: true })
   }
 }
+
+export const deployContract = async function ({ commit }, { documentsApi }) {
+  try {
+    const api = documentsApi
+    const response = await api.deployContract()
+    console.log('deployContract', response)
+    return response
+  } catch (e) {
+    console.error('An error ocurred while trying to reset', e)
+    throw new Error(e)
+  }
+}

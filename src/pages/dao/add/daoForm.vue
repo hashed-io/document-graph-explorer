@@ -68,7 +68,7 @@ import additionalArticlesComponent from '../add/components/additionalArticles.vu
 import confirmationComponent from '../add/components/confirmation.vue'
 import signatureComponent from '../add/components/signature.vue'
 import paymentComponent from '../add/components/payment.vue'
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs'
 export default {
   name: 'registerdao',
@@ -92,7 +92,8 @@ export default {
   },
   computed: {
     ...mapState('accounts', ['account']),
-    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
+    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore']),
+    ...mapGetters('accounts', ['account'])
   },
   data () {
     return {
@@ -169,7 +170,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveDaoData', 'updateDaoData']),
+    ...mapActions('dao', ['saveDaoData', 'updateDaoData', 'deployContract']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
@@ -256,15 +257,14 @@ export default {
             let data = this.form
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
-        } catch (e) {
-          console.log(e)
-        }
-        try {
+
           await this.saveDaoData({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
           })
+          // asdsfa
+          this.deployContract({ deployContract: this.account })
           this.$router.push('dashboard')
         } catch (e) {
           console.log(e)
