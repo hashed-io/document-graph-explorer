@@ -160,7 +160,9 @@ export default {
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
         this.manageContract.push(JSON.parse(JSON.stringify(this.contract)))
-        this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        if (this.fieldNameEditable) {
+          this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        }
         this.clearContract()
       }
     },
@@ -181,10 +183,20 @@ export default {
       console.log(values)
       var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
-        await this.DocumentApi.StoreEntry({
-          values,
-          deleteLabels
-        })
+        if (deleteLabels.length > 0 && values.length > 0) {
+          await this.DocumentApi.StoreAndDeleteEntry({
+            values,
+            deleteLabels
+          })
+        } else if (deleteLabels.length > 0 && values.length === 0) {
+          await this.DocumentApi.DelEntry({
+            deleteLabels
+          })
+        } else if (deleteLabels.length === 0 && values.length > 0) {
+          await this.DocumentApi.StoreEntry({
+            values
+          })
+        }
         this.showSuccessMsg('Data stored correctly')
         this.loadData()
       } catch (e) {
@@ -193,7 +205,6 @@ export default {
       }
     },
     editRow (index) {
-      console.log(this.newLabels.find(el => el.label === this.manageContract[index].label))
       if (this.newLabels.find(el => el.label === this.manageContract[index].label)) {
         let data = this.manageContract[index]
         this.contract = JSON.parse(JSON.stringify(data))
@@ -210,10 +221,11 @@ export default {
       let index = this.idEdit
       if (!this.fieldNameEditable) {
         // Se guarda en nuevos labels
-        this.newLabels[index] = JSON.parse(JSON.stringify(this.contract))
+        this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        alert('new add')
       } else {
         // Se guarda en labels por actualizar
-        this.updateLabels[index] = JSON.parse(JSON.stringify(this.contract))
+        this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
       }
       this.showSuccessMsg('Label Update')
       this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
@@ -273,7 +285,9 @@ export default {
       this.$refs.labelForm.reset()
     },
     async modifiedData () {
-      let rawData = JSON.parse(JSON.stringify(this.manageContract))
+      console.log({ newLabels: this.newLabels, updateLabels: this.updateLabels })
+      Array.prototype.push.apply(this.newLabels, this.updateLabels)
+      let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
         if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
           entry.value[1] = entry.value[1].toLowerCase()
@@ -294,6 +308,8 @@ export default {
     },
     async loadData () {
       this.manageContract = []
+      this.newLabels = []
+      this.updateLabels = []
       try {
         let data = await this.DocumentApi.getDocuments({
           ...this.params,
