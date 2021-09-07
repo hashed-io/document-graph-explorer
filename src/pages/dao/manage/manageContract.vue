@@ -29,7 +29,8 @@
       q-item-section(top)
         p {{contract.value[0]}}
       q-item-section(top)
-        p {{contract.value[1]}}
+        p(v-if="contract.value[0] === 'file'") {{'File'}}
+        p(v-else )  {{contract.value[1]}}
       q-item-section(side top)
         .row.q-gutter-md.justify-end
             q-btn( color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
@@ -79,6 +80,7 @@ import BrowserIpfs from '~/services/BrowserIpfs'
 import { DocumentsApi } from '~/services'
 import { validation } from '~/mixins/validation'
 import { mapActions } from 'vuex'
+import { date } from 'quasar'
 export default {
   name: 'managecontract',
   mixins: [validation],
@@ -138,7 +140,7 @@ export default {
         },
         {
           label: 'File',
-          value: 'string'
+          value: 'file'
         }
       ],
       params: {
@@ -254,7 +256,7 @@ export default {
           let typeCid = await BrowserIpfs.addFile(blob)
           self.contract.ipfs = typeCid
           self.contract.loadingState = false
-          self.getFileFromIPFS(self.contract.ipfs, _row.type)
+          // self.getFileFromIPFS(self.contract.ipfs, _row.type)
         } catch (e) {
           alert(e)
           self.contract.ipfs = undefined
@@ -295,6 +297,9 @@ export default {
         if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
           entry.value[1] = entry.value[1].toLowerCase()
         }
+        if (entry.value[0] === 'file') {
+          entry.value[0] = 'string'
+        }
         if (entry.ipfs === undefined) {
           delete entry.ipfs
         } else {
@@ -319,6 +324,13 @@ export default {
         if (tableRows.length === 2) {
           tableRows[1].forEach(element => {
             if (counter > 1) {
+              let type = element.value[0]
+              switch (type) {
+                case 'time_point':
+                  const timeStamp = new Date(element.value[1])
+                  element.value[1] = date.formatDate(timeStamp, 'MM/DD/YYYY')
+                  break
+              }
               this.manageContract.push(element)
             }
             // flag = false
