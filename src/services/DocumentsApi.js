@@ -28,20 +28,7 @@ class DocumentsApi extends BaseEosApi {
    * @returns
    * contractAccount
    */
-  async StoreEntry ({ values }) {
-    const actions = [
-      {
-        account: this.contractAccount,
-        name: 'storeentry',
-        data: {
-          values: values
-        }
-      }
-    ]
-    console.log('actions: ', actions)
-    return this.eosApi.signTransaction(actions)
-  }
-  async StoreAndDeleteEntry ({ values, labels }) {
+  async StoreEntry ({ values, deleteLabels }) {
     const actions = [
       {
         account: this.contractAccount,
@@ -54,7 +41,7 @@ class DocumentsApi extends BaseEosApi {
         account: this.contractAccount,
         name: 'delentry',
         data: {
-          labels: labels
+          label: deleteLabels
         }
       }
     ]
@@ -66,13 +53,13 @@ class DocumentsApi extends BaseEosApi {
    * @param { label (string) }
    * @returns
    */
-  async DelEntry ({ labels }) {
+  async DelEntry ({ _label }) {
     const actions = [
       {
         account: this.contractAccount,
         name: 'delentry',
         data: {
-          labels: labels
+          label: _label
         }
       }
     ]
