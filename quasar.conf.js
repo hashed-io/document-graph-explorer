@@ -18,6 +18,7 @@ module.exports = function (ctx) {
       'mixins',
       'ga'
     ],
+    // node: { fs: 'empty' },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: [
@@ -133,7 +134,9 @@ module.exports = function (ctx) {
         WEBSERVICES_API_KEY: process.env.WEBSERVICES_API_KEY,
         BLOCKCHAIN_EXPLORER: process.env.BLOCKCHAIN_EXPLORER,
         GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
-        IPFS_URL: process.env.IPFS_URL
+        IPFS_URL: process.env.IPFS_URL,
+        CODE_CONTRACT_URL: process.env.CODE_CONTRACT_URL,
+        ABI_CONTRACT_URL: process.env.ABI_CONTRACT_URL
       },
       scopeHoisting: true,
       vueRouterMode: 'history',

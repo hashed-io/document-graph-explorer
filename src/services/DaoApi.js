@@ -3,11 +3,16 @@ import BaseEosApi from './BaseEosApi'
 import { Contracts } from '~/const/Contracts'
 import eosjsAccountName from 'eosjs-account-name'
 import { Serialize } from 'eosjs'
-import fs from 'fs'
+// import fs from 'fs'
+// // import fs from 'fs'
+// const fs = require('fs/promises')
+// import * as codeF from './../contracts/daoinf.wasm'
+// import abiF from '~/statics/contractsFile/daoinf.abi'
 
 class DaoApi extends BaseEosApi {
   constructor ({
     eosApi,
+    mEosApi,
     notifier
   }) {
     super(
@@ -19,6 +24,7 @@ class DaoApi extends BaseEosApi {
         tableId: 'id'
       }
     )
+    this.mEosApi = mEosApi
   }
 
   /** *
@@ -90,20 +96,35 @@ class DaoApi extends BaseEosApi {
    * @param {accountName} contractName
    * @returns
    */
-  async getWasmAbi (contractName) {
+  async getWasmAbi () {
     // const codePath = join(__dirname, `../compiled/${contractName}.wasm`)
     // const abiPath = join(__dirname, `../compiled/${contractName}.abi`)
-    const codePath = '~/statics/contracts/daoinf.wasm'
-    const abiPath = '~/statics/contracts/daoinf.abi'
+    const codePath = Contracts.CODE_CONTRACT_URL
+    const abiPath = Contracts.ABI_CONTRACT_URL
+    // console.warn('getWas', fs)
+    // const code = new Promise(resolve => {
+    //   fs.readFile(codePath, (_, r) => resolve(r))
+    // })
+    // const abi = new Promise(resolve => {
+    //   fs.readFile(abiPath, (_, r) => resolve(r))
+    // })
+    // const code = codeF
+    // const abi = abiF
+    let code = await fetch(codePath)
+    let abi = await fetch(abiPath)
+    code = await code.arrayBuffer()
+    abi = await abi.json()
+    // console.log(code, abi)
 
-    const code = new Promise(resolve => {
-      fs.readFile(codePath, (_, r) => resolve(r))
-    })
-    const abi = new Promise(resolve => {
-      fs.readFile(abiPath, (_, r) => resolve(r))
-    })
+    // await fetch(codePath).then(r => r.text()).then(t => console.log(t))
 
     return Promise.all([code, abi]).then(([code, abi]) => ({ code, abi }))
+  }
+
+  buf2hex (buffer) { // buffer is an ArrayBuffer
+    return [...new Uint8Array(buffer)]
+      .map(x => x.toString(16).padStart(2, '0'))
+      .join('')
   }
 
   /**
@@ -111,7 +132,10 @@ class DaoApi extends BaseEosApi {
    * @returns
    */
   async setCode ({ account, code, vmtype, vmversion }, { authorization }) {
-    const wasmHexString = code.toString('hex')
+    console.log('setCode before', code)
+    // const wasmHexString = code.toString('hex')
+    const wasmHexString = this.buf2hex(code)
+    console.log('setCode after', wasmHexString)
     let [actor, permission] = authorization.split('@')
 
     const actions = [{
@@ -130,27 +154,6 @@ class DaoApi extends BaseEosApi {
     }]
 
     const res = await this.eosApi.signTransaction(actions)
-
-    // const res = await api.transact({
-    //   actions: [{
-    //     account: 'eosio',
-    //     name: 'setcode',
-    //     authorization: [{
-    //       actor,
-    //       permission
-    //     }],
-    //     data: {
-    //       account,
-    //       code: wasmHexString,
-    //       vmtype,
-    //       vmversion
-    //     }
-    //   }]
-    // },
-    // {
-    //   blocksBehind: 3,
-    //   expireSeconds: 30
-    // })
 
     return res
   }
@@ -194,25 +197,6 @@ class DaoApi extends BaseEosApi {
 
     const res = await this.eosApi.signTransaction(actions)
 
-    // const res = await api.transact({
-    //   actions: [{
-    //     account: 'eosio',
-    //     name: 'setabi',
-    //     authorization: [{
-    //       actor,
-    //       permission
-    //     }],
-    //     data: {
-    //       account,
-    //       abi: serializedAbiHexString
-    //     }
-    //   }]
-    // },
-    // {
-    //   blocksBehind: 3,
-    //   expireSeconds: 30
-    // })
-
     return res
   }
 
@@ -221,7 +205,9 @@ class DaoApi extends BaseEosApi {
    */
   async deployContract ({ accountName }) {
     console.log('deployContract', accountName)
+    // const { abi } = await this.getWasmAbi(accountName)
     const { code: wasm, abi } = await this.getWasmAbi(accountName)
+    // const { code: wasm } = await this.getWasmAbi(accountName)
 
     await this.setCode({
       account: accountName,
@@ -234,7 +220,7 @@ class DaoApi extends BaseEosApi {
 
     await this.setAbi({
       account: accountName,
-      abi: JSON.parse(abi)
+      abi: abi
     }, {
       authorization: `${accountName}@active`
     })

@@ -1,5 +1,9 @@
 <template lang="pug">
 #container.q-pa-md
+  q-btn(
+    label="deploy"
+    @click="onClickSee"
+  )
   skeleton-table(v-if="!daos")
   q-table.q-mb-sm(
     v-else
@@ -175,7 +179,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['getDaos']),
+    ...mapActions('dao', ['getDaos', 'deployContract']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     onClickEdit (row) {
       // Send toggle modal
@@ -245,9 +249,10 @@ export default {
       this.setDaoName(daoName)
       this.$router.push('/registerDAO')
     },
-    onClickSee (row) {
-      let url = 'https://ipfs.io/ipfs/' + row.ipfs
-      window.open(url, '_blank')
+    async onClickSee (row) {
+      // let url = 'https://ipfs.io/ipfs/' + row.ipfs
+      await this.deployContract()
+      // window.open(url, '_blank')
     }
   }
 }

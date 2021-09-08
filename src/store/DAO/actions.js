@@ -38,10 +38,11 @@ export const getDaos = async function ({ commit }, params) {
   }
 }
 
-export const deployContract = async function ({ commit }, { documentsApi }) {
+export const deployContract = async function ({ commit }) {
   try {
-    const api = documentsApi
-    const response = await api.deployContract()
+    // const api = documentsApi
+    const accountName = this.getters['accounts/account']
+    const response = await this.$daoApi.deployContract({ accountName })
     console.log('deployContract', response)
     return response
   } catch (e) {
