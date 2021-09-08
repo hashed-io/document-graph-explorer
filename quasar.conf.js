@@ -18,6 +18,7 @@ module.exports = function (ctx) {
       'mixins',
       'ga'
     ],
+    // node: { fs: 'empty' },
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-css
     css: [
