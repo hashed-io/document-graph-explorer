@@ -85,18 +85,19 @@ export default {
     paymentComponent
   },
   created () {
+    this.daoName = this.account
     if (this.isEdit) {
-      this.daoName = this.daoNameStore
       this.form = JSON.parse(JSON.stringify(this.formStore))
     }
   },
   computed: {
     ...mapState('accounts', ['account']),
     ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
+    // ...mapGetters('accounts', ['account'])
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -169,7 +170,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveDaoData', 'updateDaoData']),
+    ...mapActions('dao', ['saveDaoData', 'updateDaoData', 'deployContract']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
@@ -250,24 +251,25 @@ export default {
       // Make JSON File to send IPFS
       const valid = this.$refs.daoNameInput.validate()
       if (valid) {
-        console.log('Saving data...')
+        console.log('Saving data...', this.form)
         try {
           if (this.form !== '') {
             let data = this.form
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
-        } catch (e) {
-          console.log(e)
-        }
-        try {
+
           await this.saveDaoData({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
           })
+          // asdsfa
+          await this.deployContract({ deployContract: this.account })
+          this.showSuccessMsg('Save data success')
           this.$router.push('dashboard')
         } catch (e) {
           console.log(e)
+          this.showErrorMsg('Error while saving DAO data. ' + e)
         }
       } else {
         this.showErrorMsg('Fill the DAO Name')
@@ -280,7 +282,9 @@ export default {
           let data = this.form
           this.typeCid = await BrowserIpfs.addAsJson({ data })
         }
+        this.showSuccessMsg('Data saved in IPFS')
       } catch (e) {
+        this.showErrorMsg('Error while saving the data in IPFS. ' + e)
         console.log(e)
       }
       var self = this
@@ -289,11 +293,13 @@ export default {
           dao: this.daoName.toLowerCase(),
           ipfs: this.typeCid
         })
+        this.showSuccessMsg('Data updated correctly')
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
         self.$router.push('dashboard')
       } catch (e) {
+        this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e)
       }
     }
