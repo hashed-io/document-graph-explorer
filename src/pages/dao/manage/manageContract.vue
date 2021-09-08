@@ -102,7 +102,7 @@ export default {
       console.log('documentApi created', this.DocumentApi)
       this.loadData()
     } catch (e) {
-      console.error('An error ocurred while trying to create Document Api', e)
+      console.error('An error ocurred while trying to create Document Api. ' + e)
       this.showErrorMsg(e || e.message)
     }
   },
@@ -207,12 +207,20 @@ export default {
             values
           })
         }
+        this.resetLabelsArray()
         this.showSuccessMsg('Data stored correctly')
         this.loadData()
       } catch (e) {
-        this.showErrorMsg('Fail to save DAO information')
-        console.error('An error ocurred while trying to save Data', e)
+        this.resetLabelsArray()
+        this.showErrorMsg('Fail to save DAO information ' + e)
+        console.error('An error ocurred while trying to save Data ' + e)
       }
+    },
+    resetLabelsArray () {
+      this.manageContract = []
+      this.deleteLabels = []
+      this.newLabels = []
+      this.updateLabels = []
     },
     editRow (index) {
       if (this.newLabels.find(el => el.label === this.manageContract[index].label)) {
@@ -261,9 +269,10 @@ export default {
           let typeCid = await BrowserIpfs.addFile(blob)
           self.contract.loadingState = false
           self.contract.ipfs = typeCid
+          this.showSuccessMsg('File loaded success')
           // self.getFileFromIPFS(self.contract.ipfs, _row.type)
         } catch (e) {
-          alert(e)
+          this.showErrorMsg('Error ocurred while file was uploaded.' + e)
           self.contract.ipfs = undefined
           self.contract.loadingState = false
         }
@@ -344,9 +353,9 @@ export default {
             counter++
           })
         }
-        this.showSuccessMsg('Data obtained correctly')
+        // this.showSuccessMsg('Data loaded success')
       } catch (e) {
-        this.showErrorMsg('Fail to load DAO information. ' + e.json.error.details[0].message)
+        this.showErrorMsg('Fail to load DAO information. ' + e)
         console.log(e.json.error.details[0].message)
         // this.showErrorMsg(e.json.error.details[0].message)
       }

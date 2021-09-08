@@ -259,16 +259,17 @@ export default {
           }
 
           await this.saveDaoData({
-            // dao: this.daoName.toLowerCase(),
-            // creator: this.account,
+            dao: this.daoName.toLowerCase(),
+            creator: this.account,
             ipfs: this.typeCid
           })
           // asdsfa
-          // await this.deployContract({ deployContract: this.account })
-          // this.$router.push('dashboard')
+          await this.deployContract({ deployContract: this.account })
+          this.showSuccessMsg('Save data success')
+          this.$router.push('dashboard')
         } catch (e) {
-          this.showErrorMsg('Error while saving DAO data. ' + e)
           console.log(e)
+          this.showErrorMsg('Error while saving DAO data. ' + e)
         }
       } else {
         this.showErrorMsg('Fill the DAO Name')
@@ -281,7 +282,9 @@ export default {
           let data = this.form
           this.typeCid = await BrowserIpfs.addAsJson({ data })
         }
+        this.showSuccessMsg('Data saved in IPFS')
       } catch (e) {
+        this.showErrorMsg('Error while saving the data in IPFS. ' + e)
         console.log(e)
       }
       var self = this
@@ -290,11 +293,13 @@ export default {
           dao: this.daoName.toLowerCase(),
           ipfs: this.typeCid
         })
+        this.showSuccessMsg('Data updated correctly')
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
         self.$router.push('dashboard')
       } catch (e) {
+        this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e)
       }
     }
