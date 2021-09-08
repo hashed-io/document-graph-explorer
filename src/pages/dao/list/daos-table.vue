@@ -250,9 +250,8 @@ export default {
       this.$router.push('/registerDAO')
     },
     async onClickSee (row) {
-      // let url = 'https://ipfs.io/ipfs/' + row.ipfs
-      await this.deployContract()
-      // window.open(url, '_blank')
+      let url = 'https://ipfs.io/ipfs/' + row.ipfs
+      window.open(url, '_blank')
     }
   }
 }
