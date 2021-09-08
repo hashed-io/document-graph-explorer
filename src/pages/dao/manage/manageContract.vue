@@ -25,11 +25,14 @@
   #contracts(v-for='(contract, index) in this.manageContract')
     q-item
       q-item-section(top)
-        p {{contract.label}}
+        q-item-label {{contract.label}}
       q-item-section(top)
-        p {{contract.value[0]}}
+        q-item-label(lines='') {{contract.value[0]}}
       q-item-section(top)
-        p {{contract.value[1]}}
+        //- p(v-if="contract.value[0] === 'file' || contract.value[1].length === 59") {{'File'}}
+        q-item-label
+          .containerValue
+            | {{contract.value[1]}}
       q-item-section(side top)
         .row.q-gutter-md.justify-end
             q-btn( color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
@@ -79,6 +82,7 @@ import BrowserIpfs from '~/services/BrowserIpfs'
 import { DocumentsApi } from '~/services'
 import { validation } from '~/mixins/validation'
 import { mapActions } from 'vuex'
+import { date } from 'quasar'
 export default {
   name: 'managecontract',
   mixins: [validation],
@@ -98,7 +102,7 @@ export default {
       console.log('documentApi created', this.DocumentApi)
       this.loadData()
     } catch (e) {
-      console.error('An error ocurred while trying to create Document Api', e)
+      console.error('An error ocurred while trying to create Document Api. ' + e)
       this.showErrorMsg(e || e.message)
     }
   },
@@ -141,11 +145,11 @@ export default {
         },
         {
           label: 'Checksum256',
-          value: 'checsum256'
+          value: 'checksum256'
         },
         {
           label: 'File',
-          value: 'string'
+          value: 'file'
         }
       ],
       params: {
@@ -172,50 +176,57 @@ export default {
     async deleteRow (contract, index) {
       if (contract.label !== null) {
         if (this.newLabels.find(el => el.label === contract.label)) {
-          this.showSuccessMsg('Label ' + contract.label + ' deleted from Front')
+          this.showSuccessMsg('Label ' + contract.label + ' deleted. Save your changes')
           this.manageContract.splice(index, 1)
         } else {
           let label = this.manageContract[index].label
           this.deleteLabels.push(label)
-          this.showSuccessMsg('Label ' + label + ' deleted from Back')
+          this.showSuccessMsg('Label ' + label + ' deleted. Save your changes')
           this.manageContract.splice(index, 1)
         }
       }
     },
     async saveData (values) {
       console.log(values)
-      var labels = JSON.parse(JSON.stringify(this.deleteLabels))
-      console.log(labels)
+      var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
-        if (this.deleteLabels.length > 0 && values.length > 0) {
-          console.log('two')
+        if (deleteLabels.length > 0 && values.length > 0) {
+          console.log('TWO')
           await this.DocumentApi.StoreAndDeleteEntry({
             values,
-            labels
+            deleteLabels
           })
-        } else if (this.deleteLabels.length === 0 && values.length > 0) {
-          console.log('only store')
+        } else if (deleteLabels.length > 0 && values.length === 0) {
+          console.log('Only delete')
+          await this.DocumentApi.DelEntry({
+            deleteLabels
+          })
+        } else if (deleteLabels.length === 0 && values.length > 0) {
+          console.log('Only store')
           await this.DocumentApi.StoreEntry({
             values
           })
-        } else if (this.deleteLabels.length > 0 && values.length === 0) {
-          console.log('only delete')
-          await this.DocumentApi.DelEntry({
-            labels
-          })
+        } else {
+          this.showSuccessMsg('Nothing to save')
+          return
         }
+        this.resetLabelsArray()
         this.showSuccessMsg('Data stored correctly')
-        this.newLabels = []
-        this.updateLabels = []
-        this.deleteLabels = []
         this.loadData()
       } catch (e) {
-        this.showErrorMsg('Fail to save DAO information')
-        console.error('An error ocurred while trying to save Data', e)
+        this.resetLabelsArray()
+        this.loadData()
+        this.showErrorMsg('Fail to save DAO information ' + e)
+        console.error('An error ocurred while trying to save Data ' + e)
       }
     },
+    resetLabelsArray () {
+      this.manageContract = []
+      this.deleteLabels = []
+      this.newLabels = []
+      this.updateLabels = []
+    },
     editRow (index) {
-      console.log(this.newLabels.find(el => el.label === this.manageContract[index].label))
       if (this.newLabels.find(el => el.label === this.manageContract[index].label)) {
         let data = this.manageContract[index]
         this.contract = JSON.parse(JSON.stringify(data))
@@ -232,12 +243,19 @@ export default {
       let index = this.idEdit
       if (!this.fieldNameEditable) {
         // Se guarda en nuevos labels
-        this.newLabels[index] = JSON.parse(JSON.stringify(this.contract))
+        this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
       } else {
         // Se guarda en labels por actualizar
-        this.updateLabels[index] = JSON.parse(JSON.stringify(this.contract))
+        let prevType = this.manageContract[index].value[0]
+        let prevValue = this.manageContract[index].value[1]
+        console.log({ prevType, prevValue })
+        if (prevType !== this.contract.value[0] || prevValue !== this.contract.value[1]) {
+          this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        } else {
+          this.showSuccessMsg('Valores actualizados iguales')
+        }
       }
-      this.showSuccessMsg('Label Update')
+      // this.showSuccessMsg('Label Update')
       this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
       this.idEdit = null
       this.fieldNameEditable = false
@@ -259,11 +277,12 @@ export default {
         let blob = new Blob([new Uint8Array(_row.target.result)], { type: _row.type })
         try {
           let typeCid = await BrowserIpfs.addFile(blob)
-          self.contract.ipfs = typeCid
           self.contract.loadingState = false
-          self.getFileFromIPFS(self.contract.ipfs, _row.type)
+          self.contract.ipfs = typeCid
+          this.showSuccessMsg('File loaded success')
+          // self.getFileFromIPFS(self.contract.ipfs, _row.type)
         } catch (e) {
-          alert(e)
+          this.showErrorMsg('Error ocurred while file was uploaded.' + e)
           self.contract.ipfs = undefined
           self.contract.loadingState = false
         }
@@ -295,12 +314,15 @@ export default {
       this.$refs.labelForm.reset()
     },
     async modifiedData () {
-      // join newLabels and updateLabels
+      this.clearContract()
       Array.prototype.push.apply(this.newLabels, this.updateLabels)
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
-        if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
+        if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toLowerCase()
+        }
+        if (entry.value[0] === 'file') {
+          entry.value[0] = 'string'
         }
         if (entry.ipfs === undefined) {
           delete entry.ipfs
@@ -315,6 +337,8 @@ export default {
     },
     async loadData () {
       this.manageContract = []
+      this.newLabels = []
+      this.updateLabels = []
       try {
         let data = await this.DocumentApi.getDocuments({
           ...this.params,
@@ -326,16 +350,24 @@ export default {
         if (tableRows.length === 2) {
           tableRows[1].forEach(element => {
             if (counter > 1) {
+              let type = element.value[0]
+              switch (type) {
+                case 'time_point':
+                  const timeStamp = new Date(element.value[1])
+                  element.value[1] = date.formatDate(timeStamp, 'MM/DD/YYYY')
+                  break
+              }
               this.manageContract.push(element)
             }
             // flag = false
             counter++
           })
         }
+        // this.showSuccessMsg('Data loaded success')
       } catch (e) {
-        this.showErrorMsg('Fail to load DAO information')
-        console.error('An error ocurred while trying to load DAO data', e)
-        console.log(e)
+        this.showErrorMsg('Fail to load DAO information. ' + e)
+        console.log(e.json.error.details[0].message)
+        // this.showErrorMsg(e.json.error.details[0].message)
       }
     }
   }
@@ -346,4 +378,7 @@ export default {
 .medium-width
   width: 50vw !important
   max-width: 50vw !important
+.containerValue
+  inline-size:95% !important
+  overflow-wrap: break-word
 </style>

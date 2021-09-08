@@ -85,8 +85,8 @@ export default {
     paymentComponent
   },
   created () {
+    this.daoName = this.account
     if (this.isEdit) {
-      this.daoName = this.daoNameStore
       this.form = JSON.parse(JSON.stringify(this.formStore))
     }
   },
@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -265,9 +265,11 @@ export default {
           })
           // asdsfa
           await this.deployContract({ deployContract: this.account })
+          this.showSuccessMsg('Save data success')
           this.$router.push('dashboard')
         } catch (e) {
           console.log(e)
+          this.showErrorMsg('Error while saving DAO data. ' + e)
         }
       } else {
         this.showErrorMsg('Fill the DAO Name')
@@ -280,7 +282,9 @@ export default {
           let data = this.form
           this.typeCid = await BrowserIpfs.addAsJson({ data })
         }
+        this.showSuccessMsg('Data saved in IPFS')
       } catch (e) {
+        this.showErrorMsg('Error while saving the data in IPFS. ' + e)
         console.log(e)
       }
       var self = this
@@ -289,11 +293,13 @@ export default {
           dao: this.daoName.toLowerCase(),
           ipfs: this.typeCid
         })
+        this.showSuccessMsg('Data updated correctly')
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
         self.$router.push('dashboard')
       } catch (e) {
+        this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e)
       }
     }
