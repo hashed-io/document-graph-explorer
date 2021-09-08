@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -170,7 +170,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveDaoData', 'updateDaoData', 'deployContract']),
+    ...mapActions('dao', ['saveDaoData', 'updateDaoData', 'deployContract', 'initDao']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
@@ -258,14 +258,13 @@ export default {
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
 
-          await this.saveDaoData({
-            dao: this.daoName.toLowerCase(),
-            creator: this.account,
-            ipfs: this.typeCid
-          })
-          // asdsfa
+          // await this.saveDaoData({
+          //   dao: this.daoName.toLowerCase(),
+          //   creator: this.account,
+          //   ipfs: this.typeCid
+          // })
           // await this.deployContract()
-          // await this.deployContract({ deployContract: this.account })
+          await this.initDao()
           this.showSuccessMsg('Deploy contract success')
           this.$router.push('dashboard')
         } catch (e) {

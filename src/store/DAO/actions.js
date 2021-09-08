@@ -1,3 +1,14 @@
+export const initDao = async function ({ commit, dispatch }) {
+  try {
+    const accountName = this.getters['accounts/account']
+    const response = await this.$daoApi.InitDao({ accountName })
+    console.log('initDao', response)
+    return response
+  } catch (e) {
+    console.error('An error ocurred while trying to Init DAO', e)
+    throw new Error(e)
+  }
+}
 export const saveDaoData = async function ({ commit, dispatch }, params) {
   try {
     const accountName = this.getters['accounts/account']

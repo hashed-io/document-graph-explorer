@@ -33,6 +33,17 @@ class DaoApi extends BaseEosApi {
   async _parseRows (rows, modifierProps) {
     return rows
   }
+  async InitDao ({ accountName }) {
+    const actions = [{
+      account: accountName,
+      name: 'initdao',
+      data: {
+        creator: accountName
+      }
+    }]
+    console.log('actions: ', actions)
+    return this.eosApi.signTransaction(actions)
+  }
   /**
    *
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
