@@ -61,7 +61,7 @@
               div(v-else-if="contract.value[0] === 'file'")
                 .row.justify-center
                   .col.q-px-md.col-xs-10.col-sm-10
-                    q-file(v-model='contract.value[1]'  :loading='contract.loadingState' ref='file' id='file' @input='handleFileUpload()' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                    q-file(v-model='contract.value[1]'  :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
                       template(v-slot:before)
                         q-icon(name='folder_open')
                   .col.col-xs-2.col-sm-2
@@ -271,27 +271,22 @@ export default {
       this.contract.value[1] = dateFormatted
       this.$forceUpdate()
     },
-    async handleFileUpload () {
+    async handleFileUpload (e) {
       var self = this
       self.contract.loadingState = true
-      var _row = self.contract.value[1]
-      const reader = new FileReader()
-      reader.onload = async function (_row) {
-        let blob = new Blob([new Uint8Array(_row.target.result)], { type: _row.type })
-        try {
-          let typeCid = await BrowserIpfs.addFile(blob)
-          self.contract.loadingState = false
-          self.contract.ipfs = typeCid
-          // alert(typeCid)
-          // this.showSuccessMsg('File loaded success')
-          // self.getFileFromIPFS(self.contract.ipfs, _row.type)
-        } catch (e) {
-          // this.showErrorMsg('Error ocurred while file was uploaded.' + e)
-          self.contract.ipfs = undefined
-          self.contract.loadingState = false
-        }
+      try {
+        this.loading = true
+        let typeCid = await BrowserIpfs.store(e)
+        console.log(typeCid)
+        self.contract.loadingState = false
+        self.contract.ipfs = typeCid
+      } catch (e) {
+        self.showSuccessMsg('Error ocurred while file was uploaded. ' + e)
+        console.error(e)
+      } finally {
+        self.showSuccessMsg('File uploaded success')
+        this.loading = false
       }
-      reader.readAsArrayBuffer(_row)
     },
     async getFileFromIPFS (index, type) {
       // application/vnd.oasis.opendocument.text
@@ -375,7 +370,7 @@ export default {
         // this.showErrorMsg(e.json.error.details[0].message)
       }
     },
-    openLink (value, value2) {
+    async openLink (value, value2) {
       var link
       if (value) {
         link = value
@@ -384,8 +379,13 @@ export default {
           link = value2.substring(5)
         }
       }
-      let url = 'https://ipfs.io/ipfs/' + link
-      window.open(url, '_blank')
+      const file = await BrowserIpfs.retrieve(link)
+      var blob = new Blob([file.payload], { type: file.type })
+      var url = window.URL.createObjectURL(blob)
+      var a = document.createElement('a')
+      a.href = url
+      a.target = '_blank'
+      a.click()
       console.log({ value, value2 })
     }
   }
