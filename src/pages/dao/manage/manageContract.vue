@@ -171,26 +171,32 @@ export default {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
-        this.manageContract.push(JSON.parse(JSON.stringify(this.contract)))
-        this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
-        this.clearContract()
+        if (this.manageContract.find(el => el.label === this.contract.label)) {
+          this.showErrorMsg('Label duplicate')
+        } else {
+          this.manageContract.push(JSON.parse(JSON.stringify(this.contract)))
+          this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+          this.clearContract()
+        }
       }
     },
     async deleteRow (contract, index) {
       if (contract.label !== null) {
         if (this.newLabels.find(el => el.label === contract.label)) {
-          this.showSuccessMsg('Label ' + contract.label + ' deleted. Save your changes')
           this.manageContract.splice(index, 1)
+          const isEqual = (element) => element.label === contract.label
+          let _index = this.newLabels.findIndex(isEqual)
+          this.newLabels.splice(_index, 1)
+          this.showSuccessMsg('Label ' + contract.label + ' deleted.')
         } else {
           let label = this.manageContract[index].label
           this.deleteLabels.push(label)
-          this.showSuccessMsg('Label ' + label + ' deleted. Save your changes')
           this.manageContract.splice(index, 1)
+          this.showSuccessMsg('Label ' + label + ' deleted. Save your changes')
         }
       }
     },
     async saveData (values) {
-      console.log(values)
       var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
         if (deleteLabels.length > 0 && values.length > 0) {
@@ -386,7 +392,6 @@ export default {
       a.href = url
       a.target = '_blank'
       a.click()
-      console.log({ value, value2 })
     }
   }
 }
