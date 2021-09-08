@@ -85,8 +85,8 @@ export default {
     paymentComponent
   },
   created () {
+    this.daoName = this.account
     if (this.isEdit) {
-      this.daoName = this.daoNameStore
       this.form = JSON.parse(JSON.stringify(this.formStore))
     }
   },
@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -259,14 +259,15 @@ export default {
           }
 
           await this.saveDaoData({
-            dao: this.daoName.toLowerCase(),
-            creator: this.account,
+            // dao: this.daoName.toLowerCase(),
+            // creator: this.account,
             ipfs: this.typeCid
           })
           // asdsfa
-          await this.deployContract({ deployContract: this.account })
-          this.$router.push('dashboard')
+          // await this.deployContract({ deployContract: this.account })
+          // this.$router.push('dashboard')
         } catch (e) {
+          this.showErrorMsg('Error while saving DAO data. ' + e)
           console.log(e)
         }
       } else {

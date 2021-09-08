@@ -4,6 +4,7 @@ export const saveDaoData = async function ({ commit, dispatch }, params) {
     const response = await this.$daoApi.saveDaoData({ ...params, accountName })
     return response
   } catch (e) {
+    this.errorMsg(e)
     console.error('An error ocurred while trying to save dao data', e)
     throw new Error(e)
   }
@@ -14,6 +15,7 @@ export const updateDaoData = async function ({ commit, dispatch }, params) {
     const response = await this.$daoApi.updateDaoData({ ...params, accountName })
     return response
   } catch (e) {
+    this.errorMsg(e)
     console.error('An error ocurred while trying to update dao data', e)
     throw new Error(e)
   }
@@ -30,6 +32,7 @@ export const getDaos = async function ({ commit }, params) {
     })
     // return response
   } catch (e) {
+    this.errorMsg(e)
     console.error('An error ocurred while trying to get users action:', e)
     commit('general/setErrorMsg', e.message || e, { root: true })
     throw new Error(e)
@@ -45,6 +48,7 @@ export const deployContract = async function ({ commit }, { documentsApi }) {
     console.log('deployContract', response)
     return response
   } catch (e) {
+    this.errorMsg(e)
     console.error('An error ocurred while trying to reset', e)
     throw new Error(e)
   }

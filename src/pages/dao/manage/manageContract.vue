@@ -25,12 +25,14 @@
   #contracts(v-for='(contract, index) in this.manageContract')
     q-item
       q-item-section(top)
-        p {{contract.label}}
+        q-item-label {{contract.label}}
       q-item-section(top)
-        p {{contract.value[0]}}
+        q-item-label(lines='') {{contract.value[0]}}
       q-item-section(top)
-        p(v-if="contract.value[0] === 'file' || contract.value[1].length > 20") {{'File'}}
-        p(v-else )  {{contract.value[1]}}
+        //- p(v-if="contract.value[0] === 'file' || contract.value[1].length === 59") {{'File'}}
+        q-item-label
+          .containerValue
+            | {{contract.value[1]}}
       q-item-section(side top)
         .row.q-gutter-md.justify-end
             q-btn( color='red' icon='delete' round size='md' @click='deleteRow(contract, index)')
@@ -143,7 +145,7 @@ export default {
         },
         {
           label: 'Checksum256',
-          value: 'checsum256'
+          value: 'checksum256'
         },
         {
           label: 'File',
@@ -167,21 +169,19 @@ export default {
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
         this.manageContract.push(JSON.parse(JSON.stringify(this.contract)))
-        if (this.fieldNameEditable) {
-          this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
-        }
+        this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
         this.clearContract()
       }
     },
     async deleteRow (contract, index) {
       if (contract.label !== null) {
         if (this.newLabels.find(el => el.label === contract.label)) {
-          this.showSuccessMsg('Label ' + contract.label + ' deleted from Front')
+          this.showSuccessMsg('Label ' + contract.label + ' deleted. Save your changes')
           this.manageContract.splice(index, 1)
         } else {
           let label = this.manageContract[index].label
           this.deleteLabels.push(label)
-          this.showSuccessMsg('Label ' + label + ' deleted from Back')
+          this.showSuccessMsg('Label ' + label + ' deleted. Save your changes')
           this.manageContract.splice(index, 1)
         }
       }
@@ -191,15 +191,18 @@ export default {
       var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
         if (deleteLabels.length > 0 && values.length > 0) {
+          console.log('TWO')
           await this.DocumentApi.StoreAndDeleteEntry({
             values,
             deleteLabels
           })
         } else if (deleteLabels.length > 0 && values.length === 0) {
+          console.log('Only delete')
           await this.DocumentApi.DelEntry({
             deleteLabels
           })
         } else if (deleteLabels.length === 0 && values.length > 0) {
+          console.log('Only store')
           await this.DocumentApi.StoreEntry({
             values
           })
@@ -256,8 +259,8 @@ export default {
         let blob = new Blob([new Uint8Array(_row.target.result)], { type: _row.type })
         try {
           let typeCid = await BrowserIpfs.addFile(blob)
-          self.contract.ipfs = typeCid
           self.contract.loadingState = false
+          self.contract.ipfs = typeCid
           // self.getFileFromIPFS(self.contract.ipfs, _row.type)
         } catch (e) {
           alert(e)
@@ -296,7 +299,7 @@ export default {
       Array.prototype.push.apply(this.newLabels, this.updateLabels)
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
-        if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file')) {
+        if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toLowerCase()
         }
         if (entry.value[0] === 'file') {
@@ -341,10 +344,11 @@ export default {
             counter++
           })
         }
+        this.showSuccessMsg('Data obtained correctly')
       } catch (e) {
-        this.showErrorMsg('Fail to load DAO information')
-        console.error('An error ocurred while trying to load DAO data', e)
-        console.log(e)
+        this.showErrorMsg('Fail to load DAO information. ' + e.json.error.details[0].message)
+        console.log(e.json.error.details[0].message)
+        // this.showErrorMsg(e.json.error.details[0].message)
       }
     }
   }
@@ -355,4 +359,7 @@ export default {
 .medium-width
   width: 50vw !important
   max-width: 50vw !important
+.containerValue
+  inline-size:95% !important
+  overflow-wrap: break-word
 </style>
