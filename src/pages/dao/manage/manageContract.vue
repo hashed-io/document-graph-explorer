@@ -244,7 +244,6 @@ export default {
       if (!this.fieldNameEditable) {
         // Se guarda en nuevos labels
         this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
-        alert('new add')
       } else {
         // Se guarda en labels por actualizar
         let prevType = this.manageContract[index].value[0]
