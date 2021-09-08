@@ -55,7 +55,8 @@ export default ({ store }) => {
     getTableRows: getTableRows.bind(store)
   }
   const daoApi = new DaoApi({
-    eosApi: api
+    eosApi: api,
+    mEosApi
   })
   const documentsApi = new DocumentsApi({
     eosApi: api,
