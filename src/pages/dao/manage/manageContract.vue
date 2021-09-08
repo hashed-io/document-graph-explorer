@@ -206,12 +206,16 @@ export default {
           await this.DocumentApi.StoreEntry({
             values
           })
+        } else {
+          this.showSuccessMsg('Nothing to save')
+          return
         }
         this.resetLabelsArray()
         this.showSuccessMsg('Data stored correctly')
         this.loadData()
       } catch (e) {
         this.resetLabelsArray()
+        this.loadData()
         this.showErrorMsg('Fail to save DAO information ' + e)
         console.error('An error ocurred while trying to save Data ' + e)
       }
@@ -243,9 +247,16 @@ export default {
         alert('new add')
       } else {
         // Se guarda en labels por actualizar
-        this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        let prevType = this.manageContract[index].value[0]
+        let prevValue = this.manageContract[index].value[1]
+        console.log({ prevType, prevValue })
+        if (prevType !== this.contract.value[0] || prevValue !== this.contract.value[1]) {
+          this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        } else {
+          this.showSuccessMsg('Valores actualizados iguales')
+        }
       }
-      this.showSuccessMsg('Label Update')
+      // this.showSuccessMsg('Label Update')
       this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
       this.idEdit = null
       this.fieldNameEditable = false
@@ -304,7 +315,7 @@ export default {
       this.$refs.labelForm.reset()
     },
     async modifiedData () {
-      console.log({ newLabels: this.newLabels, updateLabels: this.updateLabels })
+      this.clearContract()
       Array.prototype.push.apply(this.newLabels, this.updateLabels)
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
