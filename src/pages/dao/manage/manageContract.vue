@@ -79,7 +79,6 @@
         q-btn(label='Save' @click='modifiedData()' color="primary")
 
 </template>
-
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
 import { DocumentsApi } from '~/services'
