@@ -96,11 +96,11 @@ class DaoApi extends BaseEosApi {
    * @param {accountName} contractName
    * @returns
    */
-  async getWasmAbi (contractName) {
+  async getWasmAbi () {
     // const codePath = join(__dirname, `../compiled/${contractName}.wasm`)
     // const abiPath = join(__dirname, `../compiled/${contractName}.abi`)
-    const codePath = 'https://drive.google.com/uc?export=view&id=1krXIiI6qiKhq1F-kZyd7dZZvRpNJp4Sn'
-    const abiPath = 'https://drive.google.com/uc?export=view&id=1L9A1PZFqSATiKwLathsEpOIvU31WmW8A'
+    const codePath = Contracts.CODE_CONTRACT_URL
+    const abiPath = Contracts.ABI_CONTRACT_URL
     // console.warn('getWas', fs)
     // const code = new Promise(resolve => {
     //   fs.readFile(codePath, (_, r) => resolve(r))
@@ -154,26 +154,6 @@ class DaoApi extends BaseEosApi {
     }]
 
     const res = await this.eosApi.signTransaction(actions)
-    // const res = await api.transact({
-    //   actions: [{
-    //     account: 'eosio',
-    //     name: 'setcode',
-    //     authorization: [{
-    //       actor,
-    //       permission
-    //     }],
-    //     data: {
-    //       account,
-    //       code: wasmHexString,
-    //       vmtype,
-    //       vmversion
-    //     }
-    //   }]
-    // },
-    // {
-    //   blocksBehind: 3,
-    //   expireSeconds: 30
-    // })
 
     return res
   }
@@ -217,25 +197,6 @@ class DaoApi extends BaseEosApi {
 
     const res = await this.eosApi.signTransaction(actions)
 
-    // const res = await api.transact({
-    //   actions: [{
-    //     account: 'eosio',
-    //     name: 'setabi',
-    //     authorization: [{
-    //       actor,
-    //       permission
-    //     }],
-    //     data: {
-    //       account,
-    //       abi: serializedAbiHexString
-    //     }
-    //   }]
-    // },
-    // {
-    //   blocksBehind: 3,
-    //   expireSeconds: 30
-    // })
-
     return res
   }
 
@@ -244,18 +205,18 @@ class DaoApi extends BaseEosApi {
    */
   async deployContract ({ accountName }) {
     console.log('deployContract', accountName)
-    const { abi } = await this.getWasmAbi(accountName)
-    // const { code: wasm, abi } = await this.getWasmAbi(accountName)
+    // const { abi } = await this.getWasmAbi(accountName)
+    const { code: wasm, abi } = await this.getWasmAbi(accountName)
     // const { code: wasm } = await this.getWasmAbi(accountName)
 
-    // await this.setCode({
-    //   account: accountName,
-    //   code: wasm,
-    //   vmtype: 0,
-    //   vmversion: 0
-    // }, {
-    //   authorization: `${accountName}@active`
-    // })
+    await this.setCode({
+      account: accountName,
+      code: wasm,
+      vmtype: 0,
+      vmversion: 0
+    }, {
+      authorization: `${accountName}@active`
+    })
 
     await this.setAbi({
       account: accountName,
