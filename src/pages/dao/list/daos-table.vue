@@ -1,9 +1,5 @@
 <template lang="pug">
 #container.q-pa-md
-  q-btn(
-    label="deploy"
-    @click="onClickSee"
-  )
   skeleton-table(v-if="!daos")
   q-table.q-mb-sm(
     v-else

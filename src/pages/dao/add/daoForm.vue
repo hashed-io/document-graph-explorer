@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 1,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -258,12 +258,12 @@ export default {
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
 
-          // await this.saveDaoData({
-          //   dao: this.daoName.toLowerCase(),
-          //   creator: this.account,
-          //   ipfs: this.typeCid
-          // })
-          // await this.deployContract()
+          await this.saveDaoData({
+            dao: this.daoName.toLowerCase(),
+            creator: this.account,
+            ipfs: this.typeCid
+          })
+          await this.deployContract()
           await this.initDao()
           this.showSuccessMsg('Deploy contract success')
           this.$router.push('dashboard')
