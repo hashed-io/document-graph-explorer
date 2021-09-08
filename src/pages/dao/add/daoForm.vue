@@ -264,7 +264,7 @@ export default {
             ipfs: this.typeCid
           })
           // asdsfa
-          // await this.deployContract()
+          await this.deployContract()
           // await this.deployContract({ deployContract: this.account })
           this.showSuccessMsg('Deploy contract success')
           this.$router.push('dashboard')

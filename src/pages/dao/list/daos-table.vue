@@ -2,7 +2,7 @@
 #container.q-pa-md
   q-btn(
     label="deploy"
-    @click="onClickSee"
+    @click="deployTest"
   )
   skeleton-table(v-if="!daos")
   q-table.q-mb-sm(
@@ -252,6 +252,9 @@ export default {
     async onClickSee (row) {
       let url = 'https://ipfs.io/ipfs/' + row.ipfs
       window.open(url, '_blank')
+    },
+    deployTest () {
+      this.deployContract()
     }
   }
 }
