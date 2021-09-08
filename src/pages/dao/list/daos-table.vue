@@ -248,6 +248,9 @@ export default {
     async onClickSee (row) {
       let url = 'https://ipfs.io/ipfs/' + row.ipfs
       window.open(url, '_blank')
+    },
+    deployTest () {
+      this.deployContract()
     }
   }
 }

@@ -110,8 +110,11 @@ class DaoApi extends BaseEosApi {
   async getWasmAbi () {
     // const codePath = join(__dirname, `../compiled/${contractName}.wasm`)
     // const abiPath = join(__dirname, `../compiled/${contractName}.abi`)
-    const codePath = Contracts.CODE_CONTRACT_URL
-    const abiPath = Contracts.ABI_CONTRACT_URL
+    console.log('getWasmAbi', window.location.origin)
+    // const codePath = Contracts.CODE_CONTRACT_URL
+    // const abiPath = Contracts.ABI_CONTRACT_URL
+    const codePath = `${window.location.origin}/statics/contracts/daoinf.wasm`
+    const abiPath = `${window.location.origin}/statics/contracts/daoinf.abi`
     // console.warn('getWas', fs)
     // const code = new Promise(resolve => {
     //   fs.readFile(codePath, (_, r) => resolve(r))
