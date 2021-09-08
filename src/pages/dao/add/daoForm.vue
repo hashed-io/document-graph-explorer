@@ -49,7 +49,7 @@
           q-stepper-navigation
             .row
               .col
-                q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
+                q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' readonly :rules='[rules.required]')
               .col(style='text-align:end;')
                 q-btn(@click='validateStep' color="primary" label="Finish" )
         //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
@@ -97,7 +97,7 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 1,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -264,7 +264,7 @@ export default {
             ipfs: this.typeCid
           })
           // asdsfa
-          await this.deployContract({ deployContract: this.account })
+          // await this.deployContract({ deployContract: this.account })
           this.showSuccessMsg('Save data success')
           this.$router.push('dashboard')
         } catch (e) {

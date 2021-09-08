@@ -29,8 +29,11 @@
       q-item-section(top)
         q-item-label(lines='') {{contract.value[0]}}
       q-item-section(top)
-        //- p(v-if="contract.value[0] === 'file' || contract.value[1].length === 59") {{'File'}}
-        q-item-label
+        template(v-if="contract.value[0] === 'file' || contract.value[1].includes('file:') === true")
+          .row.q-gutter-md
+            q-btn(icon='search' @click='openLink(contract.ipfs, contract.value[1])' color="primary" )
+            p {{'File'}}
+        q-item-label(v-else)
           .containerValue
             | {{contract.value[1]}}
       q-item-section(side top)
@@ -279,10 +282,11 @@ export default {
           let typeCid = await BrowserIpfs.addFile(blob)
           self.contract.loadingState = false
           self.contract.ipfs = typeCid
-          this.showSuccessMsg('File loaded success')
+          // alert(typeCid)
+          // this.showSuccessMsg('File loaded success')
           // self.getFileFromIPFS(self.contract.ipfs, _row.type)
         } catch (e) {
-          this.showErrorMsg('Error ocurred while file was uploaded.' + e)
+          // this.showErrorMsg('Error ocurred while file was uploaded.' + e)
           self.contract.ipfs = undefined
           self.contract.loadingState = false
         }
@@ -321,15 +325,16 @@ export default {
         if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toLowerCase()
         }
-        if (entry.value[0] === 'file') {
-          entry.value[0] = 'string'
-        }
         if (entry.ipfs === undefined) {
           delete entry.ipfs
         } else {
           let ipfsCID = entry.ipfs
           entry.value[1] = ipfsCID
           delete entry.ipfs
+        }
+        if (entry.value[0] === 'file') {
+          entry.value[1] = 'file:' + entry.value[1]
+          entry.value[0] = 'string'
         }
         delete entry.loadingState
       })
@@ -369,6 +374,19 @@ export default {
         console.log(e.json.error.details[0].message)
         // this.showErrorMsg(e.json.error.details[0].message)
       }
+    },
+    openLink (value, value2) {
+      var link
+      if (value) {
+        link = value
+      } else {
+        if (value2.includes('file:')) {
+          link = value2.substring(5)
+        }
+      }
+      let url = 'https://ipfs.io/ipfs/' + link
+      window.open(url, '_blank')
+      console.log({ value, value2 })
     }
   }
 }
