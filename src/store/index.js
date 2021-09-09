@@ -8,7 +8,7 @@ import transfers from './transfers'
 import general from './general'
 
 Vue.use(Vuex)
-
+Vue.config.devtools = true
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation

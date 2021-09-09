@@ -4,6 +4,7 @@ export default {
     buttons: {
       cancel: 'Cancel',
       edit: 'Edit',
+      delete: 'Delete',
       continue: 'Continue',
       create: 'Create',
       logout: 'Logout',

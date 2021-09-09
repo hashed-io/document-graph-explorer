@@ -68,5 +68,6 @@ export default () => ({
       phone: null,
       email: null
     }
-  }
+  },
+  selectedDAO: null
 })

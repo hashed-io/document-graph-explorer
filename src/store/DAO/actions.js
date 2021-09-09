@@ -9,16 +9,29 @@ export const initDao = async function ({ commit, dispatch }) {
     throw new Error(e)
   }
 }
-export const saveDaoData = async function ({ commit, dispatch }, params) {
+export const saveAndDeployDao = async function ({ commit, dispatch }, params) {
   try {
     const accountName = this.getters['accounts/account']
-    const response = await this.$daoApi.saveDaoData({ ...params, accountName })
+    const response = await this.$daoApi.SaveAndDeployDao({ ...params, accountName })
     return response
   } catch (e) {
     console.error('An error ocurred while trying to save dao data', e)
     throw new Error(e)
   }
 }
+export const deployContract = async function ({ commit }) {
+  try {
+    // const api = documentsApi
+    const accountName = this.getters['accounts/account']
+    const response = await this.$daoApi.deployContract({ accountName })
+    console.log('deployContract', response)
+    return response
+  } catch (e) {
+    console.error('An error ocurred while trying to reset', e)
+    throw new Error(e)
+  }
+}
+
 export const updateDaoData = async function ({ commit, dispatch }, params) {
   try {
     const accountName = this.getters['accounts/account']
@@ -46,18 +59,5 @@ export const getDaos = async function ({ commit }, params) {
     throw new Error(e)
   } finally {
     commit('general/setIsLoading', false, { root: true })
-  }
-}
-
-export const deployContract = async function ({ commit }) {
-  try {
-    // const api = documentsApi
-    const accountName = this.getters['accounts/account']
-    const response = await this.$daoApi.deployContract({ accountName })
-    console.log('deployContract', response)
-    return response
-  } catch (e) {
-    console.error('An error ocurred while trying to reset', e)
-    throw new Error(e)
   }
 }

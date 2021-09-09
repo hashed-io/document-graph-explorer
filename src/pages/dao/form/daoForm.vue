@@ -59,19 +59,19 @@
 
 <script>
 import { validation } from '~/mixins/validation'
-import businessName from '../add/components/businessName.vue'
-import detail from '../add/components/detail.vue'
-import agentComponent from '../add/components/agent.vue'
-import addressesComponent from '../add/components/addresses.vue'
-import organizersComponent from '../add/components/organizers.vue'
-import additionalArticlesComponent from '../add/components/additionalArticles.vue'
-import confirmationComponent from '../add/components/confirmation.vue'
-import signatureComponent from '../add/components/signature.vue'
-import paymentComponent from '../add/components/payment.vue'
+import businessName from '../form/components/businessName.vue'
+import detail from '../form/components/detail.vue'
+import agentComponent from '../form/components/agent.vue'
+import addressesComponent from '../form/components/addresses.vue'
+import organizersComponent from '../form/components/organizers.vue'
+import additionalArticlesComponent from '../form/components/additionalArticles.vue'
+import confirmationComponent from '../form/components/confirmation.vue'
+import signatureComponent from '../form/components/signature.vue'
+import paymentComponent from '../form/components/payment.vue'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs'
 export default {
-  name: 'registerdao',
+  name: 'daoForm',
   mixins: [validation],
   components: {
     businessName,
@@ -170,7 +170,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveDaoData', 'updateDaoData', 'deployContract', 'initDao']),
+    ...mapActions('dao', ['saveAndDeployDao', 'updateDaoData', 'deployContract', 'initDao']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     validateStep () {
       switch (this.step) {
@@ -257,14 +257,22 @@ export default {
             let data = this.form
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
-
-          await this.saveDaoData({
+          // loading show [step 1]
+          this.$q.loading.show({
+            message: 'Saving data and deploy contract...'
+          })
+          await this.saveAndDeployDao({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
           })
-          await this.deployContract()
+          // await this.deployContract()
+          // loading show [step 2]
+          this.$q.loading.show({
+            message: 'Initializing DAO...'
+          })
           await this.initDao()
+          this.$q.loading.hide()
           this.showSuccessMsg('Deploy contract success')
           this.$router.push('dashboard')
         } catch (e) {

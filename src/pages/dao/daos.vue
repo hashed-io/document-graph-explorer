@@ -11,23 +11,12 @@
           color="primary"
           @click="onClickCreateDao"
         )
-      #modals
-        q-dialog(v-model="openCreateDao" full-width persistent)
-          q-card.q-pa-md.responsive-modal
-            managedao(:dao="selectedDao" @success='onManageDao')
-            //- form-create-user(@success="onCreatedDao" :dao="selectedDao")
-        //- confirm-dialog(
-        //-   v-model="showConfirmRemove"
-        //-   v-if="selectedDao"
-        //-   icon="delete"
-        //-   iconColor="negative"
-        //-   @confirm="onConfirmRemoveDao"
-        //- )
 </template>
 
 <script>
-import listdao from './list/daos-table.vue'
-import managedao from './manage/manageContract.vue'
+import listdao from './listDaos/listDao.vue'
+import managedao from './manage/listContracts.vue'
+import { mapMutations } from 'vuex'
 export default {
   name: 'daos',
   components: { listdao, managedao },
@@ -39,7 +28,7 @@ export default {
     }
   },
   methods: {
-
+    ...mapMutations('dao', ['setSelectedDao']),
     onConfirmRemoveDao () {
     },
     onClickCreateDao () {
@@ -48,8 +37,10 @@ export default {
       this.$router.push('/registerDao')
     },
     onClickManage () {
-      this.openCreateDao = true
-      this.selectedDao = arguments[0]
+      this.setSelectedDao(arguments[0])
+      this.$router.push('/manageContract')
+      // this.openCreateDao = true
+      // this.selectedDao = arguments[0]
     },
     onManageDao () {
 

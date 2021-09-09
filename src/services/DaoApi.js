@@ -49,16 +49,74 @@ class DaoApi extends BaseEosApi {
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
    * @returns
    */
-  async saveDaoData ({ dao, creator, ipfs, accountName }) {
-    const actions = [{
-      account: Contracts.CONTRACT_DAO,
-      name: 'create',
-      data: {
-        dao: dao,
-        creator: creator,
-        ipfs: ipfs
+  async SaveAndDeployDao ({ dao, creator, ipfs, accountName }) {
+    // Deploy Contract
+    var { code, abi } = await this.getWasmAbi(accountName)
+    var authorization = `${accountName}@active`
+    // Set Code
+    console.log('setCode before', code)
+    // vmtype = {}
+    // vmversion = 0
+    // const wasmHexString = code.toString('hex')
+    const wasmHexString = this.buf2hex(code)
+    console.log('setCode after', wasmHexString)
+    let [actor, permission] = authorization.split('@')
+    // Set ABI
+    const buffer = new Serialize.SerialBuffer({
+      textEncoder: this.mEosApi.textEncoder,
+      textDecoder: this.mEosApi.textDecoder
+    })
+
+    const abiDefinitions = this.mEosApi.abiTypes.get('abi_def')
+    abi = abiDefinitions.fields.reduce(
+      (acc, { name: fieldName }) =>
+        Object.assign(acc, { [fieldName]: acc[fieldName] || [] }),
+      abi
+    )
+
+    abiDefinitions.serialize(buffer, abi)
+    const serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
+
+    // let [actor, permission] = authorization.split('@')
+
+    //  make actions
+    const actions = [
+      {
+        account: 'eosio',
+        name: 'setcode',
+        authorization: [{
+          actor,
+          permission
+        }],
+        data: {
+          account: accountName,
+          code: wasmHexString,
+          vmtype: 0,
+          vmversion: 0
+        }
+      },
+      {
+        account: 'eosio',
+        name: 'setabi',
+        authorization: [{
+          actor,
+          permission
+        }],
+        data: {
+          account: accountName,
+          abi: serializedAbiHexString
+        }
+      },
+      {
+        account: Contracts.CONTRACT_DAO,
+        name: 'create',
+        data: {
+          dao: dao,
+          creator: creator,
+          ipfs: ipfs
+        }
       }
-    }]
+    ]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
@@ -166,7 +224,7 @@ class DaoApi extends BaseEosApi {
         vmversion
       }
     }]
-
+    console.log('ACTIONS setCode : ', actions)
     const res = await this.eosApi.signTransaction(actions)
 
     return res
