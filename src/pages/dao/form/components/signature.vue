@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  .text-h4.q-pb-md
+  .text-h4.q-pb-sm
     | Signature
   p BY CHECKING THE BOXES BELOW AND ENTERING MY ELECTRONIC SIGNATURE, I HEREBY CERTIFY UNDER PENALTY OF PERJURY THAT:
   hr
@@ -29,7 +29,7 @@ div
       q-field(ref='toggle' borderless v-model="checkbox.consentAgree" :rules="[rules.required]")
         template(v-slot:control)
           q-checkbox(v-model="checkbox.consentAgree" :label='checkboxMessage.consentAgree' :rules="[rules.required]")
-    .row.justify-center.q-py-md.text-subtitle1
+    .row.justify-center.q-py-sm.text-subtitle1
       p(style='color:red;')
         u
           strong Notice Regarding False Filings: Filing a false document could result in criminal penalty and prosecution pursuant to W.S. 6-5-308.
@@ -40,11 +40,11 @@ div
         p (i) Falsifies, conceals or covers up by any trick, scheme or device a material fact;
         p (ii) Makes any materially false, fictitious or fraudulent statement or representation; or
         p (iii) Makes or uses any false writing or document knowing the same to contain any materially false, fictitious or fraudulent statement or entry.
-    .row.justify-left.q-py-md
+    .row.justify-left.q-py-sm
       q-field(ref='toggle' borderless v-model="checkbox.ack" :rules="[rules.required]")
         template(v-slot:control)
           q-checkbox(v-model="checkbox.ack" :label='checkboxMessage.ack' :rules="[rules.required]")
-    .row.justify-left.q-py-md
+    .row.justify-left.q-py-sm
       p Filer is: *
       q-field(ref='toggle' borderless v-model="fillerInformation.filerIs" :rules="[v => !!v || 'Choose one option']")
         template(v-slot:control)
@@ -60,36 +60,36 @@ div
         | By submitting this form I agree and accept this electronic filing as legal submission of my Articles of Organization.
     template.filerInformation
     .row.justify-center
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='fillerInformation.firstName', filled, label="First Name *", label-stacked :rules="[rules.required]")
           template(v-slot:prepend)
             q-icon(name='badge')
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='fillerInformation.middleName', filled, label="Middle Name", label-stacked)
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='fillerInformation.lastName', filled, label="Last Name *", label-stacked :rules="[rules.required]")
           template(v-slot:prepend)
             q-icon(name='badge')
     .row
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='fillerInformation.title', filled, label="Title *", label-stacked :rules="[rules.required]")
           template(v-slot:prepend)
             q-icon(name='article')
     .row
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='fillerInformation.phone', filled, label="Contact Phone *", mask="phone" label-stacked :rules="[rules.required]")
           template(v-slot:prepend)
             q-icon(name='phone')
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='confirmPhone', filled, label="Confirm Phone *", mask="phone" label-stacked :rules="[rules.required, v => v === this.fillerInformation.phone || 'The phone must match exactly.']")
           template(v-slot:prepend)
             q-icon(name='phone')
     .row
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='fillerInformation.email', filled, label="Contact Email *", label-stacked :rules="[rules.required, rules.isEmail]")
           template(v-slot:prepend)
             q-icon(name='email')
-      .col.q-pa-md
+      .col.q-pa-sm
         q-input(v-model='confirmEmail', filled, label="Confirm Email *", label-stacked :rules="[rules.required,rules.isEmail, v => v === this.fillerInformation.email || 'The email must match exactly.']")
           template(v-slot:prepend)
             q-icon(name='email')

@@ -1,10 +1,11 @@
 <template lang="pug">
-  div.q-pa-md
-      q-stepper.full-width(
+  div
+      q-stepper(
         v-model="step"
         ref="stepper"
         color="primary"
         animated
+        flat
         header-nav
         keep-alive
       )
@@ -98,7 +99,7 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 1,
       typeCid: undefined,
       daoName: null,
       form: {

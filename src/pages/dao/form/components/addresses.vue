@@ -1,58 +1,58 @@
 <template lang="pug">
-q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
-  .q-pa-md.row.items-start.q-gutter-md.full-width
+q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
+  .row.items-start.q-gutter-sm.full-width
     q-card.full-width
       q-card-section.bg-primary.text-white
         .text-h6 Principal Address
       q-separator
-      p.q-pa-md
+      p.q-pa-sm
         | Please update the Principal Office Address for this entity.
         .q-px-xl
           .row
-            .col.q-px-md.col-xs-12.col-sm-6
+            .col.q-px-sm.col-xs-12.col-sm-6
               q-select(filled v-model='form.principalAddress.country' :options='options' emit-value @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
                 template(v-slot:prepend)
                   q-icon(name='public')
           .row.justify-center
-            .col.q-px-md.col-xs-12.col-sm-12
+            .col.q-px-sm.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='location_on')
           .row.justify-center
-            .col.q-px-md.col-xs-12.col-sm-12
+            .col.q-px-sm.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
           .row.justify-center
-            .col.q-pa-md.col-xs-12.col-sm-12
+            .col.q-pa-sm.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line3', filled, label="Address Line 3", label-stacked)
           .row.justify-center
-            .col.q-pa-md.col-xs-12.col-sm-6
+            .col.q-pa-sm.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='location_city')
-            .col.q-pa-md.col-xs-12.col-sm-2
+            .col.q-pa-sm.col-xs-12.col-sm-2
               q-input(v-model='form.principalAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='public')
-            .col.q-pa-md.col-xs-12.col-sm-4
+            .col.q-pa-sm.col-xs-12.col-sm-4
               q-input(v-model='form.principalAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='local_post_office')
           .row.justify-center
-            .col.q-px-md.col-xs-12.col-sm-6
+            .col.q-px-sm.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='phone')
-            .col.q-px-md.col-xs-12.col-sm-6
+            .col.q-px-sm.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.fax', filled, label='Fax', label-stacked mask='phone')
                 template(v-slot:prepend)
                   q-icon(name='fax')
           .row.justify-left
-            .col.q-px-md.col-xs-12.col-sm-8
+            .col.q-px-sm.col-xs-12.col-sm-8
               q-input(v-model='form.principalAddress.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
                 template(v-slot:prepend)
                   q-icon(name='email')
           .row.justify-center
-          .col.q-px-md.col-xs-12.col-sm-12
+          .col.q-px-sm.col-xs-12.col-sm-12
             p
               | Please provide your email address in order to receive electronic notification of future annual report due dates.
             p
@@ -62,7 +62,7 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
       q-card-section.bg-primary.text-white
         .text-h6 Mailing Address
       q-separator
-      p.q-pa-md
+      p.q-pa-sm
         | Please update the Mailing Address for this entity
       .q-px-xl
         .row
@@ -78,10 +78,10 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
         .row.justify-center
           .col.q-px-sm.col-xs-12.col-sm-12
             q-input(v-model='form.mailingAddress.address.line2', filled, label="Address Line 2", label-stacked)
-        .row.justify-center.q-pt-md
+        .row.justify-center.q-pt-sm
           .col.q-px-sm.col-xs-12.col-sm-12
             q-input(v-model='form.mailingAddress.address.line3', filled, label="Address Line 3", label-stacked)
-        .row.justify-center.q-pt-md
+        .row.justify-center.q-pt-sm
           .col.q-px-sm.col-xs-12.col-sm-6
             q-input(v-model='form.mailingAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
