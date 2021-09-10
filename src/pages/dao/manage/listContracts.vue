@@ -29,7 +29,7 @@
                     div(v-else-if="contract.value[0] === 'file'")
                       .row.justify-center
                         .col.q-px-md.col-xs-10.col-sm-10
-                          q-file(v-model='contract.value[1]'  :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                          q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
                             template(v-slot:before)
                               q-icon(name='folder_open')
                         .col.col-xs-2.col-sm-2
@@ -68,7 +68,7 @@
             q-icon(name='search')
       template(v-slot:top-left)
         .row.q-gutter-md
-            q-btn(label='Add Field' @click='openDialog = !openDialog' color="primary")
+            q-btn(label='Add Field' @click='openAddField()' color="primary")
             q-btn(label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
@@ -91,7 +91,8 @@
                 color='negative'
                 @click='deleteRow(props.row,props.pageIndex)'
               )
-              template(v-if="props.row.value[1].includes('file:')")
+
+              template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
                 q-icon.animated-icon(
                   name='search'
                   v-ripple
@@ -224,6 +225,11 @@ export default {
   },
   methods: {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
+    openAddField () {
+      this.openDialog = !this.openDialog
+      this.clearContract()
+      this.fieldNameEditable = false
+    },
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
         if (this.manageContract.find(el => el.label === this.contract.label)) {
@@ -235,7 +241,7 @@ export default {
             let lengthManage = this.manageContract.length - 1
             let lengthNewLabels = this.newLabels.length - 1
             this.manageContract[lengthManage].value[1] = this.manageContract[lengthManage].ipfs
-            this.newLabels[lengthNewLabels].value[1] = this.newLabels[lengthManage].ipfs
+            this.newLabels[lengthNewLabels].value[1] = this.manageContract[lengthManage].ipfs
           }
           this.clearContract()
         }
@@ -341,6 +347,9 @@ export default {
       this.showSuccessMsg('Label Update')
       console.log({ new: this.newLabels, update: this.updateLabels })
       this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
+      if (this.manageContract[index].value[0] === 'file') {
+        this.manageContract[index].value[1] = this.manageContract[index].ipfs
+      }
       this.idEdit = null
       this.fieldNameEditable = false
       this.clearContract()
@@ -358,17 +367,17 @@ export default {
       self.contract.loadingState = true
       try {
         this.loading = true
-        let typeCid = await BrowserIpfs.store(e)
+        var typeCid = await BrowserIpfs.store(e)
         console.log(typeCid)
-        self.contract.loadingState = false
-        self.contract.value[1] = e
-        self.contract.ipfs = typeCid
       } catch (e) {
         self.showSuccessMsg('Error ocurred while file was uploaded. ' + e)
         console.error(e)
       } finally {
         self.showSuccessMsg('File uploaded success')
         this.loading = false
+        self.contract.loadingState = false
+        self.contract.value[1] = e
+        self.contract.ipfs = typeCid
       }
     },
     async getFileFromIPFS (index, type) {
@@ -439,6 +448,12 @@ export default {
                   const timeStamp = new Date(element.value[1])
                   element.value[1] = date.formatDate(timeStamp, 'MM/DD/YYYY')
                   break
+                case 'string':
+                  if (element.value[1].includes('file:')) {
+                    element.value[0] = 'file'
+                    element.ipfs = element.value[1]
+                  }
+                  break
               }
               this.manageContract.push(element)
             }
@@ -456,12 +471,17 @@ export default {
     async openLink (value, value2) {
       var link
       if (value) {
-        link = value
+        if (value.includes('file:')) {
+          link = value.substring(5)
+        } else {
+          link = value
+        }
       } else {
         if (value2.includes('file:')) {
           link = value2.substring(5)
         }
       }
+      console.log({ value, value2 })
       const file = await BrowserIpfs.retrieve(link)
       var blob = new Blob([file.payload], { type: file.type })
       var url = window.URL.createObjectURL(blob)
