@@ -9,38 +9,38 @@
         q-btn(flat round dense icon="close" v-close-popup)
       q-card-section
         q-form(ref='labelForm')
-            q-item.q-pb-md
-              q-item-section(top)
-                q-input(v-model='contract.label' outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
-              q-item-section(top)
-                q-select(v-model='contract.value[0]' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
-              q-item-section(top)
-                .row.justify-start
-                  .col-xs-11.col-sm-11
-                    div(v-if="contract.value[0] === 'time_point'")
-                      q-input(outlined v-model='contract.value[1]' :rules='[rules.required]' )
-                        template(v-slot:append='')
-                          q-icon.cursor-pointer(name='event')
-                            q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                              q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate()')
-                                .row.items-center.justify-end
-                                  q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+          .row.q-gutter-sm
+            .col-8
+              q-input(v-model='contract.label' outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
+            .col-3
+              q-select(v-model='contract.value[0]' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
+            .col-12
+              .row.justify-start
+                .col-xs-11.col-sm-11
+                  div(v-if="contract.value[0] === 'time_point'")
+                    q-input(outlined v-model='contract.value[1]' :rules='[rules.required]' )
+                      template(v-slot:append='')
+                        q-icon.cursor-pointer(name='event')
+                          q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                            q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate()')
+                              .row.items-center.justify-end
+                                q-btn(v-close-popup, label='Close', color='primary', flat='flat')
 
-                    div(v-else-if="contract.value[0] === 'file'")
-                      .row.justify-center
-                        .col.q-px-md.col-xs-10.col-sm-10
-                          q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
-                            template(v-slot:before)
-                              q-icon(name='folder_open')
-                        .col.col-xs-2.col-sm-2
-                          template(v-if="typeof(contract.ipfs) === 'string'")
-                            q-icon(name="check" class="text-green" style="font-size: 2rem;")
-                          //- p {{contract.ipfs}}
-                          template(v-if="contract.ipfs === undefined" )
-                            q-icon(name="error" class="text-red" style="font-size: 2rem;")
-                            //- p Fail Upload
-                    q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
-                    q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
+                  div(v-else-if="contract.value[0] === 'file'")
+                    .row.justify-center
+                      .col.q-px-md.col-xs-10.col-sm-10
+                        q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                          template(v-slot:before)
+                            q-icon(name='folder_open')
+                      .col.col-xs-2.col-sm-2
+                        template(v-if="typeof(contract.ipfs) === 'string'")
+                          q-icon(name="check" class="text-green" style="font-size: 2rem;")
+                        //- p {{contract.ipfs}}
+                        template(v-if="contract.ipfs === undefined" )
+                          q-icon(name="error" class="text-red" style="font-size: 2rem;")
+                          //- p Fail Upload
+                  q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
+                  q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-pa-md
               q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
@@ -51,6 +51,11 @@
       :columns="columns"
       :row-key='row => row.label'
       :rows-per-page-options="[0]"
+      :virtual-scroll-item-size="pageSize - 2"
+      :virtual-scroll-sticky-size-start="pageSize - 2"
+      @virtual-scroll="onScroll"
+      :hide-pagination="true"
+      :pagination="initialPagination"
       class="sticky-virtscroll-table"
       ref='table'
       table-header-class="hdTable"
@@ -133,6 +138,11 @@ export default {
       this.showErrorMsg(e || e.message)
     }
   },
+  computed: {
+    daosFreeze () {
+      return Object.freeze(this.daos.rows.slice(0, this.pageSize * (this.nextPage - 1)))
+    }
+  },
   data () {
     return {
       openDialog: false,
@@ -141,6 +151,15 @@ export default {
       idEdit: null,
       fieldNameEditable: false,
       manageContract: [],
+      pageSize: 5,
+      nextPage: 2,
+      initialPagination: {
+        rowsPerPage: 0
+      },
+      contracts: {
+        more: true,
+        rows: []
+      },
       contract: {
         label: null,
         loadingState: false,
@@ -481,7 +500,6 @@ export default {
           link = value2.substring(5)
         }
       }
-      console.log({ value, value2 })
       const file = await BrowserIpfs.retrieve(link)
       var blob = new Blob([file.payload], { type: file.type })
       var url = window.URL.createObjectURL(blob)
@@ -489,7 +507,8 @@ export default {
       a.href = url
       a.target = '_blank'
       a.click()
-    }
+    },
+    async onScroll ({ to, ref, index, direction }) {}
   }
 }
 </script>
