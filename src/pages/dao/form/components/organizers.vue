@@ -16,19 +16,27 @@
             .row.justify-center
               .col.q-px-md.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='firstName',filled, label="First Name: *" ,label-stacked :rules="[rules.required]")
+                  template(v-slot:prepend)
+                    q-icon(name='badge')
               .col.q-px-md.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='middleName',filled, label="Middle Name: ",label-stacked).q-pb-md
               .col.q-px-md.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='lastName',filled, label="Last Name: *",label-stacked, :rules="[rules.required]")
+                  template(v-slot:prepend)
+                    q-icon(name='badge')
           .row.justify-center
             .col.q-px-md.col-xs-12.col-sm-12.col-md-12
               div(v-if="checkbox === 'legal'")
                 q-input(v-model='organization', filled, label="Organization: *", label-stacked, :rules="[rules.required]")
+                  template(v-slot:prepend)
+                    q-icon(name='business')
             .col.q-px-md.col-xs-12.col-sm-12.col-md-12
               q-select(v-model='organizer.officerType', :options="selectOptions" filled, label="Officer type: *", label-stacked :rules="[rules.required]")
           .row.justify-center
             .col.q-px-md.col-xs-12.col-sm-12.col-md-12
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
+                template(v-slot:prepend)
+                  q-icon(name='location_on')
           .row.justify-end.q-pa-md
             div(v-if='idEdit === null')
               q-btn(label="ADD" @click='onSubmit' color="primary")

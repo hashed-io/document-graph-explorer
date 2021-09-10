@@ -24,6 +24,7 @@
     template(v-slot:top-right v-if="!selectable")
       q-input.q-mb-sm(
         ref="inputSearch"
+        clearable
         :label="$t('pages.general.search')"
         v-model.trim="params.search"
         debounce="1000"
@@ -50,10 +51,10 @@
         ) {{col.value}}
           template(v-if="col.name == 'actions'")
             q-icon.animated-icon(
-              name="edit"
+              name="assignment"
               v-ripple
               size="sm"
-              color="positive"
+              color="blue"
               @click="onClickEdit(props.row)"
               v-if="!selectable"
             )
@@ -73,7 +74,7 @@
               name="search"
               v-ripple
               size="sm"
-              color="positive"
+              color="teal"
               @click="onClickSee(props.row)"
               v-if="!selectable"
             )
@@ -133,6 +134,8 @@ export default {
           name: 'dao',
           label: this.$t('pages.general.dao'),
           align: 'center',
+          headerStyle: 'font-weight:bolder',
+          style: 'font-weight: bolder',
           field: row => row.dao,
           sortable: true
         },

@@ -38,6 +38,8 @@ div.container
         label="Business Entity Name: *"
         :rules="[rules.required, v => containsDesignations || 'Does not contain any required terms']"
       )
+      template(v-slot:prepend)
+        q-icon(name='business')
     div.q-pa-sm
     q-input(
         stack-label
@@ -46,6 +48,8 @@ div.container
         label="Confirm Name: *"
         :rules="[rules.required, v => v === this.formData.businessName || 'The Business Entity Name and Confirm Name must match exactly.']"
       )
+      template(v-slot:prepend)
+        q-icon(name='check')
     div.q-pa-sm
     strong(v-if="errorBusinessName" style="color:red").
       The Entity Name must contain one of the following designations: DAO L.C., DAO L.L.C., DAO LC, DAO LIMITED COMPANY, DAO LIMITED LIABILITY CO., DAO LIMITED LIABILITY COMPANY, DAO LIMITED LIABILITY COMPANY, DAO LLC, DAO LTD. LIABILITY CO., DAO LTD. LIABILITY COMPANY, DECENTRALIZED AUTONOMOUS ORGANIZATION L.C., DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C., DECENTRALIZED AUTONOMOUS ORGANIZATION LC, DECENTRALIZED AUTONOMOUS ORGANIZATION LLC, LAO L.C., LAO L.L.C., LAO LC, LAO LIMITED COMPANY, LAO LIMITED LIABILITY CO., LAO LIMITED LIABILITY COMPANY, LAO LLC, LAO LTD. LIABILITY CO., LAO LTD. LIABILITY COMPANY

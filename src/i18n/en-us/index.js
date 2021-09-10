@@ -55,7 +55,7 @@ export default {
       search: 'Search',
       confirmActions: 'Do you want confirm this action?',
       noAccountsFound: 'No accounts found',
-      actions: 'Actions',
+      actions: 'Contracts',
       download: 'Download',
       dao: 'DAO',
       ipfs: 'IPFS',

@@ -70,6 +70,7 @@ import signatureComponent from '../form/components/signature.vue'
 import paymentComponent from '../form/components/payment.vue'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs'
+import { QSpinnerPuff } from 'quasar'
 export default {
   name: 'daoForm',
   mixins: [validation],
@@ -97,7 +98,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       typeCid: undefined,
       daoName: null,
       form: {
@@ -259,19 +260,26 @@ export default {
           }
           // loading show [step 1]
           this.$q.loading.show({
-            message: 'Saving data and deploy contract...'
+            message: ' Saving data and deploy contract...',
+            spinnerSize: '15em',
+            spinner: QSpinnerPuff
           })
+          await new Promise(resolve => setTimeout(resolve, 1500))
           await this.saveAndDeployDao({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
           })
           // loading show [step 2]
+
           this.$q.loading.show({
-            message: 'Initializing DAO...'
+            message: 'Initializing DAO...',
+            spinnerSize: '15em',
+            spinner: QSpinnerPuff
           })
-          await this.initDao()
+          await new Promise(resolve => setTimeout(resolve, 1500))
           this.$q.loading.hide()
+          await this.initDao()
           this.showSuccessMsg('Deploy contract success')
           this.$router.push('dashboard')
         } catch (e) {

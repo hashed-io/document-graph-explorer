@@ -51,13 +51,12 @@
       :columns="columns"
       :row-key='row => row.label'
       :rows-per-page-options="[0]"
-      :virtual-scroll-item-size="pageSize - 2"
-      :virtual-scroll-sticky-size-start="pageSize - 2"
-      @virtual-scroll="onScroll"
-      :hide-pagination="true"
       :pagination="initialPagination"
       class="sticky-virtscroll-table"
+      clearable
       ref='table'
+      wrap-cells
+      separator='none'
       table-header-class="hdTable"
       :filter="params.search"
     )
@@ -80,31 +79,32 @@
           q-td(
             v-for="col in props.cols"
             :key="col.name"
+            auto-width
             :props="props"
           ) {{col.value}}
             template(v-if="col.name == 'actions'")
-              q-icon.q-px-md.animated-icon(
-                name='edit'
-                size='sm'
-                color='positive'
-                @click='editRow(props.pageIndex)'
-              )
-              q-icon.q-pr-md.animated-icon(
-                name='delete'
-                v-ripple
-                size='sm'
-                color='negative'
-                @click='deleteRow(props.row,props.pageIndex)'
-              )
-
-              template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
-                q-icon.animated-icon(
-                  name='search'
-                  v-ripple
+                template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
+                  q-icon.animated-icon(
+                    name='search'
+                    v-ripple
+                    size='sm'
+                    color='positive'
+                    @click="openLink(props.row.ipfs,props.row.value[1])"
+                  )
+                q-icon.q-px-md.animated-icon(
+                  name='edit'
                   size='sm'
                   color='positive'
-                  @click="openLink(props.row.ipfs,props.row.value[1])"
+                  @click='editRow(props.pageIndex)'
                 )
+                q-icon.q-pr-md.animated-icon(
+                  name='delete'
+                  v-ripple
+                  size='sm'
+                  color='negative'
+                  @click='deleteRow(props.row,props.pageIndex)'
+                )
+
 </template>
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
@@ -154,7 +154,8 @@ export default {
       pageSize: 5,
       nextPage: 2,
       initialPagination: {
-        rowsPerPage: 0
+        rowsPerPage: 5,
+        page: 1
       },
       contracts: {
         more: true,
@@ -211,12 +212,16 @@ export default {
           name: 'label',
           label: 'Field Name',
           align: 'left',
+          headerStyle: 'font-weight: bolder;',
+          headerClasses: '',
+          classes: '',
           field: row => row.label,
           sortable: true
         },
         {
           name: 'type',
           label: 'Type',
+          headerStyle: 'font-weight: bolder',
           align: 'left',
           field: row => row.value[0],
           sortable: true
@@ -224,7 +229,8 @@ export default {
         {
           name: 'value',
           label: 'Value',
-          align: 'left',
+          headerStyle: 'font-weight: bolder',
+          align: 'justify',
           format: (val, row) => `${(val.includes(':')) ? 'File' : val}`,
           field: row => row.value[1],
           sortable: true
@@ -232,7 +238,8 @@ export default {
         {
           name: 'actions',
           label: 'Actions',
-          align: 'left',
+          headerStyle: 'font-weight: bolder; text-align:center',
+          align: 'right',
           sortable: false
         }
       ],
@@ -444,6 +451,7 @@ export default {
         }
         delete entry.loadingState
       })
+
       this.saveData(rawData)
     },
     async loadData () {

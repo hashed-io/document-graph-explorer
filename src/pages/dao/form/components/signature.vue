@@ -62,23 +62,37 @@ div
     .row.justify-center
       .col.q-pa-md
         q-input(v-model='fillerInformation.firstName', filled, label="First Name *", label-stacked :rules="[rules.required]")
+          template(v-slot:prepend)
+            q-icon(name='badge')
       .col.q-pa-md
         q-input(v-model='fillerInformation.middleName', filled, label="Middle Name", label-stacked)
       .col.q-pa-md
         q-input(v-model='fillerInformation.lastName', filled, label="Last Name *", label-stacked :rules="[rules.required]")
+          template(v-slot:prepend)
+            q-icon(name='badge')
     .row
       .col.q-pa-md
         q-input(v-model='fillerInformation.title', filled, label="Title *", label-stacked :rules="[rules.required]")
+          template(v-slot:prepend)
+            q-icon(name='article')
     .row
       .col.q-pa-md
         q-input(v-model='fillerInformation.phone', filled, label="Contact Phone *", mask="phone" label-stacked :rules="[rules.required]")
+          template(v-slot:prepend)
+            q-icon(name='phone')
       .col.q-pa-md
         q-input(v-model='confirmPhone', filled, label="Confirm Phone *", mask="phone" label-stacked :rules="[rules.required, v => v === this.fillerInformation.phone || 'The phone must match exactly.']")
+          template(v-slot:prepend)
+            q-icon(name='phone')
     .row
       .col.q-pa-md
         q-input(v-model='fillerInformation.email', filled, label="Contact Email *", label-stacked :rules="[rules.required, rules.isEmail]")
+          template(v-slot:prepend)
+            q-icon(name='email')
       .col.q-pa-md
         q-input(v-model='confirmEmail', filled, label="Confirm Email *", label-stacked :rules="[rules.required,rules.isEmail, v => v === this.fillerInformation.email || 'The email must match exactly.']")
+          template(v-slot:prepend)
+            q-icon(name='email')
     p(style='color:red;')
       | Disclaimer:
     p(style='color:red;')

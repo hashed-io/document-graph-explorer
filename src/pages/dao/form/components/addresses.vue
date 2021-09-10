@@ -11,9 +11,13 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
           .row
             .col.q-px-md.col-xs-12.col-sm-6
               q-select(filled v-model='form.principalAddress.country' :options='options' emit-value @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
+                template(v-slot:prepend)
+                  q-icon(name='public')
           .row.justify-center
             .col.q-px-md.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
+                template(v-slot:prepend)
+                  q-icon(name='location_on')
           .row.justify-center
             .col.q-px-md.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
@@ -23,18 +27,30 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
           .row.justify-center
             .col.q-pa-md.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+                template(v-slot:prepend)
+                  q-icon(name='location_city')
             .col.q-pa-md.col-xs-12.col-sm-2
               q-input(v-model='form.principalAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
+                template(v-slot:prepend)
+                  q-icon(name='public')
             .col.q-pa-md.col-xs-12.col-sm-4
               q-input(v-model='form.principalAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
+                template(v-slot:prepend)
+                  q-icon(name='local_post_office')
           .row.justify-center
             .col.q-px-md.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
+                template(v-slot:prepend)
+                  q-icon(name='phone')
             .col.q-px-md.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.fax', filled, label='Fax', label-stacked mask='phone')
+                template(v-slot:prepend)
+                  q-icon(name='fax')
           .row.justify-left
             .col.q-px-md.col-xs-12.col-sm-8
               q-input(v-model='form.principalAddress.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
+                template(v-slot:prepend)
+                  q-icon(name='email')
           .row.justify-center
           .col.q-px-md.col-xs-12.col-sm-12
             p
@@ -52,9 +68,13 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
         .row
             .col.q-px-sm.col-xs-12.col-sm-6
               q-select(filled v-model='form.mailingAddress.country' :options='options'  @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
+                template(v-slot:prepend)
+                  q-icon(name='public')
         .row.justify-center
           .col.q-px-sm.col-xs-12.col-sm-12
             q-input(v-model='form.mailingAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='location_on')
         .row.justify-center
           .col.q-px-sm.col-xs-12.col-sm-12
             q-input(v-model='form.mailingAddress.address.line2', filled, label="Address Line 2", label-stacked)
@@ -64,10 +84,16 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-md')
         .row.justify-center.q-pt-md
           .col.q-px-sm.col-xs-12.col-sm-6
             q-input(v-model='form.mailingAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='location_city')
           .col.q-px-sm.col-xs-12.col-sm-2
             q-input(v-model='form.mailingAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='public')
           .col.q-px-sm.col-xs-12.col-sm-4
             q-input(v-model='form.mailingAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='local_post_office')
 </template>
 
 <style lang="">
