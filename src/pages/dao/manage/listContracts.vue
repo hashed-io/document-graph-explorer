@@ -218,7 +218,8 @@ export default {
       ],
       deleteLabels: [],
       updateLabels: [],
-      newLabels: []
+      newLabels: [],
+      prevLabel: null
     }
   },
   methods: {
@@ -309,8 +310,11 @@ export default {
         this.idEdit = index
         this.fieldNameEditable = true
       }
+      this.prevLabel = this.manageContract[index].label
+      console.log({ contract: this.contract, prevLabel: this.prevLabel })
     },
     updateRow () {
+      console.log({ new: this.newLabels, update: this.updateLabels, manage: this.manageContract })
       let index = this.idEdit
       if (!this.fieldNameEditable) {
         // Save in new labels
@@ -319,24 +323,17 @@ export default {
           let id = this.newLabels.findIndex(isEqual)
           this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
         } else {
-          this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+          const isEqual = (element) => element.label === this.prevLabel
+          let id = this.newLabels.findIndex(isEqual)
+          this.newLabels[id] = (JSON.parse(JSON.stringify(this.contract)))
         }
       } else {
         // Save in update lables
         let prevType = this.manageContract[index].value[0]
         let prevValue = this.manageContract[index].value[1]
         if (prevType !== this.contract.value[0] || prevValue !== this.contract.value[1]) {
-          if (this.newLabels.find(el => el.label === this.contract.label)) {
-            // findIndex in newLabels to update
-            const isEqual = (element) => element.label === this.contract.label
-            let id = this.newLabels.findIndex(isEqual)
-            this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
-            this.showSuccessMsg('Create and update in front')
-          } else {
-            //
-            this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
-            this.showSuccessMsg('Update new label')
-          }
+          this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+          this.showSuccessMsg('Update new label')
         } else {
           this.showSuccessMsg('The changes are the same')
         }
