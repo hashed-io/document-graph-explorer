@@ -313,21 +313,36 @@ export default {
     updateRow () {
       let index = this.idEdit
       if (!this.fieldNameEditable) {
-        // Se guarda en nuevos labels
-        this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        // Save in new labels
+        if (this.newLabels.find(el => el.label === this.contract.label)) {
+          const isEqual = (element) => element.label === this.contract.label
+          let id = this.newLabels.findIndex(isEqual)
+          this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
+        } else {
+          this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
+        }
       } else {
-        // Se guarda en labels por actualizar
+        // Save in update lables
         let prevType = this.manageContract[index].value[0]
         let prevValue = this.manageContract[index].value[1]
-        console.log({ prevType, prevValue })
         if (prevType !== this.contract.value[0] || prevValue !== this.contract.value[1]) {
-          this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+          if (this.newLabels.find(el => el.label === this.contract.label)) {
+            // findIndex in newLabels to update
+            const isEqual = (element) => element.label === this.contract.label
+            let id = this.newLabels.findIndex(isEqual)
+            this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
+            this.showSuccessMsg('Create and update in front')
+          } else {
+            //
+            this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+            this.showSuccessMsg('Update new label')
+          }
         } else {
           this.showSuccessMsg('The changes are the same')
         }
       }
-      // this.showSuccessMsg('Label Update')
-
+      this.showSuccessMsg('Label Update')
+      console.log({ new: this.newLabels, update: this.updateLabels })
       this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
       this.idEdit = null
       this.fieldNameEditable = false

@@ -266,7 +266,6 @@ export default {
             creator: this.account,
             ipfs: this.typeCid
           })
-          // await this.deployContract()
           // loading show [step 2]
           this.$q.loading.show({
             message: 'Initializing DAO...'
@@ -277,6 +276,7 @@ export default {
           this.$router.push('dashboard')
         } catch (e) {
           console.log(e)
+          this.$q.loading.hide()
           this.showErrorMsg('Error while saving DAO data. ' + e)
         }
       } else {
