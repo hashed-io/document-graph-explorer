@@ -235,7 +235,8 @@ export default {
       this.showIsLoading(true)
       await axios({
         method: 'get',
-        url: url
+        url: url,
+        timeout: 5000
       }).then(function (response) {
         self.loading = false
         self.changeStateDAO(response.data.data, daoName)

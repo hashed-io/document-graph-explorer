@@ -39,6 +39,7 @@ export default {
   },
   menu: {
     transfer: 'Transfer',
+    daos: 'DAOS',
     example: 'Example Dashboard',
     registerDao: 'Register dao',
     listDao: 'List Dao',

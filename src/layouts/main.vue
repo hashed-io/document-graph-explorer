@@ -14,7 +14,8 @@ export default {
   data () {
     return {
       menu: false,
-      right: false
+      right: false,
+      miniState: true
     }
   },
   computed: {
@@ -27,11 +28,12 @@ export default {
 </script>
 
 <template lang="pug">
-  q-layout(view="lHh Lpr lFf")
-    q-header(elevated)
+  q-layout(view="hHh Lpr lFf")
+    q-header
       q-toolbar
         q-btn(
           flat
+          show-if-above
           dense
           round
           @click="menu = !menu"
@@ -43,10 +45,12 @@ export default {
         right-menu-authenticated(v-if="isAuthenticated")
         right-menu-guest(v-if="!isAuthenticated")
     q-drawer(
-      show-if-above
       v-model="menu"
       side="left"
-      bordered
+      :color='primary'
+      :mini='miniState'
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
     )
       left-menu
     q-page-container

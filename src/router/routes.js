@@ -4,8 +4,7 @@ const routes = [
   { path: '/home', component: () => import('pages/home/home.vue'), name: 'home' },
   { path: '/registerDao', component: () => import('pages/dao/form/daoForm.vue'), name: 'daoForm' },
   { path: '/dashboard', component: () => import('pages/dao/daos.vue'), name: 'daos' },
-  { path: '/manageContract', component: () => import('pages/dao/manage/manageContract.vue'), name: 'manageContract' },
-  { path: '/ipfs', component: () => import('pages/ipfs/ipfs.vue'), name: 'ipfs' }
+  { path: '/manageContract', component: () => import('pages/dao/manage/manageContract.vue'), name: 'manageContract' }
 ]
 
 // Always leave this as last one

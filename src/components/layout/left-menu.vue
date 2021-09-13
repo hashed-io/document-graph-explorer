@@ -28,26 +28,14 @@ export default {
         v-ripple
       )
         q-item-section(avatar)
-          q-icon(name="app:chats")
-        q-item-section {{ $t('menu.example') }}
+          q-icon(name="business")
+        q-item-section {{ $t('menu.daos') }}
       q-item(
         v-if="isAuthenticated"
         to="/registerDao"
         clickable
         v-ripple
       )
-        q-item-section(avatar)
-          q-icon(name="app:chats")
-        q-item-section {{ $t('menu.registerDao') }}
-      q-item(
-        v-if="isAuthenticated"
-        to="/ipfs"
-        clickable
-        v-ripple
-      )
-        q-item-section(avatar)
-          q-icon(name="app:chats")
-        q-item-section IPFS
 </template>
 
 <style lang="stylus">
