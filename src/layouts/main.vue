@@ -47,7 +47,6 @@ export default {
     q-drawer(
       v-model="menu"
       side="left"
-      :color='primary'
       :mini='miniState'
       @mouseover="miniState = false"
       @mouseout="miniState = true"
