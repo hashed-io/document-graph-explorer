@@ -87,7 +87,7 @@ export default {
     paymentComponent
   },
   created () {
-    this.daoName = 'ACME DAO LLC'
+    this.daoName = this.account
     if (this.isEdit) {
       this.form = JSON.parse(JSON.stringify(this.formStore))
     } else {
