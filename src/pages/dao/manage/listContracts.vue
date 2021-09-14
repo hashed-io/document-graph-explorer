@@ -436,6 +436,7 @@ export default {
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
         if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
+          entry.value[1] = entry.value[1].toString()
           entry.value[1] = entry.value[1].toLowerCase()
         }
         if (entry.ipfs === undefined) {
@@ -482,6 +483,7 @@ export default {
                   }
                   break
               }
+              element.value[1] = element.value[1].toString()
               this.manageContract.push(element)
             }
             // flag = false
