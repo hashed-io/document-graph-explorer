@@ -1,14 +1,15 @@
 <template lang="pug">
 div
   template
-    q-card(flat bordered)
-      .text-h4.q-pa-sm
-        | Organizers
-      p.q-pa-sm.text-subtitle1
-        | Please use the form below to add the name and address of the organizers. Press 'Add' after entering information.
+    q-card(flat)
+      q-card-section.bg-primary.text-white
+        .text-subtitle1
+          | Organizers
       .container
-        q-form(@submit='onSubmitOrganizer', ref="organizerForm")
-          div.q-px-sm Choose one type of person
+        q-form(@submit='onSubmitOrganizer', ref="organizerForm").q-pl-md
+          p.q-px-md.q-pt-md.text-subtitle1
+            | Please use the form below to add the name and address of the organizers. Press 'Add' after entering information.
+          div.q-px-md Choose one type of person
           q-field(ref='toggle' borderless v-model="checkbox" :rules="[v => !!v || 'Choose one option']").q-pl-sm
             template(v-slot:control)
               q-option-group(v-model='checkbox' :options='options' color='primary' @input='deleteData' :rules="[rules.required]" inline)
@@ -22,8 +23,6 @@ div
                 q-input(v-model='middleName',filled, label="Middle Name: ",label-stacked).q-pb-sm
               .col.q-px-sm.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='lastName',filled, label="Last Name: *",label-stacked, :rules="[rules.required]")
-                  template(v-slot:prepend)
-                    q-icon(name='badge')
           .row.justify-center
             .col.q-px-sm.col-xs-12.col-sm-12.col-md-12
               div(v-if="checkbox === 'legal'")
@@ -37,40 +36,42 @@ div
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
                 template(v-slot:prepend)
                   q-icon(name='location_on')
-          .row.justify-end.q-pa-sm
+          .row.justify-start.q-pa-sm.q-pb-xl
             div(v-if='idEdit === null')
               q-btn(label="ADD" @click='onSubmit' color="primary")
             div(v-else)
               q-btn(label="UPDATE" @click='onSubmit' color="primary")
             .q-pa-sm
             //- q-btn(label="CLEAR" type="reset" color="primary")
-  template
-    .q-pa-sm
-      .text-h6 Organizers
-      hr
-      div(v-if='organizers.length === 0')
-        p  No Organizers Currently Assigned...
-      div(v-else)
-        q-list(bordered class="rounded-borders")
-          div.q-pa-sm.q-gutter-sm(v-for='(organizer, index) in organizers')
-            template
-              q-item(clickable)
-                q-item-section(top)
-                  q-item-label(lines='5')
-                    span.text-h6
-                      | Name: &nbsp;
-                      b {{organizer.name}}
-                  q-item-label(caption='', lines='1')
-                    span.text-subtitle1
-                      | type: &nbsp;
-                      b {{organizer.typeName}}
-                  q-item-label.q-mt-xs.text-body2.text-weight-bold.text-primary.text-uppercase(lines='1')
-                    span Address:  &nbsp;
-                      b {{organizer.addressInfo}}
-                q-item-section(top='', side='')
-                  .text-grey-8.q-gutter-xs
-                    q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
-                    q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
+
+        div(v-if='organizers.length === 0')
+          p  No Organizers Currently Assigned...
+        div(v-else)
+          q-list(class="rounded-borders")
+            q-item
+              q-item-section(top)
+                q-item-label(lines='5').text-subtitle1.q-px-sm
+                  | Organizers
+                  hr
+            div.q-pa-sm.q-gutter-sm(v-for='(organizer, index) in organizers')
+              template
+                q-item()
+                  q-item-section(top)
+                    q-item-label(lines='5')
+                      span.text-subtitle1
+                        | Name: &nbsp;
+                        b {{organizer.name}}
+                    q-item-label(caption='', lines='1').text-caption
+                      span.text-subtitle1
+                        | type: &nbsp;
+                        b {{organizer.typeName}}
+                    q-item-label.q-mt-xs.text-caption.text-weight-bold.text-primary.text-uppercase(lines='1')
+                      span Address:  &nbsp;
+                        b {{organizer.addressInfo}}
+                  q-item-section(top='', side='')
+                    .text-grey-8.q-gutter-xs
+                      q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
+                      q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
 
 </template>
 

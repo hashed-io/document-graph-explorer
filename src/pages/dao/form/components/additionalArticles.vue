@@ -1,8 +1,8 @@
 <template lang="pug">
 .q-pa-md
   template
-    q-card(flat bordered)
-      .text-h4.q-pa-md
+    q-card(flat)
+      .text-subtitle1.q-pa-md.bg-primary.text-white
         | Additional Articles
       q-separator
       div.q-px-lg.text-subtitle1.q-pt-md
@@ -25,27 +25,26 @@
           li Pursuant to W.S. 17-31-104(e), whether the DAO is member managed or algorithmically managed; and
           li Any additional provisions related to W.S. 17-31-106(c).
       q-form(@submit='onSubmit'  ref="articleForm")
-        div.q-pa-xl(style='max-width:100%')
+        div.q-px-md(style='max-width:100%')
           .row.q-gutter-md.justify-center
-            .col-xs-12.col-sm-1
+            .col-xs-12.col-sm-2
               q-input(v-model='article.number'  mask='##' input-class='text-center' outlined  label='Article #' :rules="[rules.required]" )
-            .col-xs-12.col-sm-10
+            .col-xs-12.col-sm-9
               q-input(v-model='article.detail'  outlined counter maxlength='1000' type="textarea" label='Article detail' :rules="[rules.required]")
-          div(v-if='idEdit === null')
+          div(v-if='idEdit === null').q-pb-md
             q-btn(label="ADD" type="submit" color="primary")
           div(v-else)
-            q-btn(label="UPDATE" @click='onSubmit' color="primary")
-          .q-pa-sm
+            q-btn(label="UPDATE" type='submit' color="primary")
+          //- .q-pa-sm
             //- q-btn(label="CLEAR" type="reset" color="primary")
   template
-  .q-pa-md
-    .text-h6 Articles Detail
-    hr
+    .text-subtitle1.q-px-md Articles Details
+      hr
     div(v-if='articles.length === 0')
       p    No Additional Articles Identified...
     div(v-else)
-      q-list(bordered class="rounded-borders")
-        div.q-pa-md.q-gutter-md(v-for='(article, index) in articles')
+      q-list
+        div.q-px-md(v-for='(article, index) in articles')
           template
             q-item(clickable)
               q-item-section(top)
@@ -58,8 +57,9 @@
                 q-item-label(caption='', lines='30')
                   span.text-subtitle2
                     strong(style='color:black;')
-                      | Detail: &nbsp;
-                    b {{article.detail}}
+                      p
+                        | Detail: &nbsp;
+                    div(align='justify') {{article.detail}}
               q-item-section(side)
                 .text-grey-8.q-gutter-xs
                   q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteArticle(index)')

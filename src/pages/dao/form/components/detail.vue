@@ -7,21 +7,21 @@ div
     p
     strong.
       Period of duration:
-    strong(style="color:red") *
+    strong.asterisk *
     .row
       .cols-8
           q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
           label (select &apos;Perpetual&apos; if the entity does not expire.)
-          .q-pa-md
+          .q-pa-xs
           div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
             p
               strong Expiration Date (mm/dd/yyyy)
-              strong(style='color:red') *
+              strong.asterisk *
             p  {{calculateDate()}}
             p
           div(v-else-if="(selectValue.value === '0')")
             strong Expiration Date (mm/dd/yyyy)
-            strong(style='color:red') *
+            strong.asterisk *
             .row
               .cols-6
                 q-input(v-model='form.expirationDate', filled, mask='##/##/####' :rules='[rules.required]')
@@ -34,9 +34,9 @@ div
           div(v-else)
             p
               strong Expiration Date (mm/dd/yyyy)
-              strong(style='color:red') *
+              strong.asterisk *
             p  {{calculateDate()}}
-          p
+          p.q-pt-xl
             b Delayed Effective Date : (mm/dd/yyyy)
             .row
               .cols-6
@@ -49,7 +49,10 @@ div
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                 p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
 </template>
-
+<style lang='sass' scoped>
+  .asterisk
+    color: red
+</style>
 <script>
 import { date } from 'quasar'
 import { validation } from '~/mixins/validation'

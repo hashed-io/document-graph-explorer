@@ -14,15 +14,6 @@ export default {
     q-list
       q-item(
         v-if="isAuthenticated"
-        to="/home"
-        clickable
-        v-ripple
-      )
-        q-item-section(avatar)
-          q-icon(name="app:my-profile")
-        q-item-section {{ $t('menu.transfer') }}
-      q-item(
-        v-if="isAuthenticated"
         to="/dashboard"
         clickable
         v-ripple
@@ -30,12 +21,6 @@ export default {
         q-item-section(avatar)
           q-icon(name="business")
         q-item-section {{ $t('menu.daos') }}
-      q-item(
-        v-if="isAuthenticated"
-        to="/registerDao"
-        clickable
-        v-ripple
-      )
 </template>
 
 <style lang="stylus">

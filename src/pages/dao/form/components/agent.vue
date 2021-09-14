@@ -1,9 +1,9 @@
 //TODO City input show a Postal Code available in Wyoming
 <template lang="pug">
-.row.items-start.q-gutter-sm
-  q-card.full
+div
+  q-card(flat)
     q-card-section.bg-primary.text-white
-      .text-h6 Search for a Registered Agent
+      .text-subtitle1 Search for a Registered Agent
     q-separator
     p.q-pa-md
       | The registered agent may be an individual resident in Wyoming who is at least eighteen (18) years old, or a domestic or foreign entity authorized to transact business in Wyoming having a business office identical with such registered office. The registered agent must have a physical address in Wyoming. A Post Office Box or Drop Box is not acceptable. If the registered office includes a suite number, it must be included in the registered office address.
@@ -14,19 +14,18 @@
     .container.q-pa-md
       q-btn(label='Search' type='submit' color='primary' @click='searchAgent')
 
-  .col
-    q-card(class='column')
+    q-card(class='column' flat)
       q-card-section.bg-primary.text-white
         div(v-if="agentForm.firstName !== null && agentFound")
           .row
-            .col
-              p Selected Agent: {{responseSearch.selectedAgent}}
-        div(v-else)
+            .col.text-subtitle1
+              div Selected Agent: {{responseSearch.selectedAgent}}
+        div(v-else).text-subtitle1
           | Enter Agent Information
       q-separator
       .container
         q-form(@submit="onSubmit" @reset='clearAgent' ref="dataAgentForm")
-          .col(style='text-align:right').q-pt-sm
+          .col(style='text-align:left').q-pt-sm.q-pl-sm
             q-btn(label='clear agent' outline type='reset')
           .row.justify-center
             .col.q-pa-sm.col-xs-12.col-sm-4
@@ -37,16 +36,14 @@
               q-input(v-model='agentForm.middleName', filled, label='Middle Name :', label-stacked)
             .col.q-pa-sm.col-xs-12.col-sm-4
               q-input(v-model='agentForm.lastName', filled, label='Last Name : *', label-stacked :rules='[rules.required]' lazy-rules)
-                template(v-slot:prepend)
-                  q-icon(name='badge')
           .row.justify-center
             .col-xs-12.col-sm-12
-              q-input.q-pa-md(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
+              q-input.q-px-sm.rulesPadding(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
                 template(v-slot:prepend)
                   q-icon(name='business')
           .row.justify-left
             .col.q-pa-sm.col-xs-12.col-sm-8
-              q-input(v-model='agentForm.country', filled, label="Country", label-stacked :readonly='true' bg-color="grey-5")
+              q-input.rulesPadding(v-model='agentForm.country', filled, label="Country", label-stacked :readonly='true' bg-color="grey-5")
           .row.justify-center
             .col.q-pa-sm.col-xs-12.col-sm-12
               q-input(v-model='agentForm.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
@@ -54,10 +51,7 @@
                   q-icon(name='location_on')
           .row.justify-center
             .col.q-pa-sm.col-xs-12.col-sm-12
-              q-input(v-model='agentForm.address.line2', filled, label="Address Line 2", label-stacked)
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-12
-              q-input(v-model='agentForm.address.line3', filled, label="Address Line 3", label-stacked)
+              q-input.rulesPadding(v-model='agentForm.address.line2', filled, label="Address Line 2", label-stacked)
           .row.justify-center
             .col.q-pa-sm.col-xs-12.col-sm-6
               q-input(v-model='agentForm.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
@@ -81,14 +75,14 @@
               q-input(v-model='agentForm.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
                 template(v-slot:prepend)
                   q-icon(name='email')
-              div(style='color:red;')
+              div(style='color:red;').q-pt-md
                 q-checkbox(v-model='agree' label="* I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
   .dialog
     q-dialog(v-model='dialog' full-width)
       q-card
-        q-toolbar(style='background-color: #4839F9; color:white;')
+        q-toolbar(style='color:white;').bg-primary
           q-toolbar-title
-            span.text-weight-bold Select an Agent
+            span.text-subtitle1 Select an Agent
           q-btn(dense flat icon='close' v-close-popup)
             q-tooltip Close
         q-card-section
@@ -122,6 +116,8 @@
   background: #ddd
 .item
   color: #808080
+.rulesPadding
+  padding-bottom : 1.3%
 </style>
 
 <script>

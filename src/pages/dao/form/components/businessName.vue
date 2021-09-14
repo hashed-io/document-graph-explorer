@@ -1,27 +1,24 @@
 <template lang="pug">
 div.container
   strong
-    u.
-      Warning:
-  label.
-    If you have not conducted a search for your business entity name
+    u Warning:
+  label &nbsp; If you have not conducted a search for your business entity name
   a(href='https://sos.wyo.gov/Forms/WyoBiz/LLC%20-%20Name%20Statutes%2017-29-108%20-%2017-16-401.pdf' target="_blank").blackRedColor
       |(Business Entity Name Statutory Requirements)
   label to ensure that there are no entities on record which contain the singular or plural form of the name you wish to register, please visit the
   a(href='https://wyobiz.wyo.gov/Business/FilingSearch.aspx' target='_blank').blackRedColor
       | Search Tool
   label before proceeding.
-  div.q-pa-md
+  div.q-pa-sm
   label Please be advised that subtype designations (DAO, LAO, L3C) are not considered distinguishable. Please visit
   a(href='http://sos.wyo.gov/Business/Docs/HowToChooseACompanyName.pdf' target="_blank").blackRedColor
     |How To Choose a Company Name
   label for information.
-  div.q-pa-md
+  div.q-pa-sm
   label
     b
       u(style="color:red;") IMPORTANT:
-  label.
-    If you are forming a Decentralized Autonomous Organization (DAO) or a Series LLC,
+  label  &nbsp;If you are forming a Decentralized Autonomous Organization (DAO) or a Series LLC,&nbsp;
   strong
     u.
       you must make the appropriate designation in the "Additional Designation" field below.

@@ -1,50 +1,51 @@
 <template lang="pug">
-  div
+  .pageMargin
+    q-card(flat bordered)
       q-stepper(
         v-model="step"
         ref="stepper"
         color="primary"
-        animated
-        flat
+        header-class='fit'
         header-nav
         keep-alive
       )
-        q-step( :name="1" title="1. Business Name" :done="step > 1" :header-nav="step > 1")
+        q-step( :name="1" title="Step 1" caption="Business Name" :done="step > 1" :header-nav="step > 1")
           div.container
             businessName(ref="businessStepComponent" :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
+            .containerStep
             q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="2" title="2. Detail" :done="step > 2" :header-nav="step > 2" )
+        q-step(:name="2" title="Step 2" caption="Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
             q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="3" title="3. Agent" :done="step>3" :header-nav="step > 3")
+        q-step(:name="3" title="Step 3" caption="Agent" :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
             q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="4" title="4. Addresses" :done="step>4" :header-nav="step > 4")
+        q-step(:name="4" title="Step 4" caption="Addresses" :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
             q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="5" title="5. Organizers" :done="step>5" :header-nav="step > 5")
+        q-step(:name="5" title="Step 5" caption="Organizers" :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
             q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="6" title="6. Additional Articles" :done="step>6" :header-nav="step > 6")
+        q-step(:name="6" title="Step 6" caption="Articles" :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
             q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="7" title="7. Confirmation" :done="step>7" :header-nav="step > 7")
+        q-step(:name="7" title="Step 7" caption="Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
             q-btn(@click ="validateStep" color="primary" label="continue")
-        q-step(:name="8" title="8. Signature" :done="step>8" :header-nav="step > 8")
+        q-step(:name="8" title="Step 8" caption="Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
@@ -52,12 +53,21 @@
               .col
                 q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' readonly :rules='[rules.required]')
               .col(style='text-align:end;')
-                q-btn(@click='validateStep' color="primary" label="Finish" )
-        //- q-step(:name="9" title="9. Payment" :done="step>9" :header-nav="step > 9")
+                q-btn(@click='validateStep' color="primary" label="Finish & upload to blockchain" )
+        //- q-step(:name="9" title="Step 9" caption="Payment" :done="step>9" :header-nav="step > 9")
         //-   div.container
         //-     paymentComponent
 </template>
-
+<style lang="sass" scoped>
+  .pageMargin
+    padding-left: 12%
+    padding-right: 12%
+    padding-top: 2%
+  .container
+    padding-top: 1.2%
+  .containerStep
+    margin-top: -5%
+</style>
 <script>
 import { validation } from '~/mixins/validation'
 import businessName from '../form/components/businessName.vue'
@@ -134,15 +144,15 @@ export default {
             email: 'achang@green.info'
           },
           mailingAddress: {
-            country: 'United States of America',
+            country: '',
             address: {
-              line1: '48764 Howard Forge Apt. 421 Vanessaside, PA 19763',
+              line1: '',
               line2: null,
               line3: null
             },
-            city: 'Changchester',
-            state: 'WY',
-            postalCode: '9000'
+            city: '',
+            state: '',
+            postalCode: ''
           }
         },
         organizers: [
@@ -280,6 +290,7 @@ export default {
           break
         case 7:
           this.step = 8
+          window.scrollTo(0, 0)
           break
         case 8:
           this.$refs.signatureStepComponent.onSubmit()
@@ -303,20 +314,24 @@ export default {
       for (var key in this.form.agent) {
         this.form.agent[key] = _form[key]
       }
+      window.scrollTo(0, 0)
       this.step = 4
     },
     messageFromAddressesComponent (_form) {
       for (var key in this.form.addresses) {
         this.form.addresses[key] = _form[key]
       }
+      window.scrollTo(0, 0)
       this.step = 5
     },
     messageFromOrganizersComponent (_form) {
       this.form.organizers = _form
+      window.scrollTo(0, 0)
       this.step = 6
     },
     messageFromAdditionalArticlesComponent (_form) {
       this.form.additionalArticles = _form
+      window.scrollTo(0, 0)
       this.step = 7
     },
     messageFromSignatureComponent (_form) {

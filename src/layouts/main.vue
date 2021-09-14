@@ -41,15 +41,13 @@ export default {
           aria-label="Menu"
         )
         q-toolbar-title.flex.items-center
-          img.logo(src="statics/telos-logo-white.svg")
+          img.logo(src="statics/icons/TK_256.png")
         right-menu-authenticated(v-if="isAuthenticated")
         right-menu-guest(v-if="!isAuthenticated")
     q-drawer(
       v-model="menu"
       side="left"
-      :mini='miniState'
-      @mouseover="miniState = false"
-      @mouseout="miniState = true"
+      :mini='false'
     )
       left-menu
     q-page-container
@@ -58,7 +56,7 @@ export default {
 
 <style lang="sass" scoped>
 .logo
-  max-height: 30px
+  max-height: 42px
   max-width: 100px
 .badge-left
   left: -5px
