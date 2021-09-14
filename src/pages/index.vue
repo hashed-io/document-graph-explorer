@@ -48,13 +48,13 @@ export default {
   /deep/i
     font-size: 18px
 .imgSplash
-  min-width: 200px
-  max-height: 100px
+  min-width: 150px
+  max-height: 400px
   margin-top: 80px
 
 @media screen and (max-width: 360px)
   .imgSplash
     max-width: 150px
-    max-height: 100px
+    max-height: 300px
     margin-bottom: 20px
 </style>

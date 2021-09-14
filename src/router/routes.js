@@ -1,9 +1,8 @@
 const routes = [
   { path: '/', component: () => import('pages/index.vue'), meta: { layout: 'empty', guest: true } },
   { path: '/login', component: () => import('pages/login/login.vue'), meta: { layout: 'guest', title: 'pages.login.title', guest: true } },
-  { path: '/home', component: () => import('pages/home/home.vue'), name: 'home' },
   { path: '/registerDao', component: () => import('pages/dao/form/daoForm.vue'), name: 'daoForm' },
-  { path: '/dashboard', component: () => import('pages/dao/daos.vue'), name: 'daos' },
+  { path: '/home', component: () => import('pages/dao/daos.vue'), name: 'daos' },
   { path: '/manageContract', component: () => import('pages/dao/manage/manageContract.vue'), name: 'manageContract' }
 ]
 

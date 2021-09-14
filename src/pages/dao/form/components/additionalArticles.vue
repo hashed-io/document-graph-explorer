@@ -5,15 +5,15 @@
       .text-subtitle1.q-pa-md.bg-primary.text-white
         | Additional Articles
       q-separator
-      div.q-px-lg.text-subtitle1.q-pt-md
+      div.q-px-xs.text-subtitle2.q-pt-md
         | Please use the form below to add additional articles if necessary. Press 'Add' after entering the information for each article.
-      div.q-px-lg(style='color:red').text-subtitle1
+      div.q-px-xs(style='color:red').text-subtitle2
         | An LLC or any LLC subtype (DAO, Series, Close) does not file an operating agreement with the Secretary of State.
-      hr
-      span.q-px-lg.text-subtitle1(style='color:red') Important:
-      p.q-px-lg.text-subtitle2
+        hr
+      span.q-px-xs.text-subtitle1(style='color:red') Important:
+      p.q-px-xs.text-subtitle2
         u Additional information is required at this step. Provide the following information required by adding additional articles before moving to the confirmation page:
-      div.q-px-xl.text-subtitle2.q-pt-md
+      div.q-px-xs.text-subtitle2.q-pt-md
         strong Required
         ul
           li Pursuant to W.S. 17-31-106(a), a statement that the entity is a decentralized autonomous organization;
@@ -25,8 +25,8 @@
           li Pursuant to W.S. 17-31-104(e), whether the DAO is member managed or algorithmically managed; and
           li Any additional provisions related to W.S. 17-31-106(c).
       q-form(@submit='onSubmit'  ref="articleForm")
-        div.q-px-md(style='max-width:100%')
-          .row.q-gutter-md.justify-center
+        div.q-px-xs(style='max-width:100%')
+          .row.q-gutter-xs.justify-left
             .col-xs-12.col-sm-2
               q-input(v-model='article.number'  mask='##' input-class='text-center' outlined  label='Article #' :rules="[rules.required]" )
             .col-xs-12.col-sm-9
@@ -38,15 +38,15 @@
           //- .q-pa-sm
             //- q-btn(label="CLEAR" type="reset" color="primary")
   template
-    .text-subtitle1.q-px-md Articles Details
+    .text-subtitle1.q-px-xs Articles Details
       hr
     div(v-if='articles.length === 0')
       p    No Additional Articles Identified...
     div(v-else)
       q-list
-        div.q-px-md(v-for='(article, index) in articles')
+        div(v-for='(article, index) in articles')
           template
-            q-item(clickable)
+            q-item
               q-item-section(top)
                 q-item-label(lines='5')
                   span.text-subtitle2

@@ -14,7 +14,7 @@ export default {
     q-list
       q-item(
         v-if="isAuthenticated"
-        to="/dashboard"
+        to="/home"
         clickable
         v-ripple
       )

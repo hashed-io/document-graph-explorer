@@ -7,41 +7,41 @@ div
           | Organizers
       .container
         q-form(@submit='onSubmitOrganizer', ref="organizerForm").q-pl-md
-          p.q-px-md.q-pt-md.text-subtitle1
+          p.q-px-xs.q-pt-md.text-subtitle1
             | Please use the form below to add the name and address of the organizers. Press 'Add' after entering information.
-          div.q-px-md Choose one type of person
-          q-field(ref='toggle' borderless v-model="checkbox" :rules="[v => !!v || 'Choose one option']").q-pl-sm
+          div.q-px-xs Choose one type of person
+          q-field(ref='toggle' borderless v-model="checkbox" :rules="[v => !!v || 'Choose one option']")
             template(v-slot:control)
               q-option-group(v-model='checkbox' :options='options' color='primary' @input='deleteData' :rules="[rules.required]" inline)
           div(v-if="checkbox === 'physical'")
             .row.justify-center
-              .col.q-px-sm.col-xs-12.col-sm-12.col-md-4
+              .col.q-px-xs.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='firstName',filled, label="First Name: *" ,label-stacked :rules="[rules.required]")
                   template(v-slot:prepend)
                     q-icon(name='badge')
-              .col.q-px-sm.col-xs-12.col-sm-12.col-md-4
+              .col.q-px-xs.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='middleName',filled, label="Middle Name: ",label-stacked).q-pb-sm
-              .col.q-px-sm.col-xs-12.col-sm-12.col-md-4
+              .col.q-px-xs.col-xs-12.col-sm-12.col-md-4
                 q-input(v-model='lastName',filled, label="Last Name: *",label-stacked, :rules="[rules.required]")
           .row.justify-center
-            .col.q-px-sm.col-xs-12.col-sm-12.col-md-12
+            .col.q-px-xs.col-xs-12.col-sm-12.col-md-12
               div(v-if="checkbox === 'legal'")
                 q-input(v-model='organization', filled, label="Organization: *", label-stacked, :rules="[rules.required]")
                   template(v-slot:prepend)
                     q-icon(name='business')
-            .col.q-px-sm.col-xs-12.col-sm-12.col-md-12
+            .col.q-px-xs.col-xs-12.col-sm-12.col-md-12
               q-select(v-model='organizer.officerType', :options="selectOptions" filled, label="Officer type: *", label-stacked :rules="[rules.required]")
           .row.justify-center
-            .col.q-px-sm.col-xs-12.col-sm-12.col-md-12
+            .col.q-px-xs.col-xs-12.col-sm-12.col-md-12
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
                 template(v-slot:prepend)
                   q-icon(name='location_on')
-          .row.justify-start.q-pa-sm.q-pb-xl
+          .row.justify-start.q-pa-xs.q-pb-xl
             div(v-if='idEdit === null')
               q-btn(label="ADD" @click='onSubmit' color="primary")
             div(v-else)
               q-btn(label="UPDATE" @click='onSubmit' color="primary")
-            .q-pa-sm
+            .q-pa-xs
             //- q-btn(label="CLEAR" type="reset" color="primary")
 
         div(v-if='organizers.length === 0')
@@ -50,10 +50,10 @@ div
           q-list(class="rounded-borders")
             q-item
               q-item-section(top)
-                q-item-label(lines='5').text-subtitle1.q-px-sm
+                q-item-label(lines='5').text-subtitle1.q-px-xs
                   | Organizers
                   hr
-            div.q-pa-sm.q-gutter-sm(v-for='(organizer, index) in organizers')
+            div(v-for='(organizer, index) in organizers')
               template
                 q-item()
                   q-item-section(top)

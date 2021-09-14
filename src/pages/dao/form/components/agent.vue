@@ -5,78 +5,72 @@ div
     q-card-section.bg-primary.text-white
       .text-subtitle1 Search for a Registered Agent
     q-separator
-    p.q-pa-md
+    p.q-px-xs
       | The registered agent may be an individual resident in Wyoming who is at least eighteen (18) years old, or a domestic or foreign entity authorized to transact business in Wyoming having a business office identical with such registered office. The registered agent must have a physical address in Wyoming. A Post Office Box or Drop Box is not acceptable. If the registered office includes a suite number, it must be included in the registered office address.
     ul
       li
         strong
           a(href='https://sos.wyo.gov/Forms/WyoBiz/Registered_Offices_and_Agents_Act_Chapter_28.pdf' style="color:#AC2734;") Registered Offices and Agents Act
-    .container.q-pa-md
+    .container.q-px-xs.q-pb-md
       q-btn(label='Search' type='submit' color='primary' @click='searchAgent')
 
-    q-card(class='column' flat)
-      q-card-section.bg-primary.text-white
-        div(v-if="agentForm.firstName !== null && agentFound")
-          .row
-            .col.text-subtitle1
-              div Selected Agent: {{responseSearch.selectedAgent}}
-        div(v-else).text-subtitle1
-          | Enter Agent Information
-      q-separator
-      .container
-        q-form(@submit="onSubmit" @reset='clearAgent' ref="dataAgentForm")
-          .col(style='text-align:left').q-pt-sm.q-pl-sm
-            q-btn(label='clear agent' outline type='reset')
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-4
-              q-input(v-model='agentForm.firstName', filled, label='First Name : *', label-stacked :rules='[rules.required]')
-                template(v-slot:prepend)
-                  q-icon(name='badge')
-            .col.q-pa-sm.col-xs-12.col-sm-4
-              q-input(v-model='agentForm.middleName', filled, label='Middle Name :', label-stacked)
-            .col.q-pa-sm.col-xs-12.col-sm-4
-              q-input(v-model='agentForm.lastName', filled, label='Last Name : *', label-stacked :rules='[rules.required]' lazy-rules)
-          .row.justify-center
-            .col-xs-12.col-sm-12
-              q-input.q-px-sm.rulesPadding(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
-                template(v-slot:prepend)
-                  q-icon(name='business')
-          .row.justify-left
-            .col.q-pa-sm.col-xs-12.col-sm-8
-              q-input.rulesPadding(v-model='agentForm.country', filled, label="Country", label-stacked :readonly='true' bg-color="grey-5")
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-12
-              q-input(v-model='agentForm.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
-                template(v-slot:prepend)
-                  q-icon(name='location_on')
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-12
-              q-input.rulesPadding(v-model='agentForm.address.line2', filled, label="Address Line 2", label-stacked)
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-6
-              q-input(v-model='agentForm.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
-                template(v-slot:prepend)
-                  q-icon(name='map')
-            .col.q-pa-sm.col-xs-12.col-sm-2
-              q-input(v-model='agentForm.state', filled, label='State: *', label-stacked readonly bg-color="grey-5" :rules='[rules.required]')
-                template(v-slot:prepend)
-                  q-icon(name='badge')
-            .col.q-pa-sm.col-xs-12.col-sm-4
-              q-input(v-model='agentForm.postalCode' filled, label='Postal Code: *', label-stacked  readonly bg-color="grey-5" :rules='[rules.required]')
-                template(v-slot:prepend)
-                  q-icon(name='local_post_office')
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-12
-              q-input(v-model='agentForm.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
-                template(v-slot:prepend)
-                  q-icon(name='phone')
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-12
-              q-input(v-model='agentForm.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
-                template(v-slot:prepend)
-                  q-icon(name='email')
-              div(style='color:red;').q-pt-md
-                q-checkbox(v-model='agree' label="* I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
+  q-card(flat)
+    q-card-section.bg-primary.text-white
+      div(v-if="agentForm.firstName !== null && agentFound")
+        .row
+          .col.text-subtitle1
+            div Selected Agent: {{responseSearch.selectedAgent}}
+      div(v-else).text-subtitle1
+        | Enter Agent Information
+    q-separator
+    .container
+      q-form(@submit="onSubmit" @reset='clearAgent' ref="dataAgentForm")
+        .col(style='text-align:left').q-pt-sm.q-pl-sm
+          q-btn(label='clear agent' outline type='reset')
+        .row.justify-center
+          .col.q-pa-sm.col-xs-12.col-sm-4
+            q-input(v-model='agentForm.firstName', filled, label='First Name : *', label-stacked :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='badge')
+          .col.q-pa-sm.col-xs-12.col-sm-4
+            q-input(v-model='agentForm.middleName', filled, label='Middle Name :', label-stacked)
+          .col.q-pa-sm.col-xs-12.col-sm-4
+            q-input(v-model='agentForm.lastName', filled, label='Last Name : *', label-stacked :rules='[rules.required]' lazy-rules)
+        .row.justify-center
+          .col-xs-12.col-sm-12
+            q-input.q-px-sm.rulesPadding(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
+              template(v-slot:prepend)
+                q-icon(name='business')
+        .row.justify-left
+          .col.q-pa-sm.col-xs-12.col-sm-8
+            q-input.rulesPadding(v-model='agentForm.country', filled, label="Country", label-stacked :readonly='true' bg-color="grey-5")
+        .row.justify-center
+          .col.q-pa-sm.col-xs-12.col-sm-12
+            q-input(v-model='agentForm.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='location_on')
+        .row.justify-center
+          .col.q-pa-sm.col-xs-12.col-sm-12
+            q-input.rulesPadding(v-model='agentForm.address.line2', filled, label="Address Line 2", label-stacked)
+        .row.justify-center
+          .col.q-pa-sm.col-xs-12.col-sm-6
+            q-input(v-model='agentForm.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+          .col.q-pa-sm.col-xs-12.col-sm-2
+            q-input(v-model='agentForm.state', filled, label='State: *', label-stacked readonly bg-color="grey-5" :rules='[rules.required]')
+          .col.q-pa-sm.col-xs-12.col-sm-4
+            q-input(v-model='agentForm.postalCode' filled, label='Postal Code: *', label-stacked  readonly bg-color="grey-5" :rules='[rules.required]')
+        .row.justify-center
+          .col.q-pa-sm.col-xs-12.col-sm-12
+            q-input(v-model='agentForm.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
+              template(v-slot:prepend)
+                q-icon(name='phone')
+        .row.justify-center
+          .col.q-pa-sm.col-xs-12.col-sm-12
+            q-input(v-model='agentForm.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
+              template(v-slot:prepend)
+                q-icon(name='email')
+            div(style='color:red;').q-pt-md
+              q-checkbox(v-model='agree' label="* I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
   .dialog
     q-dialog(v-model='dialog' full-width)
       q-card

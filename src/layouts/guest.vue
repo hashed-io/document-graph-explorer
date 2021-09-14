@@ -22,7 +22,7 @@ q-layout(view="hHh lpR fFf")
         @click="$router.go(-1)"
       )
       .col-2.text-center.content-start
-        h1 {{ title }}
+        h1.text-primary {{ title }}
       .col-10.flex.flex-center.col-grow.q-pa-lg
         router-view
 </template>

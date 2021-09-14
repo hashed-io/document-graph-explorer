@@ -1,53 +1,55 @@
 <template lang="pug">
-div
-  p
-    | Provide additional information related to the Limited Liability Company as it applies.
-
-  q-form(@submit='onSubmit', ref='formDetail' class=q-gutter-md)
+q-card(flat)
+  q-card-section.bg-primary.text-white.text-subtitle1 Detail
+  div.q-px-xs.q-pt-md
     p
-    strong.
-      Period of duration:
-    strong.asterisk *
-    .row
-      .cols-8
-          q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
-          label (select &apos;Perpetual&apos; if the entity does not expire.)
-          .q-pa-xs
-          div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
-            p
+      | Provide additional information related to the Limited Liability Company as it applies.
+
+    q-form(@submit='onSubmit', ref='formDetail' class=q-gutter-md)
+      p
+      strong.
+        Period of duration:
+      strong.asterisk *
+      .row
+        .cols-8
+            q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
+            label (select &apos;Perpetual&apos; if the entity does not expire.)
+            .q-pa-xs
+            div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
+              p
+                strong Expiration Date (mm/dd/yyyy)
+                strong.asterisk *
+              p  {{calculateDate()}}
+              p
+            div(v-else-if="(selectValue.value === '0')")
               strong Expiration Date (mm/dd/yyyy)
               strong.asterisk *
-            p  {{calculateDate()}}
-            p
-          div(v-else-if="(selectValue.value === '0')")
-            strong Expiration Date (mm/dd/yyyy)
-            strong.asterisk *
-            .row
-              .cols-6
-                q-input(v-model='form.expirationDate', filled, mask='##/##/####' :rules='[rules.required]')
-                  template(v-slot:append='')
-                    q-icon.cursor-pointer(name='event' class="cursor-pointer")
-                      q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                        q-date(v-model='form.expirationDate', today-btn, mask='MM/DD/YYYY')
-                          .row.items-center.justify-end
-                            q-btn(v-close-popup, label='Close', color='primary', flat='flat')
-          div(v-else)
-            p
-              strong Expiration Date (mm/dd/yyyy)
-              strong.asterisk *
-            p  {{calculateDate()}}
-          p.q-pt-xl
-            b Delayed Effective Date : (mm/dd/yyyy)
-            .row
-              .cols-6
-                q-input(filled, v-model='form.delayedEffectiveDate', mask='##/##/####')
-                  template(v-slot:append='')
-                    q-icon.cursor-pointer(name='event')
-                      q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                        q-date(v-model='date', today-btn, mask='YYYY/MM/DD' :options='optionsFn' @input='changesDate')
-                          .row.items-center.justify-end
-                            q-btn(v-close-popup, label='Close', color='primary', flat='flat')
-                p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
+              .row
+                .cols-6
+                  q-input(v-model='form.expirationDate', filled, mask='##/##/####' :rules='[rules.required]')
+                    template(v-slot:append='')
+                      q-icon.cursor-pointer(name='event' class="cursor-pointer")
+                        q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                          q-date(v-model='form.expirationDate', today-btn, mask='MM/DD/YYYY')
+                            .row.items-center.justify-end
+                              q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+            div(v-else)
+              p
+                strong Expiration Date (mm/dd/yyyy)
+                strong.asterisk *
+              p  {{calculateDate()}}
+            p.q-pt-xl
+              b Delayed Effective Date : (mm/dd/yyyy)
+              .row
+                .cols-6
+                  q-input(filled, v-model='form.delayedEffectiveDate', mask='##/##/####')
+                    template(v-slot:append='')
+                      q-icon.cursor-pointer(name='event')
+                        q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                          q-date(v-model='date', today-btn, mask='YYYY/MM/DD' :options='optionsFn' @input='changesDate')
+                            .row.items-center.justify-end
+                              q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+                  p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
 </template>
 <style lang='sass' scoped>
   .asterisk

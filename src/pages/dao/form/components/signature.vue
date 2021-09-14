@@ -1,12 +1,12 @@
 <template lang="pug">
-q-card(bordered)
+q-card( flat)
   q-card-section.text-subtitle1.bg-primary.text-white
       | Signature
-  div.q-px-md
-    p.q-pt-md.q-pl-md
+  div.q-px-xs
+    p.q-pt-xs.q-pl-xs
       | BY CHECKING THE BOXES BELOW AND ENTERING MY ELECTRONIC SIGNATURE, I HEREBY CERTIFY UNDER PENALTY OF PERJURY THAT:
       hr
-    q-form(@submit='onSubmit', @reset='onReset' ref="signatureForm").q-px-md
+    q-form(@submit='onSubmit', @reset='onReset' ref="signatureForm").q-px-xs
       .row.justify-left
         q-field(dense ref='toggle' borderless v-model="checkbox.personSignature")
           template(v-slot:control)
@@ -47,7 +47,7 @@ q-card(bordered)
           template(v-slot:control)
             q-checkbox(dense v-model="checkbox.ack" :label='checkboxMessage.ack' :rules="[rules.required]")
       .row.justify-left.q-py-sm
-        p.q-pr-md Filer is: *
+        p.q-pr-xs Filer is: *
         q-field(dense ref='toggle' borderless v-model="fillerInformation.filerIs" :rules="[v => !!v || 'Choose one option']")
           template(v-slot:control)
             q-option-group(dense v-model='fillerInformation.filerIs' :options='options' color='primary' inline)
@@ -61,41 +61,41 @@ q-card(bordered)
         strong
           | By submitting this form I agree and accept this electronic filing as legal submission of my Articles of Organization.
       template.filerInformation
-      .row.justify-center
-        .col.q-px-xs
+      .row.q-gutter-sm
+        .col
           q-input(v-model='fillerInformation.firstName', filled, label="First Name *", label-stacked :rules="[rules.required]")
             template(v-slot:prepend)
               q-icon(name='badge')
-        .col.q-px-xs
+        .col
           q-input(v-model='fillerInformation.middleName', filled, label="Middle Name", label-stacked)
-        .col.q-px-xs
+        .col
           q-input(v-model='fillerInformation.lastName', filled, label="Last Name *", label-stacked :rules="[rules.required]")
-      .row
-        .col.q-px-xs
+      .row.q-gutter-sm
+        .col
           q-input(v-model='fillerInformation.title', filled, label="Title *", label-stacked :rules="[rules.required]")
             template(v-slot:prepend)
               q-icon(name='article')
-      .row
-        .col.q-px-xs
+      .row.q-gutter-sm
+        .col
           q-input(v-model='fillerInformation.phone', filled, label="Contact Phone *", mask="phone" label-stacked :rules="[rules.required]")
             template(v-slot:prepend)
               q-icon(name='phone')
-        .col.q-px-xs
+        .col
           q-input(v-model='confirmPhone', filled, label="Confirm Phone *", mask="phone" label-stacked :rules="[rules.required, v => v === this.fillerInformation.phone || 'The phone must match exactly.']")
             template(v-slot:prepend)
               q-icon(name='phone')
-      .row
-        .col.q-px-xs
+      .row.q-gutter-sm
+        .col
           q-input(v-model='fillerInformation.email', filled, label="Contact Email *", label-stacked :rules="[rules.required, rules.isEmail]")
             template(v-slot:prepend)
               q-icon(name='email')
-        .col.q-px-xs
+        .col
           q-input(v-model='confirmEmail', filled, label="Confirm Email *", label-stacked :rules="[rules.required,rules.isEmail, v => v === this.fillerInformation.email || 'The email must match exactly.']")
             template(v-slot:prepend)
               q-icon(name='email')
-      p(style='color:red;')
+      p(style='color:red;').q-px-xs
         | Disclaimer:
-      p(style='color:red;')
+      p(style='color:red;').q-px-xs
         strong
           | This form and any related instructions are not intended to provide legal, business or tax advice, and are furnished without representation or warranty. While this form is believed to satisfy minimum legal requirements as of its revision date, compliance with applicable law, as the same may be amended from time to time, remains the responsibility of the user of this form. Questions should be addressed to the user's legal, business or tax advisor(s).
 </template>

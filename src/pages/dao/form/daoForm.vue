@@ -14,46 +14,52 @@
             businessName(ref="businessStepComponent" :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
             .containerStep
-            q-btn(@click="validateStep" color="primary" label="continue" )
+              q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="2" title="Step 2" caption="Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
-            q-btn(@click="validateStep" color="primary" label="continue" )
+            .containerStep
+              q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="3" title="Step 3" caption="Agent" :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
-            q-btn(@click="validateStep" color="primary" label="continue" )
+            .containerStep
+              q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="Step 4" caption="Addresses" :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue" )
+            .containerStep
+              q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="5" title="Step 5" caption="Organizers" :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue" )
+            .containerStep
+              q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="Step 6" caption="Articles" :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue" )
+            .containerStep
+              q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="7" title="Step 7" caption="Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
-            q-btn(@click ="validateStep" color="primary" label="continue")
+            .containerStep
+              q-btn(@click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="Step 8" caption="Signature" :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
             .row
-              .col
+              .col(style='margin-top:-2%')
                 q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' readonly :rules='[rules.required]')
               .col(style='text-align:end;')
-                q-btn(@click='validateStep' color="primary" label="Finish & upload to blockchain" )
+                q-btn(@click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
         //- q-step(:name="9" title="Step 9" caption="Payment" :done="step>9" :header-nav="step > 9")
         //-   div.container
         //-     paymentComponent
@@ -64,9 +70,10 @@
     padding-right: 12%
     padding-top: 2%
   .container
-    padding-top: 1.2%
+    padding-top: 0%
   .containerStep
-    margin-top: -5%
+    margin-top: -1%
+    margin-left: 0.5%
 </style>
 <script>
 import { validation } from '~/mixins/validation'

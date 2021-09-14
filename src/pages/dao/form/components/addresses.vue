@@ -5,21 +5,21 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
       q-card-section.bg-primary.text-white
         .text-subtitle1 Principal Address
       q-separator
-      p.paddingInput
+      p.paddingInput.q-pl-md
         | Please update the Principal Office Address for this entity.
-        .q-px-xl
+        .q-px-xs
           .row
-            .col.q-px-sm.col-xs-12.col-sm-6
+            .col.q-px-xs.col-xs-12.col-sm-6
               q-select(filled v-model='form.principalAddress.country' :options='options' emit-value @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
                 template(v-slot:prepend)
                   q-icon(name='public')
           .row.justify-center
-            .col.q-px-sm.col-xs-12.col-sm-12
+            .col.q-px-xs.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='location_on')
           .row.justify-center
-            .col.q-px-sm.col-xs-12.col-sm-12
+            .col.q-px-xs.col-xs-12.col-sm-12
               q-input.rulesPadding(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
           .row.justify-center
             .col.q-pa-sm.col-xs-12.col-sm-6
@@ -31,21 +31,21 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
             .col.q-pa-sm.col-xs-12.col-sm-4
               q-input(v-model='form.principalAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
           .row.justify-center
-            .col.q-px-sm.col-xs-12.col-sm-6
+            .col.q-px-xs.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='phone')
-            .col.q-px-sm.col-xs-12.col-sm-6
+            .col.q-px-xs.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.fax', filled, label='Fax', label-stacked mask='phone')
                 template(v-slot:prepend)
                   q-icon(name='fax')
           .row.justify-left
-            .col.q-px-sm.col-xs-12.col-sm-8
+            .col.q-px-xs.col-xs-12.col-sm-8
               q-input(v-model='form.principalAddress.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
                 template(v-slot:prepend)
                   q-icon(name='email')
           .row.justify-center
-          .col.q-px-sm.col-xs-12.col-sm-12
+          .col.q-px-xs.col-xs-12.col-sm-12
             p
               | Please provide your email address in order to receive electronic notification of future annual report due dates.
             p
@@ -55,32 +55,32 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
       q-card-section.bg-primary.text-white
         .text-subtitle1 Mailing Address
       q-separator
-      div.paddingInput
+      div.paddingInput.q-pl-md
         | Please update the Mailing Address for this entity
-      .q-px-xl
+      .q-px-xs
         .q-pb-md
           q-checkbox(v-model='checkboxCopy' label='Stay principal address information' @input='changeStateCheckbox')
         .row
-            .col.q-px-sm.col-xs-12.col-sm-6
+            .col.q-px-xs.col-xs-12.col-sm-6
               q-select(filled v-model='form.mailingAddress.country' :options='options'  @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
                 template(v-slot:prepend)
                   q-icon(name='public')
         .row.justify-center
-          .col.q-px-sm.col-xs-12.col-sm-12
+          .col.q-px-xs.col-xs-12.col-sm-12
             q-input(v-model='form.mailingAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
                 q-icon(name='location_on')
         .row.justify-center
-          .col.q-px-sm.col-xs-12.col-sm-12
+          .col.q-px-xs.col-xs-12.col-sm-12
             q-input.rulesPadding(v-model='form.mailingAddress.address.line2', filled, label="Address Line 2", label-stacked)
         .row.justify-center.q-pt-sm
-          .col.q-px-sm.col-xs-12.col-sm-6
+          .col.q-px-xs.col-xs-12.col-sm-6
             q-input(v-model='form.mailingAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
                 q-icon(name='location_city')
-          .col.q-px-sm.col-xs-12.col-sm-2
+          .col.q-px-xs.col-xs-12.col-sm-2
             q-input(v-model='form.mailingAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
-          .col.q-px-sm.col-xs-12.col-sm-4
+          .col.q-px-xs.col-xs-12.col-sm-4
             q-input(v-model='form.mailingAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
 </template>
 
@@ -88,7 +88,6 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
 .rulesPadding
   padding-bottom : 1.4%
 .paddingInput
-  padding-left: 5.1%
   padding-bottom: 1%
   padding-top: 1%
 </style>
@@ -142,7 +141,11 @@ export default {
   },
   methods: {
     onSubmit () {
-      this.$emit('dataFromAddresses', this.form)
+      this.$refs.formAddresses.validate().then(success => {
+        if (success) {
+          this.$emit('dataFromAddresses', this.form)
+        }
+      })
     },
     filterFn (val, update) {
       if (val === '') {
