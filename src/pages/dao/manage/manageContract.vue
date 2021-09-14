@@ -4,7 +4,7 @@
       .row
         .col-11.q-py-md.text-h6 Manage Contracts
         .col-1.q-py-md
-          q-btn(label='back' color="primary" @click="$router.push('dashboard')")
+          q-btn(label='back' color="primary" @click="$router.push('daos')")
       managedao(:dao="SelectedDao")
 </template>
 

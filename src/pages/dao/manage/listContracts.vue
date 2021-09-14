@@ -123,7 +123,7 @@ export default {
   },
   async mounted () {
     if (this.dao === null) {
-      this.$router.push('dashboard')
+      this.$router.push('daos')
     }
     try {
       let _contractAccount = this.dao.dao

@@ -372,11 +372,11 @@ export default {
             spinner: QSpinnerPuff
           })
           await new Promise(resolve => setTimeout(resolve, 1500))
-          await this.saveAndDeployDao({
-            dao: this.daoName.toLowerCase(),
-            creator: this.account,
-            ipfs: this.typeCid
-          })
+          // await this.saveAndDeployDao({
+          //   dao: this.daoName.toLowerCase(),
+          //   creator: this.account,
+          //   ipfs: this.typeCid
+          // })
           // loading show [step 2]
 
           this.$q.loading.show({
@@ -384,16 +384,16 @@ export default {
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 1500))
+          await new Promise(resolve => setTimeout(resolve, 2500))
           this.$q.loading.hide()
-          await this.initDao()
+          // await this.initDao()
           this.showSuccessMsg('Deploy contract success')
-          this.$router.push('dashboard')
+          this.$router.push('daos')
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
           this.showErrorMsg('Error while saving DAO data. ' + e)
-          this.$router.push('dashboard')
+          this.$router.push('daos')
         }
       } else {
         this.$q.loading.hide()
@@ -422,7 +422,7 @@ export default {
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
-        self.$router.push('dashboard')
+        self.$router.push('daos')
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e)
