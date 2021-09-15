@@ -27,10 +27,10 @@
       q-form(@submit='onSubmit'  ref="articleForm")
         div.q-px-xs(style='max-width:100%')
           .row.q-gutter-xs.justify-left
-            .col-xs-12.col-sm-2
+            .col-xs-12.col-sm-1
               q-input(v-model='article.number'  mask='##' input-class='text-center' outlined  label='Article #' :rules="[rules.required]" )
-            .col-xs-12.col-sm-9
-              q-input(v-model='article.detail'  outlined counter maxlength='1000' type="textarea" label='Article detail' :rules="[rules.required]")
+            .col-xs-12.col-sm-10
+              q-input(v-model='article.detail'  outlined counter maxlength='1000' autogrow type="textarea" label='Article detail' :rules="[rules.required]")
           div(v-if='idEdit === null').q-pb-md
             q-btn(label="ADD" type="submit" color="primary")
           div(v-else)
@@ -49,7 +49,7 @@
             q-item
               q-item-section(top)
                 q-item-label(lines='5')
-                  span.text-subtitle1
+                  span.text-subtitle2
                     strong
                       | Article: &nbsp; #
                     b {{article.number}}

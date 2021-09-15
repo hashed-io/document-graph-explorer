@@ -16,10 +16,10 @@ q-card(flat)
             label (select &apos;Perpetual&apos; if the entity does not expire.)
             .q-pa-xs
             div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
-              p
+              p.text-weight-bolder
                 strong Expiration Date (mm/dd/yyyy)
-                strong.asterisk *
-              p  {{calculateDate()}}
+                strong.q-pr-md.asterisk *
+                | {{calculateDate()}}
               p
             div(v-else-if="(selectValue.value === '0')")
               strong Expiration Date (mm/dd/yyyy)

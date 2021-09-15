@@ -1,7 +1,7 @@
 <template lang="pug">
 #container
   #Form
-  q-dialog(v-model='openDialog' full-width)
+  q-dialog(v-model='openDialog')
     q-card(flat)
       q-toolbar
         q-toolbar-title
@@ -57,7 +57,6 @@
       flat
       dense
       ref='table'
-      wrap-cells
       separator='none'
       table-header-class="hdTable"
       :filter="params.search"
@@ -78,12 +77,13 @@
             q-btn(label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
-          q-td(
+          q-td.column-responsive(
             v-for="col in props.cols"
             :key="col.name"
-            auto-width
             :props="props"
           ) {{col.value}}
+            template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
+              q-tooltip {{props.row.value[1]}}
             template(v-if="col.name == 'actions'")
                 template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
                   q-icon.animated-icon(

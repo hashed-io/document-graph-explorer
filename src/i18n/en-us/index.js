@@ -61,7 +61,8 @@ export default {
       dao: 'DAO',
       ipfs: 'IPFS',
       editDao: 'Edit',
-      viewData: 'See data in IPFS'
+      viewData: 'See data in IPFS',
+      back: 'Back to the list daos'
     },
     agent: {
       name: 'Name',

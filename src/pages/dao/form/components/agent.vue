@@ -11,10 +11,9 @@ div
       li
         strong
           a(href='https://sos.wyo.gov/Forms/WyoBiz/Registered_Offices_and_Agents_Act_Chapter_28.pdf' style="color:#AC2734;") Registered Offices and Agents Act
-    .container.q-px-xs.q-pb-md
+    .container.q-px-xs.q-pb-md.q-gutter-md
       q-btn(label='Search' type='submit' color='primary' @click='searchAgent')
-
-  q-card(flat)
+      q-btn(label='clear agent' @click='clearAgent()' type='reset' color='primary')
     q-card-section.bg-primary.text-white
       div(v-if="agentForm.firstName !== null && agentFound")
         .row
@@ -24,10 +23,8 @@ div
         | Enter Agent Information
     q-separator
     .container
-      q-form(@submit="onSubmit" @reset='clearAgent' ref="dataAgentForm")
-        .col(style='text-align:left').q-pt-sm.q-pl-sm
-          q-btn(label='clear agent' outline type='reset')
-        .row.justify-center
+      q-form(@submit="onSubmit"  ref="dataAgentForm")
+        .row.justify-start
           .col.q-pa-sm.col-xs-12.col-sm-4
             q-input(v-model='agentForm.firstName', filled, label='First Name : *', label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
@@ -326,7 +323,9 @@ export default {
       for (let key in this.agentForm.address) {
         this.agentForm.address[key] = null
       }
+      this.$refs.dataAgentForm.reset()
     }
+
   }
 }
 </script>

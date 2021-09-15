@@ -31,27 +31,31 @@ export default {
   q-layout(view="hHh Lpr lFf")
     q-header
       q-toolbar
-        q-btn(
-          flat
-          show-if-above
-          dense
-          round
-          @click="menu = !menu"
-          icon="fas fa-bars"
-          aria-label="Menu"
-        )
+        //- q-btn(
+        //-   flat
+        //-   show-if-above
+        //-   dense
+        //-   round
+        //-   @click="menu = !menu"
+        //-   icon="fas fa-bars"
+        //-   aria-label="Menu"
+        //- )
         q-toolbar-title.flex.items-center
           img.logo(src="statics/icons/TK_256.png")
         right-menu-authenticated(v-if="isAuthenticated")
         right-menu-guest(v-if="!isAuthenticated")
-    q-drawer(
-      v-model="menu"
-      side="left"
-      :mini='false'
-    )
-      left-menu
-    q-page-container.contentContainer.q-mt-xl
-      router-view
+    //- q-drawer(
+    //-   v-model="menu"
+    //-   side="left"
+    //-   :mini='false'
+    //- )
+    //-   left-menu
+    .row
+      .col-1
+      .col-10
+        q-page-container.q-mt-xl
+          router-view
+      .col-1
 </template>
 
 <style lang="sass" scoped>
@@ -62,5 +66,5 @@ export default {
   left: -5px
   right: auto
 .contentContainer
-  padding: 11vw;
+  padding: 6rem;
 </style>

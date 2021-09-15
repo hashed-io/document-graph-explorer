@@ -50,24 +50,24 @@ div
           q-list(class="rounded-borders")
             q-item
               q-item-section(top)
-                q-item-label(lines='5').text-subtitle1.q-px-xs
+                q-item-label(lines='5').text-subtitle1
                   | Organizers
                   hr
             div(v-for='(organizer, index) in organizers')
               template
-                q-item()
+                q-item
                   q-item-section(top)
                     q-item-label(lines='5')
                       span.text-subtitle1
                         | Name: &nbsp;
-                        p {{organizer.name}}
+                        | {{organizer.name}}
                     q-item-label(caption='', lines='1').text-caption
                       span.text-subtitle1
                         | type: &nbsp;
-                        b {{organizer.typeName}}
-                    q-item-label.q-mt-xs.text-caption.text-weight-bold.text-primary.text-uppercase(lines='1')
+                        | {{organizer.typeName}}
+                    q-item-label.q-mt-xs.text-caption.text-primary.text-uppercase(lines='1')
                       span Address:  &nbsp;
-                        b {{organizer.addressInfo}}
+                        | {{organizer.addressInfo}}
                   q-item-section(top='', side='')
                     .text-grey-8.q-gutter-xs
                       q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')

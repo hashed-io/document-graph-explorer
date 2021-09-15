@@ -1,5 +1,7 @@
 <template lang="pug">
-  .pageMargin
+  .PageMargin
+    q-btn.back( icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
+      q-tooltip {{$t('pages.general.back')}}
     q-card(flat bordered)
       q-stepper(
         v-model="step"
@@ -11,52 +13,52 @@
       )
         q-step( :name="1"  title="Business" :done="step > 1" :header-nav="step > 1")
           div.container
-            businessName(ref="businessStepComponent" :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
+            businessName(ref="businessStepComponent" :prefix='1' :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
             .containerStep
               q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="2" title="Detail" caption="Detail" :done="step > 2" :header-nav="step > 2" )
+        q-step(:name="2" title="Detail" :prefix='2' :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
             .containerStep
               q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="3" title="Agent" caption="Agent" :done="step>3" :header-nav="step > 3")
+        q-step(:name="3" title="Agent" :prefix='3' :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
-            .containerStep
+            .pageMargin
               q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="4" title="Addresses" caption="Addresses" :done="step>4" :header-nav="step > 4")
+        q-step(:name="4" title="Addresses" :prefix='4' :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
             .containerStep
               q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="5" title="Organizers" caption="Organizers" :done="step>5" :header-nav="step > 5")
+        q-step(:name="5" title="Organizers" :prefix='5' :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
-            .containerStep
+            .pageMargin
               q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="6" title="Articles" caption="Articles" :done="step>6" :header-nav="step > 6")
+        q-step(:name="6" title="Articles" :prefix='6' :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
-            .containerStep
+            .pageMargin
               q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="7" title="Confirmation" :done="step>7" :header-nav="step > 7")
+        q-step(:name="7" title="Confirmation" :prefix='7' :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
             .containerStep
               q-btn(@click ="validateStep" color="primary" label="continue")
-        q-step(:name="8" title="Signature"  :done="step>8" :header-nav="step > 8")
+        q-step(:name="8" title="Signature" :prefix='8' :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
             .row
-              .col(style='margin-top:-2%')
+              .col(style='margin-top:-2%; margin-left: 1.5%;')
                 q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' readonly :rules='[rules.required]')
               .col(style='text-align:end;')
                 q-btn(@click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
@@ -65,10 +67,13 @@
         //-     paymentComponent
 </template>
 <style lang="sass" scoped>
+  .back
+    position: absolute
+    top: 55px
+    left: 10px
   .pageMargin
-    // padding-left: 12%
-    // padding-right: 12%
-    // padding-top: 2%
+    margin-top: -1%
+    margin-left: 1.3%
   .container
     padding-top: 0%
   .containerStep
