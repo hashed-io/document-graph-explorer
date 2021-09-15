@@ -85,27 +85,32 @@
             template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
               q-tooltip {{props.row.value[1]}}
             template(v-if="col.name == 'actions'")
-                template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
-                  q-icon.animated-icon(
-                    name='search'
-                    v-ripple
+              .row
+                .col-2
+                .col-3
+                  template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
+                    q-icon.animated-icon(
+                      name='search'
+                      v-ripple
+                      size='sm'
+                      color='positive'
+                      @click="openLink(props.row.ipfs,props.row.value[1])"
+                    )
+                .col-3
+                  q-icon.q-px-md.animated-icon(
+                    name='edit'
                     size='sm'
                     color='positive'
-                    @click="openLink(props.row.ipfs,props.row.value[1])"
+                    @click='editRow(props.pageIndex)'
                   )
-                q-icon.q-px-md.animated-icon(
-                  name='edit'
-                  size='sm'
-                  color='positive'
-                  @click='editRow(props.pageIndex)'
-                )
-                q-icon.q-pr-md.animated-icon(
-                  name='delete'
-                  v-ripple
-                  size='sm'
-                  color='negative'
-                  @click='deleteRow(props.row,props.pageIndex)'
-                )
+                .col-3
+                  q-icon.q-pr-md.animated-icon(
+                    name='delete'
+                    v-ripple
+                    size='sm'
+                    color='negative'
+                    @click='deleteRow(props.row,props.pageIndex)'
+                  )
 
 </template>
 <script>
@@ -241,7 +246,7 @@ export default {
           name: 'actions',
           label: 'Actions',
           headerStyle: 'font-weight: bolder; text-align:center',
-          align: 'right',
+          align: 'center',
           sortable: false
         }
       ],
