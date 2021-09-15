@@ -54,7 +54,7 @@
                       | Article: &nbsp; #
                     b {{article.number}}
               q-item-section(top class="col-10")
-                q-item-label(caption='', lines='30')
+                q-item-label( lines='30')
                   span.text-subtitle2
                     strong(style='color:black;')
                       p

@@ -1,13 +1,11 @@
 <template lang="pug">
   .PageMargin
-    q-btn.back( icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
-      q-tooltip {{$t('pages.general.back')}}
     q-card(flat bordered)
       q-stepper(
         v-model="step"
         ref="stepper"
         color="primary"
-        header-class='fit'
+        header-class='testClass'
         header-nav
         keep-alive
       )
@@ -67,10 +65,6 @@
         //-     paymentComponent
 </template>
 <style lang="sass" scoped>
-  .back
-    position: absolute
-    top: 55px
-    left: 10px
   .pageMargin
     margin-top: -1%
     margin-left: 1.3%

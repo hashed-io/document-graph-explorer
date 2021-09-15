@@ -22,6 +22,20 @@ q-card(flat)
         div
         div.q-py-xs
       .col(style='text-align: left; padding-left:10em; padding-right:10em;')
+        div
+          strong Filing Date
+        div {{form.detail.periodOfDuration}}
+        div
+          strong Delayed Effective Date
+        div {{form.detail.delayedEffectiveDate}}
+        div
+          strong Term of Duration
+        div {{form.detail.expirationDate}}
+        div.q-pt-sm
+        div
+          strong Formed in
+        div {{formedIn}}
+      .col(style='text-align: left;')
         template
           strong Mailing Address
           div(v-for="(address,index) in form.addresses.mailingAddress.address" )
@@ -39,20 +53,6 @@ q-card(flat)
             | {{form.addresses.mailingAddress.city}}, {{form.addresses.mailingAddress.state}} {{form.addresses.mailingAddress.postalCode}}
           div
             | {{form.addresses.mailingAddress.country}}
-      .col(style='text-align: left; margin-left:0em;')
-        div
-          strong Filing Date
-        div {{form.detail.periodOfDuration}}
-        div
-          strong Delayed Effective Date
-        div {{form.detail.delayedEffectiveDate}}
-        div
-          strong Term of Duration
-        div {{form.detail.expirationDate}}
-        div.q-pt-sm
-        div
-          strong Formed in
-        div {{formedIn}}
     template
     .q-py-md
       .text-subtitle1 Organizers

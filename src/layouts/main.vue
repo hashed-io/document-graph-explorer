@@ -50,17 +50,21 @@ export default {
     //-   :mini='false'
     //- )
     //-   left-menu
-    .row
-      .col-1
-      .col-10
-        q-page-container.q-mt-xl
-          router-view
-      .col-1
+    template(v-if="!$router.history.current.path.includes('/home')")
+      q-btn.back( icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
+        q-tooltip {{$t('pages.general.back')}}
+    q-page-container.q-mt-xl.contentContainer
+      router-view
 </template>
 
 <style lang="sass" scoped>
+.back
+  position: absolute
+  top: 15px
+  left: 10px
 .logo
-  max-height: 42px
+  padding-left: 1vw
+  max-height: 50px
   max-width: 100px
 .badge-left
   left: -5px
