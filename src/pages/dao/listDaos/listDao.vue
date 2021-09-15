@@ -1,7 +1,7 @@
 <template lang="pug">
-#container.q-pa-md
+#container
   skeleton-table(v-if="!daos")
-  q-table.q-mb-sm(
+  q-table(
     v-else
     title: 'Daos'
     :data="daosFreeze"
@@ -235,8 +235,7 @@ export default {
       this.showIsLoading(true)
       await axios({
         method: 'get',
-        url: url,
-        timeout: 5000
+        url: url
       }).then(function (response) {
         self.loading = false
         self.changeStateDAO(response.data.data, daoName)
@@ -247,7 +246,7 @@ export default {
       this.setIsEdit(true)
       this.setDataForm(_form)
       this.setDaoName(daoName)
-      this.$router.push('/registerDAO')
+      this.$router.push({ name: 'daoForm' })
     },
     async onClickSee (row) {
       let url = 'https://ipfs.io/ipfs/' + row.ipfs

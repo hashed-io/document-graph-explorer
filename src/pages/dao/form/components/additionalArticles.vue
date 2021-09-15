@@ -49,7 +49,7 @@
             q-item
               q-item-section(top)
                 q-item-label(lines='5')
-                  span.text-subtitle2
+                  span.text-subtitle1
                     strong
                       | Article: &nbsp; #
                     b {{article.number}}

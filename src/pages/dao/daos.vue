@@ -1,8 +1,8 @@
 <template lang="pug">
-.row.justify-center
-  .q-pa-md.col-12.col-md-11
+div
+  .q-pb-xs.col-12.col-md-11
     q-card.q-pa-md(flat)
-      .text-subtitle1 {{ $t('pages.daos.titleForm') }}
+      .text-h6 {{ $t('pages.daos.titleForm') }}
       listdao(ref='daoTable' @onManageContract='onClickManage')
       .row.q-gutter-sm.justify-end
         q-btn(
@@ -32,15 +32,11 @@ export default {
     onConfirmRemoveDao () {
     },
     onClickCreateDao () {
-      // this.openCreateDao = true
-      // this.selectedDao = undefined
-      this.$router.push('/registerDao')
+      this.$router.push({ name: 'daoForm' })
     },
     onClickManage () {
       this.setSelectedDao(arguments[0])
-      this.$router.push('/manageContract')
-      // this.openCreateDao = true
-      // this.selectedDao = arguments[0]
+      this.$router.push({ name: 'manageContract' })
     },
     onManageDao () {
 

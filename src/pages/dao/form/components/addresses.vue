@@ -59,7 +59,7 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
         | Please update the Mailing Address for this entity
       .q-px-xs
         .q-pb-md
-          q-checkbox(v-model='checkboxCopy' label='Stay principal address information' @input='changeStateCheckbox')
+          q-checkbox(v-model='checkboxCopy' label='Same as Principal Address' @input='changeStateCheckbox')
         .row
             .col.q-px-xs.col-xs-12.col-sm-6
               q-select(filled v-model='form.mailingAddress.country' :options='options'  @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")

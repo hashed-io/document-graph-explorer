@@ -6,7 +6,7 @@ q-card(flat)
     p Please confirm the business entity information is entered correctly.
     p Warning : Please review your filing and click 'Continue' to file your registration electronically.
     .row
-      .col-8(align='justify')
+      .col-xs-12.col-sm-8(align='justify')
         div
           strong Name
         div {{form.businessName.businessName}}
@@ -30,7 +30,7 @@ q-card(flat)
             | {{form.addresses.mailingAddress.city}}, {{form.addresses.mailingAddress.state}} {{form.addresses.mailingAddress.postalCode}}
           div
             | {{form.addresses.mailingAddress.country}}
-      .col-4(align='justify')
+      .col-xs-12.col-sm-4(align='justify')
         div
           strong Filing Date
         div {{form.detail.periodOfDuration}}
@@ -102,18 +102,18 @@ q-card(flat)
       .text-subtitle1 Registered Agent
       hr
       .row.justify-left
-        .col-3
+        .col-xs-12.col-sm-3
           strong Agent Name
           div {{form.agent.firstName}} {{form.agent.middleName}} {{form.agent.lastName}}
-        .col-3
+        .col-xs-12.col-sm-3
           div.q-pt-sm
             strong Email
           div {{form.agent.email}}
-        .col-3
+        .col-xs-12.col-sm-3
           div.q-pt-sm
             strong Phone
           div {{form.agent.phone}}
-        .col-3
+        .col-xs-12.col-sm-6
           div.q-pt-sm
             template
               strong Principal Office

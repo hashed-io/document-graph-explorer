@@ -60,7 +60,7 @@ div
                     q-item-label(lines='5')
                       span.text-subtitle1
                         | Name: &nbsp;
-                        b {{organizer.name}}
+                        p {{organizer.name}}
                     q-item-label(caption='', lines='1').text-caption
                       span.text-subtitle1
                         | type: &nbsp;

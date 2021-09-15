@@ -50,7 +50,7 @@ export default {
       :mini='false'
     )
       left-menu
-    q-page-container
+    q-page-container.contentContainer.q-mt-xl
       router-view
 </template>
 
@@ -61,4 +61,6 @@ export default {
 .badge-left
   left: -5px
   right: auto
+.contentContainer
+  padding: 11vw;
 </style>

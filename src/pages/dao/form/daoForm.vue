@@ -9,49 +9,49 @@
         header-nav
         keep-alive
       )
-        q-step( :name="1" title="Step 1" caption="Business Name" :done="step > 1" :header-nav="step > 1")
+        q-step( :name="1"  title="Business" :done="step > 1" :header-nav="step > 1")
           div.container
             businessName(ref="businessStepComponent" :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
             .containerStep
               q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="2" title="Step 2" caption="Detail" :done="step > 2" :header-nav="step > 2" )
+        q-step(:name="2" title="Detail" caption="Detail" :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
             .containerStep
               q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="3" title="Step 3" caption="Agent" :done="step>3" :header-nav="step > 3")
+        q-step(:name="3" title="Agent" caption="Agent" :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
             .containerStep
               q-btn(@click="validateStep" color="primary" label="continue" )
-        q-step(:name="4" title="Step 4" caption="Addresses" :done="step>4" :header-nav="step > 4")
+        q-step(:name="4" title="Addresses" caption="Addresses" :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
             .containerStep
               q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="5" title="Step 5" caption="Organizers" :done="step>5" :header-nav="step > 5")
+        q-step(:name="5" title="Organizers" caption="Organizers" :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
             .containerStep
               q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="6" title="Step 6" caption="Articles" :done="step>6" :header-nav="step > 6")
+        q-step(:name="6" title="Articles" caption="Articles" :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
             .containerStep
               q-btn(@click ="validateStep" color="primary" label="continue" )
-        q-step(:name="7" title="Step 7" caption="Confirmation" :done="step>7" :header-nav="step > 7")
+        q-step(:name="7" title="Confirmation" :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
             .containerStep
               q-btn(@click ="validateStep" color="primary" label="continue")
-        q-step(:name="8" title="Step 8" caption="Signature" :done="step>8" :header-nav="step > 8")
+        q-step(:name="8" title="Signature"  :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
@@ -66,9 +66,9 @@
 </template>
 <style lang="sass" scoped>
   .pageMargin
-    padding-left: 12%
-    padding-right: 12%
-    padding-top: 2%
+    // padding-left: 12%
+    // padding-right: 12%
+    // padding-top: 2%
   .container
     padding-top: 0%
   .containerStep
@@ -110,7 +110,7 @@ export default {
     } else {
       this.form = { price: 100,
         businessName: {
-          businessName: 'DAO LC Levy Group',
+          businessName: 'ACME DAO LLC',
           additionalDesignation: 'Decentralized Autonomous Organization'
         },
         detail: {
@@ -368,10 +368,11 @@ export default {
           // loading show [step 1]
           this.$q.loading.show({
             message: ' Saving data and deploy contract...',
+            customClass: 'text-weight-bold text-subtitle1',
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 1500))
+          await new Promise(resolve => setTimeout(resolve, 2000))
           // await this.saveAndDeployDao({
           //   dao: this.daoName.toLowerCase(),
           //   creator: this.account,
@@ -381,6 +382,7 @@ export default {
 
           this.$q.loading.show({
             message: 'Initializing DAO...',
+            customClass: 'text-weight-bold text-subtitle1',
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
@@ -388,12 +390,12 @@ export default {
           this.$q.loading.hide()
           // await this.initDao()
           this.showSuccessMsg('Deploy contract success')
-          this.$router.push('daos')
+          this.$router.push({ name: 'daos' })
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
           this.showErrorMsg('Error while saving DAO data. ' + e)
-          this.$router.push('daos')
+          this.$router.push({ name: 'daos' })
         }
       } else {
         this.$q.loading.hide()
@@ -422,7 +424,7 @@ export default {
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
-        self.$router.push('daos')
+        this.$router.push({ name: 'daos' })
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e)

@@ -2,7 +2,7 @@
 #container
   #Form
   q-dialog(v-model='openDialog' full-width)
-    q-card
+    q-card(flat)
       q-toolbar
         q-toolbar-title
           span.text-weight-bold Fill the fields
@@ -54,6 +54,8 @@
       :pagination="initialPagination"
       class="sticky-virtscroll-table"
       clearable
+      flat
+      dense
       ref='table'
       wrap-cells
       separator='none'
@@ -123,7 +125,7 @@ export default {
   },
   async mounted () {
     if (this.dao === null) {
-      this.$router.push('daos')
+      this.$router.push({ name: 'daos' })
     }
     try {
       let _contractAccount = this.dao.dao

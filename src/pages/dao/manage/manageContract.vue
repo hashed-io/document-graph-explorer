@@ -1,11 +1,10 @@
 <template lang='pug'>
   #container
-    div.q-px-xl
-      .row
-        .col-11.q-py-md.text-h6 Manage Contracts
-        .col-1.q-py-md
-          q-btn(label='back' color="primary" @click="$router.push('daos')")
-      managedao(:dao="SelectedDao")
+    .row
+      .col-11.q-py-md.text-h6 Manage Contracts
+      .col-1.q-py-md
+        q-btn(label='back' color="primary" @click="$router.push({name: 'daos'})")
+    managedao(:dao="SelectedDao").q-pb-xs
 </template>
 
 <script>
