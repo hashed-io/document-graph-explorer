@@ -372,11 +372,11 @@ export default {
             spinner: QSpinnerPuff
           })
           await new Promise(resolve => setTimeout(resolve, 2000))
-          // await this.saveAndDeployDao({
-          //   dao: this.daoName.toLowerCase(),
-          //   creator: this.account,
-          //   ipfs: this.typeCid
-          // })
+          await this.saveAndDeployDao({
+            dao: this.daoName.toLowerCase(),
+            creator: this.account,
+            ipfs: this.typeCid
+          })
           // loading show [step 2]
 
           this.$q.loading.show({
@@ -387,7 +387,7 @@ export default {
           })
           await new Promise(resolve => setTimeout(resolve, 2500))
           this.$q.loading.hide()
-          // await this.initDao()
+          await this.initDao()
           this.showSuccessMsg('Deploy contract success')
           this.$router.push({ name: 'daos' })
         } catch (e) {

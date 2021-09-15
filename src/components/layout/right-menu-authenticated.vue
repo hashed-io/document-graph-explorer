@@ -15,7 +15,6 @@ export default {
 <template lang="pug">
 div
   q-btn(
-    to="/profiles/myProfile"
     :label="account"
     flat
     no-caps

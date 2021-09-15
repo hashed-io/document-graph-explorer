@@ -4,7 +4,7 @@ div
     q-card.q-pa-md(flat)
       .text-h6 {{ $t('pages.daos.titleForm') }}
       listdao(ref='daoTable' @onManageContract='onClickManage')
-      .row.q-gutter-sm.justify-end
+      .row.q-pt-md.justify-end
         q-btn(
           :label="$t('pages.daos.createDao')"
           outline

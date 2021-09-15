@@ -2,45 +2,44 @@
 #container
   #Form
   q-dialog(v-model='openDialog')
-    q-card(flat)
+    q-card(flat).medium-width
       q-toolbar
         q-toolbar-title
           span.text-weight-bold Fill the fields
         q-btn(flat round dense icon="close" v-close-popup)
       q-card-section
         q-form(ref='labelForm')
-          .row.q-gutter-sm
-            .col-8
+          .row
+            .col-8.q-pr-xs
               q-input(v-model='contract.label' outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
-            .col-3
+            .col-4
               q-select(v-model='contract.value[0]' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
-            .col-12
-              .row.justify-start
-                .col-xs-11.col-sm-11
-                  div(v-if="contract.value[0] === 'time_point'")
-                    q-input(outlined v-model='contract.value[1]' :rules='[rules.required]' )
-                      template(v-slot:append='')
-                        q-icon.cursor-pointer(name='event')
-                          q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                            q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate()')
-                              .row.items-center.justify-end
-                                q-btn(v-close-popup, label='Close', color='primary', flat='flat')
+          .row
+            .col-xs-12.col-sm-12
+              div(v-if="contract.value[0] === 'time_point'")
+                q-input(outlined v-model='contract.value[1]' :rules='[rules.required]' )
+                  template(v-slot:append='')
+                    q-icon.cursor-pointer(name='event')
+                      q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
+                        q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate()')
+                          .row.items-center.justify-end
+                            q-btn(v-close-popup, label='Close', color='primary', flat='flat')
 
-                  div(v-else-if="contract.value[0] === 'file'")
-                    .row.justify-center
-                      .col.q-px-md.col-xs-10.col-sm-10
-                        q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
-                          template(v-slot:before)
-                            q-icon(name='folder_open')
-                      .col.col-xs-2.col-sm-2
-                        template(v-if="typeof(contract.ipfs) === 'string'")
-                          q-icon(name="check" class="text-green" style="font-size: 2rem;")
-                        //- p {{contract.ipfs}}
-                        template(v-if="contract.ipfs === undefined" )
-                          q-icon(name="error" class="text-red" style="font-size: 2rem;")
-                          //- p Fail Upload
-                  q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
-                  q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
+              div(v-else-if="contract.value[0] === 'file'")
+                .row.justify-center
+                  .col.q-px-md.col-xs-10.col-sm-10
+                    q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                      template(v-slot:before)
+                        q-icon(name='folder_open')
+                  .col.col-xs-2.col-sm-2
+                    template(v-if="typeof(contract.ipfs) === 'string'")
+                      q-icon(name="check" class="text-green" style="font-size: 2rem;")
+                    //- p {{contract.ipfs}}
+                    template(v-if="contract.ipfs === undefined" )
+                      q-icon(name="error" class="text-red" style="font-size: 2rem;")
+                      //- p Fail Upload
+              q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
+              q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-pa-md
               q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
@@ -111,8 +110,15 @@
                     color='negative'
                     @click='deleteRow(props.row,props.pageIndex)'
                   )
-
 </template>
+<style lang="sass" scoped>
+.medium-width
+  width: 50vw !important
+  max-width: 50vw !important
+.containerValue
+  inline-size:95% !important
+  overflow-wrap: break-word
+</style>
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
 import { DocumentsApi } from '~/services'
@@ -529,12 +535,3 @@ export default {
   }
 }
 </script>
-
-<style lang="sass" scoped>
-.medium-width
-  width: 50vw !important
-  max-width: 50vw !important
-.containerValue
-  inline-size:95% !important
-  overflow-wrap: break-word
-</style>
