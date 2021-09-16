@@ -13,12 +13,8 @@ export default {
 </script>
 
 <template lang="pug">
-div
-  q-btn(
-    :label="account"
-    flat
-    no-caps
-  )
+.row.q-gutter-md
+  span.q-pt-sm.text-white {{account}}
   q-btn(
     :label="$t('common.buttons.logout')"
     @click="logout"

@@ -1,34 +1,34 @@
 <template lang="pug">
-q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
-  .row.full-width
+q-form(@submit='onSubmit', ref='formAddresses')
+  .row
     q-card.full-width(flat)
       q-card-section.bg-primary.text-white
         .text-subtitle1 Principal Address
       q-separator
-      p.paddingInput.q-pl-md
+      p.q-pt-md.q-pl-xs
         | Please update the Principal Office Address for this entity.
-        .q-px-xs
+        div
           .row
             .col.q-px-xs.col-xs-12.col-sm-6
               q-select(filled v-model='form.principalAddress.country' :options='options' emit-value @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")
                 template(v-slot:prepend)
                   q-icon(name='public')
-          .row.justify-center
+          .row
             .col.q-px-xs.col-xs-12.col-sm-12
               q-input(v-model='form.principalAddress.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='location_on')
-          .row.justify-center
+          .row
             .col.q-px-xs.col-xs-12.col-sm-12
               q-input.rulesPadding(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
-          .row.justify-center
-            .col.q-pa-sm.col-xs-12.col-sm-6
+          .row
+            .col.q-px-xs.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='location_city')
-            .col.q-pa-sm.col-xs-12.col-sm-2
+            .col.q-px-xs.col-xs-12.col-sm-2
               q-input(v-model='form.principalAddress.state', filled, label='State: *', label-stacked :rules='[rules.required]')
-            .col.q-pa-sm.col-xs-12.col-sm-4
+            .col.q-px-xs.col-xs-12.col-sm-4
               q-input(v-model='form.principalAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
           .row.justify-center
             .col.q-px-xs.col-xs-12.col-sm-6
@@ -55,11 +55,11 @@ q-form(@submit='onSubmit', ref='formAddresses' class='q-gutter-sm')
       q-card-section.bg-primary.text-white
         .text-subtitle1 Mailing Address
       q-separator
-      div.paddingInput.q-pl-md
+      div.q-pl-xs.q-pt-md
         | Please update the Mailing Address for this entity
       .q-px-xs
-        .q-pb-md
-          q-checkbox(v-model='checkboxCopy' label='Same as Principal Address' @input='changeStateCheckbox')
+        .q-pb-xs
+          q-checkbox(v-model='checkboxCopy' label='Same as Principal Address' @input='changeStateCheckbox' )
         .row
             .col.q-px-xs.col-xs-12.col-sm-6
               q-select(filled v-model='form.mailingAddress.country' :options='options'  @filter='filterFn' input-debounce='10' use-input :rules="[rules.required]" lazy-rules label="Choose country *")

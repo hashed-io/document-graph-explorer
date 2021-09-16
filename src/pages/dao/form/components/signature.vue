@@ -3,7 +3,7 @@ q-card( flat)
   q-card-section.text-subtitle1.bg-primary.text-white
       | Signature
   div.q-px-xs
-    p.q-pt-xs.q-pl-xs
+    p.q-pt-xs.q-pl-xs.q-pt-md
       | BY CHECKING THE BOXES BELOW AND ENTERING MY ELECTRONIC SIGNATURE, I HEREBY CERTIFY UNDER PENALTY OF PERJURY THAT:
       hr
     q-form(@submit='onSubmit', @reset='onReset' ref="signatureForm").q-px-xs

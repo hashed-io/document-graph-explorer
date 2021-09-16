@@ -1,5 +1,5 @@
 <template lang="pug">
-.q-pa-md
+div
   template
     q-card(flat)
       .text-subtitle1.q-pa-md.bg-primary.text-white
@@ -49,13 +49,13 @@
             q-item
               q-item-section(top)
                 q-item-label(lines='5')
-                  span.text-subtitle2
+                  span.text-caption
                     strong
                       | Article: &nbsp; #
                     b {{article.number}}
               q-item-section(top class="col-10")
                 q-item-label( lines='30')
-                  span.text-subtitle2
+                  span.text-caption
                     strong(style='color:black;')
                       p
                         | Detail: &nbsp;

@@ -38,7 +38,8 @@ q-card(flat)
                 strong Expiration Date (mm/dd/yyyy)
                 strong.asterisk *
               p  {{calculateDate()}}
-            p.q-pt-xl
+            hr.styleHR
+            p.q-pt-xs
               b Delayed Effective Date : (mm/dd/yyyy)
               .row
                 .cols-6
@@ -52,8 +53,10 @@ q-card(flat)
                   p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
 </template>
 <style lang='sass' scoped>
-  .asterisk
-    color: red
+.asterisk
+  color: red
+.styleHR
+  border-top: 1px solid $primary;
 </style>
 <script>
 import { date } from 'quasar'

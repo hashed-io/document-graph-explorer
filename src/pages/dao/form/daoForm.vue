@@ -25,7 +25,7 @@
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
-            .pageMargin
+            .containerStepAgent
               q-btn(@click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="Addresses" :prefix='4' :done="step>4" :header-nav="step > 4")
           div.container
@@ -37,19 +37,19 @@
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
-            .pageMargin
+            .containerStepAgent
               q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="Articles" :prefix='6' :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
-            .pageMargin
+            .containerStepAgent
               q-btn(@click ="validateStep" color="primary" label="continue" )
         q-step(:name="7" title="Confirmation" :prefix='7' :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
-            .containerStep
+            .containerStepAgent
               q-btn(@click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="Signature" :prefix='8' :done="step>8" :header-nav="step > 8")
           div.container
@@ -68,6 +68,9 @@
   .pageMargin
     margin-top: -1%
     margin-left: 1.3%
+  .containerStepAgent
+    margin-left: 0%
+    margin-top: -1%
   .container
     padding-top: 0%
   .containerStep

@@ -6,7 +6,7 @@ div
         .text-subtitle1
           | Organizers
       .container
-        q-form(@submit='onSubmitOrganizer', ref="organizerForm").q-pl-md
+        q-form(@submit='onSubmitOrganizer', ref="organizerForm")
           p.q-px-xs.q-pt-md.text-subtitle1
             | Please use the form below to add the name and address of the organizers. Press 'Add' after entering information.
           div.q-px-xs Choose one type of person
@@ -36,7 +36,7 @@ div
               q-input(v-model='organizer.addressInfo', filled, label="Address, City, State, and Zip: *", label-stacked, :rules="[rules.required]")
                 template(v-slot:prepend)
                   q-icon(name='location_on')
-          .row.justify-start.q-pa-xs.q-pb-xl
+          .row.justify-start.q-pa-xs.q-pb-md
             div(v-if='idEdit === null')
               q-btn(label="ADD" @click='onSubmit' color="primary")
             div(v-else)
@@ -47,22 +47,19 @@ div
         div(v-if='organizers.length === 0')
           p  No Organizers Currently Assigned...
         div(v-else)
-          q-list(class="rounded-borders")
-            q-item
-              q-item-section(top)
-                q-item-label(lines='5').text-subtitle1
-                  | Organizers
-                  hr
+          div.text-subtitle1
+            | Organizers
+            hr
             div(v-for='(organizer, index) in organizers')
               template
                 q-item
                   q-item-section(top)
                     q-item-label(lines='5')
-                      span.text-subtitle1
+                      span.text-caption
                         | Name: &nbsp;
                         | {{organizer.name}}
                     q-item-label(caption='', lines='1').text-caption
-                      span.text-subtitle1
+                      span.text-caption
                         | type: &nbsp;
                         | {{organizer.typeName}}
                     q-item-label.q-mt-xs.text-caption.text-primary.text-uppercase(lines='1')

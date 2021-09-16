@@ -1,8 +1,8 @@
 <template lang="pug">
 q-card(flat)
-  q-card-section.text-subtitle1.q-pb-md.bg-primary.text-white
+  q-card-section.text-subtitle1.bg-primary.text-white
       | Confirmation
-  div.q-pa-xs
+  div.q-pl-xs.q-pt-md
     p Please confirm the business entity information is entered correctly.
     p Warning : Please review your filing and click 'Continue' to file your registration electronically.
     .row
@@ -63,14 +63,14 @@ q-card(flat)
         div(v-for='(organizer, index) in form.organizers')
           div.q-py-sm
             .row
-              span.text-body2
+              span.text-caption
                 | Name: &nbsp;
                 | {{organizer.name}}
             .row
-              span.text-body2
+              span.text-caption
                 | type: &nbsp;
                 | {{organizer.officerType}}
-            .row.text-body2.text-primary
+            .row.text-caption.text-primary
               span Address:  &nbsp;
                 | {{organizer.addressInfo}}
               //- q-item(clickable)
@@ -97,12 +97,12 @@ q-card(flat)
           div.q-py-sm
             .row
               .col-2
-                span.text-body2
+                span.text-caption
                   div
                     | Article: &nbsp; #
                     | {{article.number}}
               .col-10
-                span.text-body2
+                span.text-caption
                   div
                     | Detail: &nbsp;
                     br

@@ -63,8 +63,8 @@ export default {
   top: 15px
   left: 10px
 .logo
-  padding-left: 1vw
-  max-height: 50px
+  padding-left: 0.1vw
+  max-height: 40px
   max-width: 100px
 .badge-left
   left: -5px
