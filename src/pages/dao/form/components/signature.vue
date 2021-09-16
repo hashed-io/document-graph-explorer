@@ -96,7 +96,7 @@ q-card( flat)
       p(style='color:red;').q-px-xs
         | Disclaimer:
       p(style='color:red;').q-px-xs
-        strong
+        div.q-px-xs(style='color:red;')
           | This form and any related instructions are not intended to provide legal, business or tax advice, and are furnished without representation or warranty. While this form is believed to satisfy minimum legal requirements as of its revision date, compliance with applicable law, as the same may be amended from time to time, remains the responsibility of the user of this form. Questions should be addressed to the user's legal, business or tax advisor(s).
 </template>
 

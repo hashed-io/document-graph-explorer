@@ -69,6 +69,17 @@ export default {
 .badge-left
   left: -5px
   right: auto
-.contentContainer
-  padding: 6rem;
+@media screen and (max-width: 600px)
+  .contentContainer
+    padding: 0rem
+@media screen and (min-width: 768px)
+  .contentContainer
+    padding: 2rem
+@media screen and (min-width: 992px)
+  .contentContainer
+    padding: 4rem
+@media screen and (min-width: 1200px)
+  .contentContainer
+    padding: 6rem
+
 </style>

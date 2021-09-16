@@ -17,8 +17,8 @@ q-card(flat)
             .q-pa-xs
             div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
               p.text-weight-bolder
-                strong Expiration Date (mm/dd/yyyy)
-                strong.q-pr-md.asterisk *
+                strong Expiration Date (mm/dd/yyyy):
+                strong.q-pr-sm.asterisk
                 | {{calculateDate()}}
               p
             div(v-else-if="(selectValue.value === '0')")
@@ -35,9 +35,9 @@ q-card(flat)
                               q-btn(v-close-popup, label='Close', color='primary', flat='flat')
             div(v-else)
               p
-                strong Expiration Date (mm/dd/yyyy)
-                strong.asterisk *
-              p  {{calculateDate()}}
+                strong Expiration Date V" (mm/dd/yyyy):
+                  strong.q-pr-sm
+                  | {{calculateDate()}}
             hr.styleHR
             p.q-pt-xs
               b Delayed Effective Date : (mm/dd/yyyy)
