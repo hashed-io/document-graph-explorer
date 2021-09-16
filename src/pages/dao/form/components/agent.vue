@@ -23,45 +23,45 @@ div
         | Enter Agent Information
     div
       q-form(@submit="onSubmit"  ref="dataAgentForm")
-        .row.q-pt-md
+        .row.q-pt-md.q-col-gutter-sm
           .col.col-xs-12.col-sm-4
             q-input(v-model='agentForm.firstName', filled, label='First Name : *', label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
                 q-icon(name='badge')
-          .col.col-xs-12.col-sm-4.q-pl-sm
+          .col.col-xs-12.col-sm-4.q-pb-md
             q-input(v-model='agentForm.middleName', filled, label='Middle Name :', label-stacked)
-          .col.col-xs-12.col-sm-4.q-pl-sm
+          .col.col-xs-12.col-sm-4
             q-input(v-model='agentForm.lastName', filled, label='Last Name : *', label-stacked :rules='[rules.required]' lazy-rules)
         .row
           .col-xs-12.col-sm-12
-            q-input.rulesPadding(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
+            q-input.q-pb-md(v-model='agentForm.organization', filled, label="Organization Name", label-stacked readonly bg-color="grey-5")
               template(v-slot:prepend)
                 q-icon(name='business')
-        .row.justify-left
+        .row
           .col.q-py-sm.col-xs-12.col-sm-8
             q-input.rulesPadding(v-model='agentForm.country', filled, label="Country", label-stacked :readonly='true' bg-color="grey-5")
         .row.justify-center
-          .col.q-py-sm.col-xs-12.col-sm-12
+          .col.q-pt-sm.col-xs-12.col-sm-12
             q-input(v-model='agentForm.address.line1', filled, label="Address Line 1 *", label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
                 q-icon(name='location_on')
         .row.justify-center
           .col.q-py-sm.col-xs-12.col-sm-12
             q-input.rulesPadding(v-model='agentForm.address.line2', filled, label="Address Line 2", label-stacked)
-        .row.justify-center
+        .row.q-col-gutter-xs
           .col.q-py-sm.col-xs-12.col-sm-6
             q-input(v-model='agentForm.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
           .col.q-py-sm.col-xs-12.col-sm-2
             q-input(v-model='agentForm.state', filled, label='State: *', label-stacked readonly bg-color="grey-5" :rules='[rules.required]')
           .col.q-py-sm.col-xs-12.col-sm-4
             q-input(v-model='agentForm.postalCode' filled, label='Postal Code: *', label-stacked  readonly bg-color="grey-5" :rules='[rules.required]')
-        .row.justify-center
-          .col.q-py-sm.col-xs-12.col-sm-12
+        .row
+          .col.q-py-xs.col-xs-12.col-sm-12
             q-input(v-model='agentForm.phone', filled, label='Phone: *', label-stacked mask="phone" :rules='[rules.required]')
               template(v-slot:prepend)
                 q-icon(name='phone')
         .row.justify-center
-          .col.q-py-sm.col-xs-12.col-sm-12
+          .col.q-py-xs.col-xs-12.col-sm-12
             q-input(v-model='agentForm.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
               template(v-slot:prepend)
                 q-icon(name='email')

@@ -75,7 +75,7 @@ export default {
       selectAccount: 'Please select an account'
     },
     daos: {
-      titleForm: 'DAOS',
+      titleForm: 'DAOs created by your account',
       createDao: 'Create new DAO'
     }
   }

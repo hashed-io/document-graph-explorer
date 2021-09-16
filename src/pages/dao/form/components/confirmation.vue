@@ -21,7 +21,7 @@ q-card(flat)
         div {{form.businessName.additionalDesignation}}
         div
         div.q-py-xs
-      .col(style='text-align: left; padding-left:10em; padding-right:10em;')
+      .col(style='text-align: left; padding-left:5em; padding-right:3em;')
         div
           strong Filing Date
         div {{form.detail.periodOfDuration}}

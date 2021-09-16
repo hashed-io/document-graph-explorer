@@ -47,23 +47,23 @@ div
         div(v-for='(article, index) in articles')
           template
             q-item
-              q-item-section(top)
+              q-item-section(top class='col-2')
                 q-item-label(lines='5')
                   span.text-caption
                     strong
                       | Article: &nbsp; #
                     b {{article.number}}
-              q-item-section(top class="col-10")
+              q-item-section(top class="col-7")
                 q-item-label( lines='30')
                   span.text-caption
                     strong(style='color:black;')
                       p
                         | Detail: &nbsp;
                     div(align='justify') {{article.detail}}
-              q-item-section(side)
-                .text-grey-8.q-gutter-xs
-                  q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteArticle(index)')
-                  q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editArticle(index, article)')
+              q-item-section(top class='col-3')
+                q-item-label(lines='8')
+                    q-btn(size='12px', flat dense, round, icon='delete' @click='deleteArticle(index)')
+                    q-btn(size='12px', flat, dense, round, icon='edit' @click='editArticle(index, article)')
 
 </template>
 

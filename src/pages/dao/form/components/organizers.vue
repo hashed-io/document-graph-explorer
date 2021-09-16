@@ -67,8 +67,8 @@ div
                         | {{organizer.addressInfo}}
                   q-item-section(top='', side='')
                     .text-grey-8.q-gutter-xs
-                      q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
-                      q-btn.gt-xs(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
+                      q-btn(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
+                      q-btn(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
 
 </template>
 

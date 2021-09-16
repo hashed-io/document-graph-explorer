@@ -20,7 +20,7 @@ q-form(@submit='onSubmit', ref='formAddresses')
                   q-icon(name='location_on')
           .row
             .col.q-px-xs.col-xs-12.col-sm-12
-              q-input.rulesPadding(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
+              q-input.q-pb-md(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
           .row
             .col.q-px-xs.col-xs-12.col-sm-6
               q-input(v-model='form.principalAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
@@ -36,10 +36,8 @@ q-form(@submit='onSubmit', ref='formAddresses')
                 template(v-slot:prepend)
                   q-icon(name='phone')
             .col.q-px-xs.col-xs-12.col-sm-6
-              q-input(v-model='form.principalAddress.fax', filled, label='Fax', label-stacked mask='phone')
-                template(v-slot:prepend)
-                  q-icon(name='fax')
-          .row.justify-left
+              q-input.q-pb-md(v-model='form.principalAddress.fax', filled, label='Fax', label-stacked mask='phone')
+          .row
             .col.q-px-xs.col-xs-12.col-sm-8
               q-input(v-model='form.principalAddress.email', filled, label='Email: *', label-stacked :rules="[rules.required, rules.isEmail]")
                 template(v-slot:prepend)

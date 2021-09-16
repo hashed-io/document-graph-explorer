@@ -6,6 +6,7 @@
         ref="stepper"
         color="primary"
         header-class='testClass'
+        :contracted ="boolContracted"
         header-nav
         keep-alive
       )
@@ -57,7 +58,7 @@
           q-stepper-navigation
             .row
               .col(style='margin-top:-2%; margin-left: 1.5%;')
-                q-input(v-model='daoName' label='Dao Name *' ref='daoNameInput' readonly :rules='[rules.required]')
+                q-input(v-model='daoName' label='Signed by' ref='daoNameInput' readonly :rules='[rules.required]')
               .col(style='text-align:end;')
                 q-btn(@click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
         //- q-step(:name="9" title="Step 9" caption="Payment" :done="step>9" :header-nav="step > 9")
@@ -105,7 +106,13 @@ export default {
     signatureComponent,
     paymentComponent
   },
+  watch: {
+    '$q.screen.width' () {
+      this.windowResized()
+    }
+  },
   created () {
+    this.windowResized()
     this.daoName = this.account
     if (this.isEdit) {
       this.form = JSON.parse(JSON.stringify(this.formStore))
@@ -203,6 +210,7 @@ export default {
   data () {
     return {
       step: 1,
+      boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
       form: {
@@ -277,6 +285,13 @@ export default {
   methods: {
     ...mapActions('dao', ['saveAndDeployDao', 'updateDaoData', 'deployContract', 'initDao']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
+    windowResized () {
+      if (this.$q.screen.width < 600) {
+        this.boolContracted = true
+      } else {
+        this.boolContracted = false
+      }
+    },
     validateStep () {
       switch (this.step) {
         case 1:
