@@ -134,21 +134,15 @@ export default {
           name: 'dao',
           label: this.$t('pages.general.dao'),
           align: 'center',
-          headerStyle: 'font-weight:bolder',
+          headerStyle: 'font-weight:bolder; font-size:15px;',
           style: 'font-weight: bolder',
           field: row => row.dao,
           sortable: true
         },
         {
-          name: 'ipfs',
-          label: this.$t('pages.general.ipfs'),
-          align: 'center',
-          field: row => row.ipfs,
-          sortable: true
-        },
-        {
           name: 'actions',
           label: this.$t('pages.general.actions'),
+          headerStyle: 'font-size:15px;',
           align: 'center',
           field: row => row.actions,
           sortable: false
@@ -156,6 +150,7 @@ export default {
         {
           name: 'editDao',
           label: this.$t('pages.general.editDao'),
+          headerStyle: 'font-size:15px;',
           align: 'center',
           field: row => row.editDao,
           sortable: false
@@ -163,6 +158,7 @@ export default {
         {
           name: 'viewData',
           label: this.$t('pages.general.viewData'),
+          headerStyle: 'font-size:15px;',
           align: 'center',
           field: row => row.viewData,
           sortable: false

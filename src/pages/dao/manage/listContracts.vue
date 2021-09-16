@@ -84,9 +84,8 @@
             template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
               q-tooltip {{props.row.value[1]}}
             template(v-if="col.name == 'actions'")
-              .row
-                .col-2
-                .col-3
+              .row.q-col-gutter-xs
+                .col-xs-12.col-sm-4
                   template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
                     q-icon.animated-icon(
                       name='search'
@@ -95,14 +94,14 @@
                       color='positive'
                       @click="openLink(props.row.ipfs,props.row.value[1])"
                     )
-                .col-3
+                .col-xs-6.col-sm-4.q-px-sm
                   q-icon.q-px-md.animated-icon(
                     name='edit'
                     size='sm'
                     color='positive'
                     @click='editRow(props.pageIndex)'
                   )
-                .col-3
+                .col-xs-6.col-sm-4.q-px-sm
                   q-icon.q-pr-md.animated-icon(
                     name='delete'
                     v-ripple
@@ -448,9 +447,10 @@ export default {
       Array.prototype.push.apply(this.newLabels, this.updateLabels)
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
-        if (!(entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
+        if ((entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toString()
           entry.value[1] = entry.value[1].toLowerCase()
+          console.log(entry.value[1])
         }
         if (entry.ipfs === undefined) {
           delete entry.ipfs
@@ -465,7 +465,7 @@ export default {
         }
         delete entry.loadingState
       })
-
+      // console.log(rawData)
       this.saveData(rawData)
     },
     async loadData () {
