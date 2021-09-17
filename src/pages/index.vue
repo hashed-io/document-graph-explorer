@@ -108,11 +108,19 @@ export default {
     max-width: 150px
     max-height: 300px
     margin-bottom: 20px
-@media screen and (min-width: 700px)
+@media screen and (min-width: 900px)
   .padding
     padding-left: 10rem
     padding-right: 10rem
+@media screen and (max-width: 900px)
+  .padding
+    padding-left: 6rem
+    padding-right: 6rem
 @media screen and (max-width: 700px)
+  .padding
+    padding-left: 4rem
+    padding-right: 4rem
+@media screen and (max-width: 600px)
   .padding
     padding-left: 2rem
     padding-right: 2rem
