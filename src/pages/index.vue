@@ -14,11 +14,11 @@ export default {
           a(href='https://wyobiz.wyo.gov/Business/RegistrationLLC.aspx' target='_blank')
             | &nbsp;Additional Articles of the online application.
           | &nbsp;As per the following regulation:
-      .row.text-body1
+      .row.text-body1.q-pt-md
         span
-          | “&nbsp;
+          | “
           a(href='https://sos.wyo.gov/Business/Docs/DAOs_FAQs.pdf' target='_blank') W.S. 17-31-106(b)
-          | , a publicly available identifier of any smart contract directly used to manage, facilitate or operate the DAO; &nbsp;”
+          | , a publicly available identifier of any smart contract directly used to manage, facilitate or operate the DAO;”
       .q-py-md
         .row.text-body1
             strong
