@@ -8,6 +8,7 @@
     :columns="columns"
     row-key="account"
     flat
+
     dense
     :pagination="initialPagination"
     virtual-scroll
@@ -17,6 +18,7 @@
     :virtual-scroll-sticky-size-start="pageSize - 2"
     no-data-label="There aren't associated DAOs to your account"
     ref="table"
+    :loading='loading'
     @virtual-scroll="onScroll"
     table-header-class="hdTable"
     :hide-pagination="true"

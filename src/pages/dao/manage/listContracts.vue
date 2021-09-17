@@ -51,15 +51,22 @@
       :row-key='row => row.label'
       :rows-per-page-options="[0]"
       :pagination="initialPagination"
+      :loading='loading'
       class="sticky-virtscroll-table"
       clearable
       flat
+      no-data-label="There arent contracts associated to your account "
       dense
       ref='table'
       separator='none'
       table-header-class="hdTable"
       :filter="params.search"
     )
+      template(v-slot:no-data="{icon, message}")
+        div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
+          q-icon( size='2em' name='warning')
+          span
+            | {{message}}
       template(v-slot:top-right)
         q-input.q-mb-sm(
           ref="inputSearch"
@@ -135,6 +142,7 @@ export default {
   },
   async mounted () {
     try {
+      this.loading = true
       if (this.dao === null) {
         this.$router.push({ name: 'daos' })
         this.showErrorMsg('The associated DAO has not been selected ')
@@ -160,6 +168,7 @@ export default {
   data () {
     return {
       openDialog: false,
+      loading: false,
       date: null,
       DocumentApi: null,
       idEdit: null,
@@ -509,7 +518,8 @@ export default {
             counter++
           })
         }
-        // this.showSuccessMsg('Data loaded success')
+        this.loading = false
+        // this.showSuccessMsg('Contracts loaded success')
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
         console.log(e.json.error.details[0].message)

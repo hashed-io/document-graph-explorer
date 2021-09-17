@@ -86,6 +86,7 @@ div
             flat
             dense
             :rows-per-page-options="[0]"
+            no-data-label='No agents recovered'
             class="sticky-virtscroll-table"
             ref="table"
             table-header-class="hdTable"
@@ -93,6 +94,11 @@ div
             :filter="search"
             @row-click='selectRow'
           )
+            template(v-slot:no-data="{icon, message}")
+              div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
+                q-icon( size='2em' name='warning')
+                span
+                  | {{message}}
             template(v-slot:top-right)
               q-input(borderless, dense, debounce='300', v-model='search', placeholder='Search')
                 template(v-slot:append)

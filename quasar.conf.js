@@ -114,7 +114,7 @@ module.exports = function (ctx) {
       ],
 
       // Quasar plugins
-      plugins: ['Notify', 'Loading', 'Dialog']
+      plugins: ['Notify', 'Loading']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
@@ -183,7 +183,6 @@ module.exports = function (ctx) {
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       // https: true,
-      host: '192.168.100.237',
       port: 8080,
       open: true // opens browser window automatically
     },
