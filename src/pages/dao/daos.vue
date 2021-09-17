@@ -1,7 +1,7 @@
 <template lang="pug">
-div
+div.q-pa-md
   .q-pb-xs.col-12.col-md-11
-    q-card.q-pa-md(flat)
+    q-card(flat)
       .text-h6 {{ $t('pages.daos.titleForm') }}
       listdao(ref='daoTable' @onManageContract='onClickManage')
       .row.q-pt-md.justify-end
