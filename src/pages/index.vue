@@ -8,7 +8,7 @@ export default {
   q-page.flex.column
     .main-splash
       img.imgSplash(src="../app-splashscreen.png")
-    div.q-px-xl
+    div.padding
       .row.text-body1(align='justify').q-pb-md
         span We’ve created this tool is to allow you to upload a copy of the official DAO LLC form to a public smart contract and help you comply with the DAO LLC requirement of generating a smart contract identifier required in Step 6 -
           a(href='https://wyobiz.wyo.gov/Business/RegistrationLLC.aspx' target='_blank')
@@ -34,8 +34,8 @@ export default {
             strong
               | Step 2:
             .q-pl-md
-              | Complete the Registration Wizard, which mirrors the data collection form located here:&nbsp;
-              a(href='https://wyobiz.wyo.gov/Business/RegistrationInstr.aspx' target='_blank') https://wyobiz.wyo.gov/Business/RegistrationInstr.aspx
+              | Complete the Registration Wizard, which mirrors the data collection form located&nbsp;
+              a(href='https://wyobiz.wyo.gov/Business/RegistrationInstr.aspx' target='_blank') here.
         .row.text-body1
             strong
               | Step 3:
@@ -45,8 +45,10 @@ export default {
             strong
               | Step 4:
             div.q-pl-md
-              | Activate other useful DAO tools, such as tokenization, governance, treasury, and even on-chain legally compliant agreements with other DAOs
-      .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-md
+              | Activate other useful DAO tools, such as tokenization, governance, treasury, and even on-chain legally compliant agreements
+            div.q-pl-md
+              | with other DAOs
+      .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-xl
         div
           q-btn.full-width.q-mb-lg(
             to="/login"
@@ -57,13 +59,13 @@ export default {
             unelevated
             size="lg"
           )
-      div.text-body1
+      div.text-caption
         | Further reading:
       ul
-        .row.text-body1
+        .row.text-caption
           span 1.- &nbsp;
           a(href='https://www.youtube.com/watch?v=ZE2HxTmxfrI' target='_blank') What is a smart contract?
-        .row.text-body1
+        .row.text-caption
           span 2.- &nbsp;
           a(href='https://wyobiz.wyo.gov/Business/RegistrationLLC.aspx' target='_blank') What needs to be in the smart contract?
       span.text-caption
@@ -99,12 +101,20 @@ export default {
     font-size: 18px
 .imgSplash
   min-width: 150px
-  max-height: 200px
-  margin-top: 30px
+  max-height: 300px
+  margin-top: -10px
 
 @media screen and (max-width: 360px)
   .imgSplash
     max-width: 150px
     max-height: 300px
     margin-bottom: 20px
+@media screen and (min-width: 700px)
+  .padding
+    padding-left: 10rem
+    padding-right: 10rem
+@media screen and (max-width: 700px)
+  .padding
+    padding-left: 2rem
+    padding-right: 2rem
 </style>
