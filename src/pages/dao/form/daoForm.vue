@@ -60,7 +60,8 @@
               .col(style='margin-top:-2%; margin-left: 1.5%;')
                 q-input(v-model='daoName' label='Signed by' ref='daoNameInput' readonly :rules='[rules.required]')
               .col(style='text-align:end;')
-                q-btn(@click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
+                q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
+                q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
         //- q-step(:name="9" title="Step 9" caption="Payment" :done="step>9" :header-nav="step > 9")
         //-   div.container
         //-     paymentComponent
@@ -117,7 +118,8 @@ export default {
     if (this.isEdit) {
       this.form = JSON.parse(JSON.stringify(this.formStore))
     } else {
-      this.form = { price: 100,
+      this.form = {
+        price: 100,
         businessName: {
           businessName: 'ACME DAO LLC',
           additionalDesignation: 'Decentralized Autonomous Organization'
@@ -199,7 +201,8 @@ export default {
           title: 'Dolorem dolore dolorem quisquam est dolore consectetur.',
           phone: '(194)892-4115',
           email: 'juancampos@lloyd.org'
-        } }
+        }
+      }
     }
   },
   computed: {
@@ -427,6 +430,7 @@ export default {
           this.typeCid = await BrowserIpfs.addAsJson({ data })
         }
         this.showSuccessMsg('Data saved in IPFS')
+        await new Promise(resolve => setTimeout(resolve, 1000))
       } catch (e) {
         this.showErrorMsg('Error while saving the data in IPFS. ' + e)
         console.log(e)
@@ -444,7 +448,7 @@ export default {
         this.$router.push({ name: 'daos' })
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
-        console.log(e)
+        console.log(e || e.message)
       }
     }
   }

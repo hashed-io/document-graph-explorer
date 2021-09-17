@@ -99,7 +99,7 @@
                     name='edit'
                     size='sm'
                     color='positive'
-                    @click='editRow(props.pageIndex)'
+                    @click='editRow(props.rowIndex)'
                   )
                 .col-xs-6.col-sm-4.q-px-sm
                   q-icon.q-pr-md.animated-icon(
@@ -107,7 +107,7 @@
                     v-ripple
                     size='sm'
                     color='negative'
-                    @click='deleteRow(props.row,props.pageIndex)'
+                    @click='deleteRow(props.row,props.rowIndex)'
                   )
 </template>
 <style lang="sass" scoped>
@@ -134,17 +134,19 @@ export default {
     }
   },
   async mounted () {
-    if (this.dao === null) {
-      this.$router.push({ name: 'daos' })
-    }
     try {
-      let _contractAccount = this.dao.dao
-      let _api = this.$store.$apiMethods
-      let mEosApi = this.$store.$defaultApi
-      const documentsApi = await new DocumentsApi({ eosApi: _api, mEosApi }, _contractAccount)
-      this.DocumentApi = documentsApi
-      console.log('documentApi created', this.DocumentApi)
-      this.loadData()
+      if (this.dao === null) {
+        this.$router.push({ name: 'daos' })
+        this.showErrorMsg('The associated DAO has not been selected ')
+      } else {
+        let _contractAccount = this.dao.dao
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        const documentsApi = await new DocumentsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        this.DocumentApi = documentsApi
+        console.log('documentApi created', this.DocumentApi)
+        this.loadData()
+      }
     } catch (e) {
       console.error('An error ocurred while trying to create Document Api. ' + e)
       this.showErrorMsg(e || e.message)
@@ -447,9 +449,13 @@ export default {
       Array.prototype.push.apply(this.newLabels, this.updateLabels)
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
-        if ((entry.value[0] === 'asset' || entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
+        if ((entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toString()
           entry.value[1] = entry.value[1].toLowerCase()
+          console.log(entry.value[1])
+        }
+        if (entry.value[0] === 'asset') {
+          // entry.value[1] = entry.value[1].toString()
           console.log(entry.value[1])
         }
         if (entry.ipfs === undefined) {

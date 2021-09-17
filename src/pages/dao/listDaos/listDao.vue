@@ -15,12 +15,18 @@
     class="sticky-virtscroll-table"
     :virtual-scroll-item-size="pageSize - 2"
     :virtual-scroll-sticky-size-start="pageSize - 2"
+    no-data-label="There aren't associated DAOs to your account"
     ref="table"
     @virtual-scroll="onScroll"
     table-header-class="hdTable"
     :hide-pagination="true"
     :filter="params.search"
   )
+    template(v-slot:no-data="{icon, message}")
+      div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
+        q-icon( size='2em' name='warning')
+        span
+          | {{message}}
     template(v-slot:top-right v-if="!selectable")
       q-input.q-mb-sm(
         ref="inputSearch"
@@ -234,8 +240,9 @@ export default {
         url: url
       }).then(function (response) {
         self.loading = false
-        self.changeStateDAO(response.data.data, daoName)
         self.showIsLoading(false)
+        self.showSuccessMsg('Data loaded success')
+        self.changeStateDAO(response.data.data, daoName)
       })
     },
     changeStateDAO (_form, daoName) {
