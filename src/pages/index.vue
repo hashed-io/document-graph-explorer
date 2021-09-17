@@ -16,9 +16,9 @@ export default {
           | &nbsp;As per the following regulation:
       .row.text-body1
         span
-          | “
+          | “&nbsp;
           a(href='https://sos.wyo.gov/Business/Docs/DAOs_FAQs.pdf' target='_blank') W.S. 17-31-106(b)
-          | , a publicly available identifier of any smart contract directly used to manage, facilitate or operate the DAO;”
+          | , a publicly available identifier of any smart contract directly used to manage, facilitate or operate the DAO; &nbsp;”
       .q-py-md
         .row.text-body1
             strong
