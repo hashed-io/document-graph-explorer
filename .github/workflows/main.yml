@@ -94,7 +94,7 @@ jobs:
           export_default_credentials: true
       - name: Copy website to bucket
         run: gsutil -m rsync -R . gs://$BUCKET_NAME
-        working-directory: ./build
+        working-directory: ./dist/spa
         env:
           BUCKET_NAME: ${{secrets[format('WEBSITE_BUCKET_{0}',steps.branch-name.outputs.uppercase)]}}
       - name: Invalidate CDN cache
