@@ -60,7 +60,7 @@ jobs:
         run: yarn build
         if: env.BRANCH_NAME == 'staging'
         env:
-          APP_NAME: '"DAO LLC"'
+          APP_NAME: '"DAO LLC Staging"'
           NETWORK_CHAIN_ID: '"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"'
           NETWORK_HOST: '"test.telos.kitchen"'
           NETWORK_PORT: '443'
