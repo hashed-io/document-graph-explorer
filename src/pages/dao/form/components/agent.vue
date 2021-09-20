@@ -1,4 +1,3 @@
-//TODO City input show a Postal Code available in Wyoming
 <template lang="pug">
 div
   q-card(flat)
@@ -50,7 +49,7 @@ div
             q-input.rulesPadding(v-model='agentForm.address.line2', filled, label="Address Line 2", label-stacked)
         .row.q-col-gutter-xs
           .col.q-py-sm.col-xs-12.col-sm-6
-            q-input(v-model='agentForm.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+            q-input(v-model='agentForm.city', filled, label='City: *', label-stacked :rules='[rules.required]')
           .col.q-py-sm.col-xs-12.col-sm-2
             q-input(v-model='agentForm.state', filled, label='State: *', label-stacked readonly bg-color="grey-5" :rules='[rules.required]')
           .col.q-py-sm.col-xs-12.col-sm-4
@@ -118,7 +117,6 @@ div
 
 <script>
 import { validation } from '~/mixins/validation'
-// import { Notify } from 'quasar'
 export default {
   name: 'agentComponent',
   mixins: [validation],
@@ -282,13 +280,9 @@ export default {
         object[key] = null
       }
     },
-    getPostalCode () {
-      // TODO Show modal with all PostalCode
-    },
     onSubmit () {
       const agentForm = this.$refs.dataAgentForm
       var self = this
-
       agentForm.validate().then(success => {
         if (success) {
           if (self.agree) {
@@ -330,7 +324,6 @@ export default {
       }
       this.$refs.dataAgentForm.reset()
     }
-
   }
 }
 </script>

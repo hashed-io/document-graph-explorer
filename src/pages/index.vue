@@ -70,15 +70,6 @@ export default {
       span.text-caption
         | For questions or comments, drop us a message on our&nbsp;
         a(href='https://mobile.twitter.com/TelosKitchen' target='_blank') Twitter account.
-        //- q-btn.full-width(
-        //-   to="/accounts/add"
-        //-   color="primary"
-        //-   :label="$t('pages.index.buttons.createAccount')"
-        //-   icon="app:create-account"
-        //-   rounded
-        //-   outline
-        //-   size="lg"
-        //- )
 </template>
 
 <style lang="sass" scoped>
@@ -102,26 +93,31 @@ export default {
   min-width: 150px
   max-height: 250px
   margin-top: -10px
-
-@media screen and (max-width: 360px)
-  .imgSplash
-    max-width: 150px
-    max-height: 300px
-    margin-bottom: 20px
-@media screen and (min-width: 900px)
-  .padding
-    padding-left: 10rem
-    padding-right: 10rem
-@media screen and (max-width: 900px)
+.padding
+  padding-left: 10rem
+  padding-right: 10rem
+@media only screen and (max-width: 1024px) and (min-width: 769px)
   .padding
     padding-left: 6rem
     padding-right: 6rem
-@media screen and (max-width: 700px)
+@media only screen and (max-width: 768px) and (min-width: 481px)
   .padding
     padding-left: 4rem
     padding-right: 4rem
-@media screen and (max-width: 600px)
+@media only screen and (max-width: 480px) and (min-width: 320px)
   .padding
     padding-left: 2rem
     padding-right: 2rem
+  .imgSplash
+    min-width: 100px
+    max-height: 200px
+    margin-top: -10px
+@media only screen and (max-width: 319px) and (min-width: 10px)
+  .padding
+    padding-left: 1rem
+    padding-right: 1rem
+  .imgSplash
+    min-width: 100px
+    max-height: 150px
+    margin-top: -15px
 </style>

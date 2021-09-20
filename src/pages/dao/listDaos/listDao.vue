@@ -1,14 +1,11 @@
 <template lang="pug">
 #container
-  skeleton-table(v-if="!daos")
   q-table(
-    v-else
     title: 'Daos'
     :data="daosFreeze"
     :columns="columns"
     row-key="account"
     flat
-
     dense
     :pagination="initialPagination"
     virtual-scroll
@@ -29,22 +26,12 @@
         q-icon( size='2em' name='warning')
         span
           | {{message}}
-    template(v-slot:top-right v-if="!selectable")
+    template(v-slot:top-right)
       q-input.q-mb-sm(
         ref="inputSearch"
         clearable
         :label="$t('pages.general.search')"
         v-model.trim="params.search"
-        debounce="1000"
-        maxlength="12"
-      )
-        template(v-slot:append)
-          q-icon(name="search")
-    template(v-slot:top-left v-if="selectable")
-      q-input.q-mb-sm(
-        ref="inputSearch"
-        :label="$t('pages.general.search')"
-        v-model="params.search"
         debounce="1000"
         maxlength="12"
       )
@@ -64,7 +51,6 @@
               size="sm"
               color="blue"
               @click="onClickEdit(props.row)"
-              v-if="!selectable"
             )
               q-tooltip {{ $t('common.buttons.edit') }}
           template(v-if="col.name == 'editDao'")
@@ -74,7 +60,6 @@
               size="sm"
               color="positive"
               @click="onClickEditDao(props.row)"
-              v-if="!selectable"
             )
               q-tooltip {{ $t('common.buttons.editDao') }}
           template(v-if="col.name == 'viewData'")
@@ -84,7 +69,6 @@
               size="sm"
               color="teal"
               @click="onClickSee(props.row)"
-              v-if="!selectable"
             )
               q-tooltip {{ $t('common.buttons.viewData') }}
 </template>
@@ -96,12 +80,6 @@ import axios from 'axios'
 export default {
   name: 'listdao',
   mixins: [validation],
-  props: {
-    selectable: {
-      type: Boolean,
-      default: false
-    }
-  },
   computed: {
     daosFreeze () {
       return Object.freeze(this.daos.rows.slice(0, this.pageSize * (this.nextPage - 1)))
@@ -111,17 +89,6 @@ export default {
     this.setIsEdit(false)
     this.setDataForm(null)
     this.setDaoName(null)
-  },
-  watch: {
-    // 'params.search' (value) {
-    //   // if (value && value.length <= 12) {
-    //   //   }
-    //   console.log('search changing')
-    //   if (value) {
-    //     this.params.search = value.toLowerCase()
-    //   }
-    //   this.resetPagination()
-    // }
   },
   data () {
     return {
@@ -251,7 +218,8 @@ export default {
       this.setIsEdit(true)
       this.setDataForm(_form)
       this.setDaoName(daoName)
-      this.$router.push({ name: 'daoForm' })
+      this.$emit('editDao', true)
+      // this.$router.push({ name: 'daoForm' })
     },
     async onClickSee (row) {
       let url = 'https://ipfs.io/ipfs/' + row.ipfs

@@ -1,11 +1,10 @@
 <template lang="pug">
-  .PageMargin
+  div
     q-card(flat bordered)
       q-stepper(
         v-model="step"
         ref="stepper"
         color="primary"
-        header-class='testClass'
         :contracted ="boolContracted"
         header-nav
         keep-alive
@@ -62,14 +61,8 @@
               .col(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
-        //- q-step(:name="9" title="Step 9" caption="Payment" :done="step>9" :header-nav="step > 9")
-        //-   div.container
-        //-     paymentComponent
 </template>
 <style lang="sass" scoped>
-  .pageMargin
-    margin-top: -1%
-    margin-left: 1.3%
   .containerStepAgent
     margin-left: 0%
     margin-top: -1%
@@ -80,7 +73,6 @@
     margin-left: 0.5%
 </style>
 <script>
-import { validation } from '~/mixins/validation'
 import businessName from '../form/components/businessName.vue'
 import detail from '../form/components/detail.vue'
 import agentComponent from '../form/components/agent.vue'
@@ -90,8 +82,10 @@ import additionalArticlesComponent from '../form/components/additionalArticles.v
 import confirmationComponent from '../form/components/confirmation.vue'
 import signatureComponent from '../form/components/signature.vue'
 import paymentComponent from '../form/components/payment.vue'
-import { mapActions, mapMutations, mapState } from 'vuex'
+
 import BrowserIpfs from '~/services/BrowserIpfs'
+import { validation } from '~/mixins/validation'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { QSpinnerPuff } from 'quasar'
 export default {
   name: 'daoForm',
@@ -118,101 +112,100 @@ export default {
     if (this.isEdit) {
       this.form = JSON.parse(JSON.stringify(this.formStore))
     } else {
-      this.form = {
-        price: 100,
-        businessName: {
-          businessName: 'ACME DAO LLC',
-          additionalDesignation: 'Decentralized Autonomous Organization'
-        },
-        detail: {
-          periodOfDuration: 'Expires - 50 years',
-          expirationDate: '',
-          delayedEffectiveDate: '09/14/2021'
-        },
-        agent: {
-          firstName: null,
-          middleName: null,
-          lastName: null,
-          organization: null,
-          country: 'USA',
-          address: {
-            line1: null,
-            line2: null,
-            line3: null
-          },
-          city: null,
-          state: 'WY',
-          postalCode: null,
-          phone: null,
-          email: null
-        },
-        addresses: {
-          principalAddress: {
-            country: 'United States of America',
-            address: {
-              line1: '48764 Howard Forge Apt. 421 Vanessaside, PA 19763',
-              line2: null,
-              line3: null
-            },
-            city: 'Changchester',
-            state: 'WY',
-            postalCode: '9000',
-            phone: '(194) 892 - 4115',
-            fax: '(194) 892 - 4115',
-            email: 'achang@green.info'
-          },
-          mailingAddress: {
-            country: '',
-            address: {
-              line1: '',
-              line2: null,
-              line3: null
-            },
-            city: '',
-            state: '',
-            postalCode: ''
-          }
-        },
-        organizers: [
-          {
-            name: 'Wagner LLC',
-            officerType: 'Organizer',
-            typeName: 'Legal person',
-            addressInfo: '848 Melissa Springs Suite 947 Kellerstad, MD 80819'
-          },
-          {
-            name: 'Richard Dixon',
-            officerType: 'Organizer',
-            typeName: 'Physical person',
-            addressInfo: '578 Michael Island New Thomas, NC 34644'
-          }
-        ],
-        additionalArticles: [
-          {
-            number: '10',
-            detail: 'Dolorem quisquam etincidunt magnam magnam tempora dolore. Adipisci eius ut non. Adipisci labore eius porro. Dolorem dolorem quiquia tempora. Amet velit quaerat ut labore non. Est amet amet sed ut sit etincidunt velit.'
-          }
-        ],
-        fillerInformation: {
-          filerIs: 'organization',
-          firstName: 'Jonathan',
-          middleName: null,
-          lastName: 'Woods',
-          title: 'Dolorem dolore dolorem quisquam est dolore consectetur.',
-          phone: '(194)892-4115',
-          email: 'juancampos@lloyd.org'
-        }
-      }
+      // this.form = {
+      //   price: 100,
+      //   businessName: {
+      //     businessName: 'ACME DAO LLC',
+      //     additionalDesignation: 'Decentralized Autonomous Organization'
+      //   },
+      //   detail: {
+      //     periodOfDuration: 'Expires - 50 years',
+      //     expirationDate: '',
+      //     delayedEffectiveDate: '09/14/2021'
+      //   },
+      //   agent: {
+      //     firstName: null,
+      //     middleName: null,
+      //     lastName: null,
+      //     organization: null,
+      //     country: 'USA',
+      //     address: {
+      //       line1: null,
+      //       line2: null,
+      //       line3: null
+      //     },
+      //     city: null,
+      //     state: 'WY',
+      //     postalCode: null,
+      //     phone: null,
+      //     email: null
+      //   },
+      //   addresses: {
+      //     principalAddress: {
+      //       country: 'United States of America',
+      //       address: {
+      //         line1: '48764 Howard Forge Apt. 421 Vanessaside, PA 19763',
+      //         line2: null,
+      //         line3: null
+      //       },
+      //       city: 'Changchester',
+      //       state: 'WY',
+      //       postalCode: '9000',
+      //       phone: '(194) 892 - 4115',
+      //       fax: '(194) 892 - 4115',
+      //       email: 'achang@green.info'
+      //     },
+      //     mailingAddress: {
+      //       country: '',
+      //       address: {
+      //         line1: '',
+      //         line2: null,
+      //         line3: null
+      //       },
+      //       city: '',
+      //       state: '',
+      //       postalCode: ''
+      //     }
+      //   },
+      //   organizers: [
+      //     {
+      //       name: 'Wagner LLC',
+      //       officerType: 'Organizer',
+      //       typeName: 'Legal person',
+      //       addressInfo: '848 Melissa Springs Suite 947 Kellerstad, MD 80819'
+      //     },
+      //     {
+      //       name: 'Richard Dixon',
+      //       officerType: 'Organizer',
+      //       typeName: 'Physical person',
+      //       addressInfo: '578 Michael Island New Thomas, NC 34644'
+      //     }
+      //   ],
+      //   additionalArticles: [
+      //     {
+      //       number: '10',
+      //       detail: 'Dolorem quisquam etincidunt magnam magnam tempora dolore. Adipisci eius ut non. Adipisci labore eius porro. Dolorem dolorem quiquia tempora. Amet velit quaerat ut labore non. Est amet amet sed ut sit etincidunt velit.'
+      //     }
+      //   ],
+      //   fillerInformation: {
+      //     filerIs: 'organization',
+      //     firstName: 'Jonathan',
+      //     middleName: null,
+      //     lastName: 'Woods',
+      //     title: 'Dolorem dolore dolorem quisquam est dolore consectetur.',
+      //     phone: '(194)892-4115',
+      //     email: 'juancampos@lloyd.org'
+      //   }
+      // }
     }
   },
   computed: {
     ...mapState('accounts', ['account']),
     ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
-    // ...mapGetters('accounts', ['account'])
   },
   data () {
     return {
-      step: 1,
+      step: 5,
       boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
@@ -322,9 +315,6 @@ export default {
         case 8:
           this.$refs.signatureStepComponent.onSubmit()
           break
-        // Guardar archivo JSON FILE
-        case 9:
-          break
       }
     },
     messageFrombusinessNameComponent (businessName) {
@@ -368,7 +358,6 @@ export default {
       this.saveData()
     },
     saveData () {
-      //
       if (this.isEdit) {
         this.updateDataContract()
       } else {
@@ -379,43 +368,42 @@ export default {
       // Make JSON File to send IPFS
       const valid = this.$refs.daoNameInput.validate()
       if (valid) {
-        console.log('Saving data...', this.form)
         try {
           if (this.form !== '') {
             let data = this.form
             this.typeCid = await BrowserIpfs.addAsJson({ data })
-          }
-          // loading show [step 1]
-          this.$q.loading.show({
-            message: ' Saving data and deploy contract...',
-            customClass: 'text-weight-bold text-subtitle1',
-            spinnerSize: '15em',
-            spinner: QSpinnerPuff
-          })
-          await new Promise(resolve => setTimeout(resolve, 2000))
-          await this.saveAndDeployDao({
-            dao: this.daoName.toLowerCase(),
-            creator: this.account,
-            ipfs: this.typeCid
-          })
-          // loading show [step 2]
+            // loading show [step 1]
+            this.$q.loading.show({
+              message: ' Saving data and deploy contract...',
+              customClass: 'text-weight-bold text-subtitle1',
+              spinnerSize: '15em',
+              spinner: QSpinnerPuff
+            })
+            await new Promise(resolve => setTimeout(resolve, 2000))
+            await this.saveAndDeployDao({
+              dao: this.daoName.toLowerCase(),
+              creator: this.account,
+              ipfs: this.typeCid
+            })
+            // loading show [step 2]
 
-          this.$q.loading.show({
-            message: 'Initializing DAO...',
-            customClass: 'text-weight-bold text-subtitle1',
-            spinnerSize: '15em',
-            spinner: QSpinnerPuff
-          })
-          await new Promise(resolve => setTimeout(resolve, 2500))
-          this.$q.loading.hide()
-          await this.initDao()
-          this.showSuccessMsg('Deploy contract success')
-          this.$router.push({ name: 'daos' })
+            this.$q.loading.show({
+              message: 'Initializing DAO...',
+              customClass: 'text-weight-bold text-subtitle1',
+              spinnerSize: '15em',
+              spinner: QSpinnerPuff
+            })
+            await new Promise(resolve => setTimeout(resolve, 2500))
+            this.$q.loading.hide()
+            await this.initDao()
+            this.showSuccessMsg('Deploy contract success')
+            this.$parent.$parent.changeView('showListDao')
+          }
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
           this.showErrorMsg('Error while saving DAO data. ' + e)
-          this.$router.push({ name: 'daos' })
+          this.$parent.$parent.changeView('showListDao')
         }
       } else {
         this.$q.loading.hide()
@@ -423,14 +411,14 @@ export default {
       }
     },
     async updateDataContract () {
-      console.log('Edit on blockchain')
+      // save on IPFS before to update on BlockChain
       try {
         if (this.form !== '') {
           let data = this.form
           this.typeCid = await BrowserIpfs.addAsJson({ data })
+          this.showSuccessMsg('Data saved in IPFS')
+          await new Promise(resolve => setTimeout(resolve, 1000))
         }
-        this.showSuccessMsg('Data saved in IPFS')
-        await new Promise(resolve => setTimeout(resolve, 1000))
       } catch (e) {
         this.showErrorMsg('Error while saving the data in IPFS. ' + e)
         console.log(e)
@@ -445,7 +433,7 @@ export default {
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
-        this.$router.push({ name: 'daos' })
+        this.$parent.$parent.changeView('showListDao')
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e || e.message)

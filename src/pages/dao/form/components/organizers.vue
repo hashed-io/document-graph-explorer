@@ -42,8 +42,8 @@ div
             div(v-else)
               q-btn(label="UPDATE" @click='onSubmit' color="primary")
             .q-pa-xs
-            //- q-btn(label="CLEAR" type="reset" color="primary")
 
+        //- CrudComponent(:elementsObj='organizers' @deleteElement='deleteOrganizer' @editElement='editOrganizer')
         div(v-if='organizers.length === 0')
           p  No Organizers Currently Assigned...
         div(v-else)
@@ -72,15 +72,19 @@ div
 
 </template>
 
-<style lang="">
+<style lang="sass">
 
 </style>
 
 <script>
 import { validation } from '~/mixins/validation'
+import CrudComponent from './crud/crudComponent.vue'
 export default {
   name: 'organizersComponent',
   mixins: [validation],
+  components: {
+    CrudComponent
+  },
   props: {
     organizerArray: Array
   },
@@ -165,7 +169,8 @@ export default {
         this.resetInfo()
       // Editar
       } else {
-        this.organizers[this.idEdit] = _interface
+        let _idEdit = this.idEdit
+        this.organizers[_idEdit] = _interface
         this.idEdit = null
         this.resetInfo()
       }

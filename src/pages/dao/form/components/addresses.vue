@@ -23,7 +23,7 @@ q-form(@submit='onSubmit', ref='formAddresses')
               q-input.q-pb-md(v-model='form.principalAddress.address.line2', filled, label="Address Line 2", label-stacked)
           .row
             .col.q-px-xs.col-xs-12.col-sm-6
-              q-input(v-model='form.principalAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+              q-input(v-model='form.principalAddress.city', filled, label='City: *', label-stacked :rules='[rules.required]')
                 template(v-slot:prepend)
                   q-icon(name='location_city')
             .col.q-px-xs.col-xs-12.col-sm-2
@@ -73,7 +73,7 @@ q-form(@submit='onSubmit', ref='formAddresses')
             q-input.rulesPadding(v-model='form.mailingAddress.address.line2', filled, label="Address Line 2", label-stacked)
         .row.justify-center.q-pt-sm
           .col.q-px-xs.col-xs-12.col-sm-6
-            q-input(v-model='form.mailingAddress.city', @input="getPostalCode()" filled, label='City: *', label-stacked :rules='[rules.required]')
+            q-input(v-model='form.mailingAddress.city', filled, label='City: *', label-stacked :rules='[rules.required]')
               template(v-slot:prepend)
                 q-icon(name='location_city')
           .col.q-px-xs.col-xs-12.col-sm-2
@@ -158,9 +158,6 @@ export default {
         this.options = this.countries.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
     },
-    getPostalCode () {
-
-    },
     changeStateCheckbox () {
       if (this.checkboxCopy) {
         const object = this.form.mailingAddress
@@ -171,7 +168,6 @@ export default {
     }
   },
   beforeMount () {
-    // Map
     let countries = this.countriesLang
     this.countries = Object.values(countries)
   }

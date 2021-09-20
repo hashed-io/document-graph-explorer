@@ -3,7 +3,6 @@ import { mapActions, mapGetters } from 'vuex'
 import LeftMenu from '~/components/layout/left-menu'
 import RightMenuAuthenticated from '~/components/layout/right-menu-authenticated'
 import RightMenuGuest from '~/components/layout/right-menu-guest'
-
 export default {
   name: 'layout-auth',
   components: {
@@ -31,37 +30,15 @@ export default {
   q-layout(view="hHh Lpr lFf")
     q-header
       q-toolbar
-        //- q-btn(
-        //-   flat
-        //-   show-if-above
-        //-   dense
-        //-   round
-        //-   @click="menu = !menu"
-        //-   icon="fas fa-bars"
-        //-   aria-label="Menu"
-        //- )
         q-toolbar-title.flex.items-center
           img.logo(src="statics/icons/TK_256.png")
         right-menu-authenticated(v-if="isAuthenticated")
         right-menu-guest(v-if="!isAuthenticated")
-    //- q-drawer(
-    //-   v-model="menu"
-    //-   side="left"
-    //-   :mini='false'
-    //- )
-    //-   left-menu
-    template(v-if="!$router.history.current.path.includes('/home')")
-      q-btn.back( icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
-        q-tooltip {{$t('pages.general.back')}}
     q-page-container.q-mt-xl.contentContainer
       router-view
 </template>
 
 <style lang="sass" scoped>
-.back
-  position: absolute
-  top: 15px
-  left: 10px
 .logo
   padding-left: 0.1vw
   max-height: 40px
@@ -69,17 +46,23 @@ export default {
 .badge-left
   left: -5px
   right: auto
-@media screen and (max-width: 600px)
+@media screen and (max-width: 319px) and (min-width: 30px)
   .contentContainer
     padding: 0rem
-@media screen and (min-width: 768px)
+@media screen and (max-width: 480px) and (min-width: 320px)
+  .contentContainer
+    padding: 0rem
+@media screen and (max-width: 768px) and (min-width: 481px)
   .contentContainer
     padding: 2rem
-@media screen and (min-width: 992px)
+@media screen and (max-width: 1024px) and (min-width: 769px)
   .contentContainer
     padding: 4rem
-@media screen and (min-width: 1200px)
+@media screen and (max-width: 1400px) and(min-width: 1025px)
   .contentContainer
     padding: 6rem
+@media screen and (min-width: 1401px)
+  .contentContainer
+    padding: 10rem
 
 </style>
