@@ -3,7 +3,7 @@ div(v-if='elementsObj.length === 0')
   p  No elements Currently Assigned...
 div(v-else)
   div.text-subtitle1
-    | elements
+    | {{title}}
     hr
     div(v-for='(element, index) in elementsObj')
       template
@@ -15,12 +15,12 @@ div(v-else)
                 | {{element.name}}
             q-item-label(caption='', lines='1').text-caption
               span.text-caption
-                | type: &nbsp;
+                | Type: &nbsp;
                 | {{element.typeName}}
-            q-item-label.q-mt-xs.text-caption.text-primary.text-uppercase(lines='1')
+            q-item-label.q-mt-xs.text-caption.text-primary(lines='1')
               span Address:  &nbsp;
                 | {{element.addressInfo}}
-          q-item-section(top='', side='')
+          q-item-section(v-if='actions' top='', side='')
             .text-grey-8.q-gutter-xs
               q-btn(size='12px', flat='', dense='', round='', icon='delete' @click='deleteElement(index)')
               q-btn(size='12px', flat='', dense='', round='', icon='edit' @click='editElement(index, element)')
@@ -28,20 +28,21 @@ div(v-else)
 
 <script>
 export default {
-  name: 'crud',
+  name: 'listOrganizerComponent',
   props: {
     elementsObj: {
       type: Array,
-      required: true
-    }
-  },
-  watch: {
-    'elementsObj.name': {
-      handler (val, oldVal) {
-        console.log('Item Changed')
-        console.log(val)
-      },
-      deep: true
+      default: () => []
+    },
+    title: {
+      type: String,
+      required: true,
+      default: 'Elements'
+    },
+    actions: {
+      type: Boolean,
+      required: true,
+      default: false
     }
   },
   data () {

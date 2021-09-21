@@ -35,35 +35,7 @@ div
             q-btn(label="ADD" type="submit" color="primary")
           div(v-else)
             q-btn(label="UPDATE" type='submit' color="primary")
-          //- .q-pa-sm
-            //- q-btn(label="CLEAR" type="reset" color="primary")
-  template
-    .text-subtitle1.q-px-xs Articles Details
-      hr
-    div(v-if='articles.length === 0')
-      p    No Additional Articles Identified...
-    div(v-else)
-      q-list
-        div(v-for='(article, index) in articles')
-          template
-            q-item
-              q-item-section(top class='col-2')
-                q-item-label(lines='2')
-                  span.text-caption
-                    strong
-                      | Article: &nbsp; #
-                    b {{article.number}}
-              q-item-section(top class="col-8")
-                q-item-label( lines='30')
-                  span.text-caption
-                    strong(style='color:black;')
-                      p
-                        | Detail: &nbsp;
-                    div(align='justify') {{article.detail}}
-              q-item-section(side class='col-2' align='left')
-                q-btn(size='12px', flat dense, round, icon='delete' @click='deleteArticle(index)')
-                q-btn(size='12px', flat, dense, round, icon='edit' @click='editArticle(index, article)')
-
+    ArticlesListComponent(:elementsObj='articles' :actions='actionsBool' @editElement='editArticle' @deleteElement='deleteArticle' )
 </template>
 
 <style lang="">
@@ -72,14 +44,17 @@ div
 
 <script>
 import { validation } from '~/mixins/validation'
+import ArticlesListComponent from './listOfElements/articlesListComponent.vue'
 export default {
   name: 'additionalArticlesComponent',
   mixins: [validation],
+  components: { ArticlesListComponent },
   props: {
     articlesArray: Array
   },
   data () {
     return {
+      actionsBool: true,
       articles: [],
       article: {
         number: null,

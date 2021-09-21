@@ -54,73 +54,9 @@ q-card(flat)
           div
             | {{form.addresses.mailingAddress.country}}
     template
-    .q-py-md
-      .text-subtitle1 Organizers
-      hr
-      div(v-if='form.organizers.length === 0')
-        p  No Organizers Currently Assigned...
-      div(v-else)
-        div(v-for='(organizer, index) in form.organizers')
-          div.q-py-sm
-            .row
-              span.text-caption
-                | Name: &nbsp;
-                | {{organizer.name}}
-            .row
-              span.text-caption
-                | type: &nbsp;
-                | {{organizer.officerType}}
-            .row.text-caption.text-primary
-              span Address:  &nbsp;
-                | {{organizer.addressInfo}}
-              //- q-item(clickable)
-              //-   q-item-section(top)
-              //-     q-item-label(lines='5')
-              //-       span.text-subtitle1
-              //-         | Name: &nbsp;
-              //-         | {{organizer.name}}
-              //-     q-item-label(caption='', lines='1')
-              //-       span.text-subtitle1
-              //-         | type: &nbsp;
-              //-         | {{organizer.officerType}}
-              //-     q-item-label.q-mt-xs.text-caption.text-primary.text-uppercase(lines='1')
-              //-       span Address:  &nbsp;
-              //-         | {{organizer.addressInfo}}
+      OrganizerListComponent(:elementsObj='form.organizers' title='Organizers' :fields='fields' )
     template
-    .q-py-md
-      .text-subtitle1 Articles Detail
-      hr
-      div(v-if='form.additionalArticles.length === 0')
-        p    No Additional Articles Identified...
-      div(v-else)
-        div(v-for='(article, index) in form.additionalArticles')
-          div.q-py-sm
-            .row
-              .col-2
-                span.text-caption
-                  div
-                    | Article: &nbsp; #
-                    | {{article.number}}
-              .col-10
-                span.text-caption
-                  div
-                    | Detail: &nbsp;
-                    br
-                    | {{article.detail}}
-            //- template
-            //-   q-item(clickable)
-            //-     q-item-section(top)
-            //-       q-item-label(lines='5')
-            //-         span.text-subtitle1
-            //-           strong
-            //-             | Article: &nbsp; #
-            //-           b {{article.number}}
-            //-     q-item-section(top class="col-10")
-            //-       q-item-label(caption='', lines='30')
-            //-         span.text-subtitle1
-            //-           strong
-            //-             | Detail: &nbsp;
-            //-           p {{article.detail}}
+      ArticlesListComponent(:elementsObj='form.additionalArticles')
     template
       .text-subtitle1 Registered Agent
       hr
@@ -156,8 +92,11 @@ q-card(flat)
 </style>
 
 <script>
+import OrganizerListComponent from './listOfElements/organizerListComponent.vue'
+import ArticlesListComponent from './listOfElements/articlesListComponent.vue'
 export default {
   name: 'confirmationComponent',
+  components: { OrganizerListComponent, ArticlesListComponent },
   props: {
     form: {
       type: Object
