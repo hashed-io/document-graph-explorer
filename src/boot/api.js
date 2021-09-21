@@ -46,10 +46,7 @@ export default ({ store }) => {
   const rpc = new JsonRpc(`${process.env.NETWORK_PROTOCOL}://${process.env.NETWORK_HOST}:${process.env.NETWORK_PORT}`)
   const mEosApi = new Api({ rpc, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() })
   store['$defaultApi'] = mEosApi
-  // store['$api'] = {
-  //   signTransaction: signTransaction.bind(store),
-  //   getTableRows: getTableRows.bind(store)
-  // }
+
   const api = {
     signTransaction: signTransaction.bind(store),
     getTableRows: getTableRows.bind(store)

@@ -279,7 +279,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveAndDeployDao', 'updateDaoData', 'deployContract', 'initDao']),
+    ...mapActions('dao', ['saveAndDeployDao', 'updateDaoData', 'initDao']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     windowResized () {
       if (this.$q.screen.width < 600) {
