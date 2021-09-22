@@ -5,7 +5,7 @@ export default {
 </script>
 
 <template lang="pug">
-  .flex.column
+  q-page.flex.column
     .main-splash
       img.imgSplash(src="../app-splashscreen.png")
     div.padding
@@ -50,6 +50,7 @@ export default {
       .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-xl
         div
           q-btn.full-width.q-mb-lg(
+            to="/login"
             color="primary"
             :label="$t('pages.index.buttons.login')"
             icon="app:login"

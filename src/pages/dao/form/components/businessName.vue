@@ -64,7 +64,8 @@ q-card(flat)
 
 </style>
 <script>
-import { validation } from '~/mixins/validation'
+// import { validation } from './mixins/validation'
+import { validation } from '../../../../mixins/validation'
 export default {
   name: 'businessname',
   mixins: [validation],

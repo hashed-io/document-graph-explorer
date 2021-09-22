@@ -3,11 +3,6 @@ import BaseEosApi from './BaseEosApi'
 import { Contracts } from '~/const/Contracts'
 import eosjsAccountName from 'eosjs-account-name'
 import { Serialize } from 'eosjs'
-// import fs from 'fs'
-// // import fs from 'fs'
-// const fs = require('fs/promises')
-// import * as codeF from './../contracts/daoinf.wasm'
-// import abiF from '~/statics/contractsFile/daoinf.abi'
 
 class DaoApi extends BaseEosApi {
   constructor ({
@@ -270,32 +265,6 @@ class DaoApi extends BaseEosApi {
     const res = await this.eosApi.signTransaction(actions)
 
     return res
-  }
-
-  /**
-   * Deploy contract
-   */
-  async deployContract ({ accountName }) {
-    console.log('deployContract', accountName)
-    // const { abi } = await this.getWasmAbi(accountName)
-    const { code: wasm, abi } = await this.getWasmAbi(accountName)
-    // const { code: wasm } = await this.getWasmAbi(accountName)
-
-    await this.setCode({
-      account: accountName,
-      code: wasm,
-      vmtype: 0,
-      vmversion: 0
-    }, {
-      authorization: `${accountName}@active`
-    })
-
-    await this.setAbi({
-      account: accountName,
-      abi: abi
-    }, {
-      authorization: `${accountName}@active`
-    })
   }
 }
 

@@ -149,7 +149,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['getDaos', 'deployContract']),
+    ...mapActions('dao', ['getDaos']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     onClickEdit (row) {
       // Send toggle modal

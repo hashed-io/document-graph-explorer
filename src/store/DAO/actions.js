@@ -19,18 +19,6 @@ export const saveAndDeployDao = async function ({ commit, dispatch }, params) {
     throw new Error(e)
   }
 }
-export const deployContract = async function ({ commit }) {
-  try {
-    // const api = documentsApi
-    const accountName = this.getters['accounts/account']
-    const response = await this.$daoApi.deployContract({ accountName })
-    console.log('deployContract', response)
-    return response
-  } catch (e) {
-    console.error('An error ocurred while trying to reset', e)
-    throw new Error(e)
-  }
-}
 
 export const updateDaoData = async function ({ commit, dispatch }, params) {
   try {

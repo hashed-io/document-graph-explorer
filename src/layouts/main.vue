@@ -34,8 +34,9 @@ export default {
           img.logo(src="statics/icons/TK_256.png")
         right-menu-authenticated(v-if="isAuthenticated")
         right-menu-guest(v-if="!isAuthenticated")
-    q-page-container.q-mt-xl.contentContainer
-      router-view
+    template
+      q-page-container.q-mt-xl.contentContainer
+        router-view
 </template>
 
 <style lang="sass" scoped>
