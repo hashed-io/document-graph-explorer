@@ -24,12 +24,13 @@ export const utils = {
     showNotification (message, type = 'success') {
       const color = type.toLowerCase() === 'success' ? 'green' : 'red'
       const icon = type.toLowerCase() === 'success' ? 'done' : 'error'
+      const timeOut = type.toLowerCase() === 'success' ? 5000 : 10000
       this.$q.notify({
         color: color,
         textColor: 'white',
         message: message,
         icon: icon,
-        timeout: 5000,
+        timeout: timeOut,
         actions: [{ label: 'Close', color: 'white' }]
       })
     },

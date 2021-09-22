@@ -392,7 +392,7 @@ export default {
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 2000))
+          await new Promise(resolve => setTimeout(resolve, 200))
           await this.saveAndDeployDao({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
@@ -406,7 +406,7 @@ export default {
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 2500))
+          await new Promise(resolve => setTimeout(resolve, 250))
           this.$q.loading.hide()
           await this.initDao()
           this.showSuccessMsg('Deploy contract success')
