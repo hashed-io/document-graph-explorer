@@ -42,45 +42,23 @@ div
             div(v-else)
               q-btn(label="UPDATE" @click='onSubmit' color="primary")
             .q-pa-xs
-            //- q-btn(label="CLEAR" type="reset" color="primary")
 
-        div(v-if='organizers.length === 0')
-          p  No Organizers Currently Assigned...
-        div(v-else)
-          div.text-subtitle1
-            | Organizers
-            hr
-            div(v-for='(organizer, index) in organizers')
-              template
-                q-item
-                  q-item-section(top)
-                    q-item-label(lines='5')
-                      span.text-caption
-                        | Name: &nbsp;
-                        | {{organizer.name}}
-                    q-item-label(caption='', lines='1').text-caption
-                      span.text-caption
-                        | type: &nbsp;
-                        | {{organizer.typeName}}
-                    q-item-label.q-mt-xs.text-caption.text-primary.text-uppercase(lines='1')
-                      span Address:  &nbsp;
-                        | {{organizer.addressInfo}}
-                  q-item-section(top='', side='')
-                    .text-grey-8.q-gutter-xs
-                      q-btn(size='12px', flat='', dense='', round='', icon='delete' @click='deleteOrganizer(index)')
-                      q-btn(size='12px', flat='', dense='', round='', icon='edit' @click='editOrganizer(index, organizer)')
-
+        OrganizerListComponent(:elementsObj='organizers' title='Organizers' :actions='actionsBool' @deleteElement='deleteOrganizer' @editElement='editOrganizer')
 </template>
 
-<style lang="">
+<style lang="sass">
 
 </style>
 
 <script>
 import { validation } from '~/mixins/validation'
+import OrganizerListComponent from './listOfElements/organizerListComponent.vue'
 export default {
   name: 'organizersComponent',
   mixins: [validation],
+  components: {
+    OrganizerListComponent
+  },
   props: {
     organizerArray: Array
   },
@@ -89,6 +67,7 @@ export default {
   },
   data () {
     return {
+      actionsBool: true,
       idEdit: null,
       checkbox: null,
       firstName: null,
@@ -153,6 +132,7 @@ export default {
         this.organizer.name = this.organization
         _typeName = 'Legal person'
       }
+      this.organizer.typeName = _typeName
       let _interface = {
         'name': this.organizer.name,
         'officerType': this.organizer.officerType,
@@ -162,10 +142,14 @@ export default {
       // Crear
       if (this.idEdit === null) {
         this.organizers.push(_interface)
+        // this.organizers.push(JSON.parse(JSON.stringify(this.organizer)))
         this.resetInfo()
       // Editar
       } else {
-        this.organizers[this.idEdit] = _interface
+        let _idEdit = this.idEdit
+        // this.organizers[_idEdit] = _interface
+        this.organizers.splice(_idEdit, 1, _interface)
+        // this.organizers[_idEdit] = (JSON.parse(JSON.stringify(this.organizer)))
         this.idEdit = null
         this.resetInfo()
       }

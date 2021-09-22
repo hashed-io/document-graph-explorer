@@ -98,7 +98,6 @@ export default {
           break
         }
       }
-
       return flag
     }
   },

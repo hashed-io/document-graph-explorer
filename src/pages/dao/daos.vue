@@ -1,45 +1,71 @@
 <template lang="pug">
-div.q-pa-md
+div
+  q-btn.back( v-if='currentView.showRegisterDao || currentView.showManageContract' icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="changeView('showListDao')")
+    q-tooltip {{$t('pages.general.back')}}
   .q-pb-xs.col-12.col-md-11
     q-card(flat)
-      .text-h6 {{ $t('pages.daos.titleForm') }}
-      listdao(ref='daoTable' @onManageContract='onClickManage')
+      .text-h6(v-if='currentView.showListDao') {{ $t('pages.daos.titleForm') }}
+      Listdao(v-if='currentView.showListDao' ref='daoTable' @editDao='isEditDao' @onManageContract='onClickManage')
+      RegisterDao(v-if='currentView.showRegisterDao' ref='daoForm' @backToListDao="changeView('showListDao')")
+      ManageContract(v-if='currentView.showManageContract' ref='manageContract')
       .row.q-pt-md.justify-end
         q-btn(
+          v-if='currentView.showListDao'
           :label="$t('pages.daos.createDao')"
           outline
           color="primary"
           @click="onClickCreateDao"
         )
 </template>
-
+<style lang="sass">
+.back
+  position: absolute
+  top: 15px
+  left: 10px
+</style>
 <script>
-import listdao from './listDaos/listDao.vue'
-import managedao from './manage/listContracts.vue'
+import Listdao from './listDaos/listDao.vue'
+import RegisterDao from './form/daoForm.vue'
+import ManageContract from './manage/manageContract.vue'
 import { mapMutations } from 'vuex'
 export default {
   name: 'daos',
-  components: { listdao, managedao },
+  components: {
+    Listdao,
+    RegisterDao,
+    ManageContract
+  },
   data () {
     return {
-      openCreateDao: false,
-      selectedDao: false,
-      showConfirmRemove: false
+      currentView: {
+        showListDao: true,
+        showRegisterDao: false,
+        showManageContract: false
+      }
     }
   },
   methods: {
     ...mapMutations('dao', ['setSelectedDao']),
-    onConfirmRemoveDao () {
+    changeView (currentView) {
+      for (var key in this.currentView) {
+        this.currentView[key] = false
+        if (key === currentView) {
+          this.currentView[key] = true
+        }
+      }
     },
     onClickCreateDao () {
-      this.$router.push({ name: 'daoForm' })
+      this.changeView('showRegisterDao')
     },
-    onClickManage () {
-      this.setSelectedDao(arguments[0])
-      this.$router.push({ name: 'manageContract' })
+    onBack () {
+      this.changeView('showListDao')
     },
-    onManageDao () {
-
+    onClickManage (row) {
+      this.setSelectedDao(row)
+      this.changeView('showManageContract')
+    },
+    isEditDao () {
+      this.changeView('showRegisterDao')
     }
   }
 }

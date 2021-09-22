@@ -35,7 +35,7 @@ q-card(flat)
                               q-btn(v-close-popup, label='Close', color='primary', flat='flat')
             div(v-else)
               p
-                strong Expiration Date V" (mm/dd/yyyy):
+                strong Expiration Date (mm/dd/yyyy):
                   strong.q-pr-sm
                   | {{calculateDate()}}
             hr.styleHR
@@ -134,7 +134,6 @@ export default {
     }
   },
   beforeMount () {
-    // this.matchData()
     const timeStamp = Date.now()
     this.datePickerStart = date.formatDate(timeStamp, 'YYYY/MM/DD')
     const newDate = new Date()
@@ -145,11 +144,6 @@ export default {
     this.datePickerEnd = date.formatDate(formattedString, 'YYYY/MM/DD')
   },
   methods: {
-    matchData () {
-      for (var key in this.form) {
-        this.form[key] = this.detailObject[key]
-      }
-    },
     calculateDate () {
       // Caso Perpetuo
       const value = this.selectValue.value
@@ -171,11 +165,6 @@ export default {
       formattedString = date.formatDate(formattedString, 'MM/DD/YYYY')
       this.setExpirationDate(formattedString)
       return formattedString
-    },
-    getCurrentDate () {
-      const timeStamp = Date.now()
-      this.date = date.formatDate(timeStamp, 'MM/DD/YYYY')
-      return date.formatDate(timeStamp, 'MM/DD/YYYY')
     },
     setExpirationDate (value) {
       this.form.expirationDate = value

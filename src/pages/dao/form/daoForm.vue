@@ -1,11 +1,10 @@
 <template lang="pug">
-  .PageMargin
+  div
     q-card(flat bordered)
       q-stepper(
         v-model="step"
         ref="stepper"
         color="primary"
-        header-class='testClass'
         :contracted ="boolContracted"
         header-nav
         keep-alive
@@ -62,14 +61,8 @@
               .col(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
-        //- q-step(:name="9" title="Step 9" caption="Payment" :done="step>9" :header-nav="step > 9")
-        //-   div.container
-        //-     paymentComponent
 </template>
 <style lang="sass" scoped>
-  .pageMargin
-    margin-top: -1%
-    margin-left: 1.3%
   .containerStepAgent
     margin-left: 0%
     margin-top: -1%
@@ -80,7 +73,6 @@
     margin-left: 0.5%
 </style>
 <script>
-import { validation } from '~/mixins/validation'
 import businessName from '../form/components/businessName.vue'
 import detail from '../form/components/detail.vue'
 import agentComponent from '../form/components/agent.vue'
@@ -90,8 +82,10 @@ import additionalArticlesComponent from '../form/components/additionalArticles.v
 import confirmationComponent from '../form/components/confirmation.vue'
 import signatureComponent from '../form/components/signature.vue'
 import paymentComponent from '../form/components/payment.vue'
-import { mapActions, mapMutations, mapState } from 'vuex'
+
 import BrowserIpfs from '~/services/BrowserIpfs'
+import { validation } from '~/mixins/validation'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { QSpinnerPuff } from 'quasar'
 export default {
   name: 'daoForm',
@@ -208,7 +202,6 @@ export default {
   computed: {
     ...mapState('accounts', ['account']),
     ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
-    // ...mapGetters('accounts', ['account'])
   },
   data () {
     return {
@@ -322,9 +315,6 @@ export default {
         case 8:
           this.$refs.signatureStepComponent.onSubmit()
           break
-        // Guardar archivo JSON FILE
-        case 9:
-          break
       }
     },
     messageFrombusinessNameComponent (businessName) {
@@ -368,7 +358,6 @@ export default {
       this.saveData()
     },
     saveData () {
-      //
       if (this.isEdit) {
         this.updateDataContract()
       } else {
@@ -379,7 +368,6 @@ export default {
       // Make JSON File to send IPFS
       const valid = this.$refs.daoNameInput.validate()
       if (valid) {
-        console.log('Saving data...', this.form)
         try {
           if (this.form !== '') {
             let data = this.form
@@ -415,7 +403,7 @@ export default {
           console.log(e)
           this.$q.loading.hide()
           this.showErrorMsg('Error while saving DAO data. ' + e)
-          this.$router.push({ name: 'daos' })
+          this.$emit('backToListDao', true)
         }
       } else {
         this.$q.loading.hide()
@@ -423,14 +411,14 @@ export default {
       }
     },
     async updateDataContract () {
-      console.log('Edit on blockchain')
+      // save on IPFS before to update on BlockChain
       try {
         if (this.form !== '') {
           let data = this.form
           this.typeCid = await BrowserIpfs.addAsJson({ data })
+          this.showSuccessMsg('Data saved in IPFS')
+          await new Promise(resolve => setTimeout(resolve, 1000))
         }
-        this.showSuccessMsg('Data saved in IPFS')
-        await new Promise(resolve => setTimeout(resolve, 1000))
       } catch (e) {
         this.showErrorMsg('Error while saving the data in IPFS. ' + e)
         console.log(e)
@@ -445,7 +433,7 @@ export default {
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
-        this.$router.push({ name: 'daos' })
+        this.$emit('backToListDao', true)
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e || e.message)

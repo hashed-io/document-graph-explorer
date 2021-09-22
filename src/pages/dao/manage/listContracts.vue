@@ -177,7 +177,7 @@ export default {
       pageSize: 5,
       nextPage: 2,
       initialPagination: {
-        rowsPerPage: 5,
+        rowsPerPage: 15,
         page: 1
       },
       contracts: {

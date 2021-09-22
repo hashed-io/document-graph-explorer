@@ -1,6 +1,5 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
-
 export default {
   name: 'right-menu-authenticated',
   computed: {
