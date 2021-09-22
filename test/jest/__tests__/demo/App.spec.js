@@ -1,4 +1,4 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 // import QBUTTON from './demo/QBtn-demo.vue'
 import pageIndex from 'src/pages/index.vue'
 import * as All from 'quasar'
@@ -21,7 +21,7 @@ const components = Object.keys(All).reduce((object, key) => {
 const localVue = createLocalVue()
 localVue.use(Quasar, { components }, VueRouter)
 const router = new VueRouter({ routes })
-const wrapper = mount(pageIndex, {
+const wrapper = shallowMount(pageIndex, {
   localVue,
   mocks: {
     $t: (msg) => msg

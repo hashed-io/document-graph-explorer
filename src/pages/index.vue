@@ -50,6 +50,8 @@ export default {
       .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-xl
         div
           q-btn.full-width.q-mb-lg(
+            to='/login'
+            id='redirectButton'
             color="primary"
             :label="$t('pages.index.buttons.login')"
             icon="app:login"

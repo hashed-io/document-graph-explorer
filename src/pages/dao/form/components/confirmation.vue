@@ -54,7 +54,7 @@ q-card(flat)
           div
             | {{form.addresses.mailingAddress.country}}
     template
-      OrganizerListComponent(:elementsObj='form.organizers' title='Organizers' :fields='fields' )
+      OrganizerListComponent(:elementsObj='form.organizers' title='Organizers' )
     template
       ArticlesListComponent(:elementsObj='form.additionalArticles')
     template
