@@ -398,7 +398,7 @@ export default {
           this.$q.loading.hide()
           await this.initDao()
           this.showSuccessMsg('Deploy contract success')
-          this.$router.push({ name: 'daos' })
+          this.$emit('backToListDao', true)
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
