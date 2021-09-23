@@ -41,7 +41,6 @@ export default {
     },
     actions: {
       type: Boolean,
-      required: true,
       default: false
     }
   },

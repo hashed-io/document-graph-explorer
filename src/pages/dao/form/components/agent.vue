@@ -68,41 +68,6 @@ div
               q-checkbox(v-model='agree' label="* I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
   .dialog
     AgentListComponent(ref='agentList' :show='dialog' @agentSelected='selectedAgent' @closeModal='closeModal')
-    //- q-dialog(v-model='dialog' full-width)
-    //-   q-card
-    //-     q-toolbar(style='color:white;').bg-primary
-    //-       q-toolbar-title
-    //-         span.text-subtitle1 Select an Agent
-    //-       q-btn(dense flat icon='close' v-close-popup)
-    //-         q-tooltip Close
-    //-     q-card-section
-    //-     #container.q-px-xl.q-pb-md
-    //-       q-table.q-mb-sm(
-    //-         title: 'Agents'
-    //-         :data="agentsData"
-    //-         :columns="columns"
-    //-         :loading = "loading"
-    //-         row-key="number"
-    //-         flat
-    //-         dense
-    //-         :rows-per-page-options="[0]"
-    //-         no-data-label='No agents recovered'
-    //-         class="sticky-virtscroll-table"
-    //-         ref="table"
-    //-         table-header-class="hdTable"
-    //-         :hide-pagination="true"
-    //-         :filter="search"
-    //-         @row-click='selectRow'
-    //-       )
-    //-         template(v-slot:no-data="{icon, message}")
-    //-           div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
-    //-             q-icon( size='2em' name='warning')
-    //-             span
-    //-               | {{message}}
-    //-         template(v-slot:top-right)
-    //-           q-input(borderless, dense, debounce='300', v-model='search', placeholder='Search')
-    //-             template(v-slot:append)
-    //-               q-icon(name='search')
 
 </template>
 

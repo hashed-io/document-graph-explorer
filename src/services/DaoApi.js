@@ -77,6 +77,15 @@ class DaoApi extends BaseEosApi {
     //  make actions
     const actions = [
       {
+        account: Contracts.CONTRACT_DAO,
+        name: 'create',
+        data: {
+          dao: dao,
+          creator: creator,
+          ipfs: ipfs
+        }
+      },
+      {
         account: 'eosio',
         name: 'setcode',
         authorization: [{
@@ -100,15 +109,6 @@ class DaoApi extends BaseEosApi {
         data: {
           account: accountName,
           abi: serializedAbiHexString
-        }
-      },
-      {
-        account: Contracts.CONTRACT_DAO,
-        name: 'create',
-        data: {
-          dao: dao,
-          creator: creator,
-          ipfs: ipfs
         }
       }
     ]

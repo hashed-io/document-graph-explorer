@@ -372,33 +372,33 @@ export default {
           if (this.form !== '') {
             let data = this.form
             this.typeCid = await BrowserIpfs.addAsJson({ data })
-            // loading show [step 1]
-            this.$q.loading.show({
-              message: ' Saving data and deploy contract...',
-              customClass: 'text-weight-bold text-subtitle1',
-              spinnerSize: '15em',
-              spinner: QSpinnerPuff
-            })
-            await new Promise(resolve => setTimeout(resolve, 2000))
-            await this.saveAndDeployDao({
-              dao: this.daoName.toLowerCase(),
-              creator: this.account,
-              ipfs: this.typeCid
-            })
-            // loading show [step 2]
-
-            this.$q.loading.show({
-              message: 'Initializing DAO...',
-              customClass: 'text-weight-bold text-subtitle1',
-              spinnerSize: '15em',
-              spinner: QSpinnerPuff
-            })
-            await new Promise(resolve => setTimeout(resolve, 2500))
-            this.$q.loading.hide()
-            await this.initDao()
-            this.showSuccessMsg('Deploy contract success')
-            this.$emit('backToListDao', true)
           }
+          // loading show [step 1]
+          this.$q.loading.show({
+            message: ' Saving data and deploy contract...',
+            customClass: 'text-weight-bold text-subtitle1',
+            spinnerSize: '15em',
+            spinner: QSpinnerPuff
+          })
+          await new Promise(resolve => setTimeout(resolve, 200))
+          await this.saveAndDeployDao({
+            dao: this.daoName.toLowerCase(),
+            creator: this.account,
+            ipfs: this.typeCid
+          })
+          // loading show [step 2]
+
+          this.$q.loading.show({
+            message: 'Initializing DAO...',
+            customClass: 'text-weight-bold text-subtitle1',
+            spinnerSize: '15em',
+            spinner: QSpinnerPuff
+          })
+          await new Promise(resolve => setTimeout(resolve, 250))
+          this.$q.loading.hide()
+          await this.initDao()
+          this.showSuccessMsg('Deploy contract success')
+          this.$emit('backToListDao', true)
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()

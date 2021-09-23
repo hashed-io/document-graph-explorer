@@ -172,6 +172,7 @@ export default {
       this.dialog = false
       let selectedAgentData = this.agentsData[id]
       this.$emit('agentSelected', selectedAgentData)
+      this.$emit('closeModal', true)
     },
     closeModal () {
       this.$emit('closeModal', true)
