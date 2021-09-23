@@ -32,6 +32,7 @@ q-card(flat)
     )
       div.q-pa-sm
       q-input(
+          ref='cal-modal'
           outlined
           stack-label
           v-model="formData.businessName"
@@ -70,7 +71,15 @@ export default {
   name: 'businessname',
   mixins: [validation],
   props: {
-    bussinessObject: Object
+    bussinessObject: {
+      type: Object,
+      default: function () {
+        return {
+          businessName: null,
+          additionalDesination: 'DAO'
+        }
+      }
+    }
   },
   beforeMount () {
     this.matchData()
@@ -104,8 +113,10 @@ export default {
   },
   methods: {
     matchData () {
-      this.formData = Object.assign({}, this.bussinessObject)
-      this.confirmName = this.bussinessObject.businessName
+      // this.formData = Object.assign({}, this.bussinessObject)
+      this.formData.businessName = 'DAO LC AGC'
+      this.formData.additionalDesination = 'DAO'
+      this.confirmName = this.formData.businessName
     },
     changeStateError (state) {
       this.errorBusinessName = state
