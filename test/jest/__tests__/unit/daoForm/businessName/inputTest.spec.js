@@ -37,12 +37,12 @@ describe('Form Submit', () => {
     await wrapper.setData({ formData: { businessName: 'DECENTRALIZED AUTONOMOUS ORGANIZATION L.L.C.' } })
     expect(wrapper.vm.containsDesignations).toBe(true)
   })
-  it('test', async () => {
+  it('businessName not contains substring (computed)', async () => {
     await wrapper.setData({ formData: { businessName: 'Lorem ipsum' } })
     expect(wrapper.vm.containsDesignations).toBe(false)
     await wrapper.setData({ formData: { businessName: 'DECENTRALIZED AUTONOMOUS OANIZATION L..C.' } })
     expect(wrapper.vm.containsDesignations).toBe(false)
-    await wrapper.setData({ formData: { businessName: 'LAO L.L.C.' } })
+    await wrapper.setData({ formData: { businessName: 'LO L.L.C ACME' } })
     expect(wrapper.vm.containsDesignations).toBe(false)
   })
 })

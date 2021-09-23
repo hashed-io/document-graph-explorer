@@ -33,10 +33,8 @@ describe('index testing', () => {
     expect(wrapper.text()).toContain('We’ve created this tool is to allow you to upload a copy of the official DAO LLC form to a public smart contract and help you comply with the DAO LLC requirement of generating a smart contract identifier required in Step 6 -') // easier
   })
   it('redirect in press Login to Telos', async () => {
-    // const redirectButton = wrapper.find('#redirectButton')
-    // window.location.assign = jest.fn() // Create a spy
-    // redirectButton.trigger('click')
-    // // await wrapper.vm.$nextTick()
-    // expect(window.location.assign).toHaveBeenCalledWith('/login')
+    await wrapper.find('#redirectButton').trigger('click')
+    await wrapper.vm.$nextTick()
+    expect(window.location.pathname).toEqual('/')
   })
 })
