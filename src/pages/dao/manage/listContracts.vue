@@ -174,10 +174,10 @@ export default {
       idEdit: null,
       fieldNameEditable: false,
       manageContract: [],
-      pageSize: 5,
+      pageSize: 10,
       nextPage: 2,
       initialPagination: {
-        rowsPerPage: 5,
+        rowsPerPage: 10,
         page: 1
       },
       contracts: {
@@ -308,7 +308,9 @@ export default {
         } else {
           let label = this.manageContract[index].label
           this.deleteLabels.push(label)
+          let indexUpdate = this.updateLabels.findIndex(el => el.label === contract.label)
           this.manageContract.splice(index, 1)
+          this.updateLabels.splice(indexUpdate, 1)
           this.showSuccessMsg('Label ' + label + ' deleted. Save your changes')
         }
       }
@@ -395,7 +397,7 @@ export default {
       }
       this.showSuccessMsg('Label Update')
       console.log({ new: this.newLabels, update: this.updateLabels })
-      this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
+      this.manageContract.splice(index, 1, JSON.parse(JSON.stringify(this.contract)))
       if (this.manageContract[index].value[0] === 'file') {
         this.manageContract[index].value[1] = this.manageContract[index].ipfs
       }
