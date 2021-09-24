@@ -403,6 +403,7 @@ export default {
       this.fieldNameEditable = false
       this.clearContract()
       this.openDialog = false
+      this.$forceUpdate()
     },
     //
     changesDate () {

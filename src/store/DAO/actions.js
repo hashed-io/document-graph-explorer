@@ -1,7 +1,7 @@
-export const initDao = async function ({ commit, dispatch }) {
+export const initDao = async function ({ commit, dispatch }, params) {
   try {
     const accountName = this.getters['accounts/account']
-    const response = await this.$daoApi.InitDao({ accountName })
+    const response = await this.$daoApi.InitDao({ ...params, accountName })
     console.log('initDao', response)
     return response
   } catch (e) {

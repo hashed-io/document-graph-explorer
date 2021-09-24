@@ -33,16 +33,16 @@ class DaoApi extends BaseEosApi {
   async _parseRows (rows, modifierProps) {
     return rows
   }
-  async InitDao ({ accountName }) {
+  async InitDao ({ accountName, account }) {
     const actions = [{
-      account: accountName,
+      account: account,
       name: 'initdao',
       data: {
         creator: accountName
       }
     }]
     console.log('actions: ', actions)
-    return this.eosApi.signTransaction(actions)
+    // return this.eosApi.signTransaction(actions)
   }
   /**
    *
@@ -54,12 +54,12 @@ class DaoApi extends BaseEosApi {
     var { code, abi } = await this.getWasmAbi(accountName)
     var authorization = `${accountName}@active`
     // Set Code
-    console.log('setCode before', code)
+    // console.log('setCode before', code)
     // vmtype = {}
     // vmversion = 0
-    // const wasmHexString = code.toString('hex')
+
     const wasmHexString = this.buf2hex(code)
-    console.log('setCode after', wasmHexString)
+    // console.log('setCode after', wasmHexString)
     let [actor, permission] = authorization.split('@')
     // Set ABI
     const buffer = new Serialize.SerialBuffer({
@@ -77,10 +77,17 @@ class DaoApi extends BaseEosApi {
     abiDefinitions.serialize(buffer, abi)
     const serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
 
-    // let [actor, permission] = authorization.split('@')
-
     //  make actions
     const actions = [
+      {
+        account: Contracts.CONTRACT_DAO,
+        name: 'create',
+        data: {
+          dao: dao,
+          creator: creator,
+          ipfs: ipfs
+        }
+      },
       {
         account: 'eosio',
         name: 'setcode',
@@ -106,19 +113,10 @@ class DaoApi extends BaseEosApi {
           account: accountName,
           abi: serializedAbiHexString
         }
-      },
-      {
-        account: Contracts.CONTRACT_DAO,
-        name: 'create',
-        data: {
-          dao: dao,
-          creator: creator,
-          ipfs: ipfs
-        }
       }
     ]
     console.log('actions: ', actions)
-    return this.eosApi.signTransaction(actions)
+    // return this.eosApi.signTransaction(actions)
   }
   /**
    *

@@ -57,7 +57,7 @@
           q-stepper-navigation
             .row
               .col(style='margin-top:-2%; margin-left: 1.5%;')
-                q-input(v-model='daoName' label='Signed by' ref='daoNameInput' readonly :rules='[rules.required]')
+                q-input(v-model='daoName' label='Signed by' ref='daoNameInput' :rules='[rules.required]')
               .col(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
@@ -205,7 +205,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
@@ -371,6 +371,13 @@ export default {
         try {
           if (this.form !== '') {
             let data = this.form
+            this.$q.loading.show({
+              message: ' Saving the dao information...',
+              customClass: 'text-weight-bold text-subtitle1',
+              spinnerSize: '15em',
+              spinner: QSpinnerPuff
+            })
+            await new Promise(resolve => setTimeout(resolve, 200))
             this.typeCid = await BrowserIpfs.addAsJson({ data })
           }
           // loading show [step 1]
@@ -396,7 +403,9 @@ export default {
           })
           await new Promise(resolve => setTimeout(resolve, 250))
           this.$q.loading.hide()
-          await this.initDao()
+          await this.initDao({
+            account: this.daoName.toLowerCase()
+          })
           this.showSuccessMsg('Deploy contract success')
           this.$router.push({ name: 'daos' })
         } catch (e) {

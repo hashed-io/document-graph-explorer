@@ -76,7 +76,8 @@ export default {
     },
     daos: {
       titleForm: 'DAOs created by your account',
-      createDao: 'Create new DAO'
+      createDao: 'Create new DAO',
+      nodata: 'There aren\'t any DAOs associated with your account'
     }
   }
 }

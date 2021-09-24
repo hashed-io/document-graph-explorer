@@ -13,7 +13,7 @@
     class="sticky-virtscroll-table"
     :virtual-scroll-item-size="pageSize - 2"
     :virtual-scroll-sticky-size-start="pageSize - 2"
-    no-data-label="There aren't associated DAOs to your account"
+    no-data-label="There aren't any DAOs associated with your account"
     ref="table"
     :loading='loading'
     @virtual-scroll="onScroll"
