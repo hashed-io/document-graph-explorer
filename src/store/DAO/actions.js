@@ -9,21 +9,19 @@ export const initDao = async function ({ commit, dispatch }, params) {
     throw new Error(e)
   }
 }
-export const saveAndDeployDao = async function ({ commit, dispatch }, params) {
+export const createDao = async function ({ commit, dispatch }, params) {
   try {
     const accountName = this.getters['accounts/account']
-    const response = await this.$daoApi.SaveAndDeployDao({ ...params, accountName })
+    const response = await this.$daoApi.CreateDao({ ...params, accountName })
     return response
   } catch (e) {
     console.error('An error ocurred while trying to save dao data', e)
     throw new Error(e)
   }
 }
-export const deployContract = async function ({ commit }) {
+export const deployContract = async function ({ commit, dispatch }, accountName) {
   try {
-    // const api = documentsApi
-    const accountName = this.getters['accounts/account']
-    const response = await this.$daoApi.deployContract({ accountName })
+    const response = await this.$daoApi.deployContract({ ...accountName })
     console.log('deployContract', response)
     return response
   } catch (e) {

@@ -1,6 +1,6 @@
 import BaseEosApi from './BaseEosApi'
 
-class DocumentsApi extends BaseEosApi {
+class ContractsApi extends BaseEosApi {
   constructor ({
     eosApi,
     mEosApi,
@@ -160,4 +160,4 @@ class DocumentsApi extends BaseEosApi {
   }
 }
 
-export default DocumentsApi
+export default ContractsApi

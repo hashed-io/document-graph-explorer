@@ -127,7 +127,7 @@
 </style>
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
-import { DocumentsApi } from '~/services'
+import { ContractsApi } from '~/services'
 import { validation } from '~/mixins/validation'
 import { mapActions } from 'vuex'
 import { date } from 'quasar'
@@ -150,8 +150,8 @@ export default {
         let _contractAccount = this.dao.dao
         let _api = this.$store.$apiMethods
         let mEosApi = this.$store.$defaultApi
-        const documentsApi = await new DocumentsApi({ eosApi: _api, mEosApi }, _contractAccount)
-        this.DocumentApi = documentsApi
+        const contractsApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        this.DocumentApi = contractsApi
         console.log('documentApi created', this.DocumentApi)
         this.loadData()
       }

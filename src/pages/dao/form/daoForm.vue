@@ -57,7 +57,7 @@
           q-stepper-navigation
             .row
               .col(style='margin-top:-2%; margin-left: 1.5%;')
-                q-input(v-model='daoName' label='Signed by' ref='daoNameInput' :rules='[rules.required]')
+                q-input(v-model='daoName' label='Signed by' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
               .col(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
@@ -108,10 +108,11 @@ export default {
   },
   created () {
     this.windowResized()
-    this.daoName = this.account
     if (this.isEdit) {
+      this.daoName = this.selectedDAO.dao
       this.form = JSON.parse(JSON.stringify(this.formStore))
     } else {
+      this.daoName = this.account
       this.form = {
         price: 100,
         businessName: {
@@ -201,11 +202,11 @@ export default {
   },
   computed: {
     ...mapState('accounts', ['account']),
-    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore'])
+    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore', 'selectedDAO'])
   },
   data () {
     return {
-      step: 8,
+      step: 1,
       boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
@@ -279,7 +280,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['saveAndDeployDao', 'updateDaoData', 'deployContract', 'initDao']),
+    ...mapActions('dao', ['createDao', 'updateDaoData', 'deployContract', 'initDao']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     windowResized () {
       if (this.$q.screen.width < 600) {
@@ -382,16 +383,26 @@ export default {
           }
           // loading show [step 1]
           this.$q.loading.show({
-            message: ' Saving data and deploy contract...',
+            message: 'Creating DAO...',
             customClass: 'text-weight-bold text-subtitle1',
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
           await new Promise(resolve => setTimeout(resolve, 200))
-          await this.saveAndDeployDao({
+          await this.createDao({
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
+          })
+          this.$q.loading.show({
+            message: 'Setting DAO..',
+            customClass: 'text-weight-bold text-subtitle1',
+            spinnerSize: '15em',
+            spinner: QSpinnerPuff
+          })
+          await new Promise(resolve => setTimeout(resolve, 200))
+          await this.deployContract({
+            accountName: this.daoName.toLowerCase()
           })
           // loading show [step 2]
 
@@ -407,7 +418,7 @@ export default {
             account: this.daoName.toLowerCase()
           })
           this.showSuccessMsg('Deploy contract success')
-          this.$router.push({ name: 'daos' })
+          this.$emit('backToListDao', true)
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
