@@ -17,7 +17,9 @@ export const validation = {
         positiveInteger: val => parseInt(val) > 0 || this.$t('forms.errors.positiveInteger'),
         required: val => !!val || this.$t('forms.errors.required'),
         isEqual: value => val => val === value || this.$t('forms.errors.positiveInteger', { value }),
-        isEmail: val => /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(val.toLowerCase()) || this.$t('forms.errors.email')
+        isEmail: val => /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(val.toLowerCase()) || this.$t('forms.errors.email'),
+        isChecksum: val => /(^[a-f0-9A-F]{64}$)/.test(val.toLowerCase()) || this.$t('forms.errors.checksum'),
+        isEosAccount: val => /(^[a-z1-5]{0,12}$)/.test(val) || this.$t('forms.errors.eosaccount')
       }
     }
   },

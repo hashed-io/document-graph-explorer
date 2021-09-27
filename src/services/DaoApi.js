@@ -28,9 +28,15 @@ class DaoApi extends BaseEosApi {
   async _parseRows (rows, modifierProps) {
     return rows
   }
-  async InitDao ({ accountName }) {
+  async InitDao ({ accountName, account }) {
+    var authorization = `${account}@active`
+    let [actor, permission] = authorization.split('@')
     const actions = [{
-      account: accountName,
+      authorization: [{
+        actor,
+        permission
+      }],
+      account: account,
       name: 'initdao',
       data: {
         creator: accountName
@@ -44,36 +50,7 @@ class DaoApi extends BaseEosApi {
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
    * @returns
    */
-  async SaveAndDeployDao ({ dao, creator, ipfs, accountName }) {
-    // Deploy Contract
-    var { code, abi } = await this.getWasmAbi(accountName)
-    var authorization = `${accountName}@active`
-    // Set Code
-    console.log('setCode before', code)
-    // vmtype = {}
-    // vmversion = 0
-    // const wasmHexString = code.toString('hex')
-    const wasmHexString = this.buf2hex(code)
-    console.log('setCode after', wasmHexString)
-    let [actor, permission] = authorization.split('@')
-    // Set ABI
-    const buffer = new Serialize.SerialBuffer({
-      textEncoder: this.mEosApi.textEncoder,
-      textDecoder: this.mEosApi.textDecoder
-    })
-
-    const abiDefinitions = this.mEosApi.abiTypes.get('abi_def')
-    abi = abiDefinitions.fields.reduce(
-      (acc, { name: fieldName }) =>
-        Object.assign(acc, { [fieldName]: acc[fieldName] || [] }),
-      abi
-    )
-
-    abiDefinitions.serialize(buffer, abi)
-    const serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
-
-    // let [actor, permission] = authorization.split('@')
-
+  async CreateDao ({ dao, creator, ipfs, accountName }) {
     //  make actions
     const actions = [
       {
@@ -83,32 +60,6 @@ class DaoApi extends BaseEosApi {
           dao: dao,
           creator: creator,
           ipfs: ipfs
-        }
-      },
-      {
-        account: 'eosio',
-        name: 'setcode',
-        authorization: [{
-          actor,
-          permission
-        }],
-        data: {
-          account: accountName,
-          code: wasmHexString,
-          vmtype: 0,
-          vmversion: 0
-        }
-      },
-      {
-        account: 'eosio',
-        name: 'setabi',
-        authorization: [{
-          actor,
-          permission
-        }],
-        data: {
-          account: accountName,
-          abi: serializedAbiHexString
         }
       }
     ]
@@ -154,7 +105,73 @@ class DaoApi extends BaseEosApi {
   /**
    * ============================ DEPLOY CONTRACT ================
    */
+  async deployContract ({ accountName }) {
+    // Deploy Contract
+    var { code, abi } = await this.getWasmAbi(accountName)
+    var authorization = `${accountName}@active`
+    // Set Code
+    // vmtype = {}
+    // vmversion = 0
+    // const wasmHexString = code.toString('hex')
+    const wasmHexString = this.buf2hex(code)
+    let [actor, permission] = authorization.split('@')
+    // Set ABI
+    const buffer = new Serialize.SerialBuffer({
+      textEncoder: this.mEosApi.textEncoder,
+      textDecoder: this.mEosApi.textDecoder
+    })
 
+    const abiDefinitions = this.mEosApi.abiTypes.get('abi_def')
+    abi = abiDefinitions.fields.reduce(
+      (acc, { name: fieldName }) =>
+        Object.assign(acc, { [fieldName]: acc[fieldName] || [] }),
+      abi
+    )
+
+    abiDefinitions.serialize(buffer, abi)
+    const serializedAbiHexString = Buffer.from(buffer.asUint8Array()).toString('hex')
+
+    //  make actions
+    const actions = [
+      {
+        account: Contracts.CONTRACT_DAO,
+        name: 'create',
+        data: {
+          dao: dao,
+          creator: creator,
+          ipfs: ipfs
+        }
+      },
+      {
+        account: 'eosio',
+        name: 'setcode',
+        authorization: [{
+          actor,
+          permission
+        }],
+        data: {
+          account: accountName,
+          code: wasmHexString,
+          vmtype: 0,
+          vmversion: 0
+        }
+      },
+      {
+        account: 'eosio',
+        name: 'setabi',
+        authorization: [{
+          actor,
+          permission
+        }],
+        data: {
+          account: accountName,
+          abi: serializedAbiHexString
+        }
+      }
+    ]
+    console.log('actions: ', actions)
+    return this.eosApi.signTransaction(actions)
+  }
   /**
    * GetWasmAbi
    * @param {accountName} contractName
@@ -163,7 +180,6 @@ class DaoApi extends BaseEosApi {
   async getWasmAbi () {
     // const codePath = join(__dirname, `../compiled/${contractName}.wasm`)
     // const abiPath = join(__dirname, `../compiled/${contractName}.abi`)
-    console.log('getWasmAbi', window.location.origin)
     // const codePath = Contracts.CODE_CONTRACT_URL
     // const abiPath = Contracts.ABI_CONTRACT_URL
     const codePath = `${window.location.origin}/statics/contracts/daoinf.wasm`
@@ -220,9 +236,8 @@ class DaoApi extends BaseEosApi {
       }
     }]
     console.log('ACTIONS setCode : ', actions)
-    const res = await this.eosApi.signTransaction(actions)
-
-    return res
+    // const res = await this.eosApi.signTransaction(actions)
+    // return res
   }
 
   /**
@@ -265,6 +280,32 @@ class DaoApi extends BaseEosApi {
     const res = await this.eosApi.signTransaction(actions)
 
     return res
+  }
+
+  /**
+   * Deploy contract
+   */
+  async _deployContract ({ accountName }) {
+    console.log('deployContract', accountName)
+    // const { abi } = await this.getWasmAbi(accountName)
+    const { code: wasm, abi } = await this.getWasmAbi(accountName)
+    // const { code: wasm } = await this.getWasmAbi(accountName)
+
+    await this.setCode({
+      account: accountName,
+      code: wasm,
+      vmtype: 0,
+      vmversion: 0
+    }, {
+      authorization: `${accountName}@active`
+    })
+
+    await this.setAbi({
+      account: accountName,
+      abi: abi
+    }, {
+      authorization: `${accountName}@active`
+    })
   }
 }
 

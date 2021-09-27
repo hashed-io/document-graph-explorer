@@ -13,7 +13,7 @@
     class="sticky-virtscroll-table"
     :virtual-scroll-item-size="pageSize - 2"
     :virtual-scroll-sticky-size-start="pageSize - 2"
-    no-data-label="There aren't associated DAOs to your account"
+    no-data-label="There aren't any DAOs associated with your account"
     ref="table"
     :loading='loading'
     @virtual-scroll="onScroll"
@@ -149,8 +149,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['getDaos']),
-    ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
+    ...mapActions('dao', ['getDaos', 'deployContract']),
+    ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName', 's']),
     onClickEdit (row) {
       // Send toggle modal
       this.$emit('onManageContract', row)
@@ -211,14 +211,15 @@ export default {
         self.loading = false
         self.showIsLoading(false)
         self.showSuccessMsg('Data loaded success')
-        self.changeStateDAO(response.data.data, daoName)
+        self.changeStateDAO(response.data.data, daoName, row)
       })
     },
-    changeStateDAO (_form, daoName) {
+    changeStateDAO (_form, daoName, row) {
       this.setIsEdit(true)
       this.setDataForm(_form)
       this.setDaoName(daoName)
-      this.$emit('editDao', true)
+
+      this.$emit('editDao', row)
       // this.$router.push({ name: 'daoForm' })
     },
     async onClickSee (row) {

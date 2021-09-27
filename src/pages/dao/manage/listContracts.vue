@@ -39,6 +39,8 @@
                       q-icon(name="error" class="text-red" style="font-size: 2rem;")
                       //- p Fail Upload
               q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
+              q-input(v-else-if="contract.value[0] === 'name'"  v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
+              q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-pa-md
               q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
@@ -127,7 +129,7 @@
 </style>
 <script>
 import BrowserIpfs from '~/services/BrowserIpfs'
-import { DocumentsApi } from '~/services'
+import { ContractsApi } from '~/services'
 import { validation } from '~/mixins/validation'
 import { mapActions } from 'vuex'
 import { date } from 'quasar'
@@ -148,10 +150,11 @@ export default {
         this.showErrorMsg('The associated DAO has not been selected ')
       } else {
         let _contractAccount = this.dao.dao
+        alert(_contractAccount)
         let _api = this.$store.$apiMethods
         let mEosApi = this.$store.$defaultApi
-        const documentsApi = await new DocumentsApi({ eosApi: _api, mEosApi }, _contractAccount)
-        this.DocumentApi = documentsApi
+        const contractsApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        this.DocumentApi = contractsApi
         console.log('documentApi created', this.DocumentApi)
         this.loadData()
       }
@@ -174,10 +177,10 @@ export default {
       idEdit: null,
       fieldNameEditable: false,
       manageContract: [],
-      pageSize: 5,
+      pageSize: 10,
       nextPage: 2,
       initialPagination: {
-        rowsPerPage: 15,
+        rowsPerPage: 10,
         page: 1
       },
       contracts: {
@@ -303,12 +306,18 @@ export default {
           this.manageContract.splice(index, 1)
           const isEqual = (element) => element.label === contract.label
           let _index = this.newLabels.findIndex(isEqual)
-          this.newLabels.splice(_index, 1)
+          if (_index >= 0) {
+            this.newLabels.splice(_index, 1)
+          }
           this.showSuccessMsg('Label ' + contract.label + ' deleted.')
         } else {
           let label = this.manageContract[index].label
           this.deleteLabels.push(label)
           this.manageContract.splice(index, 1)
+          let indexUpdate = this.updateLabels.findIndex(el => el.label === contract.label)
+          if (indexUpdate >= 0) {
+            this.updateLabels.splice(indexUpdate, 1)
+          }
           this.showSuccessMsg('Label ' + label + ' deleted. Save your changes')
         }
       }
@@ -355,32 +364,29 @@ export default {
     editRow (index) {
       this.openDialog = true
       if (this.newLabels.find(el => el.label === this.manageContract[index].label)) {
-        let data = this.manageContract[index]
-        this.contract = JSON.parse(JSON.stringify(data))
-        this.idEdit = index
         this.fieldNameEditable = false
       } else {
-        let data = this.manageContract[index]
-        this.contract = JSON.parse(JSON.stringify(data))
-        this.idEdit = index
         this.fieldNameEditable = true
       }
+      let data = this.manageContract[index]
+      this.contract = JSON.parse(JSON.stringify(data))
+      this.idEdit = index
       this.prevLabel = this.manageContract[index].label
-      console.log({ contract: this.contract, prevLabel: this.prevLabel })
     },
     updateRow () {
       console.log({ new: this.newLabels, update: this.updateLabels, manage: this.manageContract })
       let index = this.idEdit
       if (!this.fieldNameEditable) {
         // Save in new labels
+        var isEqual
         if (this.newLabels.find(el => el.label === this.contract.label)) {
-          const isEqual = (element) => element.label === this.contract.label
-          let id = this.newLabels.findIndex(isEqual)
-          this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
+          isEqual = (element) => element.label === this.contract.label
         } else {
-          const isEqual = (element) => element.label === this.prevLabel
-          let id = this.newLabels.findIndex(isEqual)
-          this.newLabels[id] = (JSON.parse(JSON.stringify(this.contract)))
+          isEqual = (element) => element.label === this.prevLabel
+        }
+        let id = this.newLabels.findIndex(isEqual)
+        if (id >= 0) {
+          this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
         }
       } else {
         // Save in update lables
@@ -395,7 +401,7 @@ export default {
       }
       this.showSuccessMsg('Label Update')
       console.log({ new: this.newLabels, update: this.updateLabels })
-      this.manageContract[index] = JSON.parse(JSON.stringify(this.contract))
+      this.manageContract.splice(index, 1, JSON.parse(JSON.stringify(this.contract)))
       if (this.manageContract[index].value[0] === 'file') {
         this.manageContract[index].value[1] = this.manageContract[index].ipfs
       }
@@ -403,6 +409,7 @@ export default {
       this.fieldNameEditable = false
       this.clearContract()
       this.openDialog = false
+      this.$forceUpdate()
     },
     //
     changesDate () {
@@ -419,7 +426,7 @@ export default {
         var typeCid = await BrowserIpfs.store(e)
         console.log(typeCid)
       } catch (e) {
-        self.showSuccessMsg('Error ocurred while file was uploaded. ' + e)
+        self.showErrorMsg('Error ocurred while file was uploaded. ' + e)
         console.error(e)
       } finally {
         self.showSuccessMsg('File uploaded success')
@@ -546,8 +553,7 @@ export default {
       a.href = url
       a.target = '_blank'
       a.click()
-    },
-    async onScroll ({ to, ref, index, direction }) {}
+    }
   }
 }
 </script>

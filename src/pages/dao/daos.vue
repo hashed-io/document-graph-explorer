@@ -64,7 +64,8 @@ export default {
       this.setSelectedDao(row)
       this.changeView('showManageContract')
     },
-    isEditDao () {
+    isEditDao (row) {
+      this.setSelectedDao(row)
       this.changeView('showRegisterDao')
     }
   }

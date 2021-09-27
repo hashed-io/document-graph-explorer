@@ -1,6 +1,6 @@
 import DaoApi from './DaoApi'
-import DocumentsApi from './DocumentsApi'
+import ContractsApi from './ContractsApi'
 export {
   DaoApi,
-  DocumentsApi
+  ContractsApi
 }
