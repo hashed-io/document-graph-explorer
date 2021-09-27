@@ -32,33 +32,47 @@ class ContractsApi extends BaseEosApi {
    * contractAccount
    */
   async StoreEntry ({ values }) {
-    const actions = [
-      {
-        account: this.contractAccount,
-        name: 'storeentry',
-        data: {
-          values: values
-        }
-      }
-    ]
+    var authorization = `${this.contractAccount}@active`
+    let [actor, permission] = authorization.split('@')
+    const actions = [{
+      account: this.contractAccount,
+      name: 'storeentry',
+      data: {
+        values: values
+      },
+      authorization: [{
+        actor,
+        permission
+      }]
+    }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
   async StoreAndDeleteEntry ({ values, deleteLabels }) {
+    var authorization = `${this.contractAccount}@active`
+    let [actor, permission] = authorization.split('@')
     const actions = [
       {
         account: this.contractAccount,
         name: 'storeentry',
         data: {
           values: values
-        }
+        },
+        authorization: [{
+          actor,
+          permission
+        }]
       },
       {
         account: this.contractAccount,
         name: 'delentry',
         data: {
           labels: deleteLabels
-        }
+        },
+        authorization: [{
+          actor,
+          permission
+        }]
       }
     ]
     console.log('actions: ', actions)
@@ -70,13 +84,19 @@ class ContractsApi extends BaseEosApi {
    * @returns
    */
   async DelEntry ({ deleteLabels }) {
+    var authorization = `${this.contractAccount}@active`
+    let [actor, permission] = authorization.split('@')
     const actions = [
       {
         account: this.contractAccount,
         name: 'delentry',
         data: {
           labels: deleteLabels
-        }
+        },
+        authorization: [{
+          actor,
+          permission
+        }]
       }
     ]
     console.log('actions: ', actions)

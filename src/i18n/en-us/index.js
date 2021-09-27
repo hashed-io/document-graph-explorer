@@ -34,7 +34,9 @@ export default {
       required: 'This field is required',
       token: 'The field must contain between 2 and 6 characters',
       tokenDecimals: 'The decimals must be between 2 and 9',
-      email: 'Invalid email'
+      email: 'Invalid email',
+      checksum: 'Invalid checksum. Must contain 64 characters and letters between A to F',
+      eosaccount: 'Invalid Eos account name'
     }
   },
   menu: {

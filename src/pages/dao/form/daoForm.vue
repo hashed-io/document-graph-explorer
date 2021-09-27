@@ -206,7 +206,7 @@ export default {
   },
   data () {
     return {
-      step: 1,
+      step: 8,
       boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
@@ -412,11 +412,11 @@ export default {
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 250))
-          this.$q.loading.hide()
+          await new Promise(resolve => setTimeout(resolve, 1000))
           await this.initDao({
             account: this.daoName.toLowerCase()
           })
+          this.$q.loading.hide()
           this.showSuccessMsg('Deploy contract success')
           this.$emit('backToListDao', true)
         } catch (e) {
