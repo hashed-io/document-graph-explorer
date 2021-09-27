@@ -43,8 +43,8 @@
               q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-pa-md
-              q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
-              q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
+              q-btn(v-if='idEdit === null' label='Add Field' id='addFieldButtonModal' color="primary" @click='addRow()')
+              q-btn(v-else label='Update Field' @click='updateRow()' id='updateFieldButton' color="primary")
   #table
     q-table.q-mb-sm(
       title='Contracts'
@@ -81,7 +81,7 @@
             q-icon(name='search')
       template(v-slot:top-left)
         .row.q-gutter-md
-            q-btn(label='Add Field' @click='openAddField()' color="primary")
+            q-btn(label='Add Field' id='addFieldButton' @click='openAddField()' color="primary")
             q-btn(label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
@@ -128,9 +128,9 @@
   overflow-wrap: break-word
 </style>
 <script>
-import BrowserIpfs from '~/services/BrowserIpfs'
-import { ContractsApi } from '~/services'
-import { validation } from '~/mixins/validation'
+import BrowserIpfs from 'src/services/BrowserIpfs.js'
+// import { ContractsApi } from 'src/services'
+import { validation } from 'src/mixins/validation'
 import { mapActions } from 'vuex'
 import { date } from 'quasar'
 export default {
@@ -143,30 +143,25 @@ export default {
     }
   },
   async mounted () {
-    try {
-      this.loading = true
-      if (this.dao === null) {
-        this.$router.push({ name: 'daos' })
-        this.showErrorMsg('The associated DAO has not been selected ')
-      } else {
-        let _contractAccount = this.dao.dao
-        alert(_contractAccount)
-        let _api = this.$store.$apiMethods
-        let mEosApi = this.$store.$defaultApi
-        const contractsApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
-        this.DocumentApi = contractsApi
-        console.log('documentApi created', this.DocumentApi)
-        this.loadData()
-      }
-    } catch (e) {
-      console.error('An error ocurred while trying to create Document Api. ' + e)
-      this.showErrorMsg(e || e.message)
-    }
+    // try {
+    //   this.loading = true
+    //   if (this.dao === null) {
+    //     this.showErrorMsg('The associated DAO has not been selected ')
+    //   } else {
+    //     let _contractAccount = this.dao.dao
+    //     let _api = this.$store.$apiMethods
+    //     let mEosApi = this.$store.$defaultApi
+    //     const contractsApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
+    //     this.DocumentApi = contractsApi
+    //     console.log('documentApi created', this.DocumentApi)
+    //     this.loadData()
+    //   }
+    // } catch (e) {
+    //   console.error('An error ocurred while trying to create Document Api. ' + e)
+    //   this.showErrorMsg(e || e.message)
+    // }
   },
   computed: {
-    daosFreeze () {
-      return Object.freeze(this.daos.rows.slice(0, this.pageSize * (this.nextPage - 1)))
-    }
   },
   data () {
     return {
