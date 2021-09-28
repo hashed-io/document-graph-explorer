@@ -1,8 +1,11 @@
-import { mount, createLocalVue } from '@vue/test-utils'
+import { shallowMount, createLocalVue } from '@vue/test-utils'
 import listContract from 'src/pages/dao/manage/listContracts.vue'
 import * as All from 'quasar'
 import Vuex from 'vuex'
-
+import {
+  ClosePopup
+} from 'quasar'
+import { validation } from 'src/mixins/validation'
 // eslint-disable-next-line import/namespace
 const { Quasar } = All
 
@@ -17,22 +20,41 @@ const components = Object.keys(All).reduce((object, key) => {
 
 const localVue = createLocalVue()
 localVue.use(Quasar, { components }, Vuex)
+// localVue.mixin(validation)
 // const actions = {
 //   testActions: jest.fn()
 // }
 // const store = new Vuex.Store({ actions })
-
+const VueFormStub = {
+  render: () => {},
+  methods: {
+    validate: () => { return true }
+  }
+}
+// const mockFunction = {
+//   render: () => {},
+//   methods: {
+//     showErrorMsg: () => { return true }
+//   }
+// }
 describe('create new labels on new labels array', () => {
   it('save data in correct array', async () => {
-    const wrapper = mount(listContract, {
+    const wrapper = shallowMount(listContract, {
       localVue,
-      mocks: {
-        $t: (msg) => msg
-      },
       propsData: {
         dao: {
           dao: 'alejandroga2'
         }
+      },
+      mixins: [validation],
+      mocks: {
+        $t: (msg) => msg
+      },
+      stubs: {
+        'q-form': VueFormStub
+      },
+      directives: {
+        ClosePopup
       }
     })
     // Press add field button in table
@@ -52,10 +74,11 @@ describe('create new labels on new labels array', () => {
     // press add field button in modal
     // await wrapper.find('#addFieldButton').trigger('click')
     // await wrapper.vm.$nextTick()
-    console.log(wrapper.vm.$refs)
+    // console.log(wrapper.vm.$refs)
     await wrapper.vm.addRow()
     expect(wrapper.vm.newLabels[0].value[1]).toBe('alejandroga1')
-    await wrapper.vm.saveData('tester')
+    console.log(wrapper.vm.newLabels[0].value[1])
+    // await wrapper.vm.saveData('tester')
     expect(true).toBe(true)
   })
 })
