@@ -150,7 +150,6 @@ export default {
         this.showErrorMsg('The associated DAO has not been selected ')
       } else {
         let _contractAccount = this.dao.dao
-        alert(_contractAccount)
         let _api = this.$store.$apiMethods
         let mEosApi = this.$store.$defaultApi
         const contractsApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
