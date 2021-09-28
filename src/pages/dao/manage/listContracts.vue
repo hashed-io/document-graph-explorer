@@ -369,7 +369,6 @@ export default {
       this.prevLabel = this.manageContract[index].label
     },
     updateRow () {
-      console.log({ new: this.newLabels, update: this.updateLabels, manage: this.manageContract })
       let index = this.idEdit
       if (!this.fieldNameEditable) {
         // Save in new labels
@@ -395,7 +394,6 @@ export default {
         }
       }
       this.showSuccessMsg('Label Update')
-      console.log({ new: this.newLabels, update: this.updateLabels })
       this.manageContract.splice(index, 1, JSON.parse(JSON.stringify(this.contract)))
       if (this.manageContract[index].value[0] === 'file') {
         this.manageContract[index].value[1] = this.manageContract[index].ipfs
@@ -524,7 +522,7 @@ export default {
         // this.showSuccessMsg('Contracts loaded success')
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
-        console.log(e.json.error.details[0].message)
+        // console.log(e.json.error.details[0].message)
         // this.showErrorMsg(e.json.error.details[0].message)
       }
     },

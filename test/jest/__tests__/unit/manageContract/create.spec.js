@@ -6,6 +6,8 @@ import {
   ClosePopup
 } from 'quasar'
 import { validation } from 'src/mixins/validation'
+// import documents from 'src/store/documents'
+// import { utils } from 'src/mixins/utils'
 // eslint-disable-next-line import/namespace
 const { Quasar } = All
 
@@ -46,7 +48,9 @@ const wrapper = shallowMount(listContract, {
   },
   mixins: [validation],
   mocks: {
-    $t: (msg) => msg
+    $t: (msg) => msg,
+    showErrorMsg: (val) => { return true },
+    showSuccessMsg: (val) => { return true }
   },
   stubs: {
     'q-form': VueFormStub
@@ -56,46 +60,83 @@ const wrapper = shallowMount(listContract, {
   }
 })
 
-describe('create new labels on new labels array', () => {
-  it('Push new label on newLabels array', async () => {
-    // Press add field button in table
-    // await wrapper.find('#addFieldButton').trigger('click')
-    // await wrapper.vm.$nextTick()
-    // Set contract data
-    await wrapper.setData({
-      contract:
-      { label: 'l1',
+describe('Create labels and verify the edit action', () => {
+  var numberOfLabels = 4
+  var indexToFind = 2
+  it('Push new label on newLabels array [Frontend]', async () => {
+    for (let index = 0; index < numberOfLabels; index++) {
+      await wrapper.setData({
+        contract:
+      { label: 'label' + index,
         loadingState: false,
         ipfs: undefined,
         value: [
           'name',
-          'alejandroga1'
+          'alejandroga' + index
         ] }
-    })
-    // press add field button in modal
-    // await wrapper.find('#addFieldButton').trigger('click')
-    // await wrapper.vm.$nextTick()
-    // console.log(wrapper.vm.$refs)
-    await wrapper.vm.addRow()
-    expect(wrapper.vm.newLabels[0].value[1]).toBe('alejandroga1')
-    // await wrapper.vm.saveData('tester')
-    expect(true).toBe(true)
+      })
+      await wrapper.vm.addRow()
+    }
+
+    expect(wrapper.vm.newLabels[indexToFind].value[1]).toBe('alejandroga' + indexToFind)
+    expect(wrapper.vm.newLabels).toHaveLength(numberOfLabels)
+    expect(wrapper.vm.manageContract).toHaveLength(numberOfLabels)
+    expect(wrapper.vm.updateLabels).toHaveLength(0)
+    expect(wrapper.vm.deleteLabels).toHaveLength(0)
   })
-  it('Push update label on updateLabels array', async () => {
-    // Se añade un nuevo label
-    await wrapper.setData({
-      contract:
-      { label: 'l1',
-        loadingState: false,
-        ipfs: undefined,
-        value: [
-          'name',
-          'alejandroga1'
-        ] }
-    })
-    await wrapper.vm.addRow()
+  it('Value to edit is', () => {
+    expect(wrapper.vm.manageContract[indexToFind].label).toBe('label' + indexToFind)
+  })
+  it('Push update label on newLabels array [frontend]', async () => {
+    // Add new label
     // Se modifica la información
 
+    await wrapper.vm.editRow(indexToFind)
+    await wrapper.setData({
+      contract:
+      { label: 'l1 edited',
+        loadingState: false,
+        ipfs: undefined,
+        value: [
+          'name',
+          'alejandroga1'
+        ] }
+    })
+    await wrapper.vm.updateRow()
+    expect(wrapper.vm.newLabels[indexToFind].label).toBe('l1 edited')
+    expect(wrapper.vm.updateLabels).toHaveLength(0)
+  })
+})
+describe('Verified the changes on labels', () => {
+  it('simulate load data from blockchain and edit label [edit label] [backend]', async () => {
+    // simulating load data from BlockChain
+    await wrapper.setData({
+      manageContract: [{ 'label': 'create_label', 'value': ['asset', '1000 TLOS'] }, { 'label': 'label2', 'value': ['name', 'alejandroga2'] }]
+    })
+    expect(wrapper.vm.manageContract).toHaveLength(2)
+  })
+  it('edit row', async () => {
+    // edit label
+    var indexToFind = 1
+    await wrapper.vm.editRow(indexToFind)
+    await wrapper.setData({
+      contract: {
+        label: 'l3 edited'
+      }
+    })
+    await wrapper.vm.updateRow()
+    expect(wrapper.vm.updateLabels).toHaveLength(0)
+  })
+  it('Edit label changes the type [and/or] value', async () => {
+    // edit label
+    await wrapper.vm.editRow(0)
+    await wrapper.setData({
+      contract: {
+        value: ['string', 'lorem ipsum']
+      }
+    })
+    await wrapper.vm.updateRow()
+    expect(wrapper.vm.updateLabels).toHaveLength(1)
     expect(true).toBe(true)
   })
 })
