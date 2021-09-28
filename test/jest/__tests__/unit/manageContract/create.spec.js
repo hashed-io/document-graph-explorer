@@ -37,26 +37,27 @@ const VueFormStub = {
 //     showErrorMsg: () => { return true }
 //   }
 // }
+const wrapper = shallowMount(listContract, {
+  localVue,
+  propsData: {
+    dao: {
+      dao: 'alejandroga2'
+    }
+  },
+  mixins: [validation],
+  mocks: {
+    $t: (msg) => msg
+  },
+  stubs: {
+    'q-form': VueFormStub
+  },
+  directives: {
+    ClosePopup
+  }
+})
+
 describe('create new labels on new labels array', () => {
-  it('save data in correct array', async () => {
-    const wrapper = shallowMount(listContract, {
-      localVue,
-      propsData: {
-        dao: {
-          dao: 'alejandroga2'
-        }
-      },
-      mixins: [validation],
-      mocks: {
-        $t: (msg) => msg
-      },
-      stubs: {
-        'q-form': VueFormStub
-      },
-      directives: {
-        ClosePopup
-      }
-    })
+  it('Push new label on newLabels array', async () => {
     // Press add field button in table
     // await wrapper.find('#addFieldButton').trigger('click')
     // await wrapper.vm.$nextTick()
@@ -77,8 +78,24 @@ describe('create new labels on new labels array', () => {
     // console.log(wrapper.vm.$refs)
     await wrapper.vm.addRow()
     expect(wrapper.vm.newLabels[0].value[1]).toBe('alejandroga1')
-    console.log(wrapper.vm.newLabels[0].value[1])
     // await wrapper.vm.saveData('tester')
+    expect(true).toBe(true)
+  })
+  it('Push update label on updateLabels array', async () => {
+    // Se añade un nuevo label
+    await wrapper.setData({
+      contract:
+      { label: 'l1',
+        loadingState: false,
+        ipfs: undefined,
+        value: [
+          'name',
+          'alejandroga1'
+        ] }
+    })
+    await wrapper.vm.addRow()
+    // Se modifica la información
+
     expect(true).toBe(true)
   })
 })

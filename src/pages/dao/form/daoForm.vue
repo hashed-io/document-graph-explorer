@@ -412,7 +412,7 @@ export default {
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 1000))
+          await new Promise(resolve => setTimeout(resolve, 2500))
           await this.initDao({
             account: this.daoName.toLowerCase()
           })
