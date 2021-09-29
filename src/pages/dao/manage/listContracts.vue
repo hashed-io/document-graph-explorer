@@ -136,7 +136,7 @@
 </style>
 <script>
 import BrowserIpfs from 'src/services/BrowserIpfs.js'
-import { ContractsApi } from 'src/services'
+// import { ContractsApi } from 'src/services'
 import { validation } from 'src/mixins/validation'
 import { mapActions } from 'vuex'
 import { date, QSpinnerPuff } from 'quasar'
@@ -151,37 +151,37 @@ export default {
     }
   },
   async mounted () {
-    try {
-      this.loading = true
-      if (this.dao === null) {
-        this.showErrorMsg('The associated DAO has not been selected ')
-      } else {
-        let _contractAccount = this.dao.dao
-        let _api = this.$store.$apiMethods
-        let mEosApi = this.$store.$defaultApi
-        this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
+    // try {
+    //   this.loading = true
+    //   if (this.dao === null) {
+    //     this.showErrorMsg('The associated DAO has not been selected ')
+    //   } else {
+    //     let _contractAccount = this.dao.dao
+    //     let _api = this.$store.$apiMethods
+    //     let mEosApi = this.$store.$defaultApi
+    //     this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
 
-        let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi(_contractAccount)
-        // let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi('alejandroga1')
-        if (getAbiResponse.hasOwnProperty('abi')) {
-          console.log('Deploy success')
-          await this.verifiedInitDao()
-          this.hasAbi = true
-          if (this.initializedDAO) {
-            this.loadData()
-          }
-        } else {
-          console.log(' Deploy fail, deploy again')
-          this.hasAbi = false
-          this.initializedDAO = true
-          this.showErrorMsg('Smart contract deployment failed. Deploy again')
-        }
-        console.log('documentApi created', this.DocumentApi)
-      }
-    } catch (e) {
-      console.error('An error ocurred while trying to create Document Api. ' + e)
-      this.showErrorMsg(e || e.message)
-    }
+    //     let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi(_contractAccount)
+    //     // let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi('alejandroga1')
+    //     if (getAbiResponse.hasOwnProperty('abi')) {
+    //       console.log('Deploy success')
+    //       await this.verifiedInitDao()
+    //       this.hasAbi = true
+    //       if (this.initializedDAO) {
+    //         this.loadData()
+    //       }
+    //     } else {
+    //       console.log(' Deploy fail, deploy again')
+    //       this.hasAbi = false
+    //       this.initializedDAO = true
+    //       this.showErrorMsg('Smart contract deployment failed. Deploy again')
+    //     }
+    //     console.log('documentApi created', this.DocumentApi)
+    //   }
+    // } catch (e) {
+    //   console.error('An error ocurred while trying to create Document Api. ' + e)
+    //   this.showErrorMsg(e || e.message)
+    // }
   },
   computed: {
   },
