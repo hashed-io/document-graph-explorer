@@ -365,6 +365,23 @@ export default {
         this.saveDataContract()
       }
     },
+    async verifiedAbiExists () {
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      for (let i = 0; i <= 5; i++) {
+        let response = await this.$store.$defaultApi.rpc.get_abi(this.daoName.toLowerCase())
+        if (response.hasOwnProperty('abi')) {
+          this.flagAbi = true
+          break
+        }
+        console.log('Finding ABI')
+        await delay(500)
+      }
+      if (this.flagAbi) {
+        return true
+      } else {
+        return false
+      }
+    },
     async saveDataContract () {
       // Make JSON File to send IPFS
       const valid = this.$refs.daoNameInput.validate()
@@ -412,13 +429,21 @@ export default {
             spinnerSize: '15em',
             spinner: QSpinnerPuff
           })
-          await new Promise(resolve => setTimeout(resolve, 1000))
-          await this.initDao({
-            account: this.daoName.toLowerCase()
-          })
-          this.$q.loading.hide()
-          this.showSuccessMsg('Deploy contract success')
-          this.$emit('backToListDao', true)
+          await this.verifiedAbiExists()
+          if (this.flagAbi) {
+            console.log('Found ABI')
+            this.hasAbi = true
+            await this.initDao({
+              account: this.daoName.toLowerCase()
+            })
+            this.$q.loading.hide()
+            this.$emit('backToListDao', true)
+          } else {
+            console.log('NOT Found ABI')
+            this.$q.loading.hide()
+            this.showErrorMsg('An error occurred when the smart contract was deployed')
+            this.$emit('backToListDao', true)
+          }
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
