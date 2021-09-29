@@ -1,6 +1,6 @@
 <template lang='pug'>
   #container
-    .q-py-md.text-h6 Manage Contracts
+    .q-py-md.text-h6 Manage Contracts of {{SelectedDao.dao}}
     managedao(:dao="SelectedDao" @backToListDao="changeView('showListDao')").q-pb-xs
 </template>
 <style lang="sass" scoped>

@@ -79,7 +79,9 @@ export default {
     daos: {
       titleForm: 'DAOs created by your account',
       createDao: 'Create new DAO',
-      nodata: 'There aren\'t any DAOs associated with your account'
+      nodata: 'There aren\'t any DAOs associated with your account',
+      deployDAOFailure: 'Failure on deploy DAO Failure',
+      initDAOFailure: 'Failure on init DAO'
     }
   }
 }

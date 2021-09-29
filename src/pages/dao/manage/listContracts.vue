@@ -119,8 +119,12 @@
                     color='negative'
                     @click='deleteRow(props.row,props.rowIndex)'
                   )
-  q-btn(v-else-if='!hasAbi && initializedDAO' label='Deploy contract again' color='primary' @click='deployContractAgain()')
-  q-btn(v-else-if='!initializedDAO && hasAbi' label='Initializing DAO' color='primary' @click='callActionInitDAO()')
+  div(v-else-if='!hasAbi && initializedDAO')
+    p The contract was not deployed success. Press the button to deploy the smart contract and initialize
+    q-btn(label='Deploy contract' color='primary' @click='deployContractAgain()')
+  div(v-else-if='!initializedDAO && hasAbi')
+    p The contract was deployed success but the DAO was not initialized correctly.
+    q-btn(label='Initialize the DAO' color='primary' @click='callActionInitDAO()')
 </template>
 <style lang="sass" scoped>
 .medium-width
@@ -320,7 +324,7 @@ export default {
         spinnerSize: '15em',
         spinner: QSpinnerPuff
       })
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await new Promise(resolve => setTimeout(resolve, 500))
       this.$q.loading.hide()
       try {
         await this.initDao({
@@ -366,7 +370,7 @@ export default {
           spinnerSize: '15em',
           spinner: QSpinnerPuff
         })
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 500))
         this.$q.loading.hide()
         try {
           await this.deployContract({
@@ -378,20 +382,30 @@ export default {
         }
         // loading show [step 2]
         this.$q.loading.show({
-          message: 'Initializing DAO...',
+          message: 'Confirming the contract deployment...',
           customClass: 'text-weight-bold text-subtitle1',
           spinnerSize: '15em',
           spinner: QSpinnerPuff
         })
         //
-
         await this.verifiedAbiExists()
+        await new Promise(resolve => setTimeout(resolve, 500))
+        this.$q.loading.hide()
+
         this.initializedDAO = false
 
         if (this.flagAbi) {
           console.log('Found ABI')
           this.hasAbi = true
           try {
+            this.$q.loading.show({
+              message: 'Initializing DAO...',
+              customClass: 'text-weight-bold text-subtitle1',
+              spinnerSize: '15em',
+              spinner: QSpinnerPuff
+            })
+            await new Promise(resolve => setTimeout(resolve, 700))
+            this.$q.loading.hide()
             await this.initDao({
               account: this.dao.dao.toLowerCase()
             })
