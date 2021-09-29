@@ -43,9 +43,10 @@
               q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-pa-md
-              q-btn(v-if='idEdit === null' label='Add Field' id='addFieldButtonModal' color="primary" @click='addRow()')
-              q-btn(v-else label='Update Field' @click='updateRow()' id='updateFieldButton' color="primary")
-  #table
+              q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
+              q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
+  #deployAgain
+  #table.q-gutter-md(v-if='hasAbi && initializedDAO')
     q-table.q-mb-sm(
       title='Contracts'
       :data='manageContract'
@@ -118,6 +119,12 @@
                     color='negative'
                     @click='deleteRow(props.row,props.rowIndex)'
                   )
+  div(v-else-if='!hasAbi && initializedDAO')
+    p The contract was not deployed success. Press the button to deploy the smart contract and initialize
+    q-btn(label='Deploy contract' color='primary' @click='deployContractAgain()')
+  div(v-else-if='!initializedDAO && hasAbi')
+    p The contract was deployed success but the DAO was not initialized correctly.
+    q-btn(label='Initialize the DAO' color='primary' @click='callActionInitDAO()')
 </template>
 <style lang="sass" scoped>
 .medium-width
@@ -129,10 +136,11 @@
 </style>
 <script>
 import BrowserIpfs from 'src/services/BrowserIpfs.js'
-// import { ContractsApi } from 'src/services'
+import { ContractsApi } from 'src/services'
 import { validation } from 'src/mixins/validation'
 import { mapActions } from 'vuex'
-import { date } from 'quasar'
+import { date, QSpinnerPuff } from 'quasar'
+
 export default {
   name: 'managecontract',
   mixins: [validation],
@@ -143,28 +151,45 @@ export default {
     }
   },
   async mounted () {
-    // try {
-    //   this.loading = true
-    //   if (this.dao === null) {
-    //     this.showErrorMsg('The associated DAO has not been selected ')
-    //   } else {
-    //     let _contractAccount = this.dao.dao
-    //     let _api = this.$store.$apiMethods
-    //     let mEosApi = this.$store.$defaultApi
-    //     const contractsApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
-    //     this.DocumentApi = contractsApi
-    //     console.log('documentApi created', this.DocumentApi)
-    //     this.loadData()
-    //   }
-    // } catch (e) {
-    //   console.error('An error ocurred while trying to create Document Api. ' + e)
-    //   this.showErrorMsg(e || e.message)
-    // }
+    try {
+      this.loading = true
+      if (this.dao === null) {
+        this.showErrorMsg('The associated DAO has not been selected ')
+      } else {
+        let _contractAccount = this.dao.dao
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
+
+        let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi(_contractAccount)
+        // let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi('alejandroga1')
+        if (getAbiResponse.hasOwnProperty('abi')) {
+          console.log('Deploy success')
+          await this.verifiedInitDao()
+          this.hasAbi = true
+          if (this.initializedDAO) {
+            this.loadData()
+          }
+        } else {
+          console.log(' Deploy fail, deploy again')
+          this.hasAbi = false
+          this.initializedDAO = true
+          this.showErrorMsg('Smart contract deployment failed. Deploy again')
+        }
+        console.log('documentApi created', this.DocumentApi)
+      }
+    } catch (e) {
+      console.error('An error ocurred while trying to create Document Api. ' + e)
+      this.showErrorMsg(e || e.message)
+    }
   },
   computed: {
   },
   data () {
     return {
+      hasAbi: true,
+      flagAbi: false,
+      initializedDAO: true,
       openDialog: false,
       loading: false,
       date: null,
@@ -272,10 +297,133 @@ export default {
   },
   methods: {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
+    ...mapActions('dao', ['deployContract', 'initDao']),
     openAddField () {
       this.openDialog = !this.openDialog
       this.clearContract()
       this.fieldNameEditable = false
+    },
+    async verifiedInitDao () {
+      let data = await this.DocumentApi.getDocuments({
+        ...this.params,
+        search: this.params.search ? this.params.search.toLowerCase() : undefined
+      })
+      if (data.rows.length === 0 && this.hasAbi) {
+        this.initializedDAO = false
+      } else {
+        this.initializedDAO = true
+      }
+    },
+    async callActionInitDAO () {
+      this.$q.loading.show({
+        message: 'Initializing DAO...',
+        customClass: 'text-weight-bold text-subtitle1',
+        spinnerSize: '15em',
+        spinner: QSpinnerPuff
+      })
+      await new Promise(resolve => setTimeout(resolve, 500))
+      this.$q.loading.hide()
+      try {
+        await this.initDao({
+          account: this.dao.dao.toLowerCase()
+        })
+        this.hasAbi = true
+        this.initializedDAO = true
+        this.showSuccessMsg('DAO initialized successfully')
+        this.loadData()
+      } catch (e) {
+        this.showErrorMsg('Error an ocurred while trying to initializing DAO')
+        this.initializedDAO = false
+      }
+    },
+    async verifiedAbiExists () {
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      for (let i = 0; i <= 5; i++) {
+        let response = await this.$store.$defaultApi.rpc.get_abi(this.dao.dao)
+        if (response.hasOwnProperty('abi')) {
+          this.flagAbi = true
+          break
+        }
+        console.log('Finding ABI')
+        await delay(500)
+      }
+      if (this.flagAbi) {
+        this.hasAbi = true
+        this.initializedDAO = false
+        return true
+      } else {
+        this.initializedDAO = false
+        this.hasAbi = false
+        return false
+      }
+    },
+    async deployContractAgain () {
+      this.initializedDAO = true
+      this.hasAbi = false
+      try {
+        this.$q.loading.show({
+          message: 'Setting DAO..',
+          customClass: 'text-weight-bold text-subtitle1',
+          spinnerSize: '15em',
+          spinner: QSpinnerPuff
+        })
+        await new Promise(resolve => setTimeout(resolve, 500))
+        this.$q.loading.hide()
+        try {
+          await this.deployContract({
+            accountName: this.dao.dao.toLowerCase()
+          })
+          this.showSuccessMsg('Deploy contract success')
+        } catch (e) {
+          this.showErrorMsg('An error ocurred while trying to deploy contract again' + e)
+        }
+        // loading show [step 2]
+        this.$q.loading.show({
+          message: 'Confirming the contract deployment...',
+          customClass: 'text-weight-bold text-subtitle1',
+          spinnerSize: '15em',
+          spinner: QSpinnerPuff
+        })
+        //
+        await this.verifiedAbiExists()
+        await new Promise(resolve => setTimeout(resolve, 500))
+        this.$q.loading.hide()
+
+        this.initializedDAO = false
+
+        if (this.flagAbi) {
+          console.log('Found ABI')
+          this.hasAbi = true
+          try {
+            this.$q.loading.show({
+              message: 'Initializing DAO...',
+              customClass: 'text-weight-bold text-subtitle1',
+              spinnerSize: '15em',
+              spinner: QSpinnerPuff
+            })
+            await new Promise(resolve => setTimeout(resolve, 700))
+            this.$q.loading.hide()
+            await this.initDao({
+              account: this.dao.dao.toLowerCase()
+            })
+            this.initializedDAO = true
+            this.loadData()
+          } catch (e) {
+            this.initializedDAO = false
+          }
+          this.$q.loading.hide()
+        } else {
+          console.log('NOT Found ABI')
+          this.$q.loading.hide()
+          this.showErrorMsg('An error occurred when the smart contract was deployed')
+          this.$emit('backToListDao', true)
+        }
+        // await new Promise(resolve => setTimeout(resolve, 1000))
+      } catch (e) {
+        this.hasAbi = false
+        this.$q.loading.hide()
+        this.showErrorMsg('An error ocurred while trying to deploy contract and Initialize the dao. Try again')
+      }
     },
     async addRow () {
       if (await this.$refs.labelForm.validate()) {

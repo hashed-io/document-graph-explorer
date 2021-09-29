@@ -7,7 +7,7 @@ div
       .text-h6(v-if='currentView.showListDao') {{ $t('pages.daos.titleForm') }}
       Listdao(v-if='currentView.showListDao' ref='daoTable' @editDao='isEditDao' @onManageContract='onClickManage')
       RegisterDao(v-if='currentView.showRegisterDao' ref='daoForm' @backToListDao="changeView('showListDao')")
-      ManageContract(v-if='currentView.showManageContract' ref='manageContract')
+      ManageContract(v-if='currentView.showManageContract' ref='manageContract' @backToListDao="changeView('showListDao')")
       .row.q-pt-md.justify-end
         q-btn(
           v-if='currentView.showListDao'
