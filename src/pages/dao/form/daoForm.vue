@@ -206,7 +206,7 @@ export default {
   },
   data () {
     return {
-      step: 8,
+      step: 1,
       boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
