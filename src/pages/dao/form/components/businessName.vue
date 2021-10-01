@@ -43,6 +43,8 @@ q-card(flat)
           q-icon(name='business')
       div.q-pa-sm
       q-input(
+          ref='confirmNameInput'
+          id='confirmNameInputID'
           stack-label
           outlined
           v-model="confirmName"
@@ -113,9 +115,7 @@ export default {
   },
   methods: {
     matchData () {
-      // this.formData = Object.assign({}, this.bussinessObject)
-      this.formData.businessName = 'DAO LC AGC'
-      this.formData.additionalDesination = 'DAO'
+      this.formData = Object.assign({}, this.bussinessObject)
       this.confirmName = this.formData.businessName
     },
     changeStateError (state) {

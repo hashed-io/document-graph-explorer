@@ -27,28 +27,31 @@ const VueFormStub = {
     validate: () => { return true }
   }
 }
-const wrapper = mount(listContract, {
-  localVue,
-  propsData: {
-    dao: {
-      dao: 'alejandroga2'
-    }
-  },
-  mixins: [validation],
-  mocks: {
-    $t: (msg) => msg,
-    showErrorMsg: (val) => { return true },
-    showSuccessMsg: (val) => { return true }
-  },
-  stubs: {
-    'q-form': VueFormStub
-  },
-  directives: {
-    ClosePopup,
-    Ripple
-  }
-})
+var wrapper
 
+beforeEach(() => {
+  wrapper = mount(listContract, {
+    localVue,
+    propsData: {
+      dao: {
+        dao: 'alejandroga2'
+      }
+    },
+    mixins: [validation],
+    mocks: {
+      $t: (msg) => msg,
+      showErrorMsg: (val) => { return true },
+      showSuccessMsg: (val) => { return true }
+    },
+    stubs: {
+      'q-form': VueFormStub
+    },
+    directives: {
+      ClosePopup,
+      Ripple
+    }
+  })
+})
 describe('Changes type on create', () => {
   it('The change in Q-select erase the value in managecontract and newLabels array', async () => {
     await wrapper.setData({ newLabels: [], updateLabels: [], deleteLabels: [], manageContract: [], hasAbi: true, initializedDAO: true })
@@ -81,9 +84,13 @@ describe('Changes type on create', () => {
   it('The change in Q-select erase the value in managecontract and newLabels array [DOM]', async () => {
     await wrapper.setData({ newLabels: [], updateLabels: [], deleteLabels: [], manageContract: [], hasAbi: true, initializedDAO: true })
     // add new row in frontend
-    await wrapper.vm.openAddField()
-    await wrapper.find('select')
-    console.log(wrapper.find('select'))
-    expect(true).toBe(true)
+    // Open the modal
+    await wrapper.findComponent({ ref: 'addFieldButton' }).get('button').trigger('click')
+    // await wrapper.vm.$nextTick()
+    // await wrapper.vm.openAddField()
+    const selectType = await wrapper.findAllComponents({ ref: 'qDialog' })
+    // const selectType = wrapper.find('select')
+    // wrapper.vm.$refs.provider.errors[0];
+    expect(selectType.exists()).toBe(true)
   })
 })

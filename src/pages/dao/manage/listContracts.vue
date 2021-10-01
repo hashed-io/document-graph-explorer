@@ -81,7 +81,7 @@
             q-icon(name='search')
       template(v-slot:top-left)
         .row.q-gutter-md
-            q-btn(label='Add Field' id='addFieldButton' @click='openAddField()' color="primary")
+            q-btn(label='Add Field' ref='addFieldButton' id='addFieldButton' @click='openAddField()' color="primary")
             q-btn(label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")

@@ -1,9 +1,3 @@
-<script>
-export default {
-  name: 'pageIndex'
-}
-</script>
-
 <template lang="pug">
   .flex.column
     .main-splash
@@ -50,8 +44,9 @@ export default {
       .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-xl
         div
           q-btn.full-width.q-mb-lg(
-            to='/login'
+            @click='redirectTo()'
             id='redirectButton'
+            ref='redirectButtonRef'
             color="primary"
             :label="$t('pages.index.buttons.login')"
             icon="app:login"
@@ -72,6 +67,16 @@ export default {
         | For questions or comments, drop us a message on our&nbsp;
         a(href='https://mobile.twitter.com/TelosKitchen' target='_blank') Twitter account.
 </template>
+<script>
+export default {
+  name: 'pageIndex',
+  methods: {
+    redirectTo () {
+      this.$router.push('/login')
+    }
+  }
+}
+</script>
 
 <style lang="sass" scoped>
 .main-title
