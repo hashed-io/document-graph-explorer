@@ -12,7 +12,7 @@ q-card(flat)
       strong.asterisk *
       .row
         .cols-8
-            q-select(filled v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
+            q-select(filled ref='selectPeriod' v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
             label (select &apos;Perpetual&apos; if the entity does not expire.)
             .q-pa-xs
             div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")
@@ -43,7 +43,7 @@ q-card(flat)
               b Delayed Effective Date : (mm/dd/yyyy)
               .row
                 .cols-6
-                  q-input(filled, v-model='form.delayedEffectiveDate', mask='##/##/####')
+                  q-input(filled, ref='delayedEffectiveDateInput' v-model='form.delayedEffectiveDate', mask='##/##/####')
                     template(v-slot:append='')
                       q-icon.cursor-pointer(name='event')
                         q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
@@ -60,7 +60,7 @@ q-card(flat)
 </style>
 <script>
 import { date } from 'quasar'
-import { validation } from '~/mixins/validation'
+import { validation } from 'src/mixins/validation.js'
 export default {
   name: 'detail',
   mixins: [validation],
