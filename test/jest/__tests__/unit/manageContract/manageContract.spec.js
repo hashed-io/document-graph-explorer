@@ -150,6 +150,48 @@ describe('Verified the changes on labels', () => {
     expect(wrapper.vm.updateLabels[indexFound].value[0]).toBe(labelType)
     expect(wrapper.vm.updateLabels).toHaveLength(1)
   })
+  it('add label with the same name in list of contracts [frontend]', async () => {
+    // reset the arrays
+    await wrapper.setData({ newLabels: [], updateLabels: [], deleteLabels: [], manageContract: [] })
+    // add new label
+    let newLabelString = 'addedNewLabel'
+    await wrapper.setData({
+      contract:
+    { label: newLabelString,
+      loadingState: false,
+      ipfs: undefined,
+      value: [
+        'name',
+        'alejandrog11'
+      ] }
+    })
+    await wrapper.vm.addRow()
+    // edit the only label and is the same in manageContract
+    await wrapper.vm.editRow(0)
+    await wrapper.setData({
+      contract: {
+        label: newLabelString
+      }
+    })
+    // update the label
+    await wrapper.vm.updateRow()
+    // verified that the laber isn't in newLabels or updateLabels
+    // Verified newLabels array contain the label `addedNewLabel`
+    expect(wrapper.vm.newLabels).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: newLabelString
+        })
+      ])
+    )
+    expect(wrapper.vm.manageContract).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: newLabelString
+        })
+      ])
+    )
+  })
 })
 describe('delete labels that are creates on Frontend', () => {
   it('delete label after create the same label {splice}', async () => {
@@ -208,5 +250,41 @@ describe('delete label that need signature [backend]', () => {
   })
 })
 describe('create new labels [frontend] and delete labels from BlockChain [backend]', () => {
-
+  it('load data, add labels and delete label from backend', async () => {
+    let labelToDelete = 'create_label'
+    let indexToDelete = 1
+    // simulating load data from BlockChain
+    await wrapper.setData({ newLabels: [], updateLabels: [], deleteLabels: [], manageContract: [] })
+    await wrapper.setData({
+      manageContract: [{ 'label': 'testLabel', 'value': ['string', 'lorem ipsum'] }, { 'label': labelToDelete, 'value': ['asset', '1000 TLOS'] }, { 'label': 'label2', 'value': ['name', 'alejandroga2'] }]
+    })
+    // add new row in frontend
+    let newLabelString = 'addedNewLabel'
+    await wrapper.setData({
+      contract:
+    { label: newLabelString,
+      loadingState: false,
+      ipfs: undefined,
+      value: [
+        'name',
+        'alejandrog11'
+      ] }
+    })
+    await wrapper.vm.addRow()
+    // Delete label that come in backend
+    let rowObj = { label: labelToDelete }
+    await wrapper.vm.deleteRow(rowObj, indexToDelete)
+    // Verified newLabels array contain the label `addedNewLabel`
+    expect(wrapper.vm.newLabels).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          label: newLabelString
+        })
+      ])
+    )
+    // verified deleteLabels array contain the label in index [] in managecontract
+    expect(wrapper.vm.deleteLabels).toEqual(
+      expect.arrayContaining([labelToDelete])
+    )
+  })
 })

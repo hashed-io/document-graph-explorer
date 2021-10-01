@@ -1,7 +1,7 @@
 <template lang="pug">
 #container
   #Form
-  q-dialog(v-model='openDialog')
+  q-dialog(v-model='openDialog' ref='qDialog')
     q-card(flat).medium-width
       q-toolbar
         q-toolbar-title
@@ -13,7 +13,7 @@
             .col-8.q-pr-xs
               q-input(v-model='contract.label' outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
             .col-4
-              q-select(v-model='contract.value[0]' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
+              q-select(v-model='contract.value[0]' ref='selectInput' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
           .row
             .col-xs-12.col-sm-12
               div(v-if="contract.value[0] === 'time_point'")
@@ -39,13 +39,12 @@
                       q-icon(name="error" class="text-red" style="font-size: 2rem;")
                       //- p Fail Upload
               q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
-              q-input(v-else-if="contract.value[0] === 'name'"  v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
+              q-input(v-else-if="contract.value[0] === 'name'" ref='input' v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
               q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-pa-md
               q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
-  #deployAgain
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
     q-table.q-mb-sm(
       title='Contracts'

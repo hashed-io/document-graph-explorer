@@ -37,6 +37,7 @@ export default {
   },
   data () {
     return {
+      test: null,
       currentView: {
         showListDao: true,
         showRegisterDao: false,
