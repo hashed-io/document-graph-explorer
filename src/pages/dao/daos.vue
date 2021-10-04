@@ -39,9 +39,9 @@ export default {
     return {
       test: null,
       currentView: {
-        showListDao: false,
+        showListDao: true,
         showRegisterDao: false,
-        showManageContract: true
+        showManageContract: false
       }
     }
   },

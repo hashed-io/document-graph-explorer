@@ -51,6 +51,7 @@
               size="sm"
               color="blue"
               @click="onClickEdit(props.row)"
+              data-cy="editContracts"
             )
               q-tooltip {{ $t('common.buttons.edit') }}
           template(v-if="col.name == 'editDao'")

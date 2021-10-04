@@ -33,6 +33,7 @@ q-card(flat)
       div.q-pa-sm
       q-input(
           ref='cal-modal'
+          data-cy="businessInput"
           outlined
           stack-label
           v-model="formData.businessName"
@@ -45,6 +46,7 @@ q-card(flat)
       q-input(
           ref='confirmNameInput'
           id='confirmNameInputID'
+          data-cy="confirmNameInput"
           stack-label
           outlined
           v-model="confirmName"
