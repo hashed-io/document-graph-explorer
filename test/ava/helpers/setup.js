@@ -18,12 +18,12 @@ hooks('vue')
   .push()
 // Setup vue and js files to be processed by `require-extension-hooks-babel`
 hooks(['vue', 'js'])
-  .exclude(({ filename }) => filename.match(/\/node_modules\//))
+//  .exclude(({ filename }) => filename.match(/\/node_modules\//))
   .plugin('babel')
   .push()
 
 // Notify babel config of test
-process.env.QUASAR_APP_TEST = true
+// process.env.QUASAR_APP_TEST = true
 
 // Error if console.log is called
 // console.log = () => {

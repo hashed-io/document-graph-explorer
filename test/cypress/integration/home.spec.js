@@ -1,31 +1,9 @@
 /// <reference path="cypress" />
 /// <reference path="../support/index.d.ts" />
-
-// Use `cy.dataCy` custom command for more robust tests
-// See https://docs.cypress.io/guides/references/best-practices.html#Selecting-Elements
-
-// ** This file is an example of how to write Cypress tests, you can safely delete it **
-
-// This test will pass when run against a clean Quasar project
-describe('Landing', () => {
-  beforeEach(() => {
-    cy.visit('/')
-  })
-  it('title on package json is DAO LLC', () => {
-    cy.title().should('include', 'DAO LLC')
-  })
-})
-
-// ** The following code is an example to show you how to write some tests for your home page **
 //
-describe('Home page tests', () => {
+describe('Business Name tests', () => {
   beforeEach(() => {
-    cy.visit('/')
-  })
-  it('has a logo', () => {
-    cy.get('[data-cy="imgSplash"]')
-      .should('have.attr', 'src')
-      .and('include', 'app-splashscreen.png')
+    cy.visit('/home')
   })
   it('has steps information', () => {
     cy.dataCy('instructions')
