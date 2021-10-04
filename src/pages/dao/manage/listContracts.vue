@@ -2,7 +2,7 @@
 #container
   #Form
   q-dialog(v-model='openDialog' ref='qDialog')
-    q-card(flat).medium-width
+    q-card(flat).full-width
       q-toolbar
         q-toolbar-title
           span.text-weight-bold Fill the fields
@@ -34,15 +34,17 @@
                   .col.col-xs-2.col-sm-2
                     template(v-if="typeof(contract.ipfs) === 'string'")
                       q-icon(name="check" class="text-green" style="font-size: 2rem;")
-                    //- p {{contract.ipfs}}
                     template(v-if="contract.ipfs === undefined" )
                       q-icon(name="error" class="text-red" style="font-size: 2rem;")
-                      //- p Fail Upload
               q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
               q-input(v-else-if="contract.value[0] === 'name'" ref='input' v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
               q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
+              template(v-else-if="contract.value[0] === 'string'")
+                .q-pb-md
+                  q-btn(label='Save in IPFS' :loading='stringIPFSloading' @click='saveStringIPFS()' color='primary')
+                q-input(v-model='contract.value[1]'  outlined label='Value' :rules='[rules.required]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
-            .row.justify-end.q-pa-md
+            .row.justify-end.q-py-md
               q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
@@ -91,17 +93,26 @@
             :props="props"
           ) {{col.value}}
             template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
-              q-tooltip {{props.row.value[1]}}
+              q-popup-edit(v-model="props.row.value[1]" title='Details')
+                q-input(v-model="props.row.value[1]" readonly @keyup.enter.stop type='textarea').fitExpand
             template(v-if="col.name == 'actions'")
               .row.q-col-gutter-xs
                 .col-xs-12.col-sm-4
-                  template(v-if="props.row.value[1].includes('file:') || props.row.ipfs")
+                  template(v-if="props.row.value[1].includes('file:') || props.row.ipfs  ")
                     q-icon.animated-icon(
                       name='search'
                       v-ripple
                       size='sm'
                       color='positive'
                       @click="openLink(props.row.ipfs,props.row.value[1])"
+                    )
+                  template(v-else-if="/^([a-zA-Z0-9]){45,60}/.test(props.row.value[1])  ")
+                    q-icon.animated-icon(
+                      name='search'
+                      v-ripple
+                      size='sm'
+                      color='positive'
+                      @click="openLinkString(props.row.value[1])"
                     )
                 .col-xs-6.col-sm-4.q-px-sm
                   q-icon.q-px-md.animated-icon(
@@ -132,6 +143,8 @@
 .containerValue
   inline-size:95% !important
   overflow-wrap: break-word
+.fitExpand
+  height: auto
 </style>
 <script>
 import BrowserIpfs from 'src/services/BrowserIpfs.js'
@@ -186,6 +199,8 @@ export default {
   },
   data () {
     return {
+      stringIPFS: false,
+      stringIPFSloading: false,
       hasAbi: true,
       flagAbi: false,
       initializedDAO: true,
@@ -276,7 +291,17 @@ export default {
           label: 'Value',
           headerStyle: 'font-weight: bolder',
           align: 'justify',
-          format: (val, row) => `${(val.includes(':')) ? 'File' : val}`,
+          format: (val, row) => {
+            let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
+            let isStringIPFS = /^([a-zA-Z0-9]){59}/.test(val)
+            if (isFile) {
+              return 'File'
+            } else if (isStringIPFS) {
+              return 'Value in IPFS'
+            } else {
+              return val
+            }
+          },
           field: row => row.value[1],
           sortable: true
         },
@@ -297,6 +322,18 @@ export default {
   methods: {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
     ...mapActions('dao', ['deployContract', 'initDao']),
+    async saveStringIPFS () {
+      this.stringIPFSloading = true
+      let string = this.contract.value[1]
+      try {
+        this.contract.value[1] = await BrowserIpfs.addAsJson({ data: string })
+        this.showSuccessMsg('The value has been saved in IPFS')
+        this.stringIPFSloading = false
+      } catch (e) {
+        this.stringIPFSloading = false
+        this.showErrorMsg('Error occurred while data was saving in IPFS. ' + e)
+      }
+    },
     openAddField () {
       this.openDialog = !this.openDialog
       this.clearContract()
@@ -693,6 +730,10 @@ export default {
       a.href = url
       a.target = '_blank'
       a.click()
+    },
+    openLinkString (Cid) {
+      let url = 'https://ipfs.io/ipfs/' + Cid
+      window.open(url, '_blank')
     }
   }
 }
