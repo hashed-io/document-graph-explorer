@@ -2,7 +2,7 @@
 #container
   #Form
   q-dialog(v-model='openDialog')
-    q-card(flat).medium-width
+    q-card(flat).full-width
       q-toolbar
         q-toolbar-title
           span.text-weight-bold Fill the fields
@@ -295,7 +295,6 @@ export default {
           label: 'Value',
           headerStyle: 'font-weight: bolder',
           align: 'justify',
-          // format: (val, row) => `${/^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val) ? 'File' : val}`,
           format: (val, row) => {
             let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
             let isStringIPFS = /^([a-zA-Z0-9]){59}/.test(val)
