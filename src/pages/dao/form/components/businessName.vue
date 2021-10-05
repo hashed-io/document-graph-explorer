@@ -29,6 +29,7 @@ q-card(flat)
       @submit="onSubmit"
       class=q-gutter-md
       ref="myForm"
+      id='qForm'
     )
       div.q-pa-sm
       q-input(

@@ -11,7 +11,7 @@
         q-form(ref='labelForm')
           .row
             .col-8.q-pr-xs
-              q-input(v-model='contract.label' outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
+              q-input(v-model='contract.label' data-cy='FieldNameInput'  outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
             .col-4
               q-select(v-model='contract.value[0]' ref='selectInput' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
           .row

@@ -10,6 +10,7 @@ div
       ManageContract(v-if='currentView.showManageContract' ref='manageContract' @backToListDao="changeView('showListDao')")
       .row.q-pt-md.justify-end
         q-btn(
+          data-cy='createNewDAOButton'
           v-if='currentView.showListDao'
           :label="$t('pages.daos.createDao')"
           outline

@@ -6,12 +6,15 @@
 //
 describe('Home page tests', () => {
   beforeEach(() => {
-    cy.visit('/home')
+    cy.loginAnchor()
   })
-  it('has link to download Anchor Wallet 2', () => {
-    cy.dataCy('loginButton')
-      .containts('Anchor')
+  it('BusinessName input', () => {
+    cy.visit('/home')
+    cy.dataCy('createNewDAOButton')
       .click()
-      // .type('AGC')
+    cy.dataCy('businessInput')
+      .clear()
+      .get('.q-field__messages')
+      .contains('This field is required')
   })
 })
