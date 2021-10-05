@@ -1,9 +1,4 @@
 
-/// <reference path="cypress" />
-/// <reference path="../support/index.d.ts" />
-
-// ** The following code is an example to show you how to write some tests for your home page **
-//
 beforeEach(() => {
   cy.loginAnchor()
   // cy.saveLocalStorage({ 'account': 'alejandroga1', 'autoLogin': 'Anchor', 'returning': true })

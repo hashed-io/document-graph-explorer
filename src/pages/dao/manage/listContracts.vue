@@ -13,7 +13,7 @@
             .col-8.q-pr-xs
               q-input(v-model='contract.label' data-cy='FieldNameInput'  outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
             .col-4
-              q-select(v-model='contract.value[0]' ref='selectInput' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
+              q-select(v-model='contract.value[0]' data-cy='typeInput' ref='selectInput' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
           .row
             .col-xs-12.col-sm-12
               div(v-if="contract.value[0] === 'time_point'")
@@ -42,11 +42,11 @@
               template(v-else-if="contract.value[0] === 'string'")
                 .q-pb-md
                   q-checkbox(left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
-                q-input(v-model='contract.value[1]'  outlined label='Value' :rules='[rules.required]')
+                q-input(v-model='contract.value[1]' data-cy='stringInput' outlined label='Value' :rules='[rules.required]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-py-md
-              q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
-              q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
+              q-btn(v-if='idEdit === null' data-cy='addFieldButton' label='Add Field' color="primary" @click='addRow()')
+              q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
     q-table.q-mb-sm(
       title='Contracts'
@@ -84,7 +84,7 @@
       template(v-slot:top-left)
         .row.q-gutter-md
             q-btn(label='Add Field' ref='addFieldButton' id='addFieldButton' @click='openAddField()' color="primary")
-            q-btn(label='Save data' @click='modifiedData()' color="primary")
+            q-btn(label='Save data' data-cy='saveDataButton' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
           q-td.column-responsive(
@@ -118,6 +118,7 @@
                   q-icon.q-px-md.animated-icon(
                     name='edit'
                     size='sm'
+                    data-cy='editButton'
                     color='positive'
                     @click='editRow(props.rowIndex)'
                   )
@@ -125,6 +126,7 @@
                   q-icon.q-pr-md.animated-icon(
                     name='delete'
                     v-ripple
+                    data-cy='deleteButton'
                     size='sm'
                     color='negative'
                     @click='deleteRow(props.row,props.rowIndex)'
@@ -148,7 +150,7 @@
 </style>
 <script>
 import BrowserIpfs from 'src/services/BrowserIpfs.js'
-// import { ContractsApi } from 'src/services'
+import { ContractsApi } from 'src/services'
 import { validation } from 'src/mixins/validation'
 import { mapActions } from 'vuex'
 import { date, QSpinnerPuff } from 'quasar'
@@ -163,37 +165,37 @@ export default {
     }
   },
   async mounted () {
-    // try {
-    //   this.loading = true
-    //   if (this.dao === null) {
-    //     this.showErrorMsg('The associated DAO has not been selected ')
-    //   } else {
-    //     let _contractAccount = this.dao.dao
-    //     let _api = this.$store.$apiMethods
-    //     let mEosApi = this.$store.$defaultApi
-    //     this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
+    try {
+      this.loading = true
+      if (this.dao === null) {
+        this.showErrorMsg('The associated DAO has not been selected ')
+      } else {
+        let _contractAccount = this.dao.dao
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
 
-    //     let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi(_contractAccount)
-    //     // let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi('alejandroga1')
-    //     if (getAbiResponse.hasOwnProperty('abi')) {
-    //       console.log('Deploy success')
-    //       await this.verifiedInitDao()
-    //       this.hasAbi = true
-    //       if (this.initializedDAO) {
-    //         this.loadData()
-    //       }
-    //     } else {
-    //       console.log(' Deploy fail, deploy again')
-    //       this.hasAbi = false
-    //       this.initializedDAO = true
-    //       this.showErrorMsg('Smart contract deployment failed. Deploy again')
-    //     }
-    //     console.log('documentApi created', this.DocumentApi)
-    //   }
-    // } catch (e) {
-    //   console.error('An error ocurred while trying to create Document Api. ' + e)
-    //   this.showErrorMsg(e || e.message)
-    // }
+        let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi(_contractAccount)
+        // let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi('alejandroga1')
+        if (getAbiResponse.hasOwnProperty('abi')) {
+          console.log('Deploy success')
+          await this.verifiedInitDao()
+          this.hasAbi = true
+          if (this.initializedDAO) {
+            this.loadData()
+          }
+        } else {
+          console.log(' Deploy fail, deploy again')
+          this.hasAbi = false
+          this.initializedDAO = true
+          this.showErrorMsg('Smart contract deployment failed. Deploy again')
+        }
+        console.log('documentApi created', this.DocumentApi)
+      }
+    } catch (e) {
+      console.error('An error ocurred while trying to create Document Api. ' + e)
+      this.showErrorMsg(e || e.message)
+    }
   },
   computed: {
   },

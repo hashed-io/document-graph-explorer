@@ -1,9 +1,7 @@
-/// <reference path="cypress" />
-/// <reference path="../support/index.d.ts" />
-//
+
 describe('Business Name tests', () => {
   beforeEach(() => {
-    cy.visit('/home')
+    cy.visit('/')
   })
   it('has steps information', () => {
     cy.dataCy('instructions')

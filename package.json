@@ -85,6 +85,7 @@
     "eslint-plugin-cypress": "^2.11.1",
     "eslint-plugin-jest": "^24.1.0",
     "eslint-plugin-vue": "^5.0.0",
+    "faker": "^5.5.3",
     "husky": "^3.0.8",
     "lint-staged": "^9.4.1",
     "pug": "^2.0.4",
@@ -92,7 +93,7 @@
     "wallaby-vue-compiler": "^1.0.3"
   },
   "engines": {
-    "node": "15.x"
+    "node": "14.x"
   },
   "browserslist": [
     "last 1 version, not dead, ie >= 11"

@@ -30,6 +30,9 @@ Cypress.Commands.add('loginAnchor', () => {
   window.localStorage.setItem('anchor-link--list', '[{"auth":{"actor":"alejandroga1","permission":"active"},"chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"}]')
   window.localStorage.setItem('returning', true)
 })
+Cypress.Commands.add('logoutAnchor', () => {
+  window.localStorage.clear()
+})
 
 Cypress.Commands.add(
   'dataCy',
