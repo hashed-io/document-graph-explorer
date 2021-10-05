@@ -41,7 +41,7 @@
               q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               template(v-else-if="contract.value[0] === 'string'")
                 .q-pb-md
-                  q-btn(label='Save in IPFS' :loading='stringIPFSloading' @click='saveStringIPFS()' color='primary')
+                  q-checkbox(left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
                 q-input(v-model='contract.value[1]'  outlined label='Value' :rules='[rules.required]')
               q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-py-md
@@ -199,8 +199,8 @@ export default {
   },
   data () {
     return {
+      loadingIPFSstring: false,
       stringIPFS: false,
-      stringIPFSloading: false,
       hasAbi: true,
       flagAbi: false,
       initializedDAO: true,
@@ -323,15 +323,21 @@ export default {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
     ...mapActions('dao', ['deployContract', 'initDao']),
     async saveStringIPFS () {
-      this.stringIPFSloading = true
-      let string = this.contract.value[1]
-      try {
-        this.contract.value[1] = await BrowserIpfs.addAsJson({ data: string })
-        this.showSuccessMsg('The value has been saved in IPFS')
-        this.stringIPFSloading = false
-      } catch (e) {
-        this.stringIPFSloading = false
-        this.showErrorMsg('Error occurred while data was saving in IPFS. ' + e)
+      if (this.stringIPFS) {
+        this.$q.loading.show({
+          message: 'Saving in IPFS...'
+        })
+        this.loadingIPFSstring = true
+        let string = this.contract.value[1]
+        try {
+          this.contract.ipfs = await BrowserIpfs.addAsJson({ data: string })
+          this.loadingIPFSstring = false
+          this.$q.loading.hide()
+        } catch (e) {
+          this.loadingIPFSstring = false
+          this.$q.loading.hide()
+          this.showErrorMsg('Error occurred while data was saving in IPFS. ' + e)
+        }
       }
     },
     openAddField () {
@@ -463,6 +469,7 @@ export default {
     },
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
+        if (this.stringIPFS) { await this.saveStringIPFS() }
         if (this.manageContract.find(el => el.label === this.contract.label)) {
           this.showErrorMsg('Label duplicate')
         } else {
@@ -540,20 +547,38 @@ export default {
       this.newLabels = []
       this.updateLabels = []
     },
-    editRow (index) {
-      this.openDialog = true
+    async editRow (index) {
       if (this.newLabels.find(el => el.label === this.manageContract[index].label)) {
         this.fieldNameEditable = false
       } else {
         this.fieldNameEditable = true
       }
       let data = this.manageContract[index]
+      if (data.value[0] === 'string' && data.ipfs) {
+        this.stringIPFS = true
+      } else if (data.value[0] === 'string' && /^([a-zA-Z0-9]){59}/.test(data.value[1])) {
+        this.stringIPFS = true
+        data.ipfs = data.value[1]
+        let dataIPFS = await BrowserIpfs.getFromJson(data.value[1])
+        data.value[1] = dataIPFS.data
+      }
       this.contract = JSON.parse(JSON.stringify(data))
       this.idEdit = index
       this.prevLabel = this.manageContract[index].label
+      this.openDialog = true
     },
-    updateRow () {
+    async updateRow () {
       let index = this.idEdit
+      var flagCheckbox = false
+      if (this.stringIPFS) {
+        await this.saveStringIPFS()
+        flagCheckbox = true
+      } else {
+        if (this.manageContract[index].ipfs !== undefined) {
+          flagCheckbox = true
+          this.contract.ipfs = undefined
+        }
+      }
       if (!this.fieldNameEditable) {
         // Save in new labels
         var isEqual
@@ -574,7 +599,9 @@ export default {
           this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
           this.showSuccessMsg('Update new label')
         } else {
-          this.showSuccessMsg('The changes are the same')
+          if (flagCheckbox) {
+            this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+          }
         }
       }
       this.showSuccessMsg('Label Update')
@@ -635,6 +662,7 @@ export default {
       this.contract.ipfs = undefined
       this.contract.value[0] = null
       this.contract.value[1] = null
+      this.stringIPFS = false
       // this.$refs.labelForm.reset()
     },
     async modifiedData () {
@@ -662,6 +690,12 @@ export default {
           entry.value[1] = 'file:' + entry.value[1]
           entry.value[0] = 'string'
         }
+        if (entry.value[0] === 'string') {
+          if (entry.hasOwnProperty('ipfs')) {
+            entry.value[1] = entry.ipfs
+            delete entry.ipfs
+          }
+        }
         delete entry.loadingState
       })
       // console.log(rawData)
@@ -680,7 +714,7 @@ export default {
         var counter = 0
         let tableRows = data.rows[1].content_groups
         if (tableRows.length === 2) {
-          tableRows[1].forEach(element => {
+          tableRows[1].forEach(async (element) => {
             if (counter > 1) {
               let type = element.value[0]
               switch (type) {
@@ -689,6 +723,7 @@ export default {
                   element.value[1] = date.formatDate(timeStamp, 'MM/DD/YYYY')
                   break
                 case 'string':
+                  console.log(element.value[1])
                   if (element.value[1].includes('file:')) {
                     element.value[0] = 'file'
                     element.ipfs = element.value[1]
