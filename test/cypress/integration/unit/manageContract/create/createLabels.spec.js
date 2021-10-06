@@ -1,4 +1,5 @@
 import Faker from 'faker'
+
 before(() => {
   cy.loginAnchor()
   cy.visit('/home')
@@ -6,13 +7,6 @@ before(() => {
     .contains('assignment')
     .click()
 })
-// describe('Add Labels in manage contract component', { retries: 15 }, () => {
-// Cypress._.times(1, (k) => {
-//   it('test', () => {
-//     cy.loginAnchor()
-//     cy.visit('/home')
-//   })
-// })
 beforeEach(() => {
   // root-level hook
   // runs before every test block
@@ -26,19 +20,26 @@ after(() => {
   // runs once all tests are done
 })
 
-Cypress._.times(2, (k) => {
-  it('go to Contracts', () => {
+Cypress._.times(1, (k) => {
+  it('Create new labels', () => {
+    cy.addNewLabel(1)
+  })
+})
+describe('create new label saving in IPFS', () => {
+  it('', () => {
+    let dataCy = 'stringInput'
+    let fakeValue = Faker.lorem.sentence()
     cy.get('#addFieldButton')
       .click()
     cy.dataCy('FieldNameInput')
-      .type('ALEJANDRO GC' + k)
+      .type(Faker.name.findName())
     cy.dataCy('typeInput')
       .click()
       .get('.q-item__label')
-      .first()
+      .eq(0)
       .click()
-    cy.dataCy('stringInput')
-      .type(Faker.name.findName())
+    cy.dataCy(dataCy)
+      .type(fakeValue)
     cy.dataCy('addFieldButton')
       .click()
   })

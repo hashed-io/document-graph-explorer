@@ -12,7 +12,7 @@ q-card(flat)
       strong.asterisk *
       .row
         .cols-8
-            q-select(filled ref='selectPeriod' v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
+            q-select(filled data-cy='selectPeriod' ref='selectPeriod' v-model='selectValue' :options='options' map-options @change='calculateDate()' :rules="[(v) => !!v.label || 'You must make a selection' ]" lazy-rules)
             label (select &apos;Perpetual&apos; if the entity does not expire.)
             .q-pa-xs
             div(v-if="(selectValue.value !== '0') && (selectValue.value !== 'none') ")

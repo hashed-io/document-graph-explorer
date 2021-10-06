@@ -17,7 +17,7 @@
           .row
             .col-xs-12.col-sm-12
               div(v-if="contract.value[0] === 'time_point'")
-                q-input(outlined v-model='contract.value[1]' :rules='[rules.required]' )
+                q-input(outlined data-cy='timePointInput' v-model='contract.value[1]' :rules='[rules.required]' )
                   template(v-slot:append='')
                     q-icon.cursor-pointer(name='event')
                       q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
@@ -28,7 +28,7 @@
               div(v-else-if="contract.value[0] === 'file'")
                 .row.justify-center
                   .col.q-px-md.col-xs-10.col-sm-10
-                    q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                    q-file(v-model='contract.value[1]' data-cy='fileInput' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
                       template(v-slot:before)
                         q-icon(name='folder_open')
                   .col.col-xs-2.col-sm-2
@@ -36,14 +36,14 @@
                       q-icon(name="check" class="text-green" style="font-size: 2rem;")
                     template(v-if="contract.ipfs === undefined" )
                       q-icon(name="error" class="text-red" style="font-size: 2rem;")
-              q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
-              q-input(v-else-if="contract.value[0] === 'name'" ref='input' v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
-              q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
+              q-input(v-else-if="contract.value[0] === 'asset'" data-cy='assetInput' v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
+              q-input(v-else-if="contract.value[0] === 'name'" data-cy='nameInput' ref='input' v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
+              q-input(v-else-if="contract.value[0] === 'checksum256'" data-cy='checkSumInput' v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               template(v-else-if="contract.value[0] === 'string'")
                 .q-pb-md
-                  q-checkbox(left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
+                  q-checkbox(data-cy='checkboxIPFS' left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
                 q-input(v-model='contract.value[1]' data-cy='stringInput' outlined label='Value' :rules='[rules.required]')
-              q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
+              q-input(v-else v-model='contract.value[1]' data-cy='inputLabel' counter  outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-py-md
               q-btn(v-if='idEdit === null' data-cy='addFieldButton' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
@@ -563,6 +563,8 @@ export default {
         data.ipfs = data.value[1]
         let dataIPFS = await BrowserIpfs.getFromJson(data.value[1])
         data.value[1] = dataIPFS.data
+      } else {
+        this.stringIPFS = false
       }
       this.contract = JSON.parse(JSON.stringify(data))
       this.idEdit = index

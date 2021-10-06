@@ -26,6 +26,8 @@ describe('Business Name rules', () => {
       .should('have.value', '')
   })
   it('Confirm input [Fail]', () => {
+    cy.$t('common.appName').then(val => {
+    })
     cy.dataCy('confirmNameInput')
       .clear()
       .type('ACME!')

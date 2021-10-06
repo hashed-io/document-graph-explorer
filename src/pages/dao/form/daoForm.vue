@@ -14,7 +14,7 @@
             businessName(ref="businessStepComponent" :prefix='1' :bussinessObject='form.businessName'  @dataFromBusinessName="messageFrombusinessNameComponent" )
           q-stepper-navigation
             .containerStep
-              q-btn(@click="validateStep" color="primary" label="continue" )
+              q-btn(@click="validateStep" data-cy='step1Button' color="primary" label="continue" )
         q-step(:name="2" title="Detail" :prefix='2' :done="step > 2" :header-nav="step > 2" )
           div.container
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
