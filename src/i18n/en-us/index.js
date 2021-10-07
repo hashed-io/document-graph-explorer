@@ -45,7 +45,8 @@ export default {
     example: 'Example Dashboard',
     registerDao: 'Register dao',
     listDao: 'List Dao',
-    manageContract: 'Manage Contracts'
+    manageContract: 'Manage Contracts',
+    all_daos: 'All DAOs'
   },
   pages: {
     index: {
@@ -81,7 +82,11 @@ export default {
       createDao: 'Create new DAO',
       nodata: 'There aren\'t any DAOs associated with your account',
       deployDAOFailure: 'Failure on deploy DAO Failure',
-      initDAOFailure: 'Failure on init DAO'
+      initDAOFailure: 'Failure on init DAO',
+      daoName: 'Dao Name',
+      creator: 'Creator',
+      goWebsite: 'Go to website',
+      seeDetails: 'See details'
     }
   }
 }
