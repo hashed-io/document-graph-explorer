@@ -27,9 +27,9 @@ describe('create two news labels of type string and save in IPFS [Frontend]', ()
     cy.dataCy('addFieldButton')
       .click()
   })
-  // it('Label with type string and not checkbox IPFS', () => {
-  //   cy.addNewLabel(0)
-  // })
+  it('Label with type string and not checkbox IPFS', () => {
+    cy.addNewLabel(0)
+  })
 })
 describe('update the two Labels with type string[Frontend]', () => {
   it('Edit label with type string', () => {
