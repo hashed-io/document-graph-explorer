@@ -77,7 +77,6 @@
       separator='none'
       table-header-class="hdTable"
       :filter="params.search"
-      :filter-method="isEncrypted"
     )
       template(v-slot:no-data="{icon, message}")
         div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
@@ -104,9 +103,7 @@
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
-          )
-            template(v-if="!isEncrypted(props.row.value[1])")
-              | {{col.value}}
+          ) {{col.value}}
             template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
               q-popup-edit(v-model="props.row.value[1]" title='Details')
                 q-input(v-model="props.row.value[1]" readonly @keyup.enter.stop type='textarea').fitExpand
@@ -802,6 +799,9 @@ export default {
           })
         }
         this.loading = false
+        if (this.dao.hasOwnProperty('showActionsButtons')) {
+          this.filterEncryptData()
+        }
         // this.showSuccessMsg('Contracts loaded success')
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
@@ -920,11 +920,10 @@ export default {
         reader.readAsText(file)
       })
     },
-    isEncrypted (rows, terms) {
-      if ((rows.substr(-1) === '=')) {
-      } else {
-        return rows
-      }
+    async filterEncryptData () {
+      const isEncrypted = (item) => item.value[1].substr(-1) !== '='
+      let data = JSON.parse(JSON.stringify(this.manageContract))
+      this.manageContract = data.filter(isEncrypted)
     }
   }
 }
