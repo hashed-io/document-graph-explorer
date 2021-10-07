@@ -235,6 +235,7 @@ export default {
       openCryptoDialog: false,
       keyToEncrypt: undefined,
       textEncrypted: undefined,
+      fileNotEncrypted: undefined,
       initialPagination: {
         rowsPerPage: 10,
         page: 1
@@ -499,6 +500,12 @@ export default {
         if (this.manageContract.find(el => el.label === this.contract.label)) {
           this.showErrorMsg('Label duplicate')
         } else {
+          if (this.contract.encryptFile && this.contract.value[0] === 'file') {
+            const file = await Encrypt.encryptFile(this.fileNotEncrypted, this.keyToEncrypt, this.fileNotEncrypted.name.split('.')[1])
+            const typeCid = await BrowserIpfs.store(file)
+            this.contract.value[1] = file
+            this.contract.ipfs = typeCid
+          }
           this.manageContract.push(JSON.parse(JSON.stringify(this.contract)))
           this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
           if (this.contract.value[0] === 'file') {
@@ -673,6 +680,7 @@ export default {
         self.showSuccessMsg('File uploaded success')
         this.loading = false
         self.contract.loadingState = false
+        this.fileNotEncrypted = this.contract.value[1]
         self.contract.value[1] = e
         self.contract.ipfs = typeCid
       }
@@ -692,6 +700,7 @@ export default {
       this.contract.encrypt = false
       this.textEncrypted = undefined
       this.contract.encryptFile = false
+      this.fileNotEncrypted = undefined
       // this.$refs.labelForm.reset()
     },
     async modifiedData () {
