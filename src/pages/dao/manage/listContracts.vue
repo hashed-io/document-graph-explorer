@@ -31,6 +31,10 @@
                     q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
                       template(v-slot:before)
                         q-icon(name='folder_open')
+                    .row
+                      .col
+                        q-checkbox(left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encryptFile' color='primary')
+                        q-btn(v-if='contract.encryptFile' size="sm" label='Decrypt' color="secondary" @click="decryptFileOnIPFS(contract.ipfs)")
                   .col.col-xs-2.col-sm-2
                     template(v-if="typeof(contract.ipfs) === 'string'")
                       q-icon(name="check" class="text-green" style="font-size: 2rem;")
@@ -40,10 +44,15 @@
               q-input(v-else-if="contract.value[0] === 'name'"  v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
               q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               template(v-else-if="contract.value[0] === 'string'")
-                .q-pb-md
-                  q-checkbox(left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
-                q-input(v-model='contract.value[1]'  outlined label='Value' :rules='[rules.required]')
-              q-input(v-else v-model='contract.value[1]' counter  outlined label='Value' :rules='[rules.required]')
+                .row
+                  .col
+                    q-checkbox(left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
+                    q-checkbox(left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encrypt' color='primary')
+                q-input(v-model='contract.value[1]' outlined label='Value' :rules='[rules.required]')
+                  template(v-if="contract.encrypt" v-slot:append)
+                    q-icon.animated-icon.cursor-pointer(:name="contract.encrypt ? 'visibility' : 'visibility_off'" @click="decryptValue" v-show="contract.encrypt && contract.value[1]")
+                      q-tooltip {{ contract.encrypt ? 'Encrypt value' : 'Decrypt value' }}
+              q-input(v-else v-model='contract.value[1]' counter outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-py-md
               q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
@@ -136,6 +145,7 @@
   div(v-else-if='!initializedDAO && hasAbi')
     p The contract was deployed success but the DAO was not initialized correctly.
     q-btn(label='Initialize the DAO' color='primary' @click='callActionInitDAO()')
+  CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
 </template>
 <style lang="sass" scoped>
 .medium-width
@@ -153,9 +163,14 @@ import { ContractsApi } from '~/services'
 import { validation } from '~/mixins/validation'
 import { mapActions } from 'vuex'
 import { date, QSpinnerPuff } from 'quasar'
+import CryptoDialog from '~/components/crypto-dialog'
+import Encrypt from '~/utils/EncryptUtil'
 
 export default {
   name: 'managecontract',
+  components: {
+    CryptoDialog
+  },
   mixins: [validation],
   props: {
     dao: {
@@ -217,6 +232,10 @@ export default {
       manageContract: [],
       pageSize: 10,
       nextPage: 2,
+      openCryptoDialog: false,
+      keyToEncrypt: undefined,
+      textEncrypted: undefined,
+      fileNotEncrypted: undefined,
       initialPagination: {
         rowsPerPage: 10,
         page: 1
@@ -232,7 +251,10 @@ export default {
         value: [
           null,
           null
-        ]
+        ],
+        encrypt: false,
+        decrypt: false,
+        encryptFile: false
       },
       options: [
         {
@@ -473,10 +495,17 @@ export default {
     },
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
+        if (this.contract.encrypt) this.encryptValue()
         if (this.stringIPFS) { await this.saveStringIPFS() }
         if (this.manageContract.find(el => el.label === this.contract.label)) {
           this.showErrorMsg('Label duplicate')
         } else {
+          if (this.contract.encryptFile && this.contract.value[0] === 'file') {
+            const file = await Encrypt.encryptFile(this.fileNotEncrypted, this.keyToEncrypt, this.fileNotEncrypted.name.split('.')[1])
+            const typeCid = await BrowserIpfs.store(file)
+            this.contract.value[1] = file
+            this.contract.ipfs = typeCid
+          }
           this.manageContract.push(JSON.parse(JSON.stringify(this.contract)))
           this.newLabels.push(JSON.parse(JSON.stringify(this.contract)))
           if (this.contract.value[0] === 'file') {
@@ -566,9 +595,17 @@ export default {
         let dataIPFS = await BrowserIpfs.getFromJson(data.value[1])
         data.value[1] = dataIPFS.data
       }
+      if (data.value[0] === 'string' && data.value[1].substr(-1) === '=') data.encrypt = true
       this.contract = JSON.parse(JSON.stringify(data))
+      if (data.value[0] === 'file') {
+        this.contract.ipfs = data.value[1]
+        this.contract.encryptFile = await this.verifyIfFileIsEncrypted(data.value[1])
+        this.contract.value[1] = await this.getFileFromIpfs(data.value[1])
+      }
       this.idEdit = index
       this.prevLabel = this.manageContract[index].label
+      this.textEncrypted = this.contract.value[1]
+      if (this.contract.encrypt) this.contract.decrypt = true
       this.openDialog = true
     },
     async updateRow () {
@@ -618,6 +655,8 @@ export default {
         }
       }
       this.showSuccessMsg('Label Update')
+      if (this.contract.encrypt) this.encryptValue()
+      console.log({ new: this.newLabels, update: this.updateLabels })
       this.manageContract.splice(index, 1, JSON.parse(JSON.stringify(this.contract)))
       if (this.manageContract[index].value[0] === 'file') {
         this.manageContract[index].value[1] = this.manageContract[index].ipfs
@@ -640,6 +679,7 @@ export default {
       self.contract.loadingState = true
       try {
         this.loading = true
+        if (this.contract.encryptFile) e = await Encrypt.encryptFile(e, this.keyToEncrypt, e.name.split('.')[1])
         var typeCid = await BrowserIpfs.store(e)
         console.log(typeCid)
       } catch (e) {
@@ -649,21 +689,10 @@ export default {
         self.showSuccessMsg('File uploaded success')
         this.loading = false
         self.contract.loadingState = false
+        this.fileNotEncrypted = this.contract.value[1]
         self.contract.value[1] = e
         self.contract.ipfs = typeCid
       }
-    },
-    async getFileFromIPFS (index, type) {
-      // application/vnd.oasis.opendocument.text
-      let filename = 'documentFromIPFS'
-      let blob = await BrowserIpfs.getFile(index, filename, type)
-      let link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = filename
-
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
     },
     changeType () {
       this.contract.value[1] = undefined
@@ -676,6 +705,11 @@ export default {
       this.contract.value[0] = null
       this.contract.value[1] = null
       this.stringIPFS = false
+      this.contract.decrypt = false
+      this.contract.encrypt = false
+      this.textEncrypted = undefined
+      this.contract.encryptFile = false
+      this.fileNotEncrypted = undefined
       // this.$refs.labelForm.reset()
     },
     async modifiedData () {
@@ -782,6 +816,92 @@ export default {
     openLinkString (Cid) {
       let url = 'https://ipfs.io/ipfs/' + Cid
       window.open(url, '_blank')
+    },
+    encryptValue () {
+      if (this.keyToEncrypt) {
+        this.contract.value[1] = Encrypt.encryptText(this.contract.value[1], this.keyToEncrypt)
+      }
+    },
+    decryptValue () {
+      if (this.keyToEncrypt) {
+        if (this.contract.value[1]) {
+          if (this.contract.decrypt) {
+            this.contract.value[1] = Encrypt.decryptText(this.textEncrypted || this.contract.value[1], this.keyToEncrypt)
+          } else {
+            if (!this.textEncrypted) {
+              this.contract.value[1] = Encrypt.encryptText(this.contract.value[1], this.keyToEncrypt)
+              this.textEncrypted = this.contract.value[1]
+            } else {
+              if (this.contract.value[1] === Encrypt.decryptText(this.textEncrypted, this.keyToEncrypt)) {
+                this.contract.value[1] = this.textEncrypted
+              } else {
+                this.contract.value[1] = Encrypt.encryptText(this.contract.value[1], this.keyToEncrypt)
+                this.textEncrypted = this.contract.value[1]
+              }
+            }
+          }
+          this.contract.decrypt = !this.contract.decrypt
+          this.$forceUpdate()
+        }
+      } else {
+        this.getKeyToEncrypt()
+      }
+    },
+    onCloseDialog (keyToEncrypt) {
+      this.keyToEncrypt = keyToEncrypt
+      this.openCryptoDialog = false
+    },
+    getKeyToEncrypt () {
+      if (!this.keyToEncrypt) this.openCryptoDialog = true
+    },
+    async decryptFileOnIPFS (typeCID) {
+      if (!this.keyToEncrypt) {
+        this.openCryptoDialog = true
+      }
+      if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
+      try {
+        const ipfs = await BrowserIpfs.retrieve(typeCID)
+        const encryptedFile = ipfs.payload
+        console.log(encryptedFile)
+        const file = await Encrypt.decryptFile(encryptedFile, this.keyToEncrypt)
+        let link = document.createElement('a')
+        link.href = window.URL.createObjectURL(file)
+        link.download = file.name
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async getFileFromIpfs (typeCID) {
+      if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
+      try {
+        const ipfs = await BrowserIpfs.retrieve(typeCID)
+        return ipfs.payload
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async verifyIfFileIsEncrypted (typeCID) {
+      if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
+      try {
+        const encryptedFile = await this.getFileFromIpfs(typeCID)
+        const data = await this.readFile(encryptedFile)
+        return data.substr(-1) === '='
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    readFile (file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+          resolve(reader.result)
+        }
+        reader.onerror = reject
+        reader.readAsText(file)
+      })
     }
   }
 }
