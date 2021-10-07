@@ -1,5 +1,7 @@
 <template lang="pug">
 #container
+  //- q-btn.back(  icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
+  //-   q-tooltip {{$t('pages.general.back')}}
   #Form
   q-dialog(v-model='openDialog')
     q-card(flat).full-width
@@ -484,7 +486,8 @@ export default {
           console.log('NOT Found ABI')
           this.$q.loading.hide()
           this.showErrorMsg('An error occurred when the smart contract was deployed')
-          this.$emit('backToListDao', true)
+          this.$router.push({ name: 'daos' })
+          // this.$emit('backToListDao', true)
         }
         // await new Promise(resolve => setTimeout(resolve, 1000))
       } catch (e) {

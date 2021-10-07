@@ -1,7 +1,7 @@
 <template lang='pug'>
   #container
     .q-py-md.text-h6 Manage Contracts of {{SelectedDao.dao}}
-    managedao(:dao="SelectedDao" @backToListDao="changeView('showListDao')").q-pb-xs
+    managedao(:dao="SelectedDao" ).q-pb-xs
 </template>
 <style lang="sass" scoped>
 </style>
@@ -23,9 +23,6 @@ export default {
     }
   },
   methods: {
-    changeView (val) {
-      this.$emit('backToListDao', true)
-    },
     setDAO () {
       this.SelectedDao = JSON.parse(JSON.stringify(this.selectedDAO))
     }

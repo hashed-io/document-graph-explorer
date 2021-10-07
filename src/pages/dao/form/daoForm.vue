@@ -1,5 +1,6 @@
 <template lang="pug">
   div
+    //- q-btn.back( icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
     q-card(flat bordered)
       q-stepper(
         v-model="step"
@@ -437,18 +438,18 @@ export default {
               account: this.daoName.toLowerCase()
             })
             this.$q.loading.hide()
-            this.$emit('backToListDao', true)
+            this.$router.push({ name: 'daos' })
           } else {
             console.log('NOT Found ABI')
             this.$q.loading.hide()
             this.showErrorMsg('An error occurred when the smart contract was deployed')
-            this.$emit('backToListDao', true)
+            this.$router.push({ name: 'daos' })
           }
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
           this.showErrorMsg('Error while saving DAO data. ' + e)
-          this.$emit('backToListDao', true)
+          this.$router.push({ name: 'daos' })
         }
       } else {
         this.$q.loading.hide()
@@ -478,7 +479,8 @@ export default {
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
-        this.$emit('backToListDao', true)
+        this.$router.push({ name: 'daos' })
+        // this.$emit('backToListDao', true)
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e || e.message)
