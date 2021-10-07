@@ -584,7 +584,7 @@ export default {
         }
       }
       if (!this.fieldNameEditable) {
-        // Save in new labels
+        // Save in new labels [FRONTEND]
         var isEqual
         if (this.newLabels.find(el => el.label === this.contract.label)) {
           isEqual = (element) => element.label === this.contract.label
@@ -596,14 +596,23 @@ export default {
           this.newLabels[id] = JSON.parse(JSON.stringify(this.contract))
         }
       } else {
-        // Save in update lables
+        // Save in update lables [BACKEND]
         let prevType = this.manageContract[index].value[0]
         let prevValue = this.manageContract[index].value[1]
+        let inIndex = this.updateLabels.findIndex(el => el.label === this.contract.label)
         if (prevType !== this.contract.value[0] || prevValue !== this.contract.value[1]) {
-          this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
-          this.showSuccessMsg('Update new label')
+        // Verify if exist the label in updateLabels
+          // exist in array
+          if (inIndex >= 0) {
+            this.updateLabels.splice(inIndex, 1, JSON.parse(JSON.stringify(this.contract)))
+          // No exist
+          } else {
+            this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
+          }
         } else {
-          if (flagCheckbox) {
+          if (flagCheckbox && inIndex >= 0) {
+            this.updateLabels.splice(inIndex, 1, JSON.parse(JSON.stringify(this.contract)))
+          } else if (flagCheckbox && inIndex === -1) {
             this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
           }
         }
