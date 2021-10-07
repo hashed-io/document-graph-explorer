@@ -95,6 +95,15 @@
             q-icon(name='search')
       template(v-slot:top-left)
         .row.q-gutter-md
+            q-icon.animated-icon(
+              v-if='!showActions'
+              name="language"
+              v-ripple
+              size="sm"
+              color="positive"
+              @click="openWebSite()"
+            )
+              q-tooltip {{ $t('pages.daos.goWebsite') }}
             q-btn(v-if='showActions' label='Add Field' @click='openAddField()' color="primary")
             q-btn(v-if='showActions' label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
@@ -924,7 +933,8 @@ export default {
       const isEncrypted = (item) => item.value[1].substr(-1) !== '='
       let data = JSON.parse(JSON.stringify(this.manageContract))
       this.manageContract = data.filter(isEncrypted)
-    }
+    },
+    openWebSite () {}
   }
 }
 </script>
