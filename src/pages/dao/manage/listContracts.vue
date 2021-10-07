@@ -802,7 +802,6 @@ export default {
         if (this.dao.hasOwnProperty('showActionsButtons')) {
           this.filterEncryptData()
         }
-        // this.showSuccessMsg('Contracts loaded success')
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
         console.log(e.json.error.details[0].message)
