@@ -77,6 +77,7 @@
       separator='none'
       table-header-class="hdTable"
       :filter="params.search"
+      :filter-method="isEncrypted"
     )
       template(v-slot:no-data="{icon, message}")
         div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
@@ -95,19 +96,21 @@
             q-icon(name='search')
       template(v-slot:top-left)
         .row.q-gutter-md
-            q-btn(label='Add Field' @click='openAddField()' color="primary")
-            q-btn(label='Save data' @click='modifiedData()' color="primary")
+            q-btn(v-if='showActions' label='Add Field' @click='openAddField()' color="primary")
+            q-btn(v-if='showActions' label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
           q-td.column-responsive(
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
-          ) {{col.value}}
+          )
+            template(v-if="!isEncrypted(props.row.value[1])")
+              | {{col.value}}
             template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
               q-popup-edit(v-model="props.row.value[1]" title='Details')
                 q-input(v-model="props.row.value[1]" readonly @keyup.enter.stop type='textarea').fitExpand
-            template(v-if="col.name == 'actions'")
+            template(v-if="col.name == 'actions' && showActions")
               .row.q-col-gutter-xs
                 .col-xs-12.col-sm-4
                   template(v-if="props.row.value[1].includes('file:') || props.row.ipfs  ")
@@ -118,7 +121,8 @@
                       color='positive'
                       @click="openLink(props.row.ipfs,props.row.value[1])"
                     )
-                  template(v-else-if="/^([a-zA-Z0-9]){45,60}/.test(props.row.value[1])  ")
+                  //- template(v-else-if="/^([a-zA-Z0-9]){45,60}/.test(props.row.value[1])  ")
+                  template(v-else-if="/^bafk([a-zA-Z0-9]){55}$/.test(props.row.value[1])  ")
                     q-icon.animated-icon(
                       name='search'
                       v-ripple
@@ -177,16 +181,25 @@ export default {
   props: {
     dao: {
       type: Object,
-      required: true
+      required: true,
+      default: () => {
+        return {}
+      }
     }
   },
   async mounted () {
     try {
       this.loading = true
+      this.showActions = true
       if (this.dao === null) {
         this.showErrorMsg('The associated DAO has not been selected ')
       } else {
-        let _contractAccount = this.dao.dao
+        if (this.dao.hasOwnProperty('showActionsButtons')) {
+          this.showActions = false
+          this.columns.splice(3, 1)
+        }
+        var _contractAccount
+        _contractAccount = this.dao.dao
         let _api = this.$store.$apiMethods
         let mEosApi = this.$store.$defaultApi
         this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
@@ -221,6 +234,7 @@ export default {
   data () {
     return {
       loadingIPFSstring: false,
+      showActions: false,
       stringIPFS: false,
       hasAbi: true,
       flagAbi: false,
@@ -321,7 +335,7 @@ export default {
           align: 'justify',
           format: (val, row) => {
             let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
-            let isStringIPFS = /^([a-zA-Z0-9]){59}/.test(val)
+            let isStringIPFS = /^bafk([a-zA-Z0-9]){55}$/.test(val)
             if (isFile) {
               return 'File'
             } else if (isStringIPFS) {
@@ -905,6 +919,12 @@ export default {
         reader.onerror = reject
         reader.readAsText(file)
       })
+    },
+    isEncrypted (rows, terms) {
+      if ((rows.substr(-1) === '=')) {
+      } else {
+        return rows
+      }
     }
   }
 }

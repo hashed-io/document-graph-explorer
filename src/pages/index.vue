@@ -1,9 +1,3 @@
-<script>
-export default {
-  name: 'page-index'
-}
-</script>
-
 <template lang="pug">
   q-page.flex.column
     .main-splash
@@ -71,6 +65,11 @@ export default {
         | For questions or comments, drop us a message on our&nbsp;
         a(href='https://mobile.twitter.com/TelosKitchen' target='_blank') Twitter account.
 </template>
+<script>
+export default {
+  name: 'page-index'
+}
+</script>
 
 <style lang="sass" scoped>
 .main-title
