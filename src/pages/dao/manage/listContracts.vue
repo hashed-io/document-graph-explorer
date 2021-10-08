@@ -35,7 +35,7 @@
                         q-icon(name='folder_open')
                     .row
                       .col
-                        q-checkbox(left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encryptFile' color='primary')
+                        q-checkbox(left-label label="Encrypt?" data-cy='checkboxEncrypt' @input="getKeyToEncrypt" v-model='contract.encryptFile' color='primary')
                         q-btn(v-if='contract.encryptFile' size="sm" label='Decrypt' color="secondary" @click="decryptFileOnIPFS(contract.ipfs)")
                   .col.col-xs-2.col-sm-2
                     template(v-if="typeof(contract.ipfs) === 'string'")
@@ -49,14 +49,14 @@
                 .row
                   .col
                     q-checkbox(data-cy='checkboxIPFS' left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
-                    q-checkbox(left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encrypt' color='primary')
+                    q-checkbox(data-cy='checkboxEncrypt' left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encrypt' color='primary')
                 q-input(v-model='contract.value[1]' data-cy='stringInput' outlined label='Value' :rules='[rules.required]')
                   template(v-if="contract.encrypt" v-slot:append)
-                    q-icon.animated-icon.cursor-pointer(:name="contract.encrypt ? 'visibility' : 'visibility_off'" @click="decryptValue" v-show="contract.encrypt && contract.value[1]")
+                    q-icon.animated-icon.cursor-pointer(data-cy='visibilityInput' :name="contract.encrypt ? 'visibility' : 'visibility_off'" @click="decryptValue" v-show="contract.encrypt && contract.value[1]")
                       q-tooltip {{ contract.encrypt ? 'Encrypt value' : 'Decrypt value' }}
               q-input(v-else v-model='contract.value[1]' data-cy='inputLabel' counter outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-py-md
-              q-btn(v-if='idEdit === null' data-cy='addFieldButton' label='Add Field' color="primary" @click='addRow()')
+              q-btn(v-if='idEdit === null' data-cy='addFieldButton' id='addFieldButton' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
     q-table.q-mb-sm(
@@ -103,8 +103,8 @@
               @click="openWebSite()"
             )
               q-tooltip {{ $t('pages.daos.goWebsite') }}
-            q-btn(v-if='showActions' label='Add Field' @click='openAddField()' color="primary")
-            q-btn(v-if='showActions' label='Save data' @click='modifiedData()' color="primary")
+            q-btn(v-if='showActions' id='addFieldButton' label='Add Field' @click='openAddField()' color="primary")
+            q-btn(v-if='showActions' data-cy='saveDataButton' label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
           q-td.column-responsive(

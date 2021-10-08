@@ -10,13 +10,17 @@ q-dialog(v-model="openDialog" persistent)
       q-card-section
         q-input(
           v-model.trim="cryptoKey"
+          id='keyInput'
+          data-cy='keyInput'
           filled
-          label="Insert yout key"
+          label="Insert your key"
           :rules="[rules.required]"
         )
       q-card-actions(align="right")
         q-btn(
           color="primary"
+          id='confirmKey'
+          data-cy='confirmKey'
           :label="$t('common.buttons.confirm')"
           type="submit"
         )
