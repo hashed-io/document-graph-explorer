@@ -39,7 +39,7 @@ export const reset = async function ({ commit, dispatch }, params) {
 
 export const getDocuments = async function ({ commit, dispatch }, params) {
   try {
-    const response = await this.$documentApi.getDocuments({ ...params })
+    const response = await this.$contractsApi.getDocuments({ ...params })
     return response
   } catch (e) {
     console.error('An error ocurred while trying to reset', e)

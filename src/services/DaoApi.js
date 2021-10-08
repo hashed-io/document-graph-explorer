@@ -50,7 +50,8 @@ class DaoApi extends BaseEosApi {
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
    * @returns
    */
-  async CreateDao ({ dao, creator, ipfs, accountName }) {
+  async CreateDao ({ dao, creator, ipfs, accountName, basic }) {
+    // basic is to know if the registry was full or not
     //  make actions
     const actions = [
       {
@@ -64,6 +65,7 @@ class DaoApi extends BaseEosApi {
       }
     ]
     console.log('actions: ', actions)
+    console.log('Basic : ', basic)
     return this.eosApi.signTransaction(actions)
   }
   /**
@@ -102,6 +104,16 @@ class DaoApi extends BaseEosApi {
     return rounds
   }
 
+  async getAllDaos ({ limit, nextKey }) {
+    // let end = (BigInt(eosjsAccountName.nameToUint64(accountName)) * BigInt(2 ** 64) + BigInt('18446744073709551615')).toString()
+    const rounds = await this._getTableRows({
+      scope: Contracts.CONTRACT_DAO,
+      lowerBound: nextKey,
+      limit,
+      table: 'daos'
+    })
+    return rounds
+  }
   /**
    * ============================ DEPLOY CONTRACT ================
    */

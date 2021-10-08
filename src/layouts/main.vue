@@ -30,13 +30,26 @@ export default {
   q-layout(view="hHh Lpr lFf")
     q-header
       q-toolbar
+        q-btn(
+          flat
+          show-if-above
+          round
+          @click="menu = !menu"
+          icon="fas fa-bars"
+          aria-label="Menu"
+        )
         q-toolbar-title.flex.items-center
           img.logo(src="statics/icons/TK_256.png")
         right-menu-authenticated(v-if="isAuthenticated")
         right-menu-guest(v-if="!isAuthenticated")
-    template
-      q-page-container.q-mt-xl.contentContainer
-        router-view
+    q-drawer(
+      v-model="menu"
+      side="left"
+      :mini='false'
+    )
+      left-menu
+    q-page-container.q-mt-xl.contentContainer
+      router-view
 </template>
 
 <style lang="sass" scoped>
