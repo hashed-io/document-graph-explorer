@@ -50,7 +50,8 @@ class DaoApi extends BaseEosApi {
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
    * @returns
    */
-  async CreateDao ({ dao, creator, ipfs, accountName }) {
+  async CreateDao ({ dao, creator, ipfs, accountName, basic }) {
+    // basic is to know if the registry was full or not
     //  make actions
     const actions = [
       {
@@ -64,6 +65,7 @@ class DaoApi extends BaseEosApi {
       }
     ]
     console.log('actions: ', actions)
+    console.log('Basic : ', basic)
     return this.eosApi.signTransaction(actions)
   }
   /**

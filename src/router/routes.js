@@ -5,7 +5,8 @@ const routes = [
   { path: '/home', component: () => import('pages/dao/daos.vue'), name: 'daos' },
   { path: '/manageContract', component: () => import('src/pages/dao/manage/manageContract.vue'), name: 'manageContract' },
   { path: '/registerDao', component: () => import('src/pages/dao/form/daoForm.vue'), name: 'daoForm' },
-  { path: '/daos', component: () => import('~/pages/dao/listDaos/all-daos-list'), name: 'all-daos' }
+  { path: '/registerDaoSimple', component: () => import('src/pages/dao/form/daoFormSimple.vue'), name: 'daoFormSimple' },
+  { path: '/daos', component: () => import('~/pages/dao/listDaos/all-daos-list'), name: 'all-daos', meta: { guest: true } }
 ]
 
 // Always leave this as last one

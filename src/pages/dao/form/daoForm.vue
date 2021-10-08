@@ -56,10 +56,12 @@
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
-            .row
-              .col(style='margin-top:-2%; margin-left: 1.5%;')
+            .row.q-col-gutter-md.q-px-md
+              .col-6
                 q-input(v-model='daoName' label='Signed by' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
-              .col(style='text-align:end;')
+              .col-6
+                q-input(v-model='websiteDAO' label='Website of DAO' ref='websiteDAOInput' :readonly='isEdit' :rules='[rules.required]')
+              .col-12(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
 </template>
@@ -211,6 +213,7 @@ export default {
       boolContracted: false,
       typeCid: undefined,
       daoName: 'null',
+      websiteDAO: null,
       form: {
         price: 100,
         businessName: {
@@ -411,6 +414,7 @@ export default {
             dao: this.daoName.toLowerCase(),
             creator: this.account,
             ipfs: this.typeCid
+            // Link : this.websiteDAO
           })
           this.$q.loading.show({
             message: 'Setting DAO..',
