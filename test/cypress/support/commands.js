@@ -24,7 +24,15 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import Faker from 'faker'
-
+Cypress.Commands.add('fillCryptoDialog', (key) => {
+  // Encryption dialog
+  cy.dataCy('checkboxEncrypt')
+    .click()
+  cy.dataCy('keyInput')
+    .type(key)
+  cy.dataCy('confirmKey')
+    .click()
+})
 Cypress.Commands.add('addNewLabel', (typeLabelNumber, withCheckBox) => {
   // TODO modified timePoint actions and File, require more steps
   let fakeValue

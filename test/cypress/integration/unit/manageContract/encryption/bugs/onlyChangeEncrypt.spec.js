@@ -8,11 +8,10 @@ before(() => {
     .contains('assignment')
     .click()
 })
-const fakeValue = Faker.lorem.sentence()
+const fakeValue = 'Ut est dolorem dolore consectetur. Sit tempora adipisci dolore labore sed numquam neque. Magnam magnam amet adipisci eius amet quisquam dolore. Quaerat ut consectetur quiquia quaerat. Eius neque etincidunt voluptatem magnam labore tempora.'
 const key = '123'
-
 describe('Bug #2. Only change encryption to update the label [Backend]', () => {
-  it('Create new label with encryption and not save in IPFS', () => {
+  it('Create new label without encryption and not save in IPFS', () => {
     cy.get('#addFieldButton')
       .click()
     cy.dataCy('FieldNameInput')
@@ -22,13 +21,6 @@ describe('Bug #2. Only change encryption to update the label [Backend]', () => {
       .get('.q-item__label')
       .eq(0)
       .click()
-    // Encryption dialog
-    cy.dataCy('checkboxEncrypt')
-      .click()
-    cy.dataCy('keyInput')
-      .type(key)
-    cy.dataCy('confirmKey')
-      .click()
     cy.dataCy('stringInput')
       .type(fakeValue)
     // Si se presiona visibility antes de guardar encripta nuevamente
@@ -37,20 +29,27 @@ describe('Bug #2. Only change encryption to update the label [Backend]', () => {
     cy.dataCy('addFieldButton')
       .click()
   })
-  it.only('Verify the last element added has symbol = in the last position', () => {
-    cy.dataCy('rowTD').then(($el) => {
-      // var itemCount = Cypress.$($el).length - 1
-      const row = 1
-      const col = 2
-      cy.dataCy('rowTD')
-        .eq(col * (col * row - 1))
-        .then(($input) => {
-          const rowText = $input.text()
-          cy.log(rowText)
-          // invoke verify if the text is encrypt
-        })
-    })
-  })
+  // it('Verify the last element added has symbol = in the last position', () => {
+  //   cy.dataCy('rowTD').then(($el) => {
+  //     cy.dataCy('editButton').then(($el) => {
+  //       var itemCount = Cypress.$($el).length - 1
+  //       const row = itemCount
+  //       const col = 2
+  //       cy.dataCy('rowTD')
+  //         .eq(col * (col * row - 1))
+  //         .then(($input) => {
+  //           const rowText = $input.text()
+  //           const verifyEncrypt = (rowText) => {
+  //             console.log(rowText)
+  //             return rowText.substr(-1) === '='
+  //           }
+  //           // cy.log('The row added has symbol?', verifyEncrypt(rowText))
+  //           // invoke verify if the text is encrypt
+  //           expect(verifyEncrypt(rowText)).to.eq(true)
+  //         })
+  //     })
+  //   })
+  // })
   it('Click button and sign transaction', () => {
     cy.dataCy('saveDataButton')
       .click()
@@ -68,15 +67,22 @@ describe('Bug #2. Only change encryption to update the label [Backend]', () => {
         .eq(itemCount)
         .click()
       cy.dataCy('FieldNameInput')
-      cy.dataCy('visibilityInput')
-        .click()
+      // cy.dataCy('visibilityInput')
+      //   .click()
       cy.dataCy('checkboxEncrypt')
-        .click()
-      cy.dataCy('stringInput')
-        .clear()
-        .type(fakeValue)
+      // .click()
+      cy.fillCryptoDialog(key)
       cy.dataCy('updateButton')
         .click()
     })
+  })
+  it('Save data. Click button and sign transaction', () => {
+    cy.dataCy('saveDataButton')
+      .click()
+    // spy on POST requests to /push_transaction TELOS endpoint
+    cy.intercept('POST', 'https://test.telos.kitchen/v1/chain/push_transaction').as('sendSignature')
+    // wait until response [30 sec to send sign transaction]
+    // Expect response 202 from TLOS
+    cy.wait('@sendSignature', { timeout: 30000 }).its('response.statusCode').should('eq', 202)
   })
 })

@@ -1,5 +1,5 @@
 import Faker from 'faker'
-import Encrypt from '/home/edwin/Documentos/m1ghty/DAO-LLC-WEBAPP/src/utils/EncryptUtil.js'
+// import Encrypt from '/home/edwin/Documentos/m1ghty/DAO-LLC-WEBAPP/src/utils/EncryptUtil.js'
 
 before(() => {
   cy.loginAnchor()
@@ -42,32 +42,32 @@ describe('Bug #1. Encryption not detected', () => {
       expect(xhr.status).to.eq(200)
     })
   })
-  it('Verified the encryption of label in IPFS', () => {
-    // get the number of row
-    cy.dataCy('editButton').then(($el) => {
-      var itemCount = Cypress.$($el).length - 1
-      cy.dataCy('editButton')
-        .eq(itemCount)
-        .click()
-      cy.log('Fake Value', fakeValue)
-      cy.dataCy('stringInput').then(($input) => {
-        const inputValue = ($input.val())
-        const decryptValue = Encrypt.decryptText(inputValue, key)
-        cy.log('The assert validate if the encryption is correct')
-        expect(decryptValue).to.eq(fakeValue)
-        cy.log('Value encrypted in Input', inputValue)
-      })
-      cy.dataCy('visibilityInput')
-        .click()
-      // verificar que contenga FakeValue
-      cy.dataCy('stringInput')
-        .should('have.value', fakeValue)
-        .clear()
-        .type(fakeValue)
-      cy.dataCy('updateButton')
-        .click()
-    })
-  })
+  // it('Verified the encryption of label in IPFS', () => {
+  //   // get the number of row
+  //   cy.dataCy('editButton').then(($el) => {
+  //     var itemCount = Cypress.$($el).length - 1
+  //     cy.dataCy('editButton')
+  //       .eq(itemCount)
+  //       .click()
+  //     cy.log('Fake Value', fakeValue)
+  //     cy.dataCy('stringInput').then(($input) => {
+  //       const inputValue = ($input.val())
+  //       const decryptValue = Encrypt.decryptText(inputValue, key)
+  //       cy.log('The assert validate if the encryption is correct')
+  //       expect(decryptValue).to.eq(fakeValue)
+  //       cy.log('Value encrypted in Input', inputValue)
+  //     })
+  //     cy.dataCy('visibilityInput')
+  //       .click()
+  //     // verificar que contenga FakeValue
+  //     cy.dataCy('stringInput')
+  //       .should('have.value', fakeValue)
+  //       // .clear()
+  //       .type(fakeValue)
+  //     cy.dataCy('updateButton')
+  //       .click()
+  //   })
+  // })
   it('Save data. Click button and sign transaction', () => {
     cy.dataCy('saveDataButton')
       .click()
