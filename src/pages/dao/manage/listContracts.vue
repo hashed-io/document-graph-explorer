@@ -495,7 +495,7 @@ export default {
     },
     async addRow () {
       if (await this.$refs.labelForm.validate()) {
-        if (this.contract.encrypt) this.encryptValue()
+        if (this.contract.encrypt && !this.contract.decrypt) this.encryptValue()
         if (this.stringIPFS) { await this.saveStringIPFS() }
         if (this.manageContract.find(el => el.label === this.contract.label)) {
           this.showErrorMsg('Label duplicate')
@@ -611,6 +611,7 @@ export default {
     async updateRow () {
       let index = this.idEdit
       var flagCheckbox = false
+      if (this.contract.encrypt && !this.contract.decrypt) this.encryptValue()
       if (this.stringIPFS) {
         await this.saveStringIPFS()
         flagCheckbox = true
@@ -647,16 +648,14 @@ export default {
             this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
           }
         } else {
-          if (flagCheckbox && inIndex >= 0) {
+          if ((flagCheckbox && inIndex >= 0) || (this.contract.encrypt && inIndex >= 0) || (this.contract.encryptFile && inIndex >= 0)) {
             this.updateLabels.splice(inIndex, 1, JSON.parse(JSON.stringify(this.contract)))
-          } else if (flagCheckbox && inIndex === -1) {
+          } else if ((flagCheckbox && inIndex === -1) || (this.contract.encryptFile && inIndex === -1) || (this.contract.encrypt === -1)) {
             this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
           }
         }
       }
       this.showSuccessMsg('Label Update')
-      if (this.contract.encrypt) this.encryptValue()
-      console.log({ new: this.newLabels, update: this.updateLabels })
       this.manageContract.splice(index, 1, JSON.parse(JSON.stringify(this.contract)))
       if (this.manageContract[index].value[0] === 'file') {
         this.manageContract[index].value[1] = this.manageContract[index].ipfs
