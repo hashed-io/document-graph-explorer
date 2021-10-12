@@ -1,6 +1,6 @@
 <template lang='pug'>
   #container
-    .q-py-md.text-h6 {{text}}{{SelectedDao.dao}}
+    .q-py-md.text-h6(v-if='SelectedDao') {{text}}{{SelectedDao.dao}}
     managedao(:dao="SelectedDao" ).q-pb-xs
 </template>
 <style lang="sass" scoped>
@@ -36,7 +36,11 @@ export default {
       if (params) {
         this.setSelectedDao({ dao: params, showActionsButtons: false })
       }
-      this.SelectedDao = JSON.parse(JSON.stringify(this.selectedDAO))
+      if (this.selectedDAO === null) {
+        this.$router.push({ name: 'daos' })
+      } else {
+        this.SelectedDao = JSON.parse(JSON.stringify(this.selectedDAO))
+      }
     }
   }
 }

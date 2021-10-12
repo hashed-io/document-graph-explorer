@@ -3,7 +3,7 @@
   //- q-btn.back(  icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
   //-   q-tooltip {{$t('pages.general.back')}}
   #Form
-  q-dialog(v-model='openDialog' ref='qDialog')
+  q-dialog(v-model='openDialog' ref='qDialog' @hide='closeModal()')
     q-card(flat).full-width
       q-toolbar
         q-toolbar-title
@@ -109,6 +109,7 @@
         q-tr.cursor-pointer(:props="props")
           q-td.column-responsive(
             v-for="col in props.cols"
+            data-cy='rowTD'
             :key="col.name"
             :props="props"
           ) {{col.value}}
@@ -188,7 +189,7 @@ export default {
   props: {
     dao: {
       type: Object,
-      required: true,
+      required: false,
       default: () => {
         return {}
       }
@@ -199,7 +200,7 @@ export default {
       this.loading = true
       this.showActions = true
       if (this.dao === null) {
-        this.showErrorMsg('The associated DAO has not been selected ')
+        await this.showErrorMsg('The associated DAO has not been selected ')
       } else {
         if (this.dao.hasOwnProperty('showActionsButtons')) {
           this.showActions = false
@@ -368,6 +369,9 @@ export default {
   methods: {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
     ...mapActions('dao', ['deployContract', 'initDao']),
+    closeModal () {
+      this.idEdit = null
+    },
     async saveStringIPFS () {
       if (this.stringIPFS) {
         this.$q.loading.show({
@@ -878,6 +882,7 @@ export default {
     },
     getKeyToEncrypt () {
       if (!this.keyToEncrypt) this.openCryptoDialog = true
+      this.$forceUpdate()
     },
     async decryptFileOnIPFS (typeCID) {
       if (!this.keyToEncrypt) {
