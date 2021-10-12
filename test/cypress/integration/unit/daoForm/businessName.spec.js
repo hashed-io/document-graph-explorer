@@ -1,9 +1,12 @@
 
 describe('Business Name rules', () => {
-  beforeEach(() => {
+  before(() => {
     cy.loginAnchor()
     cy.visit('/home')
+    // Change to fab action
     cy.dataCy('createNewDAOButton')
+      .click()
+    cy.dataCy('createDAOButton')
       .click()
   })
   it('Get error if Not contain DAO LLC [fail]', () => {

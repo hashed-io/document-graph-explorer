@@ -9,13 +9,15 @@ div
       .row.q-pt-md.justify-end
         q-fab(
           v-model="fab"
+          id='createNewDAOButton'
+          data-cy='createNewDAOButton'
           label='Create new DAO'
           color='primary'
           icon='keyboard_arrow_left'
           direction='left'
         )
-          q-fab-action(color='secondary' @click='onClickCreateDao' :label="$t('pages.daos.createDao')")
-          q-fab-action(color='secondary' @click='onClickCreateDaoSimple' :label="$t('pages.daos.createDaoSimple')")
+          q-fab-action(color='secondary' data-cy='createDAOButton' @click='onClickCreateDao' :label="$t('pages.daos.createDao')")
+          q-fab-action(color='secondary' data-cy='createDAOSimpleButton' @click='onClickCreateDaoSimple' :label="$t('pages.daos.createDaoSimple')")
 
 </template>
 <style lang="sass">
