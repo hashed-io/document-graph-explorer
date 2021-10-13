@@ -21,6 +21,15 @@ export default {
         q-item-section(avatar)
           q-icon(name="business")
         q-item-section {{ $t('menu.daos') }}
+      q-item(
+        v-if="isAuthenticated"
+        to="/daos"
+        clickable
+        v-ripple
+      )
+        q-item-section(avatar)
+          q-icon(name="list")
+        q-item-section {{ $t('menu.all_daos') }}
 </template>
 
 <style lang="stylus">

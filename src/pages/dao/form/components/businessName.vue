@@ -29,9 +29,12 @@ q-card(flat)
       @submit="onSubmit"
       class=q-gutter-md
       ref="myForm"
+      id='qForm'
     )
       div.q-pa-sm
       q-input(
+          ref='cal-modal'
+          data-cy="businessInput"
           outlined
           stack-label
           v-model="formData.businessName"
@@ -42,6 +45,9 @@ q-card(flat)
           q-icon(name='business')
       div.q-pa-sm
       q-input(
+          ref='confirmNameInput'
+          id='confirmNameInputID'
+          data-cy="confirmNameInput"
           stack-label
           outlined
           v-model="confirmName"
@@ -64,12 +70,21 @@ q-card(flat)
 
 </style>
 <script>
-import { validation } from '~/mixins/validation'
+// import { validation } from './mixins/validation'
+import { validation } from '../../../../mixins/validation'
 export default {
   name: 'businessname',
   mixins: [validation],
   props: {
-    bussinessObject: Object
+    bussinessObject: {
+      type: Object,
+      default: function () {
+        return {
+          businessName: null,
+          additionalDesination: 'DAO'
+        }
+      }
+    }
   },
   beforeMount () {
     this.matchData()
@@ -104,7 +119,7 @@ export default {
   methods: {
     matchData () {
       this.formData = Object.assign({}, this.bussinessObject)
-      this.confirmName = this.bussinessObject.businessName
+      this.confirmName = this.formData.businessName
     },
     changeStateError (state) {
       this.errorBusinessName = state

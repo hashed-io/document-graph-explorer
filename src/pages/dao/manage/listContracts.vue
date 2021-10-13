@@ -3,7 +3,7 @@
   //- q-btn.back(  icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
   //-   q-tooltip {{$t('pages.general.back')}}
   #Form
-  q-dialog(v-model='openDialog')
+  q-dialog(v-model='openDialog' ref='qDialog' @hide='closeModal()')
     q-card(flat).full-width
       q-toolbar
         q-toolbar-title
@@ -13,13 +13,13 @@
         q-form(ref='labelForm')
           .row
             .col-8.q-pr-xs
-              q-input(v-model='contract.label' outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
+              q-input(v-model='contract.label' data-cy='FieldNameInput'  outlined :readonly='fieldNameEditable' label='Field Name' :rules='[rules.required]')
             .col-4
-              q-select(v-model='contract.value[0]' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
+              q-select(v-model='contract.value[0]' data-cy='typeInput' ref='selectInput' @input='changeType()'  :options='options' emit-value map-options outlined label='Type' :rules='[rules.required]')
           .row
             .col-xs-12.col-sm-12
               div(v-if="contract.value[0] === 'time_point'")
-                q-input(outlined v-model='contract.value[1]' :rules='[rules.required]' )
+                q-input(outlined data-cy='timePointInput' v-model='contract.value[1]' :rules='[rules.required]' )
                   template(v-slot:append='')
                     q-icon.cursor-pointer(name='event')
                       q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
@@ -30,35 +30,34 @@
               div(v-else-if="contract.value[0] === 'file'")
                 .row.justify-center
                   .col.q-px-md.col-xs-10.col-sm-10
-                    q-file(v-model='contract.value[1]' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
+                    q-file(v-model='contract.value[1]' data-cy='fileInput' display-value='File' :loading='contract.loadingState' ref='file' id='file' @input='e => handleFileUpload(e)' filled bottom-slots label='Upload file' :rules='[rules.required]')
                       template(v-slot:before)
                         q-icon(name='folder_open')
                     .row
                       .col
-                        q-checkbox(left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encryptFile' color='primary')
+                        q-checkbox(left-label label="Encrypt?" data-cy='checkboxEncrypt' @input="getKeyToEncrypt" v-model='contract.encryptFile' color='primary')
                         q-btn(v-if='contract.encryptFile' size="sm" label='Decrypt' color="secondary" @click="decryptFileOnIPFS(contract.ipfs)")
                   .col.col-xs-2.col-sm-2
                     template(v-if="typeof(contract.ipfs) === 'string'")
                       q-icon(name="check" class="text-green" style="font-size: 2rem;")
                     template(v-if="contract.ipfs === undefined" )
                       q-icon(name="error" class="text-red" style="font-size: 2rem;")
-              q-input(v-else-if="contract.value[0] === 'asset'"  v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
-              q-input(v-else-if="contract.value[0] === 'name'"  v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
-              q-input(v-else-if="contract.value[0] === 'checksum256'"  v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
+              q-input(v-else-if="contract.value[0] === 'asset'" data-cy='assetInput' v-model='contract.value[1]'  outlined label='Amount' input-class="text-right"  :rules='[rules.required]')
+              q-input(v-else-if="contract.value[0] === 'name'" data-cy='nameInput' ref='input' v-model='contract.value[1]'  outlined label='Name'   :rules='[rules.required, rules.isEosAccount]')
+              q-input(v-else-if="contract.value[0] === 'checksum256'" data-cy='checkSumInput' v-model='contract.value[1]'  outlined label='checksum256'  :rules='[rules.required, rules.isChecksum]')
               template(v-else-if="contract.value[0] === 'string'")
                 .row
                   .col
-                    q-checkbox(left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
-                    q-checkbox(left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encrypt' color='primary')
-                q-input(v-model='contract.value[1]' outlined label='Value' :rules='[rules.required]')
+                    q-checkbox(data-cy='checkboxIPFS' left-label label='Save in IPFS' v-model='stringIPFS' color='primary')
+                    q-checkbox(data-cy='checkboxEncrypt' left-label label="Encrypt?" @input="getKeyToEncrypt" v-model='contract.encrypt' color='primary')
+                q-input(v-model='contract.value[1]' data-cy='stringInput' outlined label='Value' :rules='[rules.required]')
                   template(v-if="contract.encrypt" v-slot:append)
-                    q-icon.animated-icon.cursor-pointer(:name="contract.encrypt ? 'visibility' : 'visibility_off'" @click="decryptValue" v-show="contract.encrypt && contract.value[1]")
+                    q-icon.animated-icon.cursor-pointer(data-cy='visibilityInput' :name="contract.encrypt ? 'visibility' : 'visibility_off'" @click="decryptValue" v-show="contract.encrypt && contract.value[1]")
                       q-tooltip {{ contract.encrypt ? 'Encrypt value' : 'Decrypt value' }}
-              q-input(v-else v-model='contract.value[1]' counter outlined label='Value' :rules='[rules.required]')
+              q-input(v-else v-model='contract.value[1]' data-cy='inputLabel' counter outlined label='Value' :rules='[rules.required]')
             .row.justify-end.q-py-md
-              q-btn(v-if='idEdit === null' label='Add Field' color="primary" @click='addRow()')
-              q-btn(v-else label='Update Field' @click='updateRow()' color="primary")
-  #deployAgain
+              q-btn(v-if='idEdit === null' data-cy='addFieldButton' id='addFieldButton' label='Add Field' color="primary" @click='addRow()')
+              q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
     q-table.q-mb-sm(
       title='Contracts'
@@ -77,7 +76,6 @@
       separator='none'
       table-header-class="hdTable"
       :filter="params.search"
-      :filter-method="isEncrypted"
     )
       template(v-slot:no-data="{icon, message}")
         div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')
@@ -96,17 +94,25 @@
             q-icon(name='search')
       template(v-slot:top-left)
         .row.q-gutter-md
-            q-btn(v-if='showActions' label='Add Field' @click='openAddField()' color="primary")
-            q-btn(v-if='showActions' label='Save data' @click='modifiedData()' color="primary")
+            q-icon.animated-icon(
+              v-if='!showActions'
+              name="language"
+              v-ripple
+              size="sm"
+              color="positive"
+              @click="openWebSite()"
+            )
+              q-tooltip {{ $t('pages.daos.goWebsite') }}
+            q-btn(v-if='showActions' id='addFieldButton' label='Add Field' @click='openAddField()' color="primary")
+            q-btn(v-if='showActions' data-cy='saveDataButton' label='Save data' @click='modifiedData()' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
           q-td.column-responsive(
             v-for="col in props.cols"
+            data-cy='rowTD'
             :key="col.name"
             :props="props"
-          )
-            template(v-if="!isEncrypted(props.row.value[1])")
-              | {{col.value}}
+          ) {{col.value}}
             template(v-if="col.name == 'value' && (!(props.row.value[1].includes('file:') || props.row.ipfs))")
               q-popup-edit(v-model="props.row.value[1]" title='Details')
                 q-input(v-model="props.row.value[1]" readonly @keyup.enter.stop type='textarea').fitExpand
@@ -134,6 +140,7 @@
                   q-icon.q-px-md.animated-icon(
                     name='edit'
                     size='sm'
+                    data-cy='editButton'
                     color='positive'
                     @click='editRow(props.rowIndex)'
                   )
@@ -141,6 +148,7 @@
                   q-icon.q-pr-md.animated-icon(
                     name='delete'
                     v-ripple
+                    data-cy='deleteButton'
                     size='sm'
                     color='negative'
                     @click='deleteRow(props.row,props.rowIndex)'
@@ -164,9 +172,9 @@
   height: auto
 </style>
 <script>
-import BrowserIpfs from '~/services/BrowserIpfs'
-import { ContractsApi } from '~/services'
-import { validation } from '~/mixins/validation'
+import BrowserIpfs from 'src/services/BrowserIpfs.js'
+import { ContractsApi } from 'src/services'
+import { validation } from 'src/mixins/validation'
 import { mapActions } from 'vuex'
 import { date, QSpinnerPuff } from 'quasar'
 import CryptoDialog from '~/components/crypto-dialog'
@@ -181,7 +189,7 @@ export default {
   props: {
     dao: {
       type: Object,
-      required: true,
+      required: false,
       default: () => {
         return {}
       }
@@ -192,7 +200,7 @@ export default {
       this.loading = true
       this.showActions = true
       if (this.dao === null) {
-        this.showErrorMsg('The associated DAO has not been selected ')
+        await this.showErrorMsg('The associated DAO has not been selected ')
       } else {
         if (this.dao.hasOwnProperty('showActionsButtons')) {
           this.showActions = false
@@ -227,9 +235,6 @@ export default {
     }
   },
   computed: {
-    daosFreeze () {
-      return Object.freeze(this.daos.rows.slice(0, this.pageSize * (this.nextPage - 1)))
-    }
   },
   data () {
     return {
@@ -364,6 +369,9 @@ export default {
   methods: {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
     ...mapActions('dao', ['deployContract', 'initDao']),
+    closeModal () {
+      this.idEdit = null
+    },
     async saveStringIPFS () {
       if (this.stringIPFS) {
         this.$q.loading.show({
@@ -611,6 +619,8 @@ export default {
         data.ipfs = data.value[1]
         let dataIPFS = await BrowserIpfs.getFromJson(data.value[1])
         data.value[1] = dataIPFS.data
+      } else {
+        this.stringIPFS = false
       }
       if (data.value[0] === 'string' && data.value[1].substr(-1) === '=') data.encrypt = true
       this.contract = JSON.parse(JSON.stringify(data))
@@ -667,12 +677,13 @@ export default {
         } else {
           if ((flagCheckbox && inIndex >= 0) || (this.contract.encrypt && inIndex >= 0) || (this.contract.encryptFile && inIndex >= 0)) {
             this.updateLabels.splice(inIndex, 1, JSON.parse(JSON.stringify(this.contract)))
-          } else if ((flagCheckbox && inIndex === -1) || (this.contract.encryptFile && inIndex === -1) || (this.contract.encrypt === -1)) {
+          } else if ((flagCheckbox && inIndex === -1) || (this.contract.encryptFile && inIndex === -1) || (this.contract.encrypt && inIndex === -1)) {
             this.updateLabels.push(JSON.parse(JSON.stringify(this.contract)))
           }
         }
       }
       this.showSuccessMsg('Label Update')
+
       this.manageContract.splice(index, 1, JSON.parse(JSON.stringify(this.contract)))
       if (this.manageContract[index].value[0] === 'file') {
         this.manageContract[index].value[1] = this.manageContract[index].ipfs
@@ -801,10 +812,12 @@ export default {
           })
         }
         this.loading = false
-        // this.showSuccessMsg('Contracts loaded success')
+        if (this.dao.hasOwnProperty('showActionsButtons')) {
+          this.filterEncryptData()
+        }
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
-        console.log(e.json.error.details[0].message)
+        // console.log(e.json.error.details[0].message)
         // this.showErrorMsg(e.json.error.details[0].message)
       }
     },
@@ -869,6 +882,7 @@ export default {
     },
     getKeyToEncrypt () {
       if (!this.keyToEncrypt) this.openCryptoDialog = true
+      this.$forceUpdate()
     },
     async decryptFileOnIPFS (typeCID) {
       if (!this.keyToEncrypt) {
@@ -919,12 +933,12 @@ export default {
         reader.readAsText(file)
       })
     },
-    isEncrypted (rows, terms) {
-      if ((rows.substr(-1) === '=')) {
-      } else {
-        return rows
-      }
-    }
+    async filterEncryptData () {
+      const isEncrypted = (item) => item.value[1].substr(-1) !== '='
+      let data = JSON.parse(JSON.stringify(this.manageContract))
+      this.manageContract = data.filter(isEncrypted)
+    },
+    openWebSite () {}
   }
 }
 </script>

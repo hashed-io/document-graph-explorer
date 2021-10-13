@@ -1,0 +1,104 @@
+name: DAO LLC WebApp
+
+on:
+  push:
+    branches:
+    - staging
+    - production
+jobs:
+  extract-branch:
+    name: Determine the branch we are working on
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Extract branch name from a push event
+        if: github.event_name == 'push'
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      - name: Extract branch name from a pull request event
+        if: github.event_name == 'pull_request'
+        run: echo "BRANCH_NAME=${GITHUB_BASE_REF}" >> $GITHUB_ENV
+      - name: Echo branch name
+        run: echo $BRANCH_NAME
+      - name: Output branch name
+        run: echo "##[set-output name=branch;]$(echo ${BRANCH_NAME})"
+        id: output-branch-name
+    outputs:
+      branch: ${{steps.output-branch-name.outputs.branch}}
+  deploy:
+    name: Deploy DAO LLC WebApp
+    needs: extract-branch
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    env:
+      BRANCH_NAME: ${{needs.extract-branch.outputs.branch}}
+    steps:
+      - name: Branch Name to uppercase
+        id: branch-name
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ${{ env.BRANCH_NAME }}
+      # - name: Test Action
+      #   run: echo $BUCKET_NAME
+      #   env:
+      #     WEBSITE_BUCKET_STAGING: ${{ secrets.WEBSITE_BUCKET_STAGING }}
+      #     WEBSITE_BUCKET_PRODUCTION: ${{ secrets.WEBSITE_BUCKET_PRODUCTION }}
+      #     BUCKET_NAME: ${{secrets[format('WEBSITE_BUCKET_{0}',steps.branch-name.outputs.uppercase)]}}
+      #     #BUCKET_NAME: ${{env[format('WEBSITE_BUCKET_{0}',steps.branch-name.outputs.uppercase)]}}
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '15'
+      - name: Install WebApp dependencies
+        run: yarn install
+      - name: Build for staging
+        run: yarn build
+        if: env.BRANCH_NAME == 'staging'
+        env:
+          APP_NAME: '"DAO LLC Staging"'
+          NETWORK_CHAIN_ID: '"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"'
+          NETWORK_HOST: '"test.telos.kitchen"'
+          NETWORK_PORT: '443'
+          NETWORK_PROTOCOL: '"https"'
+          BLOCKCHAIN_EXPLORER: '"https://telos-test.bloks.io"'
+          CONTRACT_DAO: "'daoregistry1'"
+          CONTRACT_DOC: "'daoinfor1111'"
+          IPFS_URL: '"https://ipfs.infura.io:5001"'
+          CODE_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1krXIiI6qiKhq1F-kZyd7dZZvRpNJp4Sn"'
+          ABI_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1L9A1PZFqSATiKwLathsEpOIvU31WmW8A"'
+      - name: Build for prod
+        run: yarn build
+        if: env.BRANCH_NAME == 'production'
+        env:
+          APP_NAME: '"DAO LLC"'
+          NETWORK_CHAIN_ID: '"4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"'
+          NETWORK_HOST: '"telos.caleos.io"'
+          NETWORK_PORT: '443'
+          NETWORK_PROTOCOL: '"https"'
+          BLOCKCHAIN_EXPLORER: '"https://telos.bloks.io"'
+          CONTRACT_DAO: "'daollc.tk'"
+          CONTRACT_DOC: "'daoinfor1111'"
+          IPFS_URL: '"https://ipfs.infura.io:5001"'
+          CODE_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1krXIiI6qiKhq1F-kZyd7dZZvRpNJp4Sn"'
+          ABI_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1L9A1PZFqSATiKwLathsEpOIvU31WmW8A"'
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GOOGLE_CREDENTIALS }}
+          export_default_credentials: true
+      - name: Copy website to bucket
+        run: gsutil -m rsync -R . gs://$BUCKET_NAME
+        working-directory: ./dist/spa
+        env:
+          BUCKET_NAME: ${{secrets[format('WEBSITE_BUCKET_{0}',steps.branch-name.outputs.uppercase)]}}
+      - name: Invalidate CDN cache
+        run: gcloud compute url-maps invalidate-cdn-cache $URL_MAP_NAME --path=/*
+        env:
+          URL_MAP_NAME: ${{secrets[format('URL_MAP_{0}',steps.branch-name.outputs.uppercase)]}}
+          
