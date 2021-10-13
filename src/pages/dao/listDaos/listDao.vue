@@ -51,6 +51,7 @@
               size="sm"
               color="blue"
               @click="onClickEdit(props.row)"
+              data-cy="editContracts"
             )
               q-tooltip {{ $t('common.buttons.edit') }}
           template(v-if="col.name == 'editDao'")
@@ -223,8 +224,12 @@ export default {
       // this.$router.push({ name: 'daoForm' })
     },
     async onClickSee (row) {
-      let url = 'https://ipfs.io/ipfs/' + row.ipfs
-      window.open(url, '_blank')
+      if (/^bafk([a-zA-Z0-9]){55}$/.test(row.ipfs)) {
+        let url = 'https://ipfs.io/ipfs/' + row.ipfs
+        window.open(url, '_blank')
+      } else {
+        window.open(row.ipfs, '_blank')
+      }
     }
   }
 }

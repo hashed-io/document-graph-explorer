@@ -79,7 +79,8 @@ export default {
     },
     daos: {
       titleForm: 'DAOs created by your account',
-      createDao: 'Create new DAO',
+      createDao: 'Using Wyoming steps',
+      createDaoSimple: 'Basic setup',
       nodata: 'There aren\'t any DAOs associated with your account',
       deployDAOFailure: 'Failure on deploy DAO Failure',
       initDAOFailure: 'Failure on init DAO',
@@ -87,6 +88,9 @@ export default {
       creator: 'Creator',
       goWebsite: 'Go to website',
       seeDetails: 'See details'
+    },
+    daoSimple: {
+      text: 'Basic setup of the create a DAO LLC '
     }
   }
 }

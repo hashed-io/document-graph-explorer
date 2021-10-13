@@ -42,6 +42,7 @@ export default {
         :key="wallet.getStyle().text"
         v-ripple
         :style="{ background: wallet.getStyle().background, color: wallet.getStyle().textColor }"
+        data-cy="loginButton"
         v-if="wallet.shouldRender()"
       )
         q-item-section.cursor-pointer(

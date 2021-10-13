@@ -80,7 +80,7 @@ export default {
           name: 'dao',
           label: this.$t('pages.daos.daoName'),
           field: row => '',
-          // field: row => ''row.information.dao_name,
+          // field: row => row.information.dao_name,
           align: 'center',
           sortable: true
         },
@@ -124,6 +124,7 @@ export default {
           this.loading = true
           let newRows = await this.getAllDaos({ ...this.params })
           this.daos.rows = this.daos.rows.concat(newRows.rows)
+          console.log(this.daos.rows)
           this.daos.more = newRows.more
           this.nextPage = this.nextPage + 1
           this.loading = false

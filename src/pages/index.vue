@@ -1,8 +1,8 @@
 <template lang="pug">
-  q-page.flex.column
+  .flex.column
     .main-splash
-      img.imgSplash(src="../app-splashscreen.png")
-    div.padding
+      img.imgSplash(src="../app-splashscreen.png" data-cy="imgSplash")
+    div.padding(data-cy="instructions")
       .row.text-body2(align='justify').q-pb-md
         span We’ve created this tool is to allow you to upload a copy of the official DAO LLC form to a public smart contract and help you comply with the DAO LLC requirement of generating a smart contract identifier required in Step 6 -
           a(href='https://wyobiz.wyo.gov/Business/RegistrationLLC.aspx' target='_blank')
@@ -18,11 +18,11 @@
             strong
               | Step 1:
             .q-pl-md
-              a(v-if='$q.platform.is.android' href='https://play.google.com/store/apps/details?id=com.greymass.anchor&hl=en&gl=US' target='_blank') Download Anchor on Android
-              a(v-if='$q.platform.is.ios' href='https://apps.apple.com/us/app/anchor-wallet/id1487410877' target='_blank') Download Anchor on iOS
-              a(v-if='$q.platform.is.linux' href='https://github.com/greymass/anchor/releases/download/v1.2.9/linux-anchor-wallet-1.2.9-amd64.deb' target='_blank') Download Anchor on Linux
-              a(v-if='$q.platform.is.mac' href='https://github.com/greymass/anchor/releases/download/v1.2.9/mac-anchor-wallet-1.2.9-x64.dmg' target='_blank') Download Anchor on Mac
-              a(v-if='$q.platform.is.win' href='https://github.com/greymass/anchor/releases/download/v1.2.9/win-anchor-wallet-1.2.9.exe' target='_blank') Download Anchor on Windows
+              a(data-cy='linkAnchor' v-if='$q.platform.is.android' href='https://play.google.com/store/apps/details?id=com.greymass.anchor&hl=en&gl=US' target='_blank') Download Anchor on Android
+              a(data-cy='linkAnchor' v-if='$q.platform.is.ios' href='https://apps.apple.com/us/app/anchor-wallet/id1487410877' target='_blank') Download Anchor on iOS
+              a(data-cy='linkAnchor' v-if='$q.platform.is.linux' href='https://github.com/greymass/anchor/releases/download/v1.2.9/linux-anchor-wallet-1.2.9-amd64.deb' target='_blank') Download Anchor on Linux
+              a(data-cy='linkAnchor' v-if='$q.platform.is.mac' href='https://github.com/greymass/anchor/releases/download/v1.2.9/mac-anchor-wallet-1.2.9-x64.dmg' target='_blank') Download Anchor on Mac
+              a(data-cy='linkAnchor' v-if='$q.platform.is.win' href='https://github.com/greymass/anchor/releases/download/v1.2.9/win-anchor-wallet-1.2.9.exe' target='_blank') Download Anchor on Windows
               | &nbsp;and Create your Keys and Account
         .row.text-body2
             strong
@@ -44,7 +44,9 @@
       .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-xl
         div
           q-btn.full-width.q-mb-lg(
-            to="/login"
+            @click='redirectTo()'
+            id='redirectButton'
+            ref='redirectButtonRef'
             color="primary"
             :label="$t('pages.index.buttons.login')"
             icon="app:login"
@@ -67,7 +69,12 @@
 </template>
 <script>
 export default {
-  name: 'page-index'
+  name: 'pageIndex',
+  methods: {
+    redirectTo () {
+      this.$router.push('/login')
+    }
+  }
 }
 </script>
 
