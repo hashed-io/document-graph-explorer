@@ -17,7 +17,7 @@ div
     template(v-slot:body-cell-actions="props")
       q-td(:props="props")
         q-btn(label="Buy token" size="sm" color="dark" @click="acceptOrder(props.row)")
-  q-dialog(v-model="createOrder" persistent)
+  q-dialog(v-model="createOrder" persistent :position='positionDialog' seamless)
     CreateOrder(@close="createOrder = false" :order="order")
 </template>
 
@@ -31,6 +31,7 @@ export default {
   },
   data () {
     return {
+      positionDialog: 'bottom',
       createOrder: false,
       order: undefined,
       loading: false,
@@ -91,6 +92,16 @@ export default {
           sortable: true
         }
       ]
+    }
+  },
+  mounted () {
+    for (let i = 0; i < 20; i++) {
+      this.orders.rows.push({
+        dao: 'Dao Example',
+        token: 'Dao Token',
+        amount: 89,
+        price: '90.00 USD'
+      })
     }
   },
   computed: {

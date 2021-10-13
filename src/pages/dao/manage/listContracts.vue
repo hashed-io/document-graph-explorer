@@ -104,7 +104,7 @@
             )
               q-tooltip {{ $t('pages.daos.goWebsite') }}
             q-btn(v-if='showActions' id='addFieldButton' label='Add Field' @click='openAddField()' color="primary")
-            q-btn(v-if='showActions' data-cy='saveDataButton' label='Save data' @click='modifiedData()' color="primary")
+            q-btn(v-if='showActions' data-cy='saveDataButton' label='Save data' @click='modifiedData()' v-show='checkContractsModified' color="primary")
       template(v-slot:body="props")
         q-tr.cursor-pointer(:props="props")
           q-td.column-responsive(
@@ -235,6 +235,9 @@ export default {
     }
   },
   computed: {
+    checkContractsModified () {
+      return (this.updateLabels.length > 0 || this.newLabels.length > 0 || this.deleteLabels.length > 0)
+    }
   },
   data () {
     return {

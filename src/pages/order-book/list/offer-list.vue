@@ -7,6 +7,7 @@ div
     :columns="columns",
     :data="ordersFreeze"
     virtual-scroll
+    :rows-per-page-options="[0]"
     no-data-label="There aren't any Orders"
     ref="table"
     class="sticky-virtscroll-table"
@@ -41,7 +42,19 @@ export default {
       orders: {
         rows: [
           {
-            buyer: 'Daniel Poot',
+            buyer: 'Daniel Poot 2',
+            token: 'Dao token',
+            amount: 9,
+            price: '90.00 USD'
+          },
+          {
+            buyer: 'Daniel Poot 2',
+            token: 'Dao token',
+            amount: 9,
+            price: '90.00 USD'
+          },
+          {
+            buyer: 'Daniel Poot 2',
             token: 'Dao token',
             amount: 9,
             price: '90.00 USD'
@@ -96,6 +109,7 @@ export default {
       return Object.freeze(this.orders.rows.slice(0, this.pageSize * (this.nextPage - 1)))
     }
   },
+
   methods: {
     onBuy (row) {
       this.selectedOrder = row

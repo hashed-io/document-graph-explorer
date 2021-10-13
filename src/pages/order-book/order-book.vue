@@ -2,10 +2,13 @@
 #container
   .q-gutter-xs
     q-btn(color="brown" label="Create order" @click="createOrder = true")
-  q-dialog(v-model="createOrder" persistent)
+  q-dialog(v-model="createOrder" :position='positionDialog' seamless)
     CreateOrder(@close="createOrder = false")
-  BuyOrdersList.q-mt-md
-  OrdersList.q-mt-md
+  .row.q-col-gutter-md
+    .col-6
+      BuyOrdersList.q-mt-md
+    .col-6
+      OrdersList.q-mt-md
 </template>
 
 <script>
@@ -23,7 +26,8 @@ export default {
   },
   data () {
     return {
-      createOrder: false
+      createOrder: false,
+      positionDialog: 'bottom'
     }
   }
 }

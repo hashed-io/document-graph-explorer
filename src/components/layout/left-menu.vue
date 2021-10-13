@@ -13,7 +13,6 @@ export default {
   q-scroll-area.fit
     q-list
       q-item(
-        v-if="isAuthenticated"
         to="/home"
         clickable
         v-ripple
@@ -22,7 +21,6 @@ export default {
           q-icon(name="business")
         q-item-section {{ $t('menu.daos') }}
       q-item(
-        v-if="isAuthenticated"
         to="/daos"
         clickable
         v-ripple
