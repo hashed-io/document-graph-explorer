@@ -1,0 +1,58 @@
+<template lang="pug">
+q-card(flat).q-pb-md.full-width
+  q-toolbar
+    q-toolbar-title
+      .text Offer #1
+    q-btn(flat round dense icon="close" @click="$emit('close')")
+  q-card-section.q-pb-lg
+    .row
+      .col
+        .row
+          .col-6
+            .text-bold Buyer:
+          .col
+            .text {{ order.buyer }}
+      .col
+        .row
+          .col-4
+            .text-bold Date:
+          .col
+            .text Octuber 08, 2021
+    .row
+      .col
+        .row
+          .col-6
+            .text-bold Amount to buy:
+          .col
+            .text {{ order.amount }} {{ order.token }}
+      .col
+        .row
+          .col-4
+            .text-bold Price:
+          .col
+            .text {{ order.price }}
+  q-card-actions(align="right")
+    q-btn(color="primary" label="Accept Offer" @click="onAcceptOrder")
+</template>
+
+<script>
+export default {
+  name: 'accept-order',
+  props: {
+    order: {
+      type: Object,
+      require: true
+    }
+  },
+  methods: {
+    onAcceptOrder () {
+      console.log('Accept Order')
+      this.$emit('close')
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

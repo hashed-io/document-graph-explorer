@@ -30,6 +30,15 @@ export default {
         q-item-section(avatar)
           q-icon(name="list")
         q-item-section {{ $t('menu.all_daos') }}
+      q-item(
+        to="/order-book"
+        clickable
+        v-ripple
+      )
+        q-item-section(avatar)
+          q-icon(name="info")
+        q-item-section
+          div Order Book
 </template>
 
 <style lang="stylus">
