@@ -1,9 +1,10 @@
 <template lang="pug">
 div
+  div(align='center').text-h5.q-pb-md Sell orders
   q-table(
-    title="Orders"
     flat
     dense
+    bordered
     :columns="columns",
     :data="ordersFreeze"
     virtual-scroll
@@ -12,17 +13,22 @@ div
     class="sticky-virtscroll-table"
     table-header-class="hdTable"
     :loading='loading'
+    :pagination.sync="initialPagination"
     :hide-pagination="true"
+    separator='none'
+    @row-click='acceptOrder'
   )
     template(v-slot:body-cell-actions="props")
       q-td(:props="props")
-        q-btn(label="Buy token" size="sm" color="dark" @click="acceptOrder(props.row)")
+        q-icon(name='price_check' label="Buy token" size="sm" color="green" @click="acceptOrder(props.row)")
+          q-tooltip Buy Token
   q-dialog(v-model="createOrder" persistent :position='positionDialog' seamless)
     CreateOrder(@close="createOrder = false" :order="order")
 </template>
 
 <script>
 import CreateOrder from '../read/create-order'
+import Faker from 'faker'
 
 export default {
   name: 'buy-list',
@@ -35,38 +41,30 @@ export default {
       createOrder: false,
       order: undefined,
       loading: false,
-      pageSize: 5,
+      pageSize: 12,
       nextPage: 2,
       selectedOrder: undefined,
       initialPagination: {
         rowsPerPage: 0
       },
       orders: {
-        rows: [
-          {
-            dao: 'Dao Example',
-            token: 'Dao Token',
-            amount: 89,
-            price: '90.00 USD'
-          }
-        ],
+        rows: [],
         more: true
       },
       columns: [
-        {
-          name: 'dao',
-          label: this.$t('pages.daos.daoName'),
-          field: row => row.dao,
-          // field: row => ''row.information.dao_name,
-          align: 'center',
-          sortable: true
-        },
+        // {
+        //   name: 'actions',
+        //   label: 'actions',
+        //   align: 'center',
+        //   sortable: true
+        // },
         {
           name: 'token',
           label: 'Token',
           field: row => row.token,
           // field: row => ''row.information.dao_name,
-          align: 'center',
+          classes: 'text-green text-bold column-order-book',
+          align: 'left',
           sortable: true
         },
         {
@@ -74,21 +72,26 @@ export default {
           label: 'Amount',
           field: row => row.amount,
           // field: row => ''row.information.dao_name,
-          align: 'center',
+          classes: 'text-bold',
+          align: 'left',
+          sortable: true
+        },
+        {
+          name: 'dao',
+          label: this.$t('pages.daos.daoName'),
+          field: row => row.dao,
+          // field: row => ''row.information.dao_name,
+          classes: 'column-order-book',
+          align: 'left',
           sortable: true
         },
         {
           name: 'price',
           label: 'Price',
-          field: row => row.price,
+          field: row => '$' + row.price,
+          classes: 'text-green text-bold',
           // field: row => ''row.information.dao_name,
-          align: 'center',
-          sortable: true
-        },
-        {
-          name: 'actions',
-          label: 'actions',
-          align: 'center',
+          align: 'right',
           sortable: true
         }
       ]
@@ -97,10 +100,10 @@ export default {
   mounted () {
     for (let i = 0; i < 20; i++) {
       this.orders.rows.push({
-        dao: 'Dao Example',
-        token: 'Dao Token',
-        amount: 89,
-        price: '90.00 USD'
+        dao: Faker.company.companyName(),
+        token: Faker.finance.currencyName(),
+        amount: Faker.datatype.float(),
+        price: Faker.finance.amount()
       })
     }
   },
@@ -110,7 +113,7 @@ export default {
     }
   },
   methods: {
-    acceptOrder (row) {
+    acceptOrder (evt, row) {
       this.order = row
       this.createOrder = true
     }

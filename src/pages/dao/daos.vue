@@ -13,8 +13,8 @@ div
           data-cy='createNewDAOButton'
           label='Create new DAO'
           color='primary'
-          icon='keyboard_arrow_left'
-          direction='left'
+          :icon="$q.platform.is.mobile? 'keyboard_arrow_down' : 'keyboard_arrow_left'"
+          :direction="$q.platform.is.mobile? 'down' : 'left' "
         )
           q-fab-action(color='secondary' data-cy='createDAOButton' @click='onClickCreateDao' :label="$t('pages.daos.createDao')")
           q-fab-action(color='secondary' data-cy='createDAOSimpleButton' @click='onClickCreateDaoSimple' :label="$t('pages.daos.createDaoSimple')")

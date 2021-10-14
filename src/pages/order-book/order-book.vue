@@ -1,14 +1,15 @@
 <template lang="pug">
 #container
   .q-gutter-xs
-    q-btn(color="brown" label="Create order" @click="createOrder = true")
-  q-dialog(v-model="createOrder" :position='positionDialog' seamless)
-    CreateOrder(@close="createOrder = false")
-  .row.q-col-gutter-md
-    .col-6
-      BuyOrdersList.q-mt-md
-    .col-6
-      OrdersList.q-mt-md
+    .row.q-col-gutter-sm
+      .col-xs-12.col-sm-6
+        BuyOrdersList.q-mt-md
+      .col-xs-12.col-sm-6
+        OrdersList.q-mt-md
+    .row.q-py-md
+      q-btn(color="green" label="Create order" @click="createOrder = true")
+    q-dialog(v-model="createOrder" :position='positionDialog' seamless)
+      CreateOrder(@close="createOrder = false")
 </template>
 
 <script>
