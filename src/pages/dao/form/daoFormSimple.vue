@@ -1,16 +1,35 @@
 <template lang='pug'>
-  q-card
-    q-card-section.text-subtitle1.bg-primary.text-white
-      | Create DAO
-    div.text-subtitle2.q-pt-md.q-px-md {{$t('pages.daoSimple.text')}}
-    q-form(@submit='onSubmit' ref="daoForm").row.q-col-gutter-md.q-px-md
-      .col-6
-        q-input(v-model='daoName' label='Signed by' ref='daoNameInput' :rules='[rules.required]')
-      .col-6
-        q-input(v-model='website' label='Web site of DAO' ref='websiteInput')
-    .row.q-pa-md
-      .col(style='text-align:end;')
-        q-btn(type="submit" @click='onSubmit' dense color="primary" label="Finish & upload to blockchain" )
+q-card
+  q-card-section.text-subtitle1.bg-primary.text-white
+    | Create DAO
+  .text-subtitle2.q-pt-md.q-px-md {{ $t('pages.daoSimple.text') }}
+  q-form.row.q-col-gutter-md.q-px-md(@submit="onSubmit", ref="daoForm")
+    .col-4
+      q-input(
+        v-model="accountLogged"
+        label="Signed by"
+        ref='signedInput'
+        data-cy='signedInput'
+        disabled
+      )
+    .col-4
+      q-input(
+        v-model="daoName",
+        label="DAO Name",
+        ref="daoNameInput",
+        :rules="[rules.required]"
+      )
+    .col-4
+      q-input(v-model="website", label="Web site of DAO", ref="websiteInput")
+  .row.q-pa-md
+    .col(style="text-align: end")
+      q-btn(
+        type="submit",
+        @click="onSubmit",
+        dense,
+        color="primary",
+        label="Finish & upload to blockchain"
+      )
 </template>
 
 <script>
@@ -23,6 +42,7 @@ export default {
   mixins: [validation],
   data () {
     return {
+      accountLogged: undefined,
       flagAbi: undefined,
       daoName: undefined,
       website: undefined
@@ -30,12 +50,18 @@ export default {
   },
   mounted () {
     this.daoName = this.account
+    this.accountLogged = this.account
   },
   computed: {
     ...mapState('accounts', ['account'])
   },
   methods: {
-    ...mapActions('dao', ['createDaoSimple', 'updateDaoSimple', 'deployContractSimple', 'initDaoSimple']),
+    ...mapActions('dao', [
+      'createDaoSimple',
+      'updateDaoSimple',
+      'deployContractSimple',
+      'initDaoSimple'
+    ]),
     async onSubmit () {
       if (await this.$refs.daoForm.validate()) {
         await this.callCreateDAO()
@@ -44,9 +70,11 @@ export default {
       }
     },
     async verifiedAbiExists () {
-      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
       for (let i = 0; i <= 5; i++) {
-        let response = await this.$store.$defaultApi.rpc.get_abi(this.daoName.toLowerCase())
+        let response = await this.$store.$defaultApi.rpc.get_abi(
+          this.daoName.toLowerCase()
+        )
         if (response.hasOwnProperty('abi')) {
           this.flagAbi = true
           break
@@ -69,7 +97,7 @@ export default {
           spinnerSize: '15em',
           spinner: QSpinnerPuff
         })
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise((resolve) => setTimeout(resolve, 200))
         await this.createDaoSimple({
           dao: this.daoName.toLowerCase(),
           creator: this.account,
@@ -92,14 +120,16 @@ export default {
           spinnerSize: '15em',
           spinner: QSpinnerPuff
         })
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise((resolve) => setTimeout(resolve, 200))
         await this.deployContractSimple({
           accountName: this.daoName.toLowerCase()
         })
         this.$q.loading.hide()
       } catch (e) {
         this.$q.loading.hide()
-        this.showErrorMsg('An error ocurred while the contract was deployed. ' + e)
+        this.showErrorMsg(
+          'An error ocurred while the contract was deployed. ' + e
+        )
       }
     },
     async initializedDao () {
@@ -122,7 +152,9 @@ export default {
         } else {
           console.log('NOT Found ABI')
           this.$q.loading.hide()
-          this.showErrorMsg('An error occurred when the smart contract was deployed')
+          this.showErrorMsg(
+            'An error occurred when the smart contract was deployed'
+          )
           this.$router.push({ name: 'daos' })
         }
         this.$q.loading.hide()
@@ -132,13 +164,10 @@ export default {
       }
     },
     async updateDAO () {
-      this.updateDaoSimple({
-
-      })
+      this.updateDaoSimple({})
     }
   }
 }
 </script>
 <style>
-
 </style>

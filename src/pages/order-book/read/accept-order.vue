@@ -1,5 +1,5 @@
 <template lang="pug">
-q-card(flat).q-pb-md.full-width
+q-card(flat bordered).q-pb-md.full-width
   q-toolbar
     q-toolbar-title
       .text Offer #1
@@ -36,6 +36,7 @@ q-card(flat).q-pb-md.full-width
 </template>
 
 <script>
+import { QSpinnerGrid } from 'quasar'
 export default {
   name: 'accept-order',
   props: {
@@ -45,8 +46,14 @@ export default {
     }
   },
   methods: {
-    onAcceptOrder () {
+    async onAcceptOrder () {
       console.log('Accept Order')
+      this.$q.loading.show({
+        message: 'Processing the order...',
+        spinner: QSpinnerGrid
+      })
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      this.$q.loading.hide()
       this.$emit('close')
     }
   }

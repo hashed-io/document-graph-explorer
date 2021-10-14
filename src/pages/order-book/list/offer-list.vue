@@ -18,7 +18,7 @@ div
     template(v-slot:body-cell-actions="props")
       q-td(:props="props")
         q-btn(label="Accept order" size="sm" color="dark" @click="onBuy(props.row)")
-  q-dialog(v-model="acceptOrder" persistent)
+  q-dialog(v-model="acceptOrder" seamless position="bottom")
         AcceptOrder(@close="acceptOrder = false" :order="selectedOrder")
 </template>
 

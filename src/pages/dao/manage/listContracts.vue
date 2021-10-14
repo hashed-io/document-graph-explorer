@@ -20,13 +20,18 @@
             .col-xs-12.col-sm-12
               div(v-if="contract.value[0] === 'time_point'")
                 q-input(outlined data-cy='timePointInput' v-model='contract.value[1]' :rules='[rules.required]' )
-                  template(v-slot:append='')
+                  template(v-slot:prepend)
                     q-icon.cursor-pointer(name='event')
                       q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                        q-date(v-model='date', today-btn, mask='YYYY/MM/DD' @input='changesDate()')
+                        q-date(v-model='date', today-btn, mask='YYYY-MM-DD HH:mm' @input='changesDate()')
                           .row.items-center.justify-end
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
-
+                  template(v-slot:append)
+                    q-icon(name='access_time' class='cursor-pointer')
+                      q-popup-proxy(transition-show="scale" transition-hide="scale")
+                        q-time(v-model="date" mask="YYYY-MM-DD HH:mm" format24 @input='changesDate()')
+                          div(class='row items-center justify-end')
+                            q-btn(v-close-popup label='close' color='primary' flat)
               div(v-else-if="contract.value[0] === 'file'")
                 .row.justify-center
                   .col.q-px-md.col-xs-10.col-sm-10
@@ -176,7 +181,7 @@ import BrowserIpfs from 'src/services/BrowserIpfs.js'
 import { ContractsApi } from 'src/services'
 import { validation } from 'src/mixins/validation'
 import { mapActions } from 'vuex'
-import { date, QSpinnerPuff } from 'quasar'
+import { QSpinnerPuff } from 'quasar'
 import CryptoDialog from '~/components/crypto-dialog'
 import Encrypt from '~/utils/EncryptUtil'
 
@@ -573,18 +578,15 @@ export default {
       var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
         if (deleteLabels.length > 0 && values.length > 0) {
-          console.log('TWO')
           await this.DocumentApi.StoreAndDeleteEntry({
             values,
             deleteLabels
           })
         } else if (deleteLabels.length > 0 && values.length === 0) {
-          console.log('Only delete')
           await this.DocumentApi.DelEntry({
             deleteLabels
           })
         } else if (deleteLabels.length === 0 && values.length > 0) {
-          console.log('Only store')
           await this.DocumentApi.StoreEntry({
             values
           })
@@ -699,9 +701,10 @@ export default {
     },
     //
     changesDate () {
-      const arr = this.date.split('/')
-      let dateFormatted = arr[1] + '/' + arr[2] + '/' + arr[0]
-      this.contract.value[1] = dateFormatted
+      // const arr = this.date.split('/')
+      // let dateFormatted = arr[1] + '/' + arr[2] + '/' + arr[0]
+      // this.contract.value[1] = dateFormatted
+      this.contract.value[1] = this.date
       this.$forceUpdate()
     },
     async handleFileUpload (e) {
@@ -711,7 +714,6 @@ export default {
         this.loading = true
         if (this.contract.encryptFile) e = await Encrypt.encryptFile(e, this.keyToEncrypt, e.name.split('.')[1])
         var typeCid = await BrowserIpfs.store(e)
-        console.log(typeCid)
       } catch (e) {
         self.showErrorMsg('Error ocurred while file was uploaded. ' + e)
         console.error(e)
@@ -750,11 +752,6 @@ export default {
         if ((entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toString()
           entry.value[1] = entry.value[1].toLowerCase()
-          console.log(entry.value[1])
-        }
-        if (entry.value[0] === 'asset') {
-          // entry.value[1] = entry.value[1].toString()
-          console.log(entry.value[1])
         }
         if (entry.ipfs === undefined) {
           delete entry.ipfs
@@ -775,7 +772,6 @@ export default {
         }
         delete entry.loadingState
       })
-      // console.log(rawData)
       this.saveData(rawData)
     },
     async loadData () {
@@ -795,12 +791,7 @@ export default {
             if (counter > 1) {
               let type = element.value[0]
               switch (type) {
-                case 'time_point':
-                  const timeStamp = new Date(element.value[1])
-                  element.value[1] = date.formatDate(timeStamp, 'MM/DD/YYYY')
-                  break
                 case 'string':
-                  console.log(element.value[1])
                   if (element.value[1].includes('file:')) {
                     element.value[0] = 'file'
                     element.ipfs = element.value[1]
@@ -820,12 +811,16 @@ export default {
         }
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
-        // console.log(e.json.error.details[0].message)
         // this.showErrorMsg(e.json.error.details[0].message)
       }
     },
-    async openLink (value, value2) {
+    async openLink (value, value2, data) {
       var link
+      this.contract.encryptFile = await this.verifyIfFileIsEncrypted(value2)
+      if (this.contract.encryptFile) {
+        await this.decryptFileOnIPFS(value2)
+        return
+      }
       if (value) {
         if (value.includes('file:')) {
           link = value.substring(5)
@@ -895,7 +890,6 @@ export default {
       try {
         const ipfs = await BrowserIpfs.retrieve(typeCID)
         const encryptedFile = ipfs.payload
-        console.log(encryptedFile)
         const file = await Encrypt.decryptFile(encryptedFile, this.keyToEncrypt)
         let link = document.createElement('a')
         link.href = window.URL.createObjectURL(file)
