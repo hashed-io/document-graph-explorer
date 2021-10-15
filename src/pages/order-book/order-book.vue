@@ -1,7 +1,16 @@
 <template lang="pug">
 #container
+  div(v-show='account')
+    .row
+      q-btn(
+        flat
+        round
+        color="primary"
+        :icon=" showAccountInfo ? 'keyboard_arrow_right' : 'keyboard_arrow_left'"
+        @click="showAccountInfo = !showAccountInfo"
+        ).floatingArrow
+      AccountInfo.floating(v-show='showAccountInfo')
   .q-gutter-xs
-    AccountInfo
     .row.q-col-gutter-sm
       .col-xs-12.col-sm-6
         BuyOrdersList.q-mt-md
@@ -33,6 +42,7 @@ export default {
   },
   data () {
     return {
+      showAccountInfo: false,
       createOrder: false,
       typeOrder: undefined,
       positionDialog: 'bottom'
@@ -57,10 +67,33 @@ export default {
 <style lang="sass">
 .full-width
   width: 50vh
+.floatingArrow
+  position: absolute
+  top: 0vh
+  right: 0vw
+  z-index: 1
 .floating
-  position: fixed
-  bottom: 65%
-  left: 80%
-  z-index: 10
+  position: absolute
+  top: 0vh
+  right: 3vw
+  z-index: 1
+@media screen and (max-width: 319px) and (min-width: 30px)
+  .floating
+    position: absolute
+    top: 0vh
+    right: 12vw
+    z-index: 1
 
+@media screen and (max-width: 480px) and (min-width: 320px)
+  .floating
+    position: absolute
+    top: 0vh
+    right: 10vw
+    z-index: 1
+@media screen and (max-width: 768px) and (min-width: 481px)
+  .floating
+    position: absolute
+    top: 0vh
+    right: 8vw
+    z-index: 1
 </style>
