@@ -3,7 +3,7 @@ q-card(flat bordered).q-pb-md.full-width
   q-form(@submit="onSubmit" ref="orderForm")
     q-toolbar
       q-toolbar-title
-        .text {{ order ? 'Create Buy Order' : 'Create Sell Order' }}
+        .text {{ typeOrder === 'buy' ? 'Create Buy Order' : 'Create Sell Order' }}
       q-btn(flat round dense icon="close" @click="$emit('close')")
     q-card-section
       div(class='row no-wrap items-center')
@@ -13,15 +13,17 @@ q-card(flat bordered).q-pb-md.full-width
             reverse-fill-mask
             input-class="text-right"
             v-model="quantity"
-            :label="order ? 'Quantity to Buy' : 'Quantity to Sell'"
+            :label="typeOrder === 'buy' ? 'Quantity to Buy' : 'Quantity to Sell'"
             :rules="[rules.required, rules.positiveInteger]"
             no-error-icon
             filled
             square
           )
             template(v-slot:append)
-              .text-subtitle1(v-if="order") {{order.token}}
-              .text-subtitle1(v-if="!order") Token
+              //- /* Todos los tokens disponibles  */
+              .text-subtitle1(v-if="typeOrder === 'buy' ") AllToken
+              //- /* Obtener tokens del usuario */
+              .text-subtitle1(v-else) User'sToken
             template
         .col-4
           q-input.no-right-borders(
@@ -49,11 +51,11 @@ q-card(flat bordered).q-pb-md.full-width
 import { validation } from '~/mixins/validation'
 
 export default {
-  name: 'create-buy-order',
+  name: 'create-order',
   mixins: [validation],
   props: {
-    order: {
-      type: Object,
+    typeOrder: {
+      type: String,
       default: undefined
     }
   },
@@ -80,6 +82,7 @@ export default {
     async onSubmit () {
       if (await this.$refs.orderForm.validate()) {
         console.log('On Submit')
+        this.typeOrder === 'buy' ? this.createBuyOrder() : this.createSellOrder()
       }
     },
     createSellOrder () {

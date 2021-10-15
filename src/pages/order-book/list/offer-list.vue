@@ -27,11 +27,11 @@ div
         q-icon(name='fact_check' label="Accept order" size="sm" color="red" @click="onBuy(props.row)")
           q-tooltip Accept order
   q-dialog(v-model="acceptOrder" seamless position="bottom")
-        AcceptOrder(@close="acceptOrder = false" :order="selectedOrder")
+        AcceptOrder(@close="acceptOrder = false" :order="selectedOrder" typeOrder="sell")
 </template>
 
 <script>
-import AcceptOrder from '../read/accept-order'
+import AcceptOrder from '../read/accept-order.vue'
 import Faker from 'faker'
 import { mapState } from 'vuex'
 

@@ -16,30 +16,26 @@ div
     :pagination.sync="initialPagination"
     :hide-pagination="true"
     separator='none'
-    @row-click='acceptOrder'
+    @row-click='showModal'
   )
-    template(v-slot:body-cell-actions="props")
-      q-td(:props="props")
-        q-icon(name='price_check' label="Buy token" size="sm" color="green" @click="acceptOrder(props.row)")
-          q-tooltip Buy Token
-  q-dialog(v-model="createOrder" persistent :position='positionDialog' seamless)
-    CreateOrder(@close="createOrder = false" :order="order")
+  q-dialog(v-model="acceptOrder" persistent :position='positionDialog' seamless)
+    AcceptOrder(@close="acceptOrder = false" :order="order" typeOrder='buy')
 </template>
 
 <script>
-import CreateOrder from '../read/create-order'
+import AcceptOrder from '../read/accept-order.vue'
 import Faker from 'faker'
 import { mapState } from 'vuex'
 
 export default {
   name: 'buy-list',
   components: {
-    CreateOrder
+    AcceptOrder
   },
   data () {
     return {
       positionDialog: 'bottom',
-      createOrder: false,
+      acceptOrder: false,
       order: undefined,
       loading: false,
       pageSize: 12,
@@ -115,12 +111,12 @@ export default {
     }
   },
   methods: {
-    acceptOrder (evt, row) {
+    showModal (evt, row) {
       if (!this.account) {
         this.$router.push('/login')
       } else {
         this.order = row
-        this.createOrder = true
+        this.acceptOrder = true
       }
     }
   }
