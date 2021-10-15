@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  div(align='center').text-h5.q-pb-md Sell orders
+  div(align='center').text-h5.q-pb-md Buy orders
   q-table(
     flat
     dense
@@ -29,6 +29,7 @@ div
 <script>
 import CreateOrder from '../read/create-order'
 import Faker from 'faker'
+import { mapState } from 'vuex'
 
 export default {
   name: 'buy-list',
@@ -108,14 +109,19 @@ export default {
     }
   },
   computed: {
+    ...mapState('accounts', ['account']),
     ordersFreeze () {
       return Object.freeze(this.orders.rows.slice(0, this.pageSize * (this.nextPage - 1)))
     }
   },
   methods: {
     acceptOrder (evt, row) {
-      this.order = row
-      this.createOrder = true
+      if (!this.account) {
+        this.$router.push('/login')
+      } else {
+        this.order = row
+        this.createOrder = true
+      }
     }
   }
 }

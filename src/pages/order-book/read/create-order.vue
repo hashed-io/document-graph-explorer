@@ -20,7 +20,8 @@ q-card(flat bordered).q-pb-md.full-width
             square
           )
             template(v-slot:append)
-              .text-subtitle1 Token
+              .text-subtitle1(v-if="order") {{order.token}}
+              .text-subtitle1(v-if="!order") Token
             template
         .col-4
           q-input.no-right-borders(
@@ -72,6 +73,8 @@ export default {
         }
       ]
     }
+  },
+  mounted () {
   },
   methods: {
     async onSubmit () {

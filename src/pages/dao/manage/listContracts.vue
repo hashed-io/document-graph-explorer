@@ -64,6 +64,8 @@
               q-btn(v-if='idEdit === null' data-cy='addFieldButton' id='addFieldButton' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
+    q-icon(name='key'  v-show='keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt')
+    q-icon(name='lock' v-show='!keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt')
     q-table.q-mb-sm(
       title='Contracts'
       :data='manageContract'
@@ -246,6 +248,7 @@ export default {
   },
   data () {
     return {
+      atLeastElementEncrypt: false,
       loadingIPFSstring: false,
       showActions: false,
       stringIPFS: false,
@@ -350,10 +353,17 @@ export default {
             let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
             let isStringIPFS = /^bafk([a-zA-Z0-9]){55}$/.test(val)
             if (isFile) {
+              if (!this.atLeastElementEncrypt) {
+                let boolEncrypt = this.verifyIfFileIsEncrypted()
+                this.atLeastElementEncrypt = boolEncrypt
+              }
               return 'File'
             } else if (isStringIPFS) {
               return 'Value in IPFS'
             } else {
+              if (!this.atLeastElementEncrypt) {
+                this.atLeastElementEncrypt = val.substr(-1) === '='
+              }
               return val
             }
           },

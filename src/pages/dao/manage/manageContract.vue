@@ -1,6 +1,6 @@
 <template lang='pug'>
   #container
-    .q-py-md.text-h6(v-if='SelectedDao') {{text}}{{SelectedDao.dao}}
+    .q-py-md.text-h6.q-pr-md(v-if='SelectedDao') {{text}}{{SelectedDao.dao}}
     managedao(:dao="SelectedDao" ).q-pb-xs
 </template>
 <style lang="sass" scoped>

@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  div(align='center').text-h5.q-pb-md Buy orders
+  div(align='center').text-h5.q-pb-md Sell orders
   q-table(
     flat
     bordered
@@ -33,6 +33,7 @@ div
 <script>
 import AcceptOrder from '../read/accept-order'
 import Faker from 'faker'
+import { mapState } from 'vuex'
 
 export default {
   name: 'offer-list',
@@ -110,6 +111,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('accounts', ['account']),
     ordersFreeze () {
       return Object.freeze(this.orders.rows.slice(0, this.pageSize * (this.nextPage - 1)))
     }
@@ -121,8 +123,12 @@ export default {
       console.log('scroll start')
     },
     onBuy (evt, row) {
-      this.selectedOrder = row
-      this.acceptOrder = true
+      if (!this.account) {
+        this.$router.push('/login')
+      } else {
+        this.selectedOrder = row
+        this.acceptOrder = true
+      }
     }
   }
 }
