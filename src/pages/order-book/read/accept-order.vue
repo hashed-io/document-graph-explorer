@@ -1,16 +1,16 @@
 <template lang="pug">
-q-card(flat bordered).q-pb-md.full-width
+q-card.q-pb-md.full-width(flat, bordered)
   q-toolbar
     q-toolbar-title
       .text Offer Buy #1
-    q-btn(flat round dense icon="close" @click="$emit('close')")
+    q-btn(flat, round, dense, icon="close", @click="$emit('close')")
   q-card-section.q-pb-lg
     .row
       .col
         .row
           .col-6
-            .text-bold(v-if="typeOrder === 'buy' ") DAO name:
-            .text-bold(v-if="typeOrder === 'sell' ") Buyer:
+            .text-bold(v-if="typeOrder === 'buy'") DAO name:
+            .text-bold(v-if="typeOrder === 'sell'") Buyer:
           .col
             .text(v-if="typeOrder === 'buy'") {{ order.dao }}
             .text(v-if="typeOrder === 'sell'") {{ order.buyer }}
@@ -34,7 +34,7 @@ q-card(flat bordered).q-pb-md.full-width
           .col
             .text {{ order.price }}
   q-card-actions(align="right")
-    q-btn(color="primary" label="Accept Offer" @click="onAcceptOrder")
+    q-btn(color="primary", label="Accept Offer", @click="onAcceptOrder")
 </template>
 
 <script>
@@ -67,5 +67,4 @@ export default {
 </script>
 
 <style>
-
 </style>

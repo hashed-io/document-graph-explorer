@@ -1,43 +1,53 @@
 <template lang='pug'>
-
-div( :style="$q.platform.is.mobile ? 'width:80vw' : 'width:30vw' " class='bg-white')
+.bg-white(:style="$q.platform.is.mobile ? 'width:80vw' : 'width:30vw'")
   q-list(bordered)
-    q-expansion-item( group='somegroup' icon='perm_identity' label='Account' default-opened header-class='text-primary')
+    q-expansion-item(
+      group="somegroup",
+      icon="perm_identity",
+      label="Account",
+      default-opened,
+      header-class="text-primary"
+    )
       q-card
         q-card-section
           .row
             .col-6.center.text-subtitle1
-              | {{account}}
+              | {{ account }}
             .col-6.center.text-subtitle1
-              | {{balance}}
+              | {{ balance }}
       q-separator
-    q-expansion-item(group='somegroup' icon='attach_money' label='Transfer' header-class='text-primary')
+    q-expansion-item(
+      group="somegroup",
+      icon="attach_money",
+      label="Transfer",
+      header-class="text-primary"
+    )
       q-card
         q-card-section
           .row.center
             .col-sm-4.col-xs-12
               q-input.no-right-borders(
-                type="number"
-                v-model="asset"
-                label="Asset"
-                :rules="[rules.required, rules.positiveInteger]"
-                no-error-icon
-                filled
+                type="number",
+                v-model="asset",
+                label="Asset",
+                :rules="[rules.required, rules.positiveInteger]",
+                no-error-icon,
+                filled,
                 square
               )
             .col-sm-2.col-xs-12
               q-select.no-left-borders(
-                :options="tokenOptions"
-                v-model="selectedToken"
-                :rules="[rules.required]"
-                filled
+                :options="tokenOptions",
+                v-model="selectedToken",
+                :rules="[rules.required]",
+                filled,
                 square
               )
           .row.q-pt-md.q-col-gutter-md
             .col-sm-6.col-xs-12.center
-              q-btn(label='Deposit' color='primary' @click='deposit')
+              q-btn(label="Deposit", color="primary", @click="deposit")
             .col-sm-6.col-xs-12.center
-              q-btn(label='Withdrawals' color='primary' @click='withdrawal')
+              q-btn(label="Withdrawals", color="primary", @click="withdrawal")
 </template>
 
 <script>
@@ -72,11 +82,15 @@ export default {
     async deposit () {
       try {
         this.$q.loading.show({
-          message: 'Depositing to your account ' + this.asset + ' ' + this.selectedToken.value,
+          message:
+            'Depositing to your account ' +
+            this.asset +
+            ' ' +
+            this.selectedToken.value,
           spinner: QSpinnerGrid,
           color: 'primary'
         })
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000))
         this.$q.loading.hide()
       } catch (e) {
         this.showErrorMsg('Error in deposit')
@@ -85,10 +99,14 @@ export default {
     async withdrawal () {
       try {
         this.$q.loading.show({
-          message: 'Making the withdrawal. ' + this.asset + ' ' + this.selectedToken.value,
+          message:
+            'Making the withdrawal. ' +
+            this.asset +
+            ' ' +
+            this.selectedToken.value,
           spinner: QSpinnerGrid
         })
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000))
         this.$q.loading.hide()
       } catch (e) {
         this.showErrorMsg('Error in deposit')
@@ -100,7 +118,7 @@ export default {
 
 <style lang='sass'>
 .center
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex
+  align-items: center
+  justify-content: center
 </style>

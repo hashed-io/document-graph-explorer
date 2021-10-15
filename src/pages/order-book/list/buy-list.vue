@@ -1,25 +1,30 @@
 <template lang="pug">
 div
-  div(align='center').text-h5.q-pb-md Buy orders
-  q-table(
-    flat
-    dense
-    bordered
+  .text-h5.q-pb-md(align="center") Buy orders
+  q-table.sticky-virtscroll-table(
+    data-cy='BuyListTable'
+    ref='BuyListTable'
+    flat,
+    dense,
+    bordered,
     :columns="columns",
-    :data="ordersFreeze"
-    virtual-scroll
-    no-data-label="There aren't any Orders"
-    ref="table"
-    class="sticky-virtscroll-table"
-    table-header-class="hdTable"
-    :loading='loading'
-    :pagination.sync="initialPagination"
-    :hide-pagination="true"
-    separator='none'
-    @row-click='showModal'
+    :data="ordersFreeze",
+    virtual-scroll,
+    no-data-label="There aren't any Orders",
+    table-header-class="hdTable",
+    :loading="loading",
+    :pagination.sync="initialPagination",
+    :hide-pagination="true",
+    separator="none",
+    @row-click="showModal"
   )
-  q-dialog(v-model="acceptOrder" persistent :position='positionDialog' seamless)
-    AcceptOrder(@close="acceptOrder = false" :order="order" typeOrder='buy')
+  q-dialog(
+    v-model="acceptOrder",
+    persistent,
+    :position="positionDialog",
+    seamless
+  )
+    AcceptOrder(@close="acceptOrder = false", :order="order", typeOrder="buy")
 </template>
 
 <script>
@@ -45,7 +50,12 @@ export default {
         rowsPerPage: 0
       },
       orders: {
-        rows: [],
+        rows: [{
+          dao: 'dao test',
+          token: 'token test',
+          amount: 123,
+          price: 124
+        }],
         more: true
       },
       columns: [
@@ -58,7 +68,7 @@ export default {
         {
           name: 'token',
           label: 'Token',
-          field: row => row.token,
+          field: (row) => row.token,
           // field: row => ''row.information.dao_name,
           classes: 'text-green text-bold column-order-book',
           align: 'left',
@@ -67,7 +77,7 @@ export default {
         {
           name: 'amount',
           label: 'Amount',
-          field: row => row.amount,
+          field: (row) => row.amount,
           // field: row => ''row.information.dao_name,
           classes: 'text-bold',
           align: 'left',
@@ -76,7 +86,7 @@ export default {
         {
           name: 'dao',
           label: this.$t('pages.daos.daoName'),
-          field: row => row.dao,
+          field: (row) => row.dao,
           // field: row => ''row.information.dao_name,
           classes: 'column-order-book',
           align: 'left',
@@ -85,7 +95,7 @@ export default {
         {
           name: 'price',
           label: 'Price',
-          field: row => '$' + row.price,
+          field: (row) => '$' + row.price,
           classes: 'text-green text-bold',
           // field: row => ''row.information.dao_name,
           align: 'right',
@@ -107,7 +117,9 @@ export default {
   computed: {
     ...mapState('accounts', ['account']),
     ordersFreeze () {
-      return Object.freeze(this.orders.rows.slice(0, this.pageSize * (this.nextPage - 1)))
+      return Object.freeze(
+        this.orders.rows.slice(0, this.pageSize * (this.nextPage - 1))
+      )
     }
   },
   methods: {
@@ -123,6 +135,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

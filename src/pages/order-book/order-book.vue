@@ -1,27 +1,43 @@
 <template lang="pug">
 #container
-  div(v-show='account')
+  div(v-show="account")
     .row
-      q-btn(
-        flat
-        round
-        color="primary"
-        :icon=" showAccountInfo ? 'keyboard_arrow_right' : 'keyboard_arrow_left'"
+      q-btn.floatingArrow(
+        data-cy='accountInfo'
+        ref='accountInfo'
+        flat,
+        round,
+        color="primary",
+        :icon="showAccountInfo ? 'keyboard_arrow_right' : 'keyboard_arrow_left'",
         @click="showAccountInfo = !showAccountInfo"
-        ).floatingArrow
-      AccountInfo.floating(v-show='showAccountInfo')
+      )
+      AccountInfo.floating(v-show="showAccountInfo")
   .q-gutter-xs
     .row.q-col-gutter-sm
       .col-xs-12.col-sm-6
         BuyOrdersList.q-mt-md
         .row.q-pt-md.justify-start
-          q-btn(color="green" rounded label="Create buy order" @click="showModal('buy')")
+          q-btn(
+            data-cy='createOrderBuy'
+            ref='createOrderBuy'
+            color="green",
+            rounded,
+            label="Create buy order",
+            @click="showModal('buy')"
+          )
       .col-xs-12.col-sm-6
         OfferOrdersList.q-mt-md
         .row.q-pt-md.justify-end
-          q-btn(color="red" rounded label="Create sell order" @click="showModal('sell')")
-    q-dialog(v-model="createOrder" :position='positionDialog' seamless)
-      CreateOrder(@close="createOrder = false" :typeOrder='typeOrder' )
+          q-btn(
+            data-cy='createOrderSell'
+            ref='createOrderSell'
+            color="red",
+            rounded,
+            label="Create sell order",
+            @click="showModal('sell')"
+          )
+    q-dialog(v-model="createOrder", :position="positionDialog", seamless)
+      CreateOrder(@close="createOrder = false", :typeOrder="typeOrder")
 </template>
 
 <script>
