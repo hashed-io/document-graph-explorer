@@ -1,5 +1,5 @@
 <template lang="pug">
-q-card.q-pb-md.full-width(flat, bordered)
+q-card.q-pb-md.full-width(flat, bordered, data-cy='createOrderModal')
   q-form(@submit="onSubmit", ref="orderForm")
     q-toolbar
       q-toolbar-title

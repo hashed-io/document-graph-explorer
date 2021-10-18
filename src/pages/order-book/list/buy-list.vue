@@ -124,7 +124,8 @@ export default {
   },
   methods: {
     showModal (evt, row) {
-      if (!this.account) {
+      let _account = localStorage.getItem('account')
+      if (!_account) {
         this.$router.push('/login')
       } else {
         this.order = row

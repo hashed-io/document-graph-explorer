@@ -30,6 +30,7 @@ export default {
         q-item-section {{ $t('menu.all_daos') }}
       q-item(
         to="/order-book"
+        data-cy='menuOrderBook'
         clickable
         v-ripple
       )

@@ -1,5 +1,5 @@
 <template lang="pug">
-q-card.q-pb-md.full-width(flat, bordered)
+q-card.q-pb-md.full-width(flat, bordered, data-cy='acceptOrderModal')
   q-toolbar
     q-toolbar-title
       .text Offer Buy #1

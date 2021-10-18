@@ -46,7 +46,7 @@ import CreateOrder from './read/create-order.vue'
 import BuyOrdersList from './list/buy-list'
 import OfferOrdersList from './list/offer-list'
 import AccountInfo from './info/account-info.vue'
-import { mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'order-book',
@@ -64,12 +64,20 @@ export default {
       positionDialog: 'bottom'
     }
   },
+  async mounted () {
+    if (!this.isAuthenticated && localStorage.getItem('account')) {
+      await this.autoLogin('/home')
+    }
+  },
   computed: {
+    ...mapGetters('accounts', ['isAuthenticated']),
     ...mapState('accounts', ['account'])
   },
   methods: {
+    ...mapActions('accounts', ['autoLogin']),
     showModal (_typeOrder) {
-      if (!this.account) {
+      let _account = localStorage.getItem('account')
+      if (!_account) {
         this.$router.push('/login')
       } else {
         this.createOrder = true

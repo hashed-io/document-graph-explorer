@@ -1,8 +1,9 @@
 <template lang='pug'>
 .bg-white(:style="$q.platform.is.mobile ? 'width:80vw' : 'width:30vw'")
-  q-list(bordered)
+  q-list(bordered data-cy='accountInfoCard')
     q-expansion-item(
-      group="somegroup",
+      data-cy='selectorAccount'
+      group="accountGroup",
       icon="perm_identity",
       label="Account",
       default-opened,
@@ -13,11 +14,12 @@
           .row
             .col-6.center.text-subtitle1
               | {{ account }}
-            .col-6.center.text-subtitle1
-              | {{ balance }}
+            .col-6.center.text-subtitle1(data-cy='balanceText')
+              | {{ balance + ' '+currentCurrency}}
       q-separator
     q-expansion-item(
-      group="somegroup",
+      data-cy='selectorTransfer'
+      group="accountGroup",
       icon="attach_money",
       label="Transfer",
       header-class="text-primary"
@@ -27,6 +29,7 @@
           .row.center
             .col-sm-4.col-xs-12
               q-input.no-right-borders(
+                data-cy="assetInput"
                 type="number",
                 v-model="asset",
                 label="Asset",
@@ -37,6 +40,7 @@
               )
             .col-sm-2.col-xs-12
               q-select.no-left-borders(
+                data-cy="tokenInput"
                 :options="tokenOptions",
                 v-model="selectedToken",
                 :rules="[rules.required]",
@@ -45,9 +49,9 @@
               )
           .row.q-pt-md.q-col-gutter-md
             .col-sm-6.col-xs-12.center
-              q-btn(label="Deposit", color="primary", @click="deposit")
+              q-btn(data-cy='depositButton' label="Deposit", color="primary", @click="deposit")
             .col-sm-6.col-xs-12.center
-              q-btn(label="Withdrawals", color="primary", @click="withdrawal")
+              q-btn(data-cy='withdrawalButton' label="Withdrawals", color="primary", @click="withdrawal")
 </template>
 
 <script>
@@ -63,7 +67,8 @@ export default {
   },
   data () {
     return {
-      balance: '127 TLOS',
+      balance: 127,
+      currentCurrency: 'TLOS',
       tokenOptions: [
         {
           label: 'USD',
@@ -92,6 +97,7 @@ export default {
         })
         await new Promise((resolve) => setTimeout(resolve, 1000))
         this.$q.loading.hide()
+        this.balance = this.balance + this.asset
       } catch (e) {
         this.showErrorMsg('Error in deposit')
       }

@@ -13,6 +13,7 @@ export default {
 div
   q-btn.q-mr-sm(
     to="/login"
+    data-cy='loginButton'
     :size="$q.platform.is.mobile ? 'sm' : 'md' "
     :label="$t('pages.index.buttons.login')"
     color="accent"

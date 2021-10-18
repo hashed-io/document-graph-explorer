@@ -34,6 +34,7 @@ export default {
           flat
           show-if-above
           round
+          data-cy='menuButton'
           @click="menu = !menu"
           icon="fas fa-bars"
           aria-label="Menu"
