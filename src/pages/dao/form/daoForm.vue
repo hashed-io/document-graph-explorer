@@ -85,7 +85,7 @@ import additionalArticlesComponent from '../form/components/additionalArticles.v
 import confirmationComponent from '../form/components/confirmation.vue'
 import signatureComponent from '../form/components/signature.vue'
 import paymentComponent from '../form/components/payment.vue'
-
+import daoInformation from 'src/utils/daoInformation.js'
 import BrowserIpfs from '~/services/BrowserIpfs'
 import { validation } from '~/mixins/validation'
 import { mapActions, mapMutations, mapState } from 'vuex'
@@ -116,91 +116,7 @@ export default {
       this.form = JSON.parse(JSON.stringify(this.formStore))
     } else {
       this.daoName = this.account
-      this.form = {
-        price: 100,
-        businessName: {
-          businessName: 'ACME DAO LLC',
-          additionalDesignation: 'Decentralized Autonomous Organization'
-        },
-        detail: {
-          periodOfDuration: 'Expires - 50 years',
-          expirationDate: '',
-          delayedEffectiveDate: '09/14/2021'
-        },
-        agent: {
-          firstName: null,
-          middleName: null,
-          lastName: null,
-          organization: null,
-          country: 'USA',
-          address: {
-            line1: null,
-            line2: null,
-            line3: null
-          },
-          city: null,
-          state: 'WY',
-          postalCode: null,
-          phone: null,
-          email: null
-        },
-        addresses: {
-          principalAddress: {
-            country: 'United States of America',
-            address: {
-              line1: '48764 Howard Forge Apt. 421 Vanessaside, PA 19763',
-              line2: null,
-              line3: null
-            },
-            city: 'Changchester',
-            state: 'WY',
-            postalCode: '9000',
-            phone: '(194) 892 - 4115',
-            fax: '(194) 892 - 4115',
-            email: 'achang@green.info'
-          },
-          mailingAddress: {
-            country: '',
-            address: {
-              line1: '',
-              line2: null,
-              line3: null
-            },
-            city: '',
-            state: '',
-            postalCode: ''
-          }
-        },
-        organizers: [
-          {
-            name: 'Wagner LLC',
-            officerType: 'Organizer',
-            typeName: 'Legal person',
-            addressInfo: '848 Melissa Springs Suite 947 Kellerstad, MD 80819'
-          },
-          {
-            name: 'Richard Dixon',
-            officerType: 'Organizer',
-            typeName: 'Physical person',
-            addressInfo: '578 Michael Island New Thomas, NC 34644'
-          }
-        ],
-        additionalArticles: [
-          {
-            number: '10',
-            detail: 'Dolorem quisquam etincidunt magnam magnam tempora dolore. Adipisci eius ut non. Adipisci labore eius porro. Dolorem dolorem quiquia tempora. Amet velit quaerat ut labore non. Est amet amet sed ut sit etincidunt velit.'
-          }
-        ],
-        fillerInformation: {
-          filerIs: 'organization',
-          firstName: 'Jonathan',
-          middleName: null,
-          lastName: 'Woods',
-          title: 'Dolorem dolore dolorem quisquam est dolore consectetur.',
-          phone: '(194)892-4115',
-          email: 'juancampos@lloyd.org'
-        }
-      }
+      this.form = daoInformation
     }
   },
   computed: {
@@ -392,63 +308,11 @@ export default {
       if (valid) {
         try {
           if (this.form !== '') {
-            let data = this.form
-            this.$q.loading.show({
-              message: ' Saving the dao information...',
-              customClass: 'text-weight-bold text-subtitle1',
-              spinnerSize: '15em',
-              spinner: QSpinnerPuff
-            })
-            await new Promise(resolve => setTimeout(resolve, 200))
-            this.typeCid = await BrowserIpfs.addAsJson({ data })
+            await this.saveDataIPFS()
           }
-          // loading show [step 1]
-          this.$q.loading.show({
-            message: 'Creating DAO...',
-            customClass: 'text-weight-bold text-subtitle1',
-            spinnerSize: '15em',
-            spinner: QSpinnerPuff
-          })
-          await new Promise(resolve => setTimeout(resolve, 200))
-          await this.createDao({
-            dao: this.daoName.toLowerCase(),
-            creator: this.account,
-            ipfs: this.typeCid
-            // Link : this.websiteDAO
-          })
-          this.$q.loading.show({
-            message: 'Setting DAO..',
-            customClass: 'text-weight-bold text-subtitle1',
-            spinnerSize: '15em',
-            spinner: QSpinnerPuff
-          })
-          await new Promise(resolve => setTimeout(resolve, 200))
-          await this.deployContract({
-            accountName: this.daoName.toLowerCase()
-          })
-          // loading show [step 2]
-
-          this.$q.loading.show({
-            message: 'Initializing DAO...',
-            customClass: 'text-weight-bold text-subtitle1',
-            spinnerSize: '15em',
-            spinner: QSpinnerPuff
-          })
-          await this.verifiedAbiExists()
-          if (this.flagAbi) {
-            console.log('Found ABI')
-            this.hasAbi = true
-            await this.initDao({
-              account: this.daoName.toLowerCase()
-            })
-            this.$q.loading.hide()
-            this.$router.push({ name: 'daos' })
-          } else {
-            console.log('NOT Found ABI')
-            this.$q.loading.hide()
-            this.showErrorMsg('An error occurred when the smart contract was deployed')
-            this.$router.push({ name: 'daos' })
-          }
+          await this.callCreateDAO()
+          await this.deployingContract()
+          await this.initializedDAO()
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
@@ -458,6 +322,86 @@ export default {
       } else {
         this.$q.loading.hide()
         this.showErrorMsg('Fill the DAO Name')
+      }
+    },
+    async saveDataIPFS () {
+      try {
+        let data = this.form
+        this.$q.loading.show({
+          message: ' Saving the dao information...',
+          customClass: 'text-weight-bold text-subtitle1',
+          spinnerSize: '15em',
+          spinner: QSpinnerPuff
+        })
+        await new Promise(resolve => setTimeout(resolve, 200))
+        this.typeCid = await BrowserIpfs.addAsJson({ data })
+      } catch (e) {
+        this.showErrorMsg('An error has occured while saving data in IPFS ' + e)
+        console.log('An error occur has ocurred while saving data in IPFS ' + e)
+      }
+    },
+    async callCreateDAO () {
+      try {
+        // loading show [step 1]
+        this.$q.loading.show({
+          message: 'Creating DAO...',
+          customClass: 'text-weight-bold text-subtitle1',
+          spinnerSize: '15em',
+          spinner: QSpinnerPuff
+        })
+        await new Promise(resolve => setTimeout(resolve, 200))
+        await this.createDao({
+          dao: this.daoName.toLowerCase(),
+          creator: this.account,
+          ipfs: this.typeCid
+          // Link : this.websiteDAO
+        })
+      } catch (error) {
+        this.showErrorMsg('An error has occured while creating the DAO ' + error)
+        console.log('An error occur has ocurred while creating the DAO ' + error)
+      }
+    },
+    async deployingContract () {
+      try {
+        this.$q.loading.show({
+          message: 'Setting DAO..',
+          customClass: 'text-weight-bold text-subtitle1',
+          spinnerSize: '15em',
+          spinner: QSpinnerPuff
+        })
+        await new Promise(resolve => setTimeout(resolve, 200))
+        await this.deployContract({
+          accountName: this.daoName.toLowerCase()
+        })
+      } catch (error) {
+        this.showErrorMsg('An error has occured while deploying the contract ' + error)
+        console.log('An error occur has ocurred while deploying the contract ' + error)
+      }
+    },
+    async initializedDAO () {
+      try {
+        this.$q.loading.show({
+          message: 'Initializing DAO...',
+          customClass: 'text-weight-bold text-subtitle1',
+          spinnerSize: '15em',
+          spinner: QSpinnerPuff
+        })
+        await this.verifiedAbiExists()
+        if (this.flagAbi) {
+          this.hasAbi = true
+          await this.initDao({
+            account: this.daoName.toLowerCase()
+          })
+          this.$q.loading.hide()
+          this.$router.push({ name: 'daos' })
+        } else {
+          this.$q.loading.hide()
+          this.showErrorMsg('An error occurred when the smart contract was deployed')
+          this.$router.push({ name: 'daos' })
+        }
+      } catch (error) {
+        this.showErrorMsg('An error has occured while initializing the contract ' + error)
+        console.log('An error occur has ocurred while initializing the contract ' + error)
       }
     },
     async updateDataContract () {
