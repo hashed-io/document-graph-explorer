@@ -115,7 +115,7 @@ export default {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         this.$q.loading.hide()
       } catch (e) {
-        this.showErrorMsg('Error in deposit')
+        this.showErrorMsg('Error in withdrawal')
       }
     }
   }

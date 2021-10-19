@@ -10,27 +10,27 @@ q-card( flat)
       .row.justify-left
         q-field(dense ref='toggle' borderless v-model="checkbox.personSignature")
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.personSignature" :label='checkboxMessage.personSignature')
+            q-checkbox(data-cy='checkbox1' ref='checkbox#1' dense v-model="checkbox.personSignature" :label='checkboxMessage.personSignature')
       .row.justify-left
         q-field( dense ref='toggle' borderless v-model="checkbox.fillingAgree")
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.fillingAgree" :label='checkboxMessage.fillingAgree')
+            q-checkbox(data-cy='checkbox2' ref='checkbox#2' dense v-model="checkbox.fillingAgree" :label='checkboxMessage.fillingAgree')
       .row.justify-left
         q-field(dense ref='toggle' borderless v-model="checkbox.understandAgree")
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.understandAgree" :label='checkboxMessage.understandAgree')
+            q-checkbox(data-cy='checkbox3' ref='checkbox#3' dense v-model="checkbox.understandAgree" :label='checkboxMessage.understandAgree')
       .row.justify-left
         q-field(dense ref='toggle' borderless v-model="checkbox.intendAgree")
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.intendAgree" :label='checkboxMessage.intendAgree')
+            q-checkbox(data-cy='checkbox4' ref='checkbox#4' dense v-model="checkbox.intendAgree" :label='checkboxMessage.intendAgree')
       .row.justify-left
         q-field(dense ref='toggle' borderless v-model="checkbox.appropriateSearchAgree")
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.appropriateSearchAgree" :label='checkboxMessage.appropriateSearchAgree')
+            q-checkbox(data-cy='checkbox5' ref='checkbox#5' dense v-model="checkbox.appropriateSearchAgree" :label='checkboxMessage.appropriateSearchAgree')
       .row.justify-left
         q-field(dense ref='toggle' borderless v-model="checkbox.consentAgree")
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.consentAgree" :label='checkboxMessage.consentAgree')
+            q-checkbox(data-cy='checkbox6' ref='checkbox#6' dense v-model="checkbox.consentAgree" :label='checkboxMessage.consentAgree')
       .row.justify-center.q-py-sm.text-subtitle1
         p(style='color:red;')
           u
@@ -45,7 +45,7 @@ q-card( flat)
       .row.justify-left.q-py-sm
         q-field(dense ref='toggle' borderless v-model="checkbox.ack" )
           template(v-slot:control)
-            q-checkbox(dense v-model="checkbox.ack" :label='checkboxMessage.ack' :rules="[rules.required]")
+            q-checkbox(data-cy='checkbox7' dense v-model="checkbox.ack" :label='checkboxMessage.ack' :rules="[rules.required]")
       .row.justify-left.q-py-sm
         p.q-pr-xs Filer is: *
         q-field(dense ref='toggle' borderless v-model="fillerInformation.filerIs" :rules="[v => !!v || 'Choose one option']")

@@ -21,49 +21,49 @@
             detail(ref="detailStepComponent" :detailObject='form.detail' @dataFromDetail="messageFromDetailComponent")
           q-stepper-navigation
             .containerStep
-              q-btn(@click="validateStep" color="primary" label="continue" )
+              q-btn(data-cy='step2Button' @click="validateStep" color="primary" label="continue" )
         q-step(:name="3" title="Agent" :prefix='3' :done="step>3" :header-nav="step > 3")
           div.container
             agentComponent(ref='agentStepComponent' :agentObject='form.agent' @dataFromAgent='messageFromAgentComponent')
           q-stepper-navigation
             .containerStepAgent
-              q-btn(@click="validateStep" color="primary" label="continue" )
+              q-btn(data-cy='step3Button' @click="validateStep" color="primary" label="continue" )
         q-step(:name="4" title="Addresses" :prefix='4' :done="step>4" :header-nav="step > 4")
           div.container
             addressesComponent(ref='addressStepComponent' :addressesObject='form.addresses' @dataFromAddresses='messageFromAddressesComponent')
           q-stepper-navigation
             .containerStep
-              q-btn(@click ="validateStep" color="primary" label="continue" )
+              q-btn(data-cy='step4Button' @click ="validateStep" color="primary" label="continue" )
         q-step(:name="5" title="Organizers" :prefix='5' :done="step>5" :header-nav="step > 5")
           div.container
             organizersComponent(ref='organizersStepComponent' :organizerArray='form.organizers' @dataFromOrganizers='messageFromOrganizersComponent')
           q-stepper-navigation
             .containerStepAgent
-              q-btn(@click ="validateStep" color="primary" label="continue" )
+              q-btn(data-cy='step5Button' @click ="validateStep" color="primary" label="continue" )
         q-step(:name="6" title="Articles" :prefix='6' :done="step>6" :header-nav="step > 6")
           div.container
             additionalArticlesComponent(ref='articleStepComponent' :articlesArray='form.additionalArticles' @dataFromAdditionalArticles='messageFromAdditionalArticlesComponent')
           q-stepper-navigation
             .containerStepAgent
-              q-btn(@click ="validateStep" color="primary" label="continue" )
+              q-btn(data-cy='step6Button' @click ="validateStep" color="primary" label="continue" )
         q-step(:name="7" title="Confirmation" :prefix='7' :done="step>7" :header-nav="step > 7")
           div.container
             confirmationComponent(ref='confirmationStepComponent' :form="form")
           q-stepper-navigation
             .containerStepAgent
-              q-btn(@click ="validateStep" color="primary" label="continue")
+              q-btn(data-cy='step7Button' @click ="validateStep" color="primary" label="continue")
         q-step(:name="8" title="Signature" :prefix='8' :done="step>8" :header-nav="step > 8")
           div.container
             signatureComponent(ref='signatureStepComponent' :signatureObject='form.fillerInformation' @dataFromSignature='messageFromSignatureComponent')
           q-stepper-navigation
             .row.q-col-gutter-md.q-px-md
               .col-6
-                q-input(v-model='daoName' label='Signed by' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
+                q-input(data-cy='daoName' v-model='daoName' label='Signed by' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
               .col-6
-                q-input(v-model='websiteDAO' label='Website of DAO' ref='websiteDAOInput' :readonly='isEdit' :rules='[rules.required]')
+                q-input(data-cy='website' v-model='websiteDAO' label='Website of DAO' ref='websiteDAOInput' :readonly='isEdit' :rules='[rules.required]')
               .col-12(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
-                q-btn(v-else @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
+                q-btn(v-else data-cy='finishForm' @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
 </template>
 <style lang="sass" scoped>
   .containerStepAgent
@@ -130,6 +130,13 @@ export default {
       typeCid: undefined,
       daoName: 'null',
       websiteDAO: null,
+      params: {
+        offset: 0,
+        limit: 5,
+        search: undefined,
+        customOffset: undefined,
+        nextKey: undefined
+      },
       form: {
         price: 100,
         businessName: {
@@ -200,7 +207,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('dao', ['createDao', 'updateDaoData', 'deployContract', 'initDao']),
+    ...mapActions('dao', ['createDao', 'updateDaoData', 'deployContract', 'initDao', 'getDaos', 'upserattributes']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName']),
     windowResized () {
       if (this.$q.screen.width < 600) {
@@ -287,7 +294,7 @@ export default {
     },
     async verifiedAbiExists () {
       const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-      for (let i = 0; i <= 5; i++) {
+      for (let i = 0; i <= 15; i++) {
         let response = await this.$store.$defaultApi.rpc.get_abi(this.daoName.toLowerCase())
         if (response.hasOwnProperty('abi')) {
           this.flagAbi = true
@@ -311,8 +318,8 @@ export default {
             await this.saveDataIPFS()
           }
           await this.callCreateDAO()
-          await this.deployingContract()
-          await this.initializedDAO()
+          // await this.deployingContract()
+          // await this.initializedDAO()
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
@@ -350,15 +357,39 @@ export default {
           spinner: QSpinnerPuff
         })
         await new Promise(resolve => setTimeout(resolve, 200))
-        await this.createDao({
-          dao: this.daoName.toLowerCase(),
-          creator: this.account,
-          ipfs: this.typeCid
-          // Link : this.websiteDAO
-        })
+        // await this.createDao({
+        //   dao: this.daoName.toLowerCase(),
+        //   creator: this.account,
+        //   ipfs: this.typeCid
+        // })
+        await this.setAttributes()
       } catch (error) {
+        this.$q.loading.hide()
         this.showErrorMsg('An error has occured while creating the DAO ' + error)
         console.log('An error occur has ocurred while creating the DAO ' + error)
+      }
+    },
+    async setAttributes () {
+      try {
+        let newRows = await this.getDaos({
+          ...this.params,
+          search: undefined
+        })
+        let lastIndex = newRows.rows.length - 1
+        let lastID = newRows.rows[lastIndex].dao_id
+        console.log(lastID)
+        let variantValue = [
+          { first: 'DAO name', second: ['string', this.daoName.toLowerCase()] },
+          { first: 'website', second: ['string', this.websiteDAO] }
+        ]
+        await this.upserattributes({
+          daoId: lastID,
+          Attributes: variantValue
+        })
+      } catch (error) {
+        this.$q.loading.hide()
+        this.showErrorMsg('An error has occured while setting attributes ' + error)
+        console.log('An error occur has ocurred while setting attributes ' + error)
       }
     },
     async deployingContract () {
@@ -374,6 +405,7 @@ export default {
           accountName: this.daoName.toLowerCase()
         })
       } catch (error) {
+        this.$q.loading.hide()
         this.showErrorMsg('An error has occured while deploying the contract ' + error)
         console.log('An error occur has ocurred while deploying the contract ' + error)
       }
@@ -400,6 +432,7 @@ export default {
           this.$router.push({ name: 'daos' })
         }
       } catch (error) {
+        this.$q.loading.hide()
         this.showErrorMsg('An error has occured while initializing the contract ' + error)
         console.log('An error occur has ocurred while initializing the contract ' + error)
       }
@@ -419,6 +452,7 @@ export default {
       }
       var self = this
       try {
+        // TODO: Change to DAO ID
         await this.updateDaoData({
           dao: this.daoName.toLowerCase(),
           ipfs: this.typeCid

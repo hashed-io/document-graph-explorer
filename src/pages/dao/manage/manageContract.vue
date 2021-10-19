@@ -1,16 +1,16 @@
 <template lang='pug'>
   #container
     .q-py-md.text-h6.q-pr-md(v-if='SelectedDao') {{text}}{{SelectedDao.dao}}
-    managedao(:dao="SelectedDao" ).q-pb-xs
+    ListContracts(:dao="SelectedDao" ).q-pb-xs
 </template>
 <style lang="sass" scoped>
 </style>
 <script>
 import { mapMutations, mapState } from 'vuex'
-import managedao from './listContracts.vue'
+import ListContracts from './listContracts.vue'
 export default {
   name: 'manageContract',
-  components: { managedao },
+  components: { ListContracts },
   beforeMount () {
     this.setDAO()
   },
@@ -33,8 +33,9 @@ export default {
     ...mapMutations('dao', ['setSelectedDao']),
     setDAO () {
       let params = this.$route.params.daoName
+      let _website = this.$route.params.website
       if (params) {
-        this.setSelectedDao({ dao: params, showActionsButtons: false })
+        this.setSelectedDao({ dao: params, website: _website, showActionsButtons: false })
       }
       if (this.selectedDAO === null) {
         this.$router.push({ name: 'daos' })

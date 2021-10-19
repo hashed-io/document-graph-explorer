@@ -28,6 +28,11 @@ class DaoApi extends BaseEosApi {
   async _parseRows (rows, modifierProps) {
     return rows
   }
+  /**
+   *
+   * @param {accountName, account} param0
+   * @returns
+   */
   async InitDao ({ accountName, account }) {
     var authorization = `${account}@active`
     let [actor, permission] = authorization.split('@')
@@ -44,6 +49,23 @@ class DaoApi extends BaseEosApi {
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
+  }
+  /**
+   *
+   * @param {daoId, tokenContract[token name], token [token symbol e.g EOS]} param0
+   * @returns
+   */
+  async addToken ({ daoId, tokenContract, Token }) {
+    const actions = [{
+      account: Contracts.CONTRACT_DAO,
+      name: 'addtoken',
+      data: {
+        dao_id: daoId,
+        token_contract: tokenContract,
+        token: Token
+      }
+    }]
+    return this.signTransaction(actions)
   }
   /**
    *
@@ -70,15 +92,48 @@ class DaoApi extends BaseEosApi {
   }
   /**
    *
+   * @param {dao_id, attributes [string]}
+   * @returns
+   */
+  async deleteAttributes ({ daoId, Attributes }) {
+    const actions = [{
+      account: Contracts.CONTRACT_DAO,
+      name: 'delattrs',
+      data: {
+        dao_id: daoId,
+        attributes: Attributes
+      }
+    }]
+    return this.eosApi.signTransaction(actions)
+  }
+  /**
+   *
+   * @param {key [account name], value [variant Value], description [string]} param0
+   * @returns
+   */
+  async setParams ({ Key, Value, Description }) {
+    const actions = [{
+      account: Contracts.CONTRACT_DAO,
+      name: 'setparam',
+      data: {
+        key: Key,
+        value: Value,
+        description: Description
+      }
+    }]
+    return this.eosApi.signTransaction(actions)
+  }
+  /**
+   *
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
    * @returns
    */
-  async updateDaoData ({ dao, ipfs, accountName }) {
+  async updateDaoData ({ daoId, ipfs, accountName }) {
     const actions = [{
       account: Contracts.CONTRACT_DAO,
       name: 'update',
       data: {
-        dao: dao,
+        dao_id: daoId,
         ipfs: ipfs
       }
     }]
@@ -114,6 +169,30 @@ class DaoApi extends BaseEosApi {
     })
     return rounds
   }
+  /**
+   *
+   * Variant `['tipo del dato variant', aquí el valor del variant]`
+   * @param {daoID [The number to identify the dao], attribue [pair Variant]}
+   * @returns signature
+   */
+  async upserattributes ({ daoId, Attributes }) {
+    const actions = [{
+      account: Contracts.CONTRACT_DAO,
+      name: 'upsertattrs',
+      data: {
+        dao_id: daoId,
+        attributes: Attributes
+      }
+    }]
+    console.log('Actions', actions)
+    return this.eosApi.signTransaction(actions)
+  }
+  /**
+   *
+   * @param {*} param0
+   * @returns signature
+   */
+
   /**
    * ============================ DEPLOY CONTRACT ================
    */

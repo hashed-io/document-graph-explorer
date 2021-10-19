@@ -107,6 +107,13 @@ export default {
       },
       columns: [
         {
+          name: 'dao_id',
+          label: 'DAO ID',
+          align: 'center',
+          field: row => row.dao_id,
+          sortable: false
+        },
+        {
           name: 'dao',
           label: this.$t('pages.general.dao'),
           align: 'center',
@@ -114,6 +121,22 @@ export default {
           style: 'font-weight: bolder',
           field: row => row.dao,
           sortable: true
+        },
+        {
+          name: 'tokens',
+          label: 'tokens',
+          align: 'center',
+          field: row => 'Tokens',
+          sortable: false
+        },
+        {
+          name: 'website',
+          label: 'Website',
+          align: 'center',
+          field: row => {
+            if (row.attributes.length > 0) { return row.attributes[1].second[1] } else { return '' }
+          },
+          sortable: false
         },
         {
           name: 'actions',
@@ -177,6 +200,7 @@ export default {
             ...this.params,
             search: this.params.search ? this.params.search.toLowerCase() : undefined
           })
+          console.log(newRows)
           // if (this.nextPage > 2) {
           //   newRows.rows.shift()
           // }
@@ -201,27 +225,32 @@ export default {
     },
     async onClickEditDao (row) {
       // this.loading = true
-      var self = this
-      let daoName = row.dao
-      var url = 'https://ipfs.io/ipfs/' + row.ipfs
-      this.showIsLoading(true)
-      await axios({
-        method: 'get',
-        url: url
-      }).then(function (response) {
-        self.loading = false
-        self.showIsLoading(false)
-        self.showSuccessMsg('Data loaded success')
-        self.changeStateDAO(response.data.data, daoName, row)
-      })
+      if (row.ipfs !== '') {
+        var self = this
+        let daoName = row.dao
+        var url = 'https://ipfs.io/ipfs/' + row.ipfs
+        this.showIsLoading(true)
+        await axios({
+          method: 'get',
+          url: url
+        }).then(function (response) {
+          self.loading = false
+          self.showIsLoading(false)
+          self.showSuccessMsg('Data loaded success')
+          self.changeStateDAO(response.data.data, daoName, row)
+        })
+      } else {
+        this.$router.push({ name: 'daoFormSimple', params: { dao: row } })
+        this.showSuccessMsg('No IPFS')
+      }
     },
     changeStateDAO (_form, daoName, row) {
       this.setIsEdit(true)
       this.setDataForm(_form)
       this.setDaoName(daoName)
 
-      this.$emit('editDao', row)
-      // this.$router.push({ name: 'daoForm' })
+      this.$router.push({ name: 'daoForm' })
+      // this.$emit('editDao', row)
     },
     async onClickSee (row) {
       if (/^bafk([a-zA-Z0-9]){55}$/.test(row.ipfs)) {

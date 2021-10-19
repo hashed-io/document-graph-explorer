@@ -24,6 +24,7 @@
           :hide-pagination="true"
           :filter="search"
           @row-click='selectRow'
+          data-cy='tableAgents'
         )
           template(v-slot:no-data="{icon, message}")
             div(class='full-width row flex-center text-primary q-gutter-sm text-weight-bolder')

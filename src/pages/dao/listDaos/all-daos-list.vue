@@ -40,6 +40,7 @@ q-table(
         ) {{col.value}}
           template(v-if="col.name == 'website'")
             q-icon.animated-icon(
+              v-show="props.row.attributes.length > 0"
               name="language"
               v-ripple
               size="sm"
@@ -79,8 +80,9 @@ export default {
         {
           name: 'dao',
           label: this.$t('pages.daos.daoName'),
-          field: row => '',
-          // field: row => row.information.dao_name,
+          field: row => {
+            if (row.attributes.length > 0) { return row.attributes[0].first } else { return [] }
+          },
           align: 'center',
           sortable: true
         },
@@ -94,8 +96,6 @@ export default {
         {
           name: 'website',
           label: this.$t('pages.daos.goWebsite'),
-          field: row => '',
-          // field: row => row.information.link,
           align: 'center',
           sortable: true
         },
@@ -151,11 +151,13 @@ export default {
       this.onScroll({ to: -1, ref: this.$refs.table, index: 0, direction: 'increase' })
     },
     openWebSite (dao) {
-      console.log(dao)
-      window.open(dao.information.link)
+      if (dao.attributes.length > 0) {
+        window.open(dao.attributes[1].second[1])
+      }
     },
     goToDetails (dao) {
-      this.$router.push({ name: 'daoPage', params: { daoName: dao.dao } })
+      let _website = dao.attributes[1].second[1]
+      this.$router.push({ name: 'daoPage', params: { daoName: dao.dao, website: _website } })
     }
   },
   computed: {

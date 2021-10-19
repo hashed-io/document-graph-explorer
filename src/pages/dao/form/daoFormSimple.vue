@@ -24,11 +24,20 @@ q-card
   .row.q-pa-md
     .col(style="text-align: end")
       q-btn(
+        v-show='!inEdit.isEdit'
         type="submit",
         @click="onSubmit",
         dense,
         color="primary",
         label="Finish & upload to blockchain"
+      )
+      q-btn(
+        v-show='inEdit.isEdit'
+        type="submit",
+        @click="updateDAO",
+        dense,
+        color="primary",
+        label="Edit the DAO"
       )
 </template>
 
@@ -45,12 +54,26 @@ export default {
       accountLogged: undefined,
       flagAbi: undefined,
       daoName: undefined,
-      website: undefined
+      website: undefined,
+      inEdit: {
+        isEdit: false,
+        idEdit: undefined
+      }
     }
   },
   mounted () {
-    this.daoName = this.account
-    this.accountLogged = this.account
+    let params = this.$route.params.dao
+
+    if (params) {
+      this.daoName = params.dao
+      this.accountLogged = params.creator
+      this.website = params.attributes[1].second[1]
+      this.inEdit.isEdit = true
+      this.inEdit.idEdit = params.dao_id
+    } else {
+      this.daoName = this.account
+      this.accountLogged = this.account
+    }
   },
   computed: {
     ...mapState('accounts', ['account'])
@@ -60,7 +83,9 @@ export default {
       'createDaoSimple',
       'updateDaoSimple',
       'deployContractSimple',
-      'initDaoSimple'
+      'initDaoSimple',
+      'getDaos',
+      'upserattributes'
     ]),
     async onSubmit () {
       if (await this.$refs.daoForm.validate()) {
@@ -101,9 +126,10 @@ export default {
         await this.createDaoSimple({
           dao: this.daoName.toLowerCase(),
           creator: this.account,
-          ipfs: this.website,
+          ipfs: '',
           basic: false
         })
+        await this.setAttributes()
         this.$q.loading.hide()
       } catch (e) {
         console.log(e)
@@ -111,6 +137,29 @@ export default {
         this.showErrorMsg('An error occurred when the dao was created' + e)
       }
       this.$router.push({ name: 'daos' })
+    },
+    async setAttributes () {
+      try {
+        let newRows = await this.getDaos({
+          ...this.params,
+          search: undefined
+        })
+        let lastIndex = newRows.rows.length - 1
+        let lastID = newRows.rows[lastIndex].dao_id
+        console.log(lastID)
+        let variantValue = [
+          { first: 'DAO name', second: ['string', this.daoName.toLowerCase()] },
+          { first: 'website', second: ['string', this.website] }
+        ]
+        await this.upserattributes({
+          daoId: lastID,
+          Attributes: variantValue
+        })
+      } catch (error) {
+        this.$q.loading.hide()
+        this.showErrorMsg('An error has occured while setting attributes ' + error)
+        console.log('An error occur has ocurred while setting attributes ' + error)
+      }
     },
     async deployingContract () {
       try {
@@ -163,8 +212,42 @@ export default {
         this.$q.loading.hide()
       }
     },
+    clear () {
+      this.inEdit.isEdit = false
+      this.inEdit.idEdit = undefined
+    },
     async updateDAO () {
-      this.updateDaoSimple({})
+      await this.updateDaoSimple()
+      this.clear()
+    },
+    async onEdit () {
+      try {
+        await this.callUpdateAction()
+        await this.modifyAttributes()
+      } catch (e) {
+        this.showErrorMsg('An error ocurred while on Edit the DAO ', e)
+        console.error('An error ocurred while on Edit the DAO ', e)
+      }
+    },
+    async callUpdateAction () {
+      try {
+        await this.updateDaoSimple({
+          daoId: this.inEdit.idEdit,
+          ipfs: ''
+        })
+      } catch (e) {
+        this.showErrorMsg('An error ocurred while call update action ', e)
+        console.error('An error ocurred while call update action ', e)
+      }
+    },
+    async modifyAttributes () {
+      try {
+        // TODO Add the actions to modify the attrs
+        // Edit attrs [delattrs and upserattrs?]
+      } catch (e) {
+        this.showErrorMsg('An error ocurred while modifying the attributes ', e)
+        console.error('An error ocurred while modifying the attributes ', e)
+      }
     }
   }
 }

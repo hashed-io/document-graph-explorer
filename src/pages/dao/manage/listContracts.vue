@@ -188,7 +188,7 @@ import CryptoDialog from '~/components/crypto-dialog'
 import Encrypt from '~/utils/EncryptUtil'
 
 export default {
-  name: 'managecontract',
+  name: 'ListContracts',
   components: {
     CryptoDialog
   },
@@ -945,7 +945,9 @@ export default {
       let data = JSON.parse(JSON.stringify(this.manageContract))
       this.manageContract = data.filter(isEncrypted)
     },
-    openWebSite () {}
+    openWebSite () {
+      window.open(this.dao.website)
+    }
   }
 }
 </script>

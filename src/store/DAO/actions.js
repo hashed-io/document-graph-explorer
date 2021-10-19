@@ -9,14 +9,44 @@ export const initDao = async function ({ commit, dispatch }, params) {
     throw new Error(e)
   }
 }
+export const addToken = async function ({ commit, dispatch }, params) {
+  try {
+    // daoId
+    const response = await this.$daoApi.addToken({ ...params })
+    return response
+  } catch (error) {
+    console.error('An error occured while trying to add Token', error)
+    throw new Error(error)
+  }
+}
 export const createDao = async function ({ commit, dispatch }, params) {
   try {
     const accountName = this.getters['accounts/account']
     const response = await this.$daoApi.CreateDao({ ...params, accountName })
+    console.log(response)
     return response
   } catch (e) {
     console.error('An error ocurred while trying to save dao data', e)
     throw new Error(e)
+  }
+}
+export const deleteAttributes = async function ({ commit, dispatch }, params) {
+  try {
+    // daoId
+    const response = await this.$daoApi.deleteAttributes({ ...params })
+    return response
+  } catch (error) {
+    console.error('An error occured while trying to add Token', error)
+    throw new Error(error)
+  }
+}
+export const setParams = async function ({ commit, dispatch }, params) {
+  try {
+    const response = await this.$daoApi.setParams({ ...params })
+    return response
+  } catch (error) {
+    console.error('An error occured while trying to add Token', error)
+    throw new Error(error)
   }
 }
 export const deployContract = async function ({ commit, dispatch }, accountName) {
@@ -37,6 +67,15 @@ export const updateDaoData = async function ({ commit, dispatch }, params) {
   } catch (e) {
     console.error('An error ocurred while trying to update dao data', e)
     throw new Error(e)
+  }
+}
+export const upserattributes = async function ({ commit, dispatch }, params) {
+  try {
+    const response = await this.$daoApi.upserattributes({ ...params })
+    return response
+  } catch (error) {
+    console.error('An error occured while trying to set attributes', error)
+    throw new Error(error)
   }
 }
 export const getDaos = async function ({ commit }, params) {
@@ -85,4 +124,11 @@ export const deployContractSimple = async function ({ commit, dispatch }, params
 export const initDaoSimple = async function ({ commit, dispatch }, params) {
 }
 export const updateDaoSimple = async function ({ commit, dispatch }, params) {
+  try {
+    const response = this.$daoApi.updateDaoData({ ...params })
+    return response
+  } catch (e) {
+    console.error('An error ocurred while trying to update basic dao data ', e)
+    throw new Error(e)
+  }
 }

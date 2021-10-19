@@ -11,7 +11,7 @@ div
         strong
           a(href='https://sos.wyo.gov/Forms/WyoBiz/Registered_Offices_and_Agents_Act_Chapter_28.pdf' style="color:#AC2734;") Registered Offices and Agents Act
     .container.q-px-xs.q-pb-md.q-gutter-sm
-      q-btn(label='Search' type='submit' color='primary' @click='searchAgent()')
+      q-btn(data-cy='searchAgentButton' label='Search' type='submit' color='primary' @click='searchAgent()')
       q-btn(label='clear agent' @click='clearAgent()' type='reset' color='primary')
     q-card-section.bg-primary.text-white
       div(v-if="agentForm.firstName !== null && agentFound")
@@ -65,7 +65,7 @@ div
               template(v-slot:prepend)
                 q-icon(name='email')
             div(style='color:red;').q-pt-md
-              q-checkbox(v-model='agree' label="* I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
+              q-checkbox(data-cy='checkbox' ref='checkbox' v-model='agree' label="* I have obtained a signed and dated statement by the registered agent in which they voluntarily consent to appointment for this entity. " )
   .dialog
     AgentListComponent(ref='agentList' :show='dialog' @agentSelected='selectedAgent' @closeModal='closeModal')
 
