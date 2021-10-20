@@ -3,7 +3,7 @@ div
   .q-pb-xs.col-12.col-md-11
     q-card(flat)
       .text-h6 {{ $t('pages.daos.titleForm') }}
-      Listdao(ref='daoTable' @editDao='isEditDao' @onManageContract='onClickManage')
+      Listdao(ref='daoTable' @editDaoSimple='isEditDaoSimple' @editDao='isEditDao' @onManageContract='onClickManage')
       //- RegisterDao(v-if='currentView.showRegisterDao' ref='daoForm' @backToListDao="changeView('showListDao')")
       //- ManageContract(v-if='currentView.showManageContract' ref='manageContract' @backToListDao="changeView('showListDao')")
       .row.q-pt-md.justify-end
@@ -66,6 +66,10 @@ export default {
     isEditDao (row) {
       this.setSelectedDao(row)
       this.$router.push({ name: 'daoForm' })
+    },
+    isEditDaoSimple (row) {
+      this.setSelectedDao(row)
+      this.$router.push({ name: 'daoFormSimple' })
     }
   }
 }

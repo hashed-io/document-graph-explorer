@@ -55,7 +55,7 @@ export const deployContract = async function ({ commit, dispatch }, accountName)
     console.log('deployContract', response)
     return response
   } catch (e) {
-    console.error('An error ocurred while trying to reset', e)
+    console.error('An error ocurred while trying to deploy', e)
     throw new Error(e)
   }
 }

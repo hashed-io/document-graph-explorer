@@ -69,5 +69,6 @@ export default () => ({
       email: null
     }
   },
-  selectedDAO: null
+  selectedDAO: null,
+  key: undefined
 })

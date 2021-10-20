@@ -60,7 +60,7 @@
               .col-6
                 q-input(data-cy='daoName' v-model='daoName' label='Signed by' ref='daoNameInput' :readonly='isEdit' :rules='[rules.required]')
               .col-6
-                q-input(data-cy='website' v-model='websiteDAO' label='Website of DAO' ref='websiteDAOInput' :readonly='isEdit' :rules='[rules.required]')
+                q-input(data-cy='website' v-model='websiteDAO' label='Website of DAO' ref='websiteDAOInput' :rules='[rules.required]')
               .col-12(style='text-align:end;')
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else data-cy='finishForm' @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
@@ -90,6 +90,8 @@ import BrowserIpfs from '~/services/BrowserIpfs'
 import { validation } from '~/mixins/validation'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import { QSpinnerPuff } from 'quasar'
+import keys from 'src/utils/keys.js'
+
 export default {
   name: 'daoForm',
   mixins: [validation],
@@ -113,6 +115,10 @@ export default {
     this.windowResized()
     if (this.isEdit) {
       this.daoName = this.selectedDAO.dao
+      let attributesArray = this.selectedDAO.attributes
+      if (attributesArray.length > 0) {
+        this.websiteDAO = attributesArray[1].second[1]
+      }
       this.form = JSON.parse(JSON.stringify(this.formStore))
     } else {
       this.daoName = this.account
@@ -285,9 +291,11 @@ export default {
       }
       this.saveData()
     },
-    saveData () {
+    async saveData () {
       if (this.isEdit) {
-        this.updateDataContract()
+        await this.updateDataContract()
+        await this.updateAttributes()
+        this.$router.push({ name: 'daos' })
       } else {
         this.saveDataContract()
       }
@@ -318,8 +326,8 @@ export default {
             await this.saveDataIPFS()
           }
           await this.callCreateDAO()
-          // await this.deployingContract()
-          // await this.initializedDAO()
+          await this.deployingContract()
+          await this.initializedDAO()
         } catch (e) {
           console.log(e)
           this.$q.loading.hide()
@@ -357,11 +365,11 @@ export default {
           spinner: QSpinnerPuff
         })
         await new Promise(resolve => setTimeout(resolve, 200))
-        // await this.createDao({
-        //   dao: this.daoName.toLowerCase(),
-        //   creator: this.account,
-        //   ipfs: this.typeCid
-        // })
+        await this.createDao({
+          dao: this.daoName.toLowerCase(),
+          creator: this.account,
+          ipfs: this.typeCid
+        })
         await this.setAttributes()
       } catch (error) {
         this.$q.loading.hide()
@@ -377,10 +385,12 @@ export default {
         })
         let lastIndex = newRows.rows.length - 1
         let lastID = newRows.rows[lastIndex].dao_id
-        console.log(lastID)
+        const key1 = keys.key1
+        const key2 = keys.key2
+
         let variantValue = [
-          { first: 'DAO name', second: ['string', this.daoName.toLowerCase()] },
-          { first: 'website', second: ['string', this.websiteDAO] }
+          { first: key1, second: ['string', this.daoName.toLowerCase()] },
+          { first: key2, second: ['string', this.websiteDAO] }
         ]
         await this.upserattributes({
           daoId: lastID,
@@ -429,6 +439,7 @@ export default {
         } else {
           this.$q.loading.hide()
           this.showErrorMsg('An error occurred when the smart contract was deployed')
+          console.error('An error occurred when the smart contract was deployed')
           this.$router.push({ name: 'daos' })
         }
       } catch (error) {
@@ -452,20 +463,36 @@ export default {
       }
       var self = this
       try {
-        // TODO: Change to DAO ID
         await this.updateDaoData({
-          dao: this.daoName.toLowerCase(),
+          daoId: this.selectedDAO.dao_id,
           ipfs: this.typeCid
         })
         this.showSuccessMsg('Data updated correctly')
         self.setIsEdit = false
         self.setDataForm = null
         self.setDaoName = null
-        this.$router.push({ name: 'daos' })
         // this.$emit('backToListDao', true)
       } catch (e) {
         this.showErrorMsg('Error occurred while data was being updated. ' + e)
         console.log(e || e.message)
+      }
+    },
+    async updateAttributes () {
+      try {
+        const key1 = keys.key1
+        const key2 = keys.key2
+        let variantValue = [
+          { first: key1, second: ['string', this.daoName.toLowerCase()] },
+          { first: key2, second: ['string', this.websiteDAO] }
+        ]
+        await this.upserattributes({
+          daoId: this.selectedDAO.dao_id,
+          Attributes: variantValue
+        })
+      } catch (error) {
+        this.$q.loading.hide()
+        this.showErrorMsg('An error has occured while setting attributes ' + error)
+        console.log('An error occur has ocurred while setting attributes ' + error)
       }
     }
   }

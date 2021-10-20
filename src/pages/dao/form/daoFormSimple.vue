@@ -24,7 +24,7 @@ q-card
   .row.q-pa-md
     .col(style="text-align: end")
       q-btn(
-        v-show='!inEdit.isEdit'
+        v-show='!isEdit'
         type="submit",
         @click="onSubmit",
         dense,
@@ -32,12 +32,12 @@ q-card
         label="Finish & upload to blockchain"
       )
       q-btn(
-        v-show='inEdit.isEdit'
+        v-show='isEdit'
         type="submit",
         @click="updateDAO",
         dense,
         color="primary",
-        label="Edit the DAO"
+        label="Update the DAO"
       )
 </template>
 
@@ -45,6 +45,7 @@ q-card
 import { validation } from 'src/mixins/validation.js'
 import { mapActions, mapState } from 'vuex'
 import { QSpinnerPuff } from 'quasar'
+import keys from 'src/utils/keys.js'
 
 export default {
   name: 'daoFormSimple',
@@ -54,29 +55,23 @@ export default {
       accountLogged: undefined,
       flagAbi: undefined,
       daoName: undefined,
-      website: undefined,
-      inEdit: {
-        isEdit: false,
-        idEdit: undefined
-      }
+      website: undefined
     }
   },
   mounted () {
-    let params = this.$route.params.dao
-
-    if (params) {
+    let params = this.selectedDAO
+    if (this.isEdit) {
       this.daoName = params.dao
       this.accountLogged = params.creator
-      this.website = params.attributes[1].second[1]
-      this.inEdit.isEdit = true
-      this.inEdit.idEdit = params.dao_id
+      if (params.attributes.length > 0) { this.website = params.attributes[1].second[1] }
     } else {
       this.daoName = this.account
       this.accountLogged = this.account
     }
   },
   computed: {
-    ...mapState('accounts', ['account'])
+    ...mapState('accounts', ['account']),
+    ...mapState('dao', ['isEdit', 'daoNameStore', 'formStore', 'selectedDAO'])
   },
   methods: {
     ...mapActions('dao', [
@@ -90,27 +85,9 @@ export default {
     async onSubmit () {
       if (await this.$refs.daoForm.validate()) {
         await this.callCreateDAO()
+        this.$router.push({ name: 'daos' })
         // await this.deployingContract()
         // await this.initializedDao()
-      }
-    },
-    async verifiedAbiExists () {
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-      for (let i = 0; i <= 5; i++) {
-        let response = await this.$store.$defaultApi.rpc.get_abi(
-          this.daoName.toLowerCase()
-        )
-        if (response.hasOwnProperty('abi')) {
-          this.flagAbi = true
-          break
-        }
-        console.log('Finding ABI')
-        await delay(500)
-      }
-      if (this.flagAbi) {
-        return true
-      } else {
-        return false
       }
     },
     async callCreateDAO () {
@@ -146,11 +123,13 @@ export default {
         })
         let lastIndex = newRows.rows.length - 1
         let lastID = newRows.rows[lastIndex].dao_id
-        console.log(lastID)
+        const key1 = keys.key1
+        const key2 = keys.key2
         let variantValue = [
-          { first: 'DAO name', second: ['string', this.daoName.toLowerCase()] },
-          { first: 'website', second: ['string', this.website] }
+          { first: key1, second: ['string', this.daoName.toLowerCase()] },
+          { first: key2, second: ['string', this.website] }
         ]
+        console.log(variantValue)
         await this.upserattributes({
           daoId: lastID,
           Attributes: variantValue
@@ -161,64 +140,14 @@ export default {
         console.log('An error occur has ocurred while setting attributes ' + error)
       }
     },
-    async deployingContract () {
-      try {
-        this.$q.loading.show({
-          message: 'Setting DAO..',
-          customClass: 'text-weight-bold text-subtitle1',
-          spinnerSize: '15em',
-          spinner: QSpinnerPuff
-        })
-        await new Promise((resolve) => setTimeout(resolve, 200))
-        await this.deployContractSimple({
-          accountName: this.daoName.toLowerCase()
-        })
-        this.$q.loading.hide()
-      } catch (e) {
-        this.$q.loading.hide()
-        this.showErrorMsg(
-          'An error ocurred while the contract was deployed. ' + e
-        )
-      }
-    },
-    async initializedDao () {
-      try {
-        this.$q.loading.show({
-          message: 'Initializing DAO...',
-          customClass: 'text-weight-bold text-subtitle1',
-          spinnerSize: '15em',
-          spinner: QSpinnerPuff
-        })
-        await this.verifiedAbiExists()
-        if (this.flagAbi) {
-          console.log('Found ABI')
-          this.hasAbi = true
-          await this.initDaoSimple({
-            account: this.daoName.toLowerCase()
-          })
-          this.$q.loading.hide()
-          this.$router.push({ name: 'daos' })
-        } else {
-          console.log('NOT Found ABI')
-          this.$q.loading.hide()
-          this.showErrorMsg(
-            'An error occurred when the smart contract was deployed'
-          )
-          this.$router.push({ name: 'daos' })
-        }
-        this.$q.loading.hide()
-      } catch (e) {
-        this.showErrorMsg('An error occur while the DAO was initialized')
-        this.$q.loading.hide()
-      }
-    },
-    clear () {
-      this.inEdit.isEdit = false
-      this.inEdit.idEdit = undefined
-    },
     async updateDAO () {
-      await this.updateDaoSimple()
-      this.clear()
+      try {
+        await this.modifyAttributes()
+        this.$router.push({ name: 'daos' })
+      } catch (e) {
+        this.showErrorMsg('An error ocurred while call update action ', e)
+        console.error('An error ocurred while call update action ', e)
+      }
     },
     async onEdit () {
       try {
@@ -229,21 +158,18 @@ export default {
         console.error('An error ocurred while on Edit the DAO ', e)
       }
     },
-    async callUpdateAction () {
-      try {
-        await this.updateDaoSimple({
-          daoId: this.inEdit.idEdit,
-          ipfs: ''
-        })
-      } catch (e) {
-        this.showErrorMsg('An error ocurred while call update action ', e)
-        console.error('An error ocurred while call update action ', e)
-      }
-    },
     async modifyAttributes () {
       try {
-        // TODO Add the actions to modify the attrs
-        // Edit attrs [delattrs and upserattrs?]
+        const key1 = keys.key1
+        const key2 = keys.key2
+        let variantValue = [
+          { first: key1, second: ['string', this.daoName.toLowerCase()] },
+          { first: key2, second: ['string', this.website] }
+        ]
+        await this.upserattributes({
+          daoId: this.selectedDAO.dao_id,
+          Attributes: variantValue
+        })
       } catch (e) {
         this.showErrorMsg('An error ocurred while modifying the attributes ', e)
         console.error('An error ocurred while modifying the attributes ', e)

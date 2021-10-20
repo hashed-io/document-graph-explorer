@@ -46,6 +46,7 @@
         ) {{col.value}}
           template(v-if="col.name == 'actions'")
             q-icon.animated-icon(
+              v-if="props.row.ipfs!==''"
               name="assignment"
               v-ripple
               size="sm"
@@ -65,6 +66,7 @@
               q-tooltip {{ $t('common.buttons.editDao') }}
           template(v-if="col.name == 'viewData'")
             q-icon.animated-icon(
+              v-if="props.row.ipfs!==''"
               name="search"
               v-ripple
               size="sm"
@@ -240,8 +242,9 @@ export default {
           self.changeStateDAO(response.data.data, daoName, row)
         })
       } else {
-        this.$router.push({ name: 'daoFormSimple', params: { dao: row } })
-        this.showSuccessMsg('No IPFS')
+        this.setIsEdit(true)
+        this.setDaoName(row.dao)
+        this.$emit('editDaoSimple', row)
       }
     },
     changeStateDAO (_form, daoName, row) {
@@ -249,10 +252,11 @@ export default {
       this.setDataForm(_form)
       this.setDaoName(daoName)
 
-      this.$router.push({ name: 'daoForm' })
-      // this.$emit('editDao', row)
+      this.$emit('editDao', row)
+      // this.$router.push({ name: 'daoForm' })
     },
     async onClickSee (row) {
+      alert(JSON.stringify(row))
       if (/^bafk([a-zA-Z0-9]){55}$/.test(row.ipfs)) {
         let url = 'https://ipfs.io/ipfs/' + row.ipfs
         window.open(url, '_blank')

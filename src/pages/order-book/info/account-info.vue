@@ -1,57 +1,74 @@
 <template lang='pug'>
 .bg-white(:style="$q.platform.is.mobile ? 'width:80vw' : 'width:30vw'")
-  q-list(bordered data-cy='accountInfoCard')
-    q-expansion-item(
-      data-cy='selectorAccount'
-      group="accountGroup",
-      icon="perm_identity",
-      label="Account",
-      default-opened,
-      header-class="text-primary"
-    )
-      q-card
-        q-card-section
-          .row
-            .col-6.center.text-subtitle1
-              | {{ account }}
-            .col-6.center.text-subtitle1(data-cy='balanceText')
-              | {{ balance + ' '+currentCurrency}}
-      q-separator
-    q-expansion-item(
-      data-cy='selectorTransfer'
-      group="accountGroup",
-      icon="attach_money",
-      label="Transfer",
-      header-class="text-primary"
-    )
-      q-card
-        q-card-section
-          .row.center
-            .col-sm-4.col-xs-12
-              q-input.no-right-borders(
-                data-cy="assetInput"
-                type="number",
-                v-model="asset",
-                label="Asset",
-                :rules="[rules.required, rules.positiveInteger]",
-                no-error-icon,
-                filled,
-                square
-              )
-            .col-sm-2.col-xs-12
-              q-select.no-left-borders(
-                data-cy="tokenInput"
-                :options="tokenOptions",
-                v-model="selectedToken",
-                :rules="[rules.required]",
-                filled,
-                square
-              )
-          .row.q-pt-md.q-col-gutter-md
-            .col-sm-6.col-xs-12.center
-              q-btn(data-cy='depositButton' label="Deposit", color="primary", @click="deposit")
-            .col-sm-6.col-xs-12.center
-              q-btn(data-cy='withdrawalButton' label="Withdrawals", color="primary", @click="withdrawal")
+  .row
+    .col-2
+      q-icon.floatingArrow(
+      data-cy='accountInfo'
+      ref='accountInfo'
+      class="text-primary"
+      style="font-size: 3em;"
+      :name="showAccountInfo ? 'keyboard_arrow_right' : 'keyboard_arrow_left'",
+      @click="showAccountInfo = !showAccountInfo"
+      )
+    .col-11.q-pr-sm
+      transition(
+          appear
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+        )
+        div(v-if='showAccountInfo')
+          q-list(v-show='showAccountInfo' bordered data-cy='accountInfoCard')
+            q-expansion-item(
+              data-cy='selectorAccount'
+              group="accountGroup",
+              icon="perm_identity",
+              label="Account",
+              default-opened,
+              header-class="text-primary"
+            )
+              q-card
+                q-card-section
+                  .row
+                    .col-6.center.text-subtitle1
+                      | {{ account }}
+                    .col-6.center.text-subtitle1(data-cy='balanceText')
+                      | {{ balance + ' '+currentCurrency}}
+              q-separator
+            q-expansion-item(
+              data-cy='selectorTransfer'
+              group="accountGroup",
+              icon="attach_money",
+              label="Transfer",
+              header-class="text-primary"
+            )
+              q-card
+                q-card-section
+                  .row.center
+                    .col-sm-4.col-xs-12
+                      q-input.no-right-borders(
+                        data-cy="assetInput"
+                        type="number",
+                        v-model="asset",
+                        label="Asset",
+                        :rules="[rules.required, rules.positiveInteger]",
+                        no-error-icon,
+                        filled,
+                        square
+                      )
+                    .col-sm-2.col-xs-12
+                      q-select.no-left-borders(
+                        data-cy="tokenInput"
+                        :options="tokenOptions",
+                        v-model="selectedToken",
+                        :rules="[rules.required]",
+                        filled,
+                        square
+                      )
+                  .row.q-pt-md.q-col-gutter-md
+                    .col-sm-6.col-xs-12.center
+                      q-btn(data-cy='depositButton' label="Deposit", color="primary", @click="deposit")
+                    .col-sm-6.col-xs-12.center
+                      q-btn(data-cy='withdrawalButton' label="Withdrawals", color="primary", @click="withdrawal")
 </template>
 
 <script>
@@ -67,6 +84,7 @@ export default {
   },
   data () {
     return {
+      showAccountInfo: true,
       balance: 127,
       currentCurrency: 'TLOS',
       tokenOptions: [
@@ -127,4 +145,32 @@ export default {
   display: flex
   align-items: center
   justify-content: center
+.floatingArrow
+  position: absolute
+  top: 0vh
+  right: 0vw
+  z-index: 1
+.floating
+  position: absolute
+  top: 0vh
+  right: 0vw
+  z-index: 1
+@media screen and (max-width: 319px) and (min-width: 30px)
+  .floating
+    position: absolute
+    top: 0vh
+    right: 12vw
+    z-index: 1
+@media screen and (max-width: 480px) and (min-width: 320px)
+  .floating
+    position: absolute
+    top: 0vh
+    right: 10vw
+    z-index: 1
+@media screen and (max-width: 768px) and (min-width: 481px)
+  .floating
+    position: absolute
+    top: 0vh
+    right: 8vw
+    z-index: 1
 </style>

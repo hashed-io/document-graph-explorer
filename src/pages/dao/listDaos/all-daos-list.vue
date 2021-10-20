@@ -81,7 +81,7 @@ export default {
           name: 'dao',
           label: this.$t('pages.daos.daoName'),
           field: row => {
-            if (row.attributes.length > 0) { return row.attributes[0].first } else { return [] }
+            if (row.attributes.length > 0) { return row.attributes[0].second[1] } else { return [] }
           },
           align: 'center',
           sortable: true

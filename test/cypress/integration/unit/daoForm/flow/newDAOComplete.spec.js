@@ -53,7 +53,7 @@ before(() => {
   // end
   cy.dataCy('daoName')
     .clear()
-    .type('alejandroga4')
+    .type('alejandroga3')
   cy.dataCy('website')
     .type('https://horizonlandsales.com/property/laramie-river-ranch-lot-45-35-84-acres/')
 })
