@@ -64,8 +64,10 @@
               q-btn(v-if='idEdit === null' data-cy='addFieldButton' id='addFieldButton' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
   #table.q-gutter-md(v-if='hasAbi && initializedDAO')
-    q-icon(name='key'  v-show='keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt')
-    q-icon(name='lock' v-show='!keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt')
+    q-icon(name='key'  v-show='keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
+    q-btn(@click='clearKeyToEncrypt' flat size='xs' color="primary" label='clear key' v-show='keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
+    q-icon(name='lock' v-show='!keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
+    q-btn(@click='getKeyToEncrypt' flat size='xs' color="primary" label='set key' v-show='!keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
     q-table.q-mb-sm(
       title='Contracts'
       :data='manageContract'
@@ -134,8 +136,8 @@
                       color='positive'
                       @click="openLink(props.row.ipfs,props.row.value[1])"
                     )
-                  //- template(v-else-if="/^([a-zA-Z0-9]){45,60}/.test(props.row.value[1])  ")
-                  template(v-else-if="/^bafk([a-zA-Z0-9]){55}$/.test(props.row.value[1])  ")
+                  //- template(v-else-if="Regex.IPFS.test(props.row.value[1])  ")
+                  template(v-else-if="isIPFS(props.row.value[1])")
                     q-icon.animated-icon(
                       name='search'
                       v-ripple
@@ -186,6 +188,7 @@ import { mapActions } from 'vuex'
 import { QSpinnerPuff } from 'quasar'
 import CryptoDialog from '~/components/crypto-dialog'
 import Encrypt from '~/utils/EncryptUtil'
+import customRegex from 'src/const/customRegex.js'
 
 export default {
   name: 'ListContracts',
@@ -350,8 +353,14 @@ export default {
           headerStyle: 'font-weight: bolder',
           align: 'justify',
           format: (val, row) => {
-            let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
-            let isStringIPFS = /^bafk([a-zA-Z0-9]){55}$/.test(val)
+            // let expressionRegx = new RegExp('^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])')
+            // let isFile = expressionRegx.test(val)
+            // let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
+            // let isStringIPFS = /^bafk([a-zA-Z0-9]){55}$/.test(val)
+            var regexFile = new RegExp(customRegex.FILE)
+            var regexIPFS = new RegExp(customRegex.IPFS)
+            let isFile = regexFile.test(val)
+            let isStringIPFS = regexIPFS.test(val)
             if (isFile) {
               if (!this.atLeastElementEncrypt) {
                 let boolEncrypt = this.verifyIfFileIsEncrypted(val.substring(5))
@@ -387,6 +396,10 @@ export default {
   methods: {
     ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
     ...mapActions('dao', ['deployContract', 'initDao']),
+    isIPFS (value) {
+      let rgx = new RegExp(customRegex.IPFS)
+      return rgx.test(value)
+    },
     closeModal () {
       this.idEdit = null
     },
@@ -627,9 +640,10 @@ export default {
         this.fieldNameEditable = true
       }
       let data = this.manageContract[index]
+      var regexIPFS = new RegExp(customRegex.IPFSSTRING)
       if (data.value[0] === 'string' && data.ipfs) {
         this.stringIPFS = true
-      } else if (data.value[0] === 'string' && /^([a-zA-Z0-9]){59}/.test(data.value[1])) {
+      } else if (data.value[0] === 'string' && regexIPFS.test(data.value[1])) {
         this.stringIPFS = true
         data.ipfs = data.value[1]
         let dataIPFS = await BrowserIpfs.getFromJson(data.value[1])
@@ -709,7 +723,6 @@ export default {
       this.openDialog = false
       this.$forceUpdate()
     },
-    //
     changesDate () {
       // const arr = this.date.split('/')
       // let dateFormatted = arr[1] + '/' + arr[2] + '/' + arr[0]
@@ -752,14 +765,13 @@ export default {
       this.textEncrypted = undefined
       this.contract.encryptFile = false
       this.fileNotEncrypted = undefined
-      // this.$refs.labelForm.reset()
     },
     async modifiedData () {
       this.clearContract()
       Array.prototype.push.apply(this.newLabels, this.updateLabels)
       let rawData = JSON.parse(JSON.stringify(this.newLabels))
       rawData.forEach(function (entry) {
-        if ((entry.value[0] === 'time_point' || entry.value[0] === 'file' || entry.value[0] === 'name')) {
+        if ((entry.value[0] === 'time_point' || entry.value[0] === 'name')) {
           entry.value[1] = entry.value[1].toString()
           entry.value[1] = entry.value[1].toLowerCase()
         }
@@ -818,6 +830,8 @@ export default {
         this.loading = false
         if (this.dao.hasOwnProperty('showActionsButtons')) {
           this.filterEncryptData()
+          await this.filterIPFSEncrypt()
+          // await this.filterFileEncrypt()
         }
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
@@ -892,11 +906,16 @@ export default {
       if (!this.keyToEncrypt) this.openCryptoDialog = true
       this.$forceUpdate()
     },
+    clearKeyToEncrypt () {
+      this.keyToEncrypt = undefined
+    },
     async decryptFileOnIPFS (typeCID) {
       if (!this.keyToEncrypt) {
         this.openCryptoDialog = true
       }
-      if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
+      if (typeCID.includes('file:')) {
+        typeCID = typeCID.substr(5)
+      }
       try {
         const ipfs = await BrowserIpfs.retrieve(typeCID)
         const encryptedFile = ipfs.payload
@@ -912,7 +931,9 @@ export default {
       }
     },
     async getFileFromIpfs (typeCID) {
-      if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
+      if (typeCID.includes('file:')) {
+        typeCID = typeCID.substr(5)
+      }
       try {
         const ipfs = await BrowserIpfs.retrieve(typeCID)
         return ipfs.payload
@@ -921,10 +942,9 @@ export default {
       }
     },
     async verifyIfFileIsEncrypted (typeCID) {
-      console.log('******************')
-      console.log(typeCID)
-      console.log('******************')
-      if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
+      if (typeCID.includes('file:')) {
+        typeCID = typeCID.substr(5)
+      }
       try {
         const encryptedFile = await this.getFileFromIpfs(typeCID)
         const data = await this.readFile(encryptedFile)
@@ -943,10 +963,36 @@ export default {
         reader.readAsText(file)
       })
     },
-    async filterEncryptData () {
+    filterEncryptData () {
       const isEncrypted = (item) => item.value[1].substr(-1) !== '='
       let data = JSON.parse(JSON.stringify(this.manageContract))
       this.manageContract = data.filter(isEncrypted)
+    },
+    async filterIPFSEncrypt () {
+      const rgx = new RegExp(customRegex.IPFS)
+      let contracts = JSON.parse(JSON.stringify(this.manageContract))
+      let filteredContract = []
+      for (const contract of contracts) {
+        console.log(contract)
+        if (rgx.test(contract.value[1])) {
+          let dataIPFS = await BrowserIpfs.getFromJson(contract.value[1])
+          if (!(dataIPFS.data.substr(-1) === '=')) {
+            filteredContract.push(contract)
+          }
+        } else {
+          filteredContract.push(contract)
+        }
+      }
+      this.manageContract = filteredContract
+    },
+    async filterFileEncrypt () {
+      const isEncrypted = (item) => {
+        let isEncrypt = this.verifyIfFileIsEncrypted(item.value[1])
+        return !isEncrypt
+      }
+      let data = JSON.parse(JSON.stringify(this.manageContract))
+      this.manageContract = data.filter(isEncrypted)
+      console.log(this.manageContract)
     },
     openWebSite () {
       window.open(this.dao.website)

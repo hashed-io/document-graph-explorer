@@ -9,13 +9,20 @@ q-dialog(v-model="openDialog" persistent)
     )
       q-card-section
         q-input(
-          v-model.trim="cryptoKey"
+          v-model="cryptoKey"
           id='keyInput'
           data-cy='keyInput'
           filled
+          :type="isPwd ? 'password' : 'text'"
           label="Insert your key"
           :rules="[rules.required]"
         )
+          template(v-slot:append)
+            q-icon(
+              :name="isPwd ? 'visibility_off' : 'visibility'"
+              class="cursor-pointer"
+              @click="isPwd = !isPwd"
+            )
       q-card-actions(align="right")
         q-btn(
           color="primary"
@@ -41,7 +48,8 @@ export default {
   },
   data () {
     return {
-      cryptoKey: undefined
+      cryptoKey: undefined,
+      isPwd: true
     }
   },
   methods: {
