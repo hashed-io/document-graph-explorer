@@ -24,6 +24,8 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import Faker from 'faker'
+import 'cypress-file-upload'
+
 Cypress.Commands.add('fillCryptoDialog', (key) => {
   // Encryption dialog
   cy.dataCy('checkboxEncrypt')

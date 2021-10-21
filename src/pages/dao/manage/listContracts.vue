@@ -354,7 +354,7 @@ export default {
             let isStringIPFS = /^bafk([a-zA-Z0-9]){55}$/.test(val)
             if (isFile) {
               if (!this.atLeastElementEncrypt) {
-                let boolEncrypt = this.verifyIfFileIsEncrypted()
+                let boolEncrypt = this.verifyIfFileIsEncrypted(val.substring(5))
                 this.atLeastElementEncrypt = boolEncrypt
               }
               return 'File'
@@ -921,6 +921,9 @@ export default {
       }
     },
     async verifyIfFileIsEncrypted (typeCID) {
+      console.log('******************')
+      console.log(typeCID)
+      console.log('******************')
       if (typeCID.includes('file:')) typeCID = typeCID.substr(5)
       try {
         const encryptedFile = await this.getFileFromIpfs(typeCID)

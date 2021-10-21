@@ -6,37 +6,47 @@ q-card
   q-form.row.q-col-gutter-md.q-px-md(@submit="onSubmit", ref="daoForm")
     .col-4
       q-input(
-        v-model="accountLogged"
-        label="Signed by"
-        ref='signedInput'
-        data-cy='signedInput'
+        v-model="accountLogged",
+        label="Signed by",
+        ref="signedInput",
+        data-cy="signedInput",
         disabled
       )
     .col-4
       q-input(
         v-model="daoName",
-        label="DAO Name",
+        data-cy="daoNameInput",
         ref="daoNameInput",
+        label="DAO Name",
         :rules="[rules.required]"
       )
     .col-4
-      q-input(v-model="website", label="Web site of DAO", ref="websiteInput")
+      q-input(
+        v-model="website",
+        data-cy="websiteInput",
+        label="Web site of DAO",
+        ref="websiteInput"
+      )
   .row.q-pa-md
     .col(style="text-align: end")
       q-btn(
-        v-show='!isEdit'
+        v-show="!isEdit",
         type="submit",
         @click="onSubmit",
         dense,
         color="primary",
+        data-cy="submitButton",
+        ref="submitButton",
         label="Finish & upload to blockchain"
       )
       q-btn(
-        v-show='isEdit'
+        v-show="isEdit",
         type="submit",
         @click="updateDAO",
         dense,
         color="primary",
+        data-cy="EditButton",
+        ref="EditButton",
         label="Update the DAO"
       )
 </template>
@@ -63,7 +73,9 @@ export default {
     if (this.isEdit) {
       this.daoName = params.dao
       this.accountLogged = params.creator
-      if (params.attributes.length > 0) { this.website = params.attributes[1].second[1] }
+      if (params.attributes.length > 0) {
+        this.website = params.attributes[1].second[1]
+      }
     } else {
       this.daoName = this.account
       this.accountLogged = this.account
@@ -136,8 +148,12 @@ export default {
         })
       } catch (error) {
         this.$q.loading.hide()
-        this.showErrorMsg('An error has occured while setting attributes ' + error)
-        console.log('An error occur has ocurred while setting attributes ' + error)
+        this.showErrorMsg(
+          'An error has occured while setting attributes ' + error
+        )
+        console.log(
+          'An error occur has ocurred while setting attributes ' + error
+        )
       }
     },
     async updateDAO () {
@@ -171,7 +187,10 @@ export default {
           Attributes: variantValue
         })
       } catch (e) {
-        this.showErrorMsg('An error ocurred while modifying the attributes ', e)
+        this.showErrorMsg(
+          'An error ocurred while modifying the attributes ',
+          e
+        )
         console.error('An error ocurred while modifying the attributes ', e)
       }
     }
