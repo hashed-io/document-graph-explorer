@@ -10,6 +10,7 @@
       :name="showAccountInfo ? 'keyboard_arrow_right' : 'keyboard_arrow_left'",
       @click="toggleMenu()"
       )
+        q-tooltip {{$t('pages.orderBook.accountInfoTip')}}
     .col-11.q-pr-sm
       div(v-if='showAccountInfo')
         q-list(v-show='showAccountInfo' bordered data-cy='accountInfoCard')
@@ -18,7 +19,6 @@
             group="accountGroup",
             icon="perm_identity",
             label="Account",
-            default-opened,
             header-class="text-primary"
           )
             q-card

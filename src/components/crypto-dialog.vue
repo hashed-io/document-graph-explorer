@@ -1,6 +1,6 @@
 <template lang="pug">
 q-dialog(v-model="openDialog" persistent)
-  q-card
+  q-card(data-cy='cryptoDialog')
     q-card-section
       .text-h6 Enter key to encrypt and decrypt your data
     q-form(

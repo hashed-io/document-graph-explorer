@@ -19,17 +19,17 @@
           .row
             .col-xs-12.col-sm-12
               div(v-if="contract.value[0] === 'time_point'")
-                q-input(outlined data-cy='timePointInput' v-model='contract.value[1]' :rules='[rules.required]' )
+                q-input(outlined data-cy='timePointInput' v-model='contract.value[1]' mask='####-##-## ##:##' :rules='[rules.required]' )
                   template(v-slot:prepend)
-                    q-icon.cursor-pointer(name='event')
+                    q-icon.cursor-pointer(data-cy='datePickerButton' name='event')
                       q-popup-proxy(ref='qDateProxy', transition-show='scale', transition-hide='scale')
-                        q-date(v-model='date', today-btn, mask='YYYY-MM-DD HH:mm' @input='changesDate()')
+                        q-date(data-cy='datePickerPopup' v-model='date', today-btn, mask='YYYY-MM-DD HH:mm' @input='changesDate()')
                           .row.items-center.justify-end
                             q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                   template(v-slot:append)
                     q-icon(name='access_time' class='cursor-pointer')
                       q-popup-proxy(transition-show="scale" transition-hide="scale")
-                        q-time(v-model="date" mask="YYYY-MM-DD HH:mm" format24 @input='changesDate()')
+                        q-time(data-cy='timePickerPopup' v-model="date" mask="YYYY-MM-DD HH:mm" format24 @input='changesDate()')
                           div(class='row items-center justify-end')
                             q-btn(v-close-popup label='close' color='primary' flat)
               div(v-else-if="contract.value[0] === 'file'")
@@ -237,7 +237,6 @@ export default {
           this.initializedDAO = true
           this.showErrorMsg('Smart contract deployment failed. Deploy again')
         }
-        console.log('documentApi created', this.DocumentApi)
       }
     } catch (e) {
       console.error('An error ocurred while trying to create Document Api. ' + e)
@@ -402,6 +401,7 @@ export default {
     },
     closeModal () {
       this.idEdit = null
+      this.date = undefined
     },
     async saveStringIPFS () {
       if (this.stringIPFS) {
@@ -800,12 +800,13 @@ export default {
       this.manageContract = []
       this.newLabels = []
       this.updateLabels = []
+      this.deleteLabels = []
+      var contracts = []
       try {
         let data = await this.DocumentApi.getDocuments({
           ...this.params,
           search: this.params.search ? this.params.search.toLowerCase() : undefined
         })
-        // var flag = true
         var counter = 0
         let tableRows = data.rows[1].content_groups
         if (tableRows.length === 2) {
@@ -821,22 +822,21 @@ export default {
                   break
               }
               element.value[1] = element.value[1].toString()
-              this.manageContract.push(element)
+              contracts.push(element)
             }
-            // flag = false
             counter++
           })
         }
-        this.loading = false
         if (this.dao.hasOwnProperty('showActionsButtons')) {
-          this.filterEncryptData()
-          await this.filterIPFSEncrypt()
-          // await this.filterFileEncrypt()
+          contracts = await this.filterEncryptData(contracts)
+          contracts = await this.filterIPFSEncrypt(contracts)
+          contracts = await this.filterFileEncrypt(contracts)
         }
       } catch (e) {
         this.showErrorMsg('Fail to load DAO information. ' + e)
-        // this.showErrorMsg(e.json.error.details[0].message)
       }
+      this.manageContract = contracts
+      this.loading = false
     },
     async openLink (value, value2, data) {
       var link
@@ -963,17 +963,15 @@ export default {
         reader.readAsText(file)
       })
     },
-    filterEncryptData () {
+    filterEncryptData (contracts) {
       const isEncrypted = (item) => item.value[1].substr(-1) !== '='
-      let data = JSON.parse(JSON.stringify(this.manageContract))
-      this.manageContract = data.filter(isEncrypted)
+      let data = contracts
+      return data.filter(isEncrypted)
     },
-    async filterIPFSEncrypt () {
+    async filterIPFSEncrypt (contracts) {
       const rgx = new RegExp(customRegex.IPFS)
-      let contracts = JSON.parse(JSON.stringify(this.manageContract))
       let filteredContract = []
       for (const contract of contracts) {
-        console.log(contract)
         if (rgx.test(contract.value[1])) {
           let dataIPFS = await BrowserIpfs.getFromJson(contract.value[1])
           if (!(dataIPFS.data.substr(-1) === '=')) {
@@ -983,16 +981,23 @@ export default {
           filteredContract.push(contract)
         }
       }
-      this.manageContract = filteredContract
+      return filteredContract
     },
-    async filterFileEncrypt () {
-      const isEncrypted = (item) => {
-        let isEncrypt = this.verifyIfFileIsEncrypted(item.value[1])
-        return !isEncrypt
+    async filterFileEncrypt (contracts) {
+      let filteredContract = []
+      let isEncrypt
+      const rgxFile = new RegExp(customRegex.FILE)
+      for (const contract of contracts) {
+        if (rgxFile.test(contract.value[1])) {
+          isEncrypt = await this.verifyIfFileIsEncrypted(contract.value[1])
+          if (!isEncrypt) {
+            filteredContract.push(contract)
+          }
+        } else {
+          filteredContract.push(contract)
+        }
       }
-      let data = JSON.parse(JSON.stringify(this.manageContract))
-      this.manageContract = data.filter(isEncrypted)
-      console.log(this.manageContract)
+      return filteredContract
     },
     openWebSite () {
       window.open(this.dao.website)

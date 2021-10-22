@@ -91,6 +91,9 @@ export default {
     },
     daoSimple: {
       text: 'Basic setup of the create a DAO LLC '
+    },
+    orderBook: {
+      accountInfoTip: 'Account info'
     }
   }
 }

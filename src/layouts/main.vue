@@ -1,31 +1,3 @@
-<script>
-import { mapActions, mapGetters } from 'vuex'
-import LeftMenu from '~/components/layout/left-menu'
-import RightMenuAuthenticated from '~/components/layout/right-menu-authenticated'
-import RightMenuGuest from '~/components/layout/right-menu-guest'
-export default {
-  name: 'layout-auth',
-  components: {
-    LeftMenu,
-    RightMenuAuthenticated,
-    RightMenuGuest
-  },
-  data () {
-    return {
-      menu: false,
-      right: false,
-      miniState: true
-    }
-  },
-  computed: {
-    ...mapGetters('accounts', ['isAuthenticated'])
-  },
-  methods: {
-    ...mapActions('accounts', ['autoLogin'])
-  }
-}
-</script>
-
 <template lang="pug">
   q-layout(view="hHh Lpr lFf")
     q-header
@@ -46,7 +18,13 @@ export default {
     q-drawer(
       v-model="menu"
       side="left"
-      :mini='false'
+      :breakpoint="768"
+      :width="250"
+      bordered
+      :mini='miniState'
+      @mouseover="miniState = false"
+      @mouseout="miniState = true"
+
     )
       left-menu
     q-page-container.q-mt-xl.contentContainer
@@ -81,3 +59,31 @@ export default {
     padding: 10rem
 
 </style>
+
+<script>
+import { mapActions, mapGetters } from 'vuex'
+import LeftMenu from '~/components/layout/left-menu'
+import RightMenuAuthenticated from '~/components/layout/right-menu-authenticated'
+import RightMenuGuest from '~/components/layout/right-menu-guest'
+export default {
+  name: 'layout-auth',
+  components: {
+    LeftMenu,
+    RightMenuAuthenticated,
+    RightMenuGuest
+  },
+  data () {
+    return {
+      menu: false,
+      right: false,
+      miniState: true
+    }
+  },
+  computed: {
+    ...mapGetters('accounts', ['isAuthenticated'])
+  },
+  methods: {
+    ...mapActions('accounts', ['autoLogin'])
+  }
+}
+</script>
