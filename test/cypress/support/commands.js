@@ -25,28 +25,31 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import Faker from 'faker'
 import 'cypress-file-upload'
+Cypress.Commands.add('SaveBlockChain', () => {
+  cy.dataCy('saveDataButton')
+    .click()
+  // spy on POST requests to /push_transaction TELOS endpoint
+  cy.intercept('POST', 'https://test.telos.kitchen/v1/chain/push_transaction').as('sendSignature')
+  // wait until response [30 sec to send sign transaction]
+  // Expect response 202 from TLOS
+  cy.wait('@sendSignature', { timeout: 30000 }).its('response.statusCode').should('eq', 202)
+})
 Cypress.Commands.add('fillCryptoDialog', (key) => {
   // Encryption dialog
   cy.dataCy('checkboxEncrypt')
     .click()
-  cy.log(key)
-  cy.dataCy('keyInput')
-    .should('be.visible')
-    .type(key)
-  cy.dataCy('confirmKey')
-    .click()
-
-  // cy.dataCy('body').then(($body) => {
-  //   if ($body.dataCy('cryptoDialog')) {
-  //     cy.log('Modal exits!')
-  //     cy.dataCy('keyInput')
-  //       .type(key)
-  //     cy.dataCy('confirmKey')
-  //       .click()
-  //   } else {
-  //     cy.log('MODAL NOT EXIST!')
-  //   }
-  // })
+  cy.get('body').then((body) => {
+    if (body.find('[data-cy="cryptoDialog"]').length > 0) {
+      cy.log('Crypto Dialog Fill')
+      cy.dataCy('keyInput')
+        .should('be.visible')
+        .type(key)
+      cy.dataCy('confirmKey')
+        .click()
+    } else {
+      cy.log('Without Crypto Dialog')
+    }
+  })
 })
 Cypress.Commands.add('dateTimeInput', (dataCy, date, time) => {
   cy.dataCy(dataCy)
@@ -97,7 +100,6 @@ Cypress.Commands.add('fileLabelFill', (fileName, encrypt) => {
   }
 })
 Cypress.Commands.add('addNewLabel', (typeLabelNumber, withCheckBox) => {
-  // TODO modified timePoint actions and File, require more steps
   let fakeValue
   let dataCy
   let fieldName = Faker.name.findName()
