@@ -4,8 +4,6 @@ div
     q-card(flat)
       .text-h6 {{ $t('pages.daos.titleForm') }}
       Listdao(ref='daoTable' @editDaoSimple='isEditDaoSimple' @editDao='isEditDao' @onManageContract='onClickManage')
-      //- RegisterDao(v-if='currentView.showRegisterDao' ref='daoForm' @backToListDao="changeView('showListDao')")
-      //- ManageContract(v-if='currentView.showManageContract' ref='manageContract' @backToListDao="changeView('showListDao')")
       .row.q-pt-md.justify-end
         q-fab(
           v-model="fab"
