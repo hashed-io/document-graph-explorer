@@ -15,7 +15,9 @@ export const setDataForm = (state, _form) => {
 export const setDaoName = (state, _daoName) => {
   state.daoNameStore = _daoName
 }
-
+export const setIsGeneral = (state, _isGeneral) => {
+  state.isGeneral = _isGeneral
+}
 export const setSelectedDao = (state, _selectedDao) => {
   state.selectedDAO = _selectedDao
 }

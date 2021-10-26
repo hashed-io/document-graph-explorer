@@ -72,11 +72,17 @@ class DaoApi extends BaseEosApi {
    * @param { daoName(input user) , creatorName(current account), ipfsString(content Id)}
    * @returns
    */
-  async CreateDao ({ dao, creator, ipfs, accountName, basic }) {
+  async CreateDao ({ dao, creator, ipfs, accountName }) {
     // basic is to know if the registry was full or not
     //  make actions
+    var authorization = `${dao}@active`
+    let [actor, permission] = authorization.split('@')
     const actions = [
       {
+        authorization: [{
+          actor,
+          permission
+        }],
         account: Contracts.CONTRACT_DAO,
         name: 'create',
         data: {
@@ -87,7 +93,6 @@ class DaoApi extends BaseEosApi {
       }
     ]
     console.log('actions: ', actions)
-    console.log('Basic : ', basic)
     return this.eosApi.signTransaction(actions)
   }
   /**

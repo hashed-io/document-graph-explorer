@@ -55,6 +55,16 @@
               data-cy="editContracts"
             )
               q-tooltip {{ $t('common.buttons.edit') }}
+            q-icon.animated-icon(
+              v-else
+              name="assignment"
+              v-ripple
+              size="sm"
+              color="green"
+              @click="onClickEditGeneral(props.row)"
+              data-cy="editContracts"
+            )
+              q-tooltip {{ $t('common.buttons.edit') }}
           template(v-if="col.name == 'editDao'")
             q-icon.animated-icon(
               name="edit"
@@ -177,6 +187,9 @@ export default {
   methods: {
     ...mapActions('dao', ['getDaos', 'deployContract']),
     ...mapMutations('dao', ['setIsEdit', 'setDataForm', 'setDaoName', 's']),
+    onClickEditGeneral (row) {
+      this.$emit('onManageContractGeneral', row)
+    },
     onClickEdit (row) {
       // Send toggle modal
       this.$emit('onManageContract', row)

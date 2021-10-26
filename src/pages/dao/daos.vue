@@ -3,7 +3,7 @@ div
   .q-pb-xs.col-12.col-md-11
     q-card(flat)
       .text-h6 {{ $t('pages.daos.titleForm') }}
-      Listdao(ref='daoTable' @editDaoSimple='isEditDaoSimple' @editDao='isEditDao' @onManageContract='onClickManage')
+      Listdao(ref='daoTable' @editDaoSimple='isEditDaoSimple' @editDao='isEditDao' @onManageContract='onClickManage' @onManageContractGeneral='onClickManageGeneral')
       .row.q-pt-md.justify-end
         q-fab(
           v-model="fab"
@@ -47,7 +47,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('dao', ['setSelectedDao']),
+    ...mapMutations('dao', ['setSelectedDao', 'setIsGeneral']),
     onClickCreateDao () {
       this.$router.push({ name: 'daoForm' })
     },
@@ -59,6 +59,11 @@ export default {
     },
     onClickManage (row) {
       this.setSelectedDao(row)
+      this.$router.push({ name: 'manageContract' })
+    },
+    onClickManageGeneral (row) {
+      this.setSelectedDao(row)
+      this.setIsGeneral(true)
       this.$router.push({ name: 'manageContract' })
     },
     isEditDao (row) {

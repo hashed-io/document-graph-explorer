@@ -65,7 +65,8 @@ export default {
       accountLogged: undefined,
       flagAbi: undefined,
       daoName: undefined,
-      website: undefined
+      website: undefined,
+      lastIndex: undefined
     }
   },
   mounted () {
@@ -94,6 +95,7 @@ export default {
       'getDaos',
       'upserattributes'
     ]),
+    ...mapActions('documentsGeneral', ['adddao']),
     async onSubmit () {
       if (await this.$refs.daoForm.validate()) {
         await this.callCreateDAO()
@@ -119,6 +121,7 @@ export default {
           basic: false
         })
         await this.setAttributes()
+        await this.initDAOSimple()
         this.$q.loading.hide()
       } catch (e) {
         console.log(e)
@@ -133,15 +136,16 @@ export default {
           ...this.params,
           search: undefined
         })
-        let lastIndex = newRows.rows.length - 1
-        let lastID = newRows.rows[lastIndex].dao_id
+        let lastElement = newRows.rows.length - 1
+        let lastID = newRows.rows[lastElement].dao_id
+        this.lastIndex = lastID
+        //
         const key1 = keys.key1
         const key2 = keys.key2
         let variantValue = [
           { first: key1, second: ['string', this.daoName.toLowerCase()] },
           { first: key2, second: ['string', this.website] }
         ]
-        console.log(variantValue)
         await this.upserattributes({
           daoId: lastID,
           Attributes: variantValue
@@ -154,6 +158,19 @@ export default {
         console.log(
           'An error occur has ocurred while setting attributes ' + error
         )
+      }
+    },
+    async initDAOSimple () {
+      // Action adddao in daoinfor1111
+      try {
+        await this.adddao({
+          creator: this.daoName.toLowerCase(),
+          daoId: this.lastIndex
+        })
+      } catch (e) {
+        console.log(e)
+        this.$q.loading.hide()
+        this.showErrorMsg('An error occurred when the dao was added' + e)
       }
     },
     async updateDAO () {

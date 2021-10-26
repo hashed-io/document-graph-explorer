@@ -70,5 +70,6 @@ export default () => ({
     }
   },
   selectedDAO: null,
-  key: undefined
+  key: undefined,
+  isGeneral: undefined
 })
