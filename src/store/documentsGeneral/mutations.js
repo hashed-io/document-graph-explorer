@@ -15,6 +15,6 @@ export const setDataForm = (state, _form) => {
 export const setDaoName = (state, _daoName) => {
   state.daoNameStore = _daoName
 }
-export const setSelectedDao = (state, _selectedDao) => {
+export const setSelectedDaoSimple = (state, _selectedDao) => {
   state.selectedDAO = _selectedDao
 }

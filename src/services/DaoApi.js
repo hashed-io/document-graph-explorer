@@ -164,6 +164,25 @@ class DaoApi extends BaseEosApi {
     return rounds
   }
 
+  async getDao ({ limit, accountName, nextKey, search, customOffset }) {
+    let start = nextKey || (BigInt(eosjsAccountName.nameToUint64(accountName)) * (BigInt(2 ** 64))).toString()
+    let end = (BigInt(eosjsAccountName.nameToUint64(accountName)) * BigInt(2 ** 64) + BigInt('18446744073709551615')).toString()
+    console.log('getDaos', { start, accountName, nextKey })
+    // let upperBound = search || ''
+    // if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
+
+    const rounds = await this._getTableRows({
+      scope: Contracts.CONTRACT_DAO,
+      indexPosition: 2,
+      lowerBound: start,
+      upperBound: end,
+      limit,
+      keyType: 'i128',
+      table: 'daos'
+    })
+    return rounds
+  }
+
   async getAllDaos ({ limit, nextKey }) {
     // let end = (BigInt(eosjsAccountName.nameToUint64(accountName)) * BigInt(2 ** 64) + BigInt('18446744073709551615')).toString()
     const rounds = await this._getTableRows({

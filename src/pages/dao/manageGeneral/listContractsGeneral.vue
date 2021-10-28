@@ -1,7 +1,5 @@
 <template lang="pug">
 #container
-  //- q-btn.back(  icon='fas fa-arrow-left' color="primary" flat dense size="14px" @click="$router.push({name: 'daos'})")
-  //-   q-tooltip {{$t('pages.general.back')}}
   #Form
   q-dialog(v-model='openDialog' ref='qDialog' @hide='closeModal()')
     q-card(flat).full-width
@@ -63,7 +61,7 @@
             .row.justify-end.q-py-md
               q-btn(v-if='idEdit === null' data-cy='addFieldButton' id='addFieldButton' label='Add Field' color="primary" @click='addRow()')
               q-btn(v-else label='Update Field' data-cy='updateButton' @click='updateRow()' color="primary")
-  #table.q-gutter-md(v-if='hasAbi && initializedDAO')
+  #table.q-gutter-md(v-if='initializedDAO')
     q-icon(name='key'  v-show='keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
     q-btn(@click='clearKeyToEncrypt' flat size='xs' color="primary" label='clear key' v-show='keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
     q-icon(name='lock' v-show='!keyToEncrypt && manageContract.length > 0 && atLeastElementEncrypt && showActions')
@@ -162,10 +160,7 @@
                     color='negative'
                     @click='deleteRow(props.row,props.rowIndex)'
                   )
-  div(v-else-if='!hasAbi && initializedDAO')
-    p The contract was not deployed success. Press the button to deploy the smart contract and initialize
-    q-btn(label='Deploy contract' color='primary' @click='deployContractAgain()')
-  div(v-else-if='!initializedDAO && hasAbi')
+  div(v-else-if='!initializedDAO')
     p The contract was deployed success but the DAO was not initialized correctly.
     q-btn(label='Initialize the DAO' color='primary' @click='callActionInitDAO()')
   CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
@@ -182,16 +177,15 @@
 </style>
 <script>
 import BrowserIpfs from 'src/services/BrowserIpfs.js'
-import { ContractsApi } from 'src/services'
 import { validation } from 'src/mixins/validation'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import { QSpinnerPuff } from 'quasar'
 import CryptoDialog from '~/components/crypto-dialog'
 import Encrypt from '~/utils/EncryptUtil'
 import customRegex from 'src/const/customRegex.js'
 
 export default {
-  name: 'ListContracts',
+  name: 'ListContractsGeneral',
   components: {
     CryptoDialog
   },
@@ -216,27 +210,10 @@ export default {
           this.showActions = false
           this.columns.splice(3, 1)
         }
-        var _contractAccount
-        _contractAccount = this.dao.dao
-        let _api = this.$store.$apiMethods
-        let mEosApi = this.$store.$defaultApi
-        this.DocumentApi = await new ContractsApi({ eosApi: _api, mEosApi }, _contractAccount)
-
-        let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi(_contractAccount)
-        // let getAbiResponse = await this.$store.$defaultApi.rpc.get_abi('alejandroga1')
-        if (getAbiResponse.hasOwnProperty('abi')) {
-          console.log('Deploy success')
-          await this.verifiedInitDao()
-          this.hasAbi = true
-          if (this.initializedDAO) {
-            this.loadData()
-          }
-        } else {
-          console.log(' Deploy fail, deploy again')
-          this.hasAbi = false
-          this.initializedDAO = true
-          this.showErrorMsg('Smart contract deployment failed. Deploy again')
-        }
+        console.log(this.dao.dao_id)
+        this.loadData()
+        // this.initializedDAO = true
+        // await this.verifiedInitDao()
       }
     } catch (e) {
       console.error('An error ocurred while trying to create Document Api. ' + e)
@@ -244,7 +221,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('dao', ['isGeneral']),
     checkContractsModified () {
       return (this.updateLabels.length > 0 || this.newLabels.length > 0 || this.deleteLabels.length > 0)
     }
@@ -255,8 +231,6 @@ export default {
       loadingIPFSstring: false,
       showActions: false,
       stringIPFS: false,
-      hasAbi: true,
-      flagAbi: false,
       initializedDAO: true,
       openDialog: false,
       loading: false,
@@ -353,10 +327,6 @@ export default {
           headerStyle: 'font-weight: bolder',
           align: 'justify',
           format: (val, row) => {
-            // let expressionRegx = new RegExp('^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])')
-            // let isFile = expressionRegx.test(val)
-            // let isFile = /^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])/.test(val)
-            // let isStringIPFS = /^bafk([a-zA-Z0-9]){55}$/.test(val)
             var regexFile = new RegExp(customRegex.FILE)
             var regexIPFS = new RegExp(customRegex.IPFS)
             let isFile = regexFile.test(val)
@@ -394,7 +364,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('documents', ['storeEntry', 'getDocuments', 'getEdges']),
+    ...mapActions('documentsGeneral', ['storeEntry', 'storeAndDeleteEntry', 'delEntry', 'getDocuments', 'getEdges']),
     ...mapActions('dao', ['deployContract', 'initDao']),
     isIPFS (value) {
       let rgx = new RegExp(customRegex.IPFS)
@@ -428,17 +398,19 @@ export default {
       this.fieldNameEditable = false
     },
     async verifiedInitDao () {
+      // TODO: Verified is daoinfor1111 contains the dao_id
       let data = await this.DocumentApi.getDocuments({
         ...this.params,
         search: this.params.search ? this.params.search.toLowerCase() : undefined
       })
-      if (data.rows.length === 0 && this.hasAbi) {
+      if (data.rows.length === 0) {
         this.initializedDAO = false
       } else {
         this.initializedDAO = true
       }
     },
     async callActionInitDAO () {
+      // TODO: call adddao action in daoinfor1111
       this.$q.loading.show({
         message: 'Initializing DAO...',
         customClass: 'text-weight-bold text-subtitle1',
@@ -451,103 +423,12 @@ export default {
         await this.initDao({
           account: this.dao.dao.toLowerCase()
         })
-        this.hasAbi = true
         this.initializedDAO = true
         this.showSuccessMsg('DAO initialized successfully')
         this.loadData()
       } catch (e) {
         this.showErrorMsg('Error an ocurred while trying to initializing DAO')
         this.initializedDAO = false
-      }
-    },
-    async verifiedAbiExists () {
-      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-      for (let i = 0; i <= 5; i++) {
-        let response = await this.$store.$defaultApi.rpc.get_abi(this.dao.dao)
-        if (response.hasOwnProperty('abi')) {
-          this.flagAbi = true
-          break
-        }
-        console.log('Finding ABI')
-        await delay(500)
-      }
-      if (this.flagAbi) {
-        this.hasAbi = true
-        this.initializedDAO = false
-        return true
-      } else {
-        this.initializedDAO = false
-        this.hasAbi = false
-        return false
-      }
-    },
-    async deployContractAgain () {
-      this.initializedDAO = true
-      this.hasAbi = false
-      try {
-        this.$q.loading.show({
-          message: 'Setting DAO..',
-          customClass: 'text-weight-bold text-subtitle1',
-          spinnerSize: '15em',
-          spinner: QSpinnerPuff
-        })
-        await new Promise(resolve => setTimeout(resolve, 500))
-        this.$q.loading.hide()
-        try {
-          await this.deployContract({
-            accountName: this.dao.dao.toLowerCase()
-          })
-          this.showSuccessMsg('Deploy contract success')
-        } catch (e) {
-          this.showErrorMsg('An error ocurred while trying to deploy contract again' + e)
-        }
-        // loading show [step 2]
-        this.$q.loading.show({
-          message: 'Confirming the contract deployment...',
-          customClass: 'text-weight-bold text-subtitle1',
-          spinnerSize: '15em',
-          spinner: QSpinnerPuff
-        })
-        //
-        await this.verifiedAbiExists()
-        await new Promise(resolve => setTimeout(resolve, 500))
-        this.$q.loading.hide()
-
-        this.initializedDAO = false
-
-        if (this.flagAbi) {
-          console.log('Found ABI')
-          this.hasAbi = true
-          try {
-            this.$q.loading.show({
-              message: 'Initializing DAO...',
-              customClass: 'text-weight-bold text-subtitle1',
-              spinnerSize: '15em',
-              spinner: QSpinnerPuff
-            })
-            await new Promise(resolve => setTimeout(resolve, 700))
-            this.$q.loading.hide()
-            await this.initDao({
-              account: this.dao.dao.toLowerCase()
-            })
-            this.initializedDAO = true
-            this.loadData()
-          } catch (e) {
-            this.initializedDAO = false
-          }
-          this.$q.loading.hide()
-        } else {
-          console.log('NOT Found ABI')
-          this.$q.loading.hide()
-          this.showErrorMsg('An error occurred when the smart contract was deployed')
-          this.$router.push({ name: 'daos' })
-          // this.$emit('backToListDao', true)
-        }
-        // await new Promise(resolve => setTimeout(resolve, 1000))
-      } catch (e) {
-        this.hasAbi = false
-        this.$q.loading.hide()
-        this.showErrorMsg('An error ocurred while trying to deploy contract and Initialize the dao. Try again')
       }
     },
     async addRow () {
@@ -575,6 +456,7 @@ export default {
         }
         this.openDialog = false
       }
+      this.$forceUpdate()
     },
     async deleteRow (contract, index) {
       if (contract.label !== null) {
@@ -601,18 +483,22 @@ export default {
     async saveData (values) {
       var deleteLabels = JSON.parse(JSON.stringify(this.deleteLabels))
       try {
+        let daoId = this.dao.dao_id
         if (deleteLabels.length > 0 && values.length > 0) {
-          await this.DocumentApi.StoreAndDeleteEntry({
+          await this.storeAndDeleteEntry({
             values,
-            deleteLabels
+            deleteLabels,
+            daoId
           })
         } else if (deleteLabels.length > 0 && values.length === 0) {
-          await this.DocumentApi.DelEntry({
-            deleteLabels
+          await this.delEntry({
+            deleteLabels,
+            daoId
           })
         } else if (deleteLabels.length === 0 && values.length > 0) {
-          await this.DocumentApi.StoreEntry({
-            values
+          await this.storeEntry({
+            values,
+            daoId
           })
         } else {
           this.showSuccessMsg('Nothing to save')
@@ -794,22 +680,28 @@ export default {
           }
         }
         delete entry.loadingState
+        delete entry.decrypt
+        delete entry.encrypt
+        delete entry.encryptFile
       })
       this.saveData(rawData)
     },
     async loadData () {
+      // TODO: Load data from daoinfor1111 filter by dao_id
       this.manageContract = []
       this.newLabels = []
       this.updateLabels = []
       this.deleteLabels = []
       var contracts = []
       try {
-        let data = await this.DocumentApi.getDocuments({
+        // TODO: Verify the creator
+        let data = await this.getDocuments({
           ...this.params,
-          search: this.params.search ? this.params.search.toLowerCase() : undefined
+          search: this.dao.creator
         })
         var counter = 0
-        let tableRows = data.rows[1].content_groups
+        // TODO: Change id
+        let tableRows = data.rows[3].content_groups
         if (tableRows.length === 2) {
           tableRows[1].forEach(async (element) => {
             if (counter > 1) {
@@ -824,6 +716,7 @@ export default {
               }
               element.value[1] = element.value[1].toString()
               contracts.push(element)
+              console.log(contracts)
             }
             counter++
           })
@@ -838,6 +731,7 @@ export default {
       }
       this.manageContract = contracts
       this.loading = false
+      this.$forceUpdate()
     },
     async openLink (value, value2, data) {
       var link

@@ -1,16 +1,16 @@
 <template lang='pug'>
   #container
-    .q-py-md.text-h6.q-pr-md(v-if='SelectedDao') {{text}}{{SelectedDao.dao}}
-    ListContracts(:dao="SelectedDao" ).q-pb-xs
+    .q-py-md.text-h6.q-pr-md(v-if='SelectedDao') {{text}}{{SelectedDao.dao}} {{'DHO'}}
+    listContractsGeneral(:dao="SelectedDao" ).q-pb-xs
 </template>
 <style lang="sass" scoped>
 </style>
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'
-import ListContracts from './listContracts.vue'
+import listContractsGeneral from './listContractsGeneral.vue'
 export default {
-  name: 'manageContract',
-  components: { ListContracts },
+  name: 'manageContractGeneral',
+  components: { listContractsGeneral },
   beforeMount () {
     this.setDAO()
   },
@@ -21,8 +21,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('dao', ['selectedDAO']),
-    ...mapGetters('dao', ['isGeneral'])
+    ...mapState('documentsGeneral', ['selectedDAO']),
+    ...mapGetters('documentsGeneral', ['isGeneral'])
   },
   data () {
     return {
@@ -31,7 +31,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('dao', ['setSelectedDao']),
+    ...mapMutations('documentsGeneral', ['setSelectedDao']),
     setDAO () {
       let params = this.$route.params.daoName
       let _website = this.$route.params.website
@@ -43,6 +43,9 @@ export default {
       } else {
         this.SelectedDao = JSON.parse(JSON.stringify(this.selectedDAO))
       }
+      console.log('*****************')
+      console.log(this.selectedDAO)
+      console.log('*****************')
     }
   }
 }

@@ -96,6 +96,20 @@ export const getDaos = async function ({ commit }, params) {
     commit('general/setIsLoading', false, { root: true })
   }
 }
+export const getDao = async function ({ commit }, params) {
+  try {
+    return this.$daoApi.getDao({
+      ...params
+    })
+    // return response
+  } catch (e) {
+    console.error('An error ocurred while trying to get users action:', e)
+    commit('general/setErrorMsg', e.message || e, { root: true })
+    throw new Error(e)
+  } finally {
+    commit('general/setIsLoading', false, { root: true })
+  }
+}
 export const getAllDaos = async function ({ commit }, params) {
   try {
     commit('general/setIsLoading', true, { root: true })

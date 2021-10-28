@@ -47,7 +47,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('dao', ['setSelectedDao', 'setIsGeneral']),
+    ...mapMutations('dao', ['setSelectedDao']),
+    ...mapMutations('documentsGeneral', ['setSelectedDaoSimple']),
     onClickCreateDao () {
       this.$router.push({ name: 'daoForm' })
     },
@@ -62,9 +63,8 @@ export default {
       this.$router.push({ name: 'manageContract' })
     },
     onClickManageGeneral (row) {
-      this.setSelectedDao(row)
-      this.setIsGeneral(true)
-      this.$router.push({ name: 'manageContract' })
+      this.setSelectedDaoSimple(row)
+      this.$router.push({ name: 'manageContractGeneral' })
     },
     isEditDao (row) {
       this.setSelectedDao(row)

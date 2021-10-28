@@ -1,5 +1,5 @@
 import BaseEosApi from './BaseEosApi'
-import { Contracts } from 'src/const/Contracts.js'
+// import { Contracts } from 'src/const/Contracts.js'
 class DocumentsGeneralApi extends BaseEosApi {
   constructor ({
     eosApi,
@@ -31,14 +31,15 @@ class DocumentsGeneralApi extends BaseEosApi {
    * @returns
    * contractAccount
    */
-  async StoreEntry ({ values }) {
+  async StoreEntry ({ values, daoId }) {
     var authorization = `${this.contractAccount}@active`
     let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'storeentry',
       data: {
-        values: values
+        values: values,
+        dao_id: daoId
       },
       authorization: [{
         actor,
@@ -48,7 +49,7 @@ class DocumentsGeneralApi extends BaseEosApi {
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
-  async StoreAndDeleteEntry ({ values, deleteLabels }) {
+  async StoreAndDeleteEntry ({ values, deleteLabels, daoId }) {
     var authorization = `${this.contractAccount}@active`
     let [actor, permission] = authorization.split('@')
     const actions = [
@@ -56,7 +57,8 @@ class DocumentsGeneralApi extends BaseEosApi {
         account: this.contractAccount,
         name: 'storeentry',
         data: {
-          values: values
+          values: values,
+          dao_id: daoId
         },
         authorization: [{
           actor,
@@ -83,7 +85,7 @@ class DocumentsGeneralApi extends BaseEosApi {
    * @param { label (string) }
    * @returns
    */
-  async DelEntry ({ deleteLabels }) {
+  async DelEntry ({ deleteLabels, daoId }) {
     var authorization = `${this.contractAccount}@active`
     let [actor, permission] = authorization.split('@')
     const actions = [
@@ -91,7 +93,8 @@ class DocumentsGeneralApi extends BaseEosApi {
         account: this.contractAccount,
         name: 'delentry',
         data: {
-          labels: deleteLabels
+          labels: deleteLabels,
+          dao_id: daoId
         },
         authorization: [{
           actor,
@@ -109,7 +112,7 @@ class DocumentsGeneralApi extends BaseEosApi {
    * @returns
    */
   async Adddao ({ creator, daoId }) {
-    var authorization = `${Contracts.CONTRACT_DOC}@active`
+    var authorization = `${creator}@active`
     let [actor, permission] = authorization.split('@')
     const actions = [
       {
@@ -153,16 +156,16 @@ class DocumentsGeneralApi extends BaseEosApi {
   async getDocuments ({ limit, search, customOffset }) {
     let upperBound = search || ''
     if (!(upperBound > 12)) upperBound = upperBound.padEnd(12, 'z')
-    // alert(this.account)
     const rounds = await this._getTableRows({
       scope: this.contractAccount,
-      // indexPosition: 3,
+      // indexPosition: 2,
       lowerBound: customOffset,
       upperBound,
       limit,
       keyType: 'i64',
       table: 'documents'
     })
+
     return rounds
   }
   /**

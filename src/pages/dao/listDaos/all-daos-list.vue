@@ -53,7 +53,7 @@ q-table(
               name="info"
               v-ripple
               size="sm"
-              color="positive"
+              :color="props.row.ipfs? 'positive' : 'teal-8'"
               @click="goToDetails(props.row)"
             )
               q-tooltip {{ $t('pages.daos.seeDetails') }}
@@ -157,7 +157,11 @@ export default {
     },
     goToDetails (dao) {
       let _website = dao.attributes[1].second[1]
-      this.$router.push({ name: 'daoPage', params: { daoName: dao.dao, website: _website } })
+      if (!dao.ipfs) {
+        this.$router.push({ name: 'dhoPage', params: { daoName: dao.dao, website: _website } })
+      } else {
+        this.$router.push({ name: 'daoPage', params: { daoName: dao.dao, website: _website } })
+      }
     }
   },
   computed: {

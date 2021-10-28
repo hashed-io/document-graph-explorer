@@ -4,15 +4,15 @@ q-card
     | Create DAO
   .text-subtitle2.q-pt-md.q-px-md {{ $t('pages.daoSimple.text') }}
   q-form.row.q-col-gutter-md.q-px-md(@submit="onSubmit", ref="daoForm")
-    .col-4
-      q-input(
-        v-model="accountLogged",
-        label="Signed by",
-        ref="signedInput",
-        data-cy="signedInput",
-        disabled
-      )
-    .col-4
+    //- .col-4
+    //-   q-input(
+    //-     v-model="accountLogged",
+    //-     label="Signed by",
+    //-     ref="signedInput",
+    //-     data-cy="signedInput",
+    //-     disabled
+    //-   )
+    .col-6
       q-input(
         v-model="daoName",
         data-cy="daoNameInput",
@@ -20,7 +20,7 @@ q-card
         label="DAO Name",
         :rules="[rules.required]"
       )
-    .col-4
+    .col-6
       q-input(
         v-model="website",
         data-cy="websiteInput",
@@ -93,15 +93,14 @@ export default {
       'deployContractSimple',
       'initDaoSimple',
       'getDaos',
+      'getDao',
       'upserattributes'
     ]),
-    ...mapActions('documentsGeneral', ['adddao']),
+    ...mapActions('documentsGeneral', ['adddao', 'getDocuments']),
     async onSubmit () {
       if (await this.$refs.daoForm.validate()) {
         await this.callCreateDAO()
         this.$router.push({ name: 'daos' })
-        // await this.deployingContract()
-        // await this.initializedDao()
       }
     },
     async callCreateDAO () {
@@ -116,7 +115,7 @@ export default {
         await new Promise((resolve) => setTimeout(resolve, 200))
         await this.createDaoSimple({
           dao: this.daoName.toLowerCase(),
-          creator: this.account,
+          creator: this.daoName.toLowerCase(),
           ipfs: '',
           basic: false
         })
@@ -131,13 +130,26 @@ export default {
       this.$router.push({ name: 'daos' })
     },
     async setAttributes () {
+      this.$q.loading.show({
+        message: 'Setting attributes...',
+        customClass: 'text-weight-bold text-subtitle1',
+        spinnerSize: '15em',
+        spinner: QSpinnerPuff
+      })
+      await new Promise((resolve) => setTimeout(resolve, 500))
       try {
-        let newRows = await this.getDaos({
-          ...this.params,
-          search: undefined
+        let params = {
+          offset: undefined,
+          limit: 1,
+          search: undefined,
+          customOffset: undefined,
+          nextKey: undefined
+        }
+        let newRows = await this.getDao({
+          ...params,
+          accountName: this.daoName.toLowerCase()
         })
-        let lastElement = newRows.rows.length - 1
-        let lastID = newRows.rows[lastElement].dao_id
+        let lastID = newRows.rows[0].dao_id
         this.lastIndex = lastID
         //
         const key1 = keys.key1
@@ -162,6 +174,12 @@ export default {
     },
     async initDAOSimple () {
       // Action adddao in daoinfor1111
+      this.$q.loading.show({
+        message: 'Setting DAO...',
+        customClass: 'text-weight-bold text-subtitle1',
+        spinnerSize: '15em',
+        spinner: QSpinnerPuff
+      })
       try {
         await this.adddao({
           creator: this.daoName.toLowerCase(),
