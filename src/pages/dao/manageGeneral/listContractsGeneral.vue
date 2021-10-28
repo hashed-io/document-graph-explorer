@@ -693,15 +693,23 @@ export default {
       this.updateLabels = []
       this.deleteLabels = []
       var contracts = []
+      var id = this.dao.dao_id + 1
+      // id = id.toString()
       try {
+        let _params = {
+          offset: 0,
+          limit: 1,
+          search: undefined,
+          customOffset: id,
+          nextKey: undefined
+        }
         // TODO: Verify the creator
         let data = await this.getDocuments({
-          ...this.params,
-          search: this.dao.creator
+          ..._params
         })
         var counter = 0
         // TODO: Change id
-        let tableRows = data.rows[3].content_groups
+        let tableRows = data.rows[0].content_groups
         if (tableRows.length === 2) {
           tableRows[1].forEach(async (element) => {
             if (counter > 1) {
