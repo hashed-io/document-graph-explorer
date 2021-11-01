@@ -5,6 +5,7 @@ div
     v-for="(content_group, index) in contents_groups",
     :content_group_data="content_group",
     :index_content_group="index"
+    :key="content_group+`${index}`"
   )
 </template>
 
