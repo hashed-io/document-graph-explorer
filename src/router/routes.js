@@ -10,7 +10,8 @@ const routes = [
   // { path: '/daos', component: () => import('~/pages/dao/listDaos/all-daos-list'), name: 'all-daos' },
   { path: '/order-book', component: () => import('~/pages/order-book/order-book'), name: 'order-book', meta: { guest: true } },
   { path: '/registerDaoSimple', component: () => import('src/pages/dao/form/daoFormSimple.vue'), name: 'daoFormSimple' },
-  { path: '/daos', component: () => import('~/pages/dao/listDaos/all-daos-list'), name: 'all-daos', meta: { guest: true } }
+  { path: '/daos', component: () => import('~/pages/dao/listDaos/all-daos-list'), name: 'all-daos', meta: { guest: true } },
+  { path: '/document-graph-explorer', component: () => import('~/pages/document-graph-explorer/documentExplorer'), name: 'DocumentExplorer', meta: { guest: true } }
 ]
 
 // Always leave this as last one

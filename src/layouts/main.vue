@@ -1,34 +1,34 @@
 <template lang="pug">
-  q-layout(view="hHh Lpr lFf")
-    q-header
-      q-toolbar
-        q-btn(
-          flat
-          show-if-above
-          round
-          data-cy='menuButton'
-          @click="menu = !menu"
-          icon="fas fa-bars"
-          aria-label="Menu"
-        )
-        q-toolbar-title.flex.items-center
-          img.logo(src="statics/icons/TK_256.png")
-        right-menu-authenticated(v-if="isAuthenticated")
-        right-menu-guest(v-if="!isAuthenticated")
-    q-drawer(
-      v-model="menu"
-      side="left"
-      :breakpoint="768"
-      :width="250"
-      bordered
-      :mini='miniState'
-      @mouseover="miniState = false"
-      @mouseout="miniState = true"
-
-    )
-      left-menu
-    q-page-container.q-mt-xl.contentContainer
-      router-view
+q-layout(view="hHh Lpr lFf")
+  q-header
+    q-toolbar
+      q-btn(
+        flat
+        show-if-above
+        round
+        data-cy='menuButton'
+        @click="menu = !menu"
+        icon="fas fa-bars"
+        aria-label="Menu"
+      )
+      q-toolbar-title.flex.items-center
+        img.logo(src="statics/icons/TK_256.png")
+      right-menu-authenticated(v-if="isAuthenticated")
+      right-menu-guest(v-if="!isAuthenticated")
+  q-drawer(
+    v-model="menu"
+    side="left"
+    :breakpoint="768"
+    :width="250"
+    bordered
+    :mini='miniState'
+    @mouseover="miniState = false"
+    @mouseout="miniState = true"
+    overlay
+  )
+    left-menu
+  q-page-container.q-mt-xl.contentContainer
+    router-view
 </template>
 
 <style lang="sass" scoped>
