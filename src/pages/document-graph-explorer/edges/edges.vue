@@ -14,12 +14,13 @@ div
                 @click="onPrevNode(edge)"
               )
             .col-8
-              div {{ edge.name }}
+              div(class='text-bold') {{ edge.name }}
+              div(class="text-caption text-grey-6 text-bold") {{ edge.label }}
             .col-3
-              div {{ edge.label }}
-              div ------------->
+              div {{ edge.edge }}
+              div(class="text-caption text-grey-6 text-bold") ------------->
         .col-1
-          q-icon(color="green", size="2rem")
+          q-icon(color="green", size="1.5rem")
             svg(
               xmlns="http://www.w3.org/2000/svg",
               viewbox="0 0 100 100",
@@ -33,7 +34,7 @@ div
       .row(v-else)
         .col-5
         .col-1
-          q-icon(color="green", size="2rem")
+          q-icon(color="green", size="1.5rem")
             svg(
               xmlns="http://www.w3.org/2000/svg",
               viewbox="0 0 100 100",
@@ -44,13 +45,16 @@ div
                 d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z",
                 clip-rule="evenodd"
               )
-        .col-5
+        .col-6
           .row
             .col-2
-              div {{ edge.label }}
-              div ------------->
+              div {{ edge.edge }}
+              div(class="text-caption text-grey-6 text-bold") ------------->
             .col-9
-              | {{ edge.name }}
+              div(class='text-bold')
+                | {{ edge.name }}
+              div(class="text-caption text-grey-6 text-bold")
+                | {{ edge.label }}
             .col-1
               q-icon.text-black(
                 name="keyboard_double_arrow_right",
