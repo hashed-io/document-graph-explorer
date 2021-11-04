@@ -66,11 +66,12 @@ div
 <script>
 import { cssClasses } from 'src/mixins/css-class.js'
 export default {
-  name: 'ListContentsGroup',
+  name: 'edges',
   props: {
     edges: {
       type: Array,
-      required: true
+      required: true,
+      default: () => []
     }
   },
   mixins: [cssClasses],
