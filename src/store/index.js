@@ -7,6 +7,7 @@ import documents from './documents'
 import documentsGeneral from './documentsGeneral'
 import transfers from './transfers'
 import general from './general'
+import apollo from './apollo'
 
 Vue.use(Vuex)
 Vue.config.devtools = true
@@ -23,7 +24,8 @@ export default function (/* { ssrContext } */) {
       dao,
       documents,
       documentsGeneral,
-      general
+      general,
+      apollo
     },
 
     // enable strict mode (adds overhead!)
