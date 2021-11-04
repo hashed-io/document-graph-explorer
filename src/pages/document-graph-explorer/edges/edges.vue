@@ -64,10 +64,18 @@ div
 </template>
 
 <script>
-import { cssClasses } from 'src/mixins/css-class.js'
+import { cssClasses } from '~/mixins/css-class.js'
 export default {
   name: 'edges',
   props: {
+    /**
+    * This array must contain objects with the follow props {
+    * direction: String,
+    * name: String,
+    * label: String,
+    * edge: String
+    * }
+    */
     edges: {
       type: Array,
       required: true,
