@@ -48,6 +48,16 @@ q-scroll-area.fit
         q-icon(name="assignment")
       q-item-section
         div Document Graph Explorer
+    q-item(
+      to="/timeline"
+      data-cy='timeLine'
+      clickable
+      v-ripple
+    )
+      q-item-section(avatar)
+        q-icon(name="timeline")
+      q-item-section
+        div Time Line
 </template>
 
 <style lang="stylus">
