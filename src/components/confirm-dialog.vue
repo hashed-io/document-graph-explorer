@@ -30,6 +30,9 @@ export default {
   methods: {
     onCancel () {
       this.$emit('update:show', false)
+      /**
+       * This event is emitted when the modal is clicked on closed or out space
+       */
       this.$emit('Canceled', true)
     },
     onConfirmed () {
