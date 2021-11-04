@@ -71,7 +71,7 @@ div
 
 </template>
 
-<style lang="sass">
+<style lang="stylus" scoped>
 .menuLinkActive
   color: blue
   background: #ddd

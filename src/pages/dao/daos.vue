@@ -18,7 +18,7 @@ div
           q-fab-action(color='secondary' data-cy='createDAOSimpleButton' @click='onClickCreateDaoSimple' :label="$t('pages.daos.createDaoSimple')")
 
 </template>
-<style lang="sass">
+<style lang="stylus" scoped>
 .back
   position: absolute
   top: 15px

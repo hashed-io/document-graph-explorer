@@ -165,7 +165,7 @@
     q-btn(label='Initialize the DAO' color='primary' @click='callActionInitDAO()')
   CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
 </template>
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 .medium-width
   width: 50vw !important
   max-width: 50vw !important

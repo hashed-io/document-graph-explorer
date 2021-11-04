@@ -14,7 +14,7 @@ export default {
 
 </template>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 .main-title
   color: white
   background: $primary

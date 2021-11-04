@@ -3,7 +3,7 @@
     .q-py-md.text-h6.q-pr-md(v-if='SelectedDao') {{text}}{{SelectedDao.dao}} {{'DHO'}}
     listContractsGeneral(:dao="SelectedDao" ).q-pb-xs
 </template>
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 </style>
 <script>
 import { mapGetters, mapMutations, mapState } from 'vuex'

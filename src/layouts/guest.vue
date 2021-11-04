@@ -27,7 +27,7 @@ q-layout(view="hHh lpR fFf")
         router-view
 </template>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
   .back
     position: absolute
     top: 25px

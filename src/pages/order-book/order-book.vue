@@ -78,7 +78,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="stylus" scoped>
 .full-width
   width: 50vh
 </style>

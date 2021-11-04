@@ -82,7 +82,7 @@ q-form(@submit='onSubmit', ref='formAddresses')
             q-input(v-model='form.mailingAddress.postalCode', filled, label='Postal Code: *', label-stacked :rules='[rules.required]')
 </template>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 .rulesPadding
   padding-bottom : 1.4%
 .paddingInput

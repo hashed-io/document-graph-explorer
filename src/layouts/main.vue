@@ -31,7 +31,7 @@ q-layout(view="hHh Lpr lFf")
     router-view
 </template>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 .logo
   padding-left: 0.1vw
   max-height: 40px
@@ -51,7 +51,7 @@ q-layout(view="hHh Lpr lFf")
 @media screen and (max-width: 1024px) and (min-width: 769px)
   .contentContainer
     padding: 4rem
-@media screen and (max-width: 1400px) and(min-width: 1025px)
+@media screen and (max-width: 1400px) and (min-width: 1025px)
   .contentContainer
     padding: 6rem
 @media screen and (min-width: 1401px)

@@ -46,7 +46,7 @@ div
         OrganizerListComponent(:elementsObj='organizers' title='Organizers' :actions='actionsBool' @deleteElement='deleteOrganizer' @editElement='editOrganizer')
 </template>
 
-<style lang="sass">
+<style lang="stylus" scoped>
 
 </style>
 

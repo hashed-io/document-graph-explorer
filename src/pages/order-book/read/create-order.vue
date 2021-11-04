@@ -98,7 +98,7 @@ export default {
 }
 </script>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 .q-field--outlined .q-field__control:before
   border: 5px solid
 </style>

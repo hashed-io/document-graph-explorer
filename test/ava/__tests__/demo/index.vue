@@ -72,7 +72,7 @@ export default {
         a(href='https://mobile.twitter.com/TelosKitchen' target='_blank') Twitter account.
 </template>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 .main-title
   color: white
   background: $primary

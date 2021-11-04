@@ -65,7 +65,7 @@
                 q-btn(v-if='isEdit' @click='validateStep' dense color="primary" label="Save data" )
                 q-btn(v-else data-cy='finishForm' @click='validateStep' dense color="primary" label="Finish & upload to blockchain" )
 </template>
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
   .containerStepAgent
     margin-left: 0%
     margin-top: -1%

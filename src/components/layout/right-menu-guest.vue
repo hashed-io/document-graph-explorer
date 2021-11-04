@@ -28,6 +28,6 @@ div
   )
 </template>
 
-<style lang="sass" scoped>
+<style lang="stylus" scoped>
 
 </style>
