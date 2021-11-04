@@ -14,6 +14,7 @@ module.exports = function (ctx) {
       'axios',
       'i18n',
       { path: 'ual', server: false },
+      { path: 'apollo', server: false },
       { path: 'api', server: false },
       'mixins',
       'ga'
