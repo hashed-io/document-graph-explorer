@@ -14,6 +14,7 @@ module.exports = function (ctx) {
       'axios',
       'i18n',
       { path: 'ual', server: false },
+      { path: 'apollo', server: false },
       { path: 'api', server: false },
       'mixins',
       'ga'
@@ -105,7 +106,9 @@ module.exports = function (ctx) {
         'QStepper',
         'QStep',
         'QStepperNavigation',
-        'QTooltip'
+        'QTooltip',
+        'QTimeline',
+        'QTimelineEntry'
       ],
 
       directives: [
@@ -136,7 +139,8 @@ module.exports = function (ctx) {
         GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
         IPFS_URL: process.env.IPFS_URL,
         CODE_CONTRACT_URL: process.env.CODE_CONTRACT_URL,
-        ABI_CONTRACT_URL: process.env.ABI_CONTRACT_URL
+        ABI_CONTRACT_URL: process.env.ABI_CONTRACT_URL,
+        APOLLO_URL: process.env.APOLLO_URL
       },
       scopeHoisting: true,
       vueRouterMode: 'history',
