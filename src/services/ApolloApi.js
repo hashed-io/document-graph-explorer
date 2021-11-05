@@ -83,10 +83,10 @@ class ApolloApi extends BaseEosApi {
     return data
   }
 
-  async getMembers () {
+  async getMembers ({ hash }) {
     const query = gql`
     query {
-      getMember {
+      getMember(hash: ${hash}) {
           hash
           type
           creator
