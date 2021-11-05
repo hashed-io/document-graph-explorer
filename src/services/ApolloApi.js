@@ -100,6 +100,26 @@ class ApolloApi extends BaseEosApi {
     const { data } = await this.apollo.query({ query })
     return data
   }
+
+  async getMemberWithVotes () {
+    const query = gql`
+    query {
+      queryMember(order: { asc: hash }) {
+          hash
+          type
+          creator
+          details_member_n
+          system_nodeLabel_s
+          vote(filter: { has: hash }) {
+            hash
+            creator
+          }
+        }
+      }
+    `
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
 }
 
 export default ApolloApi
