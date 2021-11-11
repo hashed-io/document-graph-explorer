@@ -21,101 +21,103 @@ class ApolloApi extends BaseEosApi {
       }
     )
     this.apollo = apollo
+    this.DocumentInterface = `
+        docId
+        docId_i
+        hash
+        type
+        creator
+        createdDate
+    `
   }
-
-  async getDocuments () {
+  async getPropsType ({ type }) {
     const query = gql`
-      query {
-        queryDocument(first:5) {
-          creator
-          hash
-          createdDate
-          type
+      { 
+        __type(name:"${type}") {
+          fields {
+              name
+            type{
+              name
+              kind
+              ofType{
+                kind
+                name
+              }
+            }
+          }  
         }
       }
     `
     const { data } = await this.apollo.query({ query })
     return data
   }
-
-  async getAssignment () {
+  async getDocumentsByDocId ({ docID, props, type }) {
+    if (!props) {
+      props = ''
+    }
+    const query = gql`
+      query {
+        query${type}(filter: {docId: { eq: "${docID}"} } ) {
+          ${this.DocumentInterface}
+          ${props}
+        }
+      }
+    `
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
+  async getDocuments ({ number, props, type }) {
+    if (!props) {
+      props = ''
+    }
+    const query = gql`
+      query {
+        query${type}(first:${number}) {
+          ${this.DocumentInterface}
+          ${props}
+        }
+      }
+    `
+    console.log(query)
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
+  async getAllDocuments ({ type }) {
     const query = gql`
     query {
-      queryAssignment(first: 5){
-        hash
-        creator
-        type
-        details_description_s
+      query${type} {
+          ${this.DocumentInterface}
+        }
+      }
+    `
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
+  async getSchema () {
+    const query = gql`
+    {
+      __schema{
+        types{
+          name
+          fields{
+              name
+            type {
+              kind
+              name
+              ofType {
+                kind
+                name
+              }
+            }
+          }
+          ofType{
+            name
+            kind
+            
+          }
+        }
       }
     }
-    `
-    const { data } = await this.apollo.query({ query })
-    return data
-  }
-
-  async getAllDocuments () {
-    const query = gql`
-      query {
-        queryDocument {
-          creator
-          hash
-          createdDate
-          type
-        }
-      }
-    `
-    const { data } = await this.apollo.query({ query })
-    return data
-  }
-
-  async getDhoByHash ({ hash }) {
-    const query = gql`
-    query {
-      getDho(hash: ${hash}) {
-          creator
-          hash
-          createdDate
-          type
-        }
-      }
-    `
-    const { data } = await this.apollo.query({ query })
-    return data
-  }
-
-  async getMembers ({ hash }) {
-    const query = gql`
-    query {
-      getMember(hash: ${hash}) {
-          hash
-          type
-          creator
-          details_member_n
-          memberof {
-            type
-          }
-        }
-      }
-    `
-    const { data } = await this.apollo.query({ query })
-    return data
-  }
-
-  async getMemberWithVotes () {
-    const query = gql`
-    query {
-      queryMember(order: { asc: hash }) {
-          hash
-          type
-          creator
-          details_member_n
-          system_nodeLabel_s
-          vote(filter: { has: hash }) {
-            hash
-            creator
-          }
-        }
-      }
     `
     const { data } = await this.apollo.query({ query })
     return data
