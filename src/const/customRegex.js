@@ -5,5 +5,6 @@ export default {
   IPFS: '^bafk([a-zA-Z0-9]){55}$',
   FILE: '^([a-zA-Z0-9]){46,64}:([a-zA-Z])|^file:([a-zA-Z])',
   IPFSSTRING: '^([a-zA-Z0-9]){59}',
+  ISCONTENTGROUP: '[^_]+(?:_[^_]+){2,}',
   SOME: ''
 }

@@ -39,7 +39,7 @@ q-scroll-area.fit
       q-item-section
         div Order Book
     q-item(
-      to="/document-graph-explorer"
+      to="/list-docs"
       data-cy='DGE'
       clickable
       v-ripple
