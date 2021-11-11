@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import appIcons from '~/utils/app-icons'
 
 export default {
@@ -33,11 +33,31 @@ export default {
       }
     }
   },
+  async mounted () {
+    await this.loadCatalog()
+  },
   created () {
     this.$q.iconMapFn = (iconName) => {
       const icon = appIcons[iconName]
       if (icon !== void 0) {
         return { icon }
+      }
+    }
+  },
+  methods: {
+    ...mapActions('documentGraph', ['getSchema']),
+    ...mapMutations('documentGraph', ['setCatalog']),
+    async loadCatalog () {
+      try {
+        const _response = await this.getSchema()
+        const mapType = new Map()
+        _response.__schema.types.forEach(element => {
+          mapType.set(element.name, element.fields)
+        })
+        this.setCatalog(mapType)
+      } catch (e) {
+        this.showErrorMsg('An error ocurred while trying to get schema' + e)
+        console.error('An error ocurred while trying to get schema ' + e)
       }
     }
   }
