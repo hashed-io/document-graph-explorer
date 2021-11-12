@@ -12,10 +12,12 @@ const routes = [
   { path: '/registerDaoSimple', component: () => import('src/pages/dao/form/daoFormSimple.vue'), name: 'daoFormSimple' },
   { path: '/daos', component: () => import('~/pages/dao/listDaos/all-daos-list'), name: 'all-daos', meta: { guest: true } },
   { path: '/timeline', component: () => import('~/pages/timeline/timeline-page'), name: 'timeline-page', meta: { guest: true } },
-  { path: '/explore', component: () => import('~/pages/document-graph-explorer/explorer/documentExplorer'), name: 'DocumentExplorer', meta: { guest: true } },
+  { path: '/explore', component: () => import('~/pages/document-graph-explorer/explorer/explorerView'), name: 'DocumentExplorer', meta: { guest: true } },
   { path: '/apollo', component: () => import('~/pages/apollo/apollo'), name: 'apollo', meta: { guest: true } },
   { path: '/list-docs', component: () => import('~/pages/document-graph-explorer/ListDocs/ListDocs.vue'), name: 'listDocs', meta: { guest: true } },
-  { path: '/edit', component: () => import('~/pages/document-graph-explorer/edit/documentExplorer.vue'), name: 'editDoc', meta: { guest: true } }
+  { path: '/edit', component: () => import('~/pages/document-graph-explorer/edit/editView.vue'), name: 'editDoc', meta: { guest: true } },
+  { path: '/extend', component: () => import('~/pages/document-graph-explorer/extend/extendView.vue'), name: 'extendDoc', meta: { guest: true } },
+  { path: '/erase', component: () => import('~/pages/document-graph-explorer/erase/eraseView.vue'), name: 'eraseDoc', meta: { guest: true } }
 ]
 
 // Always leave this as last one

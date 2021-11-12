@@ -8,6 +8,7 @@ div
     :key="content_group+`${index}`"
   )
   q-btn(
+    v-if="isEdit"
     unelevated
     color='primary'
     label='New content_group'
@@ -17,6 +18,7 @@ div
 <script>
 import ContentGroup from './Element/content-group.vue'
 import { cssClasses } from 'src/mixins/css-class.js'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ListContentsGroup',
   props: {
@@ -29,8 +31,21 @@ export default {
     ContentGroup
   },
   mixins: [cssClasses],
+  mounted () {
+    if (this.getIsEdit()) {
+      this.isEdit = true
+    } else {
+      this.isEdit = false
+    }
+    alert(this.getIsEdit())
+  },
+  computed: {
+    ...mapGetters('documentGraph', ['getIsEdit'])
+  },
   data () {
-    return {}
+    return {
+      isEdit: false
+    }
   }
 }
 </script>
