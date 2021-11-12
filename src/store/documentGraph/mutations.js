@@ -4,3 +4,6 @@ export const setDocument = (state, doc) => {
 export const setCatalog = (state, mapType) => {
   state.typeCatalog = mapType
 }
+export const setIsEdit = (state, edit) => {
+  state.isEdit = edit
+}

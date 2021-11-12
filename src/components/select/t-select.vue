@@ -1,11 +1,12 @@
 <template lang='pug'>
 div
   .text-subtitle3 {{label}}
-  q-input(
+  q-select(
     outlined
     color='indigo-6'
     v-model="content"
     :placeholder="value"
+    :options="options"
     :dense='dense'
     :rules="[rules.required]"
     @input="$emit('update', content)"
@@ -16,8 +17,8 @@ div
 import { validation } from '~/mixins/validation'
 
 export default {
-  name: 'Tinput',
-  props: ['value', 'label', 'dense'],
+  name: 'Tselect',
+  props: ['value', 'label', 'dense', 'options'],
   mixins: [validation],
   model: {
     prop: 'value',

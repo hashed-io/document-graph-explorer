@@ -16,15 +16,16 @@ div
       unelevated
       label='Cancel'
       color='primary'
+      @click='onCancel()'
     )
 </template>
 
 <script>
 import { cssClasses } from 'src/mixins/css-class.js'
-import DocInformation from './info/DocInformation.vue'
-import ListContentGroup from './List/list-content-group.vue'
-import Edges from './edges/edges.vue'
-import EdgeDialog from './dialog/edgeDialog.vue'
+import DocInformation from '../components/info/DocInformation.vue'
+import ListContentGroup from '../components/List/list-content-group.vue'
+import Edges from '../components/edges/edges.vue'
+import EdgeDialog from '../components/dialog/edgeDialog.vue'
 import { mapActions, mapGetters } from 'vuex'
 import customRegex from '~/const/customRegex.js'
 export default {
@@ -78,7 +79,7 @@ export default {
         let type = element.type.kind
         if (type !== 'LIST' && type !== 'OBJECT') {
           props += element.name.toString() + '\n'
-        } else {
+        } else if (!element.name.toLowerCase().includes('aggregate')) {
           edges.push({ edge: element.name, direction: 'next' })
         }
       })
@@ -99,100 +100,10 @@ export default {
       }
       console.log(contentGroup)
       return edges
-      // this.contentsGroups.push({
-      //   data: [
-      //     {
-      //       key: 'details',
-      //       value: '1onefiftyfor',
-      //       dataType: 'eosio:name'
-      //     },
-      //     {
-      //       key: 'node_label',
-      //       value: 'Girl Scount Cookies Cannabis (54543233)',
-      //       dataType: 'string'
-      //     },
-      //     {
-      //       key: 'type',
-      //       value: 'item',
-      //       dataType: 'eosio:name'
-      //     }
-      //   ]
-      // },
-      // {
-      //   data: [
-      //     {
-      //       key: 'content_group_label',
-      //       value: 'details',
-      //       dataType: 'eosio:name'
-      //     },
-      //     {
-      //       key: 'carrier',
-      //       value: 'Fedex',
-      //       dataType: 'string'
-      //     },
-      //     {
-      //       key: 'tracking_number',
-      //       value: 'MjJasdUIeriusdadfcvnmfgdjkldfer',
-      //       dataType: 'string'
-      //     },
-      //     {
-      //       key: 'shipped_date',
-      //       value: '14 Sep 2021 12:23:33 EST',
-      //       dataType: 'timestamp'
-      //     },
-      //     {
-      //       key: 'weight (kg)',
-      //       value: '1.239',
-      //       dataType: 'numeric'
-      //     },
-      //     {
-      //       key: 'photo_1',
-      //       value: 'Open',
-      //       dataType: 'file'
-      //     },
-      //     {
-      //       key: 'photo_2',
-      //       value: 'Open',
-      //       dataType: 'file'
-      //     }
-      //   ]
-      // })
     },
     getEdges (edges) {
       console.log(edges)
       this.edges = edges
-      // this.edges.push(
-      //   {
-      //     direction: 'prev',
-      //     name: 'Hashed Partner Forms',
-      //     label: 'Facility',
-      //     edge: 'produced'
-      //   },
-      //   {
-      //     direction: 'next',
-      //     name: 'Item created on 12 sep 2021',
-      //     label: 'Checkpoint',
-      //     edge: 'scanned'
-      //   },
-      //   {
-      //     direction: 'next',
-      //     name: 'Harvested in Upstate NY on 12 sep 2021',
-      //     label: 'Checkpoint',
-      //     edge: 'scanned'
-      //   },
-      //   {
-      //     direction: 'next',
-      //     name: 'Packed and shipped on 14 sep 2021',
-      //     label: 'Checkpoint',
-      //     edge: 'scanned'
-      //   },
-      //   {
-      //     direction: 'next',
-      //     name: 'Arrived at Dispensary on 18 sep 2021',
-      //     label: 'Checkpoint',
-      //     edge: 'scanned'
-      //   }
-      // )
     },
     openModal () {
       this.showDialogEdge = true
@@ -200,6 +111,9 @@ export default {
     addNewEdge (form) {
       this.edges.push(form)
       this.showDialogEdge = false
+    },
+    onCancel () {
+      this.$router.push({ name: 'DocumentExplorer' })
     }
   }
 }

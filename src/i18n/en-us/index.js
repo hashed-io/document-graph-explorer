@@ -15,7 +15,8 @@ export default {
       download: 'Download',
       editDao: 'Edit DAO',
       viewData: 'View Data on IPFS',
-      see: 'See data'
+      see: 'See data',
+      extendDoc: 'Extend Document'
     },
     defaultTitle: 'Title'
   },

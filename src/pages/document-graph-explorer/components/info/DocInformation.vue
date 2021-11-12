@@ -2,7 +2,7 @@
 q-card(flat bordered)
   q-card-section
     .text-h6
-      b Explore Document
+      b Edit Document
     .label.text-subtitle1
       | {{docInfo.name}}
   q-separator(color='grey-3')

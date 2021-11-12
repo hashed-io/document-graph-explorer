@@ -52,7 +52,15 @@ export default {
         const _response = await this.getSchema()
         const mapType = new Map()
         _response.__schema.types.forEach(element => {
-          mapType.set(element.name, element.fields)
+          if (!element.name.toLowerCase().includes('aggregate') && element.fields.length > 0) {
+            let filteredField = []
+            element.fields.forEach(field => {
+              if (!field.name.includes('aggregate')) {
+                filteredField.push(field)
+              }
+            })
+            mapType.set(element.name, filteredField)
+          }
         })
         this.setCatalog(mapType)
       } catch (e) {
@@ -65,9 +73,9 @@ export default {
 </script>
 
 <template lang="pug">
-  .q-app
-    component(:is="layout")
-      router-view
-    q-inner-loading(:showing="isAutoLoading")
-      q-spinner(size="3em")
+.q-app
+  component(:is="layout")
+    router-view
+  q-inner-loading(:showing="isAutoLoading")
+    q-spinner(size="3em")
 </template>
