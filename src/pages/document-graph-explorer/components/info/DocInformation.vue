@@ -2,30 +2,29 @@
 q-card(flat bordered)
   q-card-section
     .text-h6
-      b Edit Document
-    .label.text-subtitle1
-      | {{docInfo.name}}
-  q-separator(color='grey-3')
+      b Header
+        .label.text-subtitle1.prose
+          | {{docInfo.name}}
   q-card-section
     .row.q-col-gutter-md
       .col-6
-        div(:class="classes.titleDocInfo") Document ID
-        div {{ docInfo.docID }}
+        div(:class="classes.titleDocInfo" style='font-size:12px;') Document ID
+        div(style='font-size:12px;') {{ docInfo.docID }}
       .col-6
-        div(:class="classes.titleDocInfo") Hash
-        div {{ docInfo.hash }}
+        div(:class="classes.titleDocInfo" style='font-size:12px;') Hash
+        div(style='font-size:12px;') {{ docInfo.hash }}
       .col-6
-        div(:class="classes.titleDocInfo") Owner
-        div {{ docInfo.owner }}
+        div(:class="classes.titleDocInfo" style='font-size:12px;') Owner
+        div(style='font-size:12px;') {{ docInfo.owner }}
       .col-6
-        div(:class="classes.titleDocInfo") Document Type
-        div {{ docInfo.documentType }}
+        div(:class="classes.titleDocInfo" style='font-size:12px;') Document Type
+        div(style='font-size:12px;') {{ docInfo.documentType }}
       .col-6
-        div(:class="classes.titleDocInfo") Created Date
-        div {{ docInfo.createdDate }}
+        div(:class="classes.titleDocInfo" style='font-size:12px;') Created Date
+        div(style='font-size:12px;') {{ docInfo.createdDate }}
       .col-6
-        div(:class="classes.titleDocInfo") Updated Date
-        div {{ docInfo.updatedDate }}
+        div(:class="classes.titleDocInfo" style='font-size:12px;') Updated Date
+        div(style='font-size:12px;') {{ docInfo.updatedDate }}
 </template>
 
 <script>

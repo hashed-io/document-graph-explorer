@@ -26,7 +26,7 @@ import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
 import EdgeDialog from '../components/dialog/edgeDialog.vue'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import customRegex from '~/const/customRegex.js'
 export default {
   name: 'DocumentExplorer',
@@ -59,8 +59,9 @@ export default {
     this.getEdges(edges)
   },
   methods: {
-    ...mapGetters('documentGraph', ['getDocument', 'getCatalog']),
-    ...mapActions('documentGraph', ['getDocumentsByDocId']),
+    ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getDocInterface']),
+    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType']),
+    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit']),
     getDocumentInfo () {
       let selectDocument = this.getDocument()
       this.documentInfo.name = selectDocument.creator
@@ -80,30 +81,72 @@ export default {
         if (type !== 'LIST' && type !== 'OBJECT') {
           props += element.name.toString() + '\n'
         } else if (!element.name.toLowerCase().includes('aggregate')) {
-          edges.push({ edge: element.name, direction: 'next' })
+          edges.push({ edge: element.name, direction: 'next', type: 'LIST' })
         }
       })
-      console.log(props)
-      console.log(edges)
       const response = await this.getDocumentsByDocId({
         docID: this.documentInfo.docID,
         props: props,
         type: this.documentInfo.documentType
       })
       let queryLabel = 'query' + this.documentInfo.documentType
-      let contentGroup = []
+      var contentGroup = []
       for (const key in response[queryLabel][0]) {
         var regexContentGroup = new RegExp(customRegex.ISCONTENTGROUP)
         if (regexContentGroup.test(key.toString())) {
-          this.contentsGroups.push({ data: [{ key: key, value: response[queryLabel][0][key] }] })
+          var words = key.split('_')
+          contentGroup.push(
+            {
+              key: words[1],
+              value: response[queryLabel][0][key],
+              dataType: words[2],
+              title: words[0]
+            }
+          )
         }
       }
-      console.log(contentGroup)
+      const groupBy = (arr, key) => {
+        const initialValue = {}
+        return arr.reduce((acc, cval) => {
+          const myAttribute = cval[key]
+          acc[myAttribute] = [...(acc[myAttribute] || []), cval]
+          return acc
+        }, initialValue)
+      }
+      const res = groupBy(contentGroup, 'title')
+      this.contentsGroups = JSON.parse(JSON.stringify(res))
       return edges
     },
-    getEdges (edges) {
-      console.log(edges)
-      this.edges = edges
+    async getEdges (edges) {
+      var query = ''
+      var docInterface = this.getDocInterface()
+      let count = 0
+      // Filter [Aggregate] Only List Element
+      edges.map((element) => {
+        if (element.type === 'LIST' && count > 2 && element.edge !== 'vote') {
+          query += `${element.edge}{${docInterface}}\n`
+        }
+        count++
+      })
+
+      const responseEdges = await this.getDocumentsByDocId({
+        docID: this.documentInfo.docID,
+        props: query,
+        type: this.documentInfo.documentType,
+        docInterface: false
+      })
+      let queryLabel = 'query' + this.documentInfo.documentType
+      var edgesMixed = []
+      let QLresponse = responseEdges[queryLabel][0]
+      delete QLresponse['__typename']
+      for (const key in QLresponse) {
+        if (QLresponse[key]) {
+          if (QLresponse[key].length > 0) {
+            Array.prototype.push.apply(edgesMixed, QLresponse[key])
+          }
+        }
+      }
+      this.edges = edgesMixed
     },
     openModal () {
       this.showDialogEdge = true
@@ -113,6 +156,7 @@ export default {
       this.showDialogEdge = false
     },
     onCancel () {
+      this.setIsEdit(false)
       this.$router.push({ name: 'DocumentExplorer' })
     }
   }

@@ -54,7 +54,8 @@ export default {
     index: {
       buttons: {
         createAccount: 'Create account',
-        login: 'Login with Telos'
+        login: 'Login',
+        loginButton: 'Login with Telos'
       }
     },
     general: {

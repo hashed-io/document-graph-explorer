@@ -28,6 +28,7 @@ class ApolloApi extends BaseEosApi {
         type
         creator
         createdDate
+        __typename
     `
   }
   async getPropsType ({ type }) {
@@ -51,19 +52,22 @@ class ApolloApi extends BaseEosApi {
     const { data } = await this.apollo.query({ query })
     return data
   }
-  async getDocumentsByDocId ({ docID, props, type }) {
+  async getDocumentsByDocId ({ docID, props, type, docInterface }) {
     if (!props) {
       props = ''
     }
+    console.log({ docID, props, type })
     const query = gql`
       query {
         query${type}(filter: {docId: { eq: "${docID}"} } ) {
-          ${this.DocumentInterface}
+          ${docInterface ? this.DocumentInterface.toString() : ''}
           ${props}
         }
       }
     `
+    console.log(query)
     const { data } = await this.apollo.query({ query })
+    console.log(data)
     return data
   }
   async getDocuments ({ number, props, type }) {
@@ -97,27 +101,30 @@ class ApolloApi extends BaseEosApi {
     const query = gql`
     {
       __schema{
-        types{
+        types {
           name
           fields{
-              name
-            type {
-              kind
-              name
-              ofType {
+            name
+            type{
                 kind
                 name
+                ofType {
+                  kind
+                  name
+                  ofType {
+                    kind
+                    name
+                    ofType {
+                      kind
+                      name
+                    }
+                  }
+                }
               }
             }
           }
-          ofType{
-            name
-            kind
-            
-          }
         }
       }
-    }
     `
     const { data } = await this.apollo.query({ query })
     return data

@@ -2,97 +2,57 @@
 div
   .q-py-md(:class="classes.titleSection")
     | Edges
-  q-card
-    q-card(v-for="(edge, index) in edges", square, :key="edge.name", flat)
-      q-card-section(:key="edge.name")
-        .row(v-if="edge.direction === 'prev'")
-          .col-5
+  q-virtual-scroll(
+    v-if="edges.length > 0"
+    :items="edges"
+    style="max-height: 500px;"
+  )
+    template(v-slot="{item, index}")
+      q-card
+          q-card-section(:key="index")
             .row
-              .col-3
-                q-btn(
-                  label="remove",
-                  unelevated,
-                  color="primary",
-                  @click="removeEdge(edge, index)"
-                )
-                q-icon.text-black(
-                  name="keyboard_double_arrow_left",
-                  style="font-size: 2rem",
-                  @click="onPrevNode(edge)"
-                )
+              .col-5
+              .col-1
+                q-icon(color="green", size="1.5rem")
+                  svg(
+                    xmlns="http://www.w3.org/2000/svg",
+                    viewbox="0 0 100 100",
+                    fill="currentColor"
+                  )
+                    path(
+                      fill-rule="evenodd",
+                      d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z",
+                      clip-rule="evenodd"
+                    )
               .col-6
-                .text-bold {{ edge.name }}
-                q-popup-edit(buttons, v-model="edge.name")
-                  q-editor(
-                    v-model="edge.name",
-                    min-height="5rem",
-                    autofocus,
-                    @keyup.enter.stop
-                  )
-                q-popup-edit(buttons, v-model="edge.label")
-                  q-editor(
-                    v-model="edge.label",
-                    min-height="5rem",
-                    autofocus,
-                    @keyup.enter.stop
-                  )
-                .text-caption.text-grey-6.text-bold {{ edge.label }}
-              .col-3
-                div {{ edge.edge }}
-                .text-caption.text-grey-6.text-bold ------------->
-          .col-1
-            q-icon(color="green", size="1.5rem")
-              svg(
-                xmlns="http://www.w3.org/2000/svg",
-                viewbox="0 0 100 100",
-                fill="currentColor"
-              )
-                path(
-                  fill-rule="evenodd",
-                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z",
-                  clip-rule="evenodd"
-                )
-        .row(v-else)
-          .col-5
-          .col-1
-            q-icon(color="green", size="1.5rem")
-              svg(
-                xmlns="http://www.w3.org/2000/svg",
-                viewbox="0 0 100 100",
-                fill="currentColor"
-              )
-                path(
-                  fill-rule="evenodd",
-                  d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z",
-                  clip-rule="evenodd"
-                )
-          .col-6
-            .row
-              .col-2
-                div {{ edge.edge }}
-                .text-caption.text-grey-6.text-bold ------------->
-              .col-7
-                .text-bold
-                  | {{ edge.name }}
-                .text-caption.text-grey-6.text-bold
-                  | {{ edge.label }}
-              .col-3
-                q-icon.text-black(
-                  name="keyboard_double_arrow_right",
-                  style="font-size: 2rem",
-                  @click="onNextNode(edge)"
-                )
-                q-btn(
-                  label="remove",
-                  unelevated,
-                  color="primary",
-                  @click="removeEdge(edge, index)"
-                )
-    q-card-actions
-      q-btn(label="New edge", unelevated, color="primary", @click="addEdge()")
+                .row
+                  .col-2
+                    div {{ item.creator }}
+                    .text-caption.text-grey-6.text-bold ------------->
+                  .col-7
+                    .text-bold
+                      | {{ item.type }}
+                    .text-caption.text-grey-6.text-bold
+                      | {{ item.docId }}
+                  .col-3
+                    q-icon.text-black(
+                      name="keyboard_double_arrow_right",
+                      style="font-size: 2rem",
+                      @click="onNextNode(item)"
+                    )
+                    q-btn(
+                      v-if='isEdit'
+                      label="remove",
+                      unelevated,
+                      color="primary",
+                      @click="removeEdge(item)"
+                    )
+    //- q-card-actions
+    //-   q-btn(label="New edge", unelevated, color="primary", @click="addEdge()")
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { cssClasses } from '~/mixins/css-class.js'
 export default {
   name: 'edges',
@@ -112,8 +72,19 @@ export default {
     }
   },
   mixins: [cssClasses],
+  computed: {
+    ...mapGetters('documentGraph', ['getIsEdit'])
+  },
+  mounted () {
+    if (this.getIsEdit) {
+      this.isEdit = true
+    } else {
+      this.isEdit = false
+    }
+  },
   data () {
     return {
+      isEdit: false,
       columns: [
         {
           name: 'direction',
@@ -150,12 +121,11 @@ export default {
   },
   methods: {
     onPrevNode (edgeData) {
-      let url = 'prev.com'
-      window.open(url, '_blank')
+      this.$emit('edgeData', edgeData)
     },
     onNextNode (edgeData) {
-      let url = 'next.com'
-      window.open(url, '_blank')
+      console.log(edgeData)
+      this.$emit('edgeData', edgeData)
     },
     removeEdge (edge, index) {
       alert(JSON.stringify(edge))

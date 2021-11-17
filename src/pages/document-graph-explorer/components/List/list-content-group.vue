@@ -23,7 +23,7 @@ export default {
   name: 'ListContentsGroup',
   props: {
     contents_groups: {
-      type: Array,
+      type: Object,
       required: true
     }
   },
@@ -32,12 +32,11 @@ export default {
   },
   mixins: [cssClasses],
   mounted () {
-    if (this.getIsEdit()) {
+    if (this.getIsEdit) {
       this.isEdit = true
     } else {
       this.isEdit = false
     }
-    alert(this.getIsEdit())
   },
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit'])

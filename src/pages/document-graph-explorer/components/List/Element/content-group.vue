@@ -1,7 +1,8 @@
 <template lang="pug">
-.q-py-sm
+.q-py-sm.text-capitalize
+  div.q-pb-md.text-subtitle1 {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table(
-    :data="content_group_data.data",
+    :data="content_group_data",
     :columns="columns",
     :row-key="(row) => row.label",
     :pagination="initialPagination",
@@ -31,8 +32,8 @@
           no-hover,
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        ) {{ props.row.dataType }}
-  q-icon.q-py-sm(color="primary", size="2rem", @click="")
+        ) {{ getDataType(props.row.dataType) }}
+  q-icon.q-py-sm(v-if='isEdit' color="primary", size="2rem", @click="alert('Adding new Content group')" )
     svg.h-6.w-6(
       fill="none",
       viewBox="0 0 24 24",
@@ -47,20 +48,31 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'ContentGroup',
   props: {
     content_group_data: {
-      type: Object,
+      type: Array,
       required: true
     },
     index_content_group: {
-      type: Number,
-      required: true
+      type: String
+    }
+  },
+  computed: {
+    ...mapGetters('documentGraph', ['getIsEdit'])
+  },
+  mounted () {
+    if (this.getIsEdit) {
+      this.isEdit = true
+    } else {
+      this.isEdit = false
     }
   },
   data () {
     return {
+      isEdit: false,
       initialPagination: {
         rowsPerPage: 10,
         page: 1
@@ -70,9 +82,9 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: 'font-weight: bolder;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-bold',
-          classes: '',
+          headerStyle: ' width:40%',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
+          classes: 'column-responsive',
           field: (row) => row.key,
           sortable: true
         },
@@ -80,9 +92,9 @@ export default {
           name: 'value',
           label: 'Value',
           align: 'left',
-          headerStyle: 'font-weight: bolder;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-bold',
-          classes: '',
+          headerStyle: 'width:40%',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
+          classes: 'column-responsive',
           field: (row) => row.value,
           sortable: true
         },
@@ -90,13 +102,26 @@ export default {
           name: 'dataType',
           label: 'Data Type',
           align: 'left',
-          headerStyle: 'font-weight: bolder;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-bold',
-          classes: '',
+          headerStyle: 'width:20%',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
+          classes: 'column-responsive',
           field: (row) => row.dataType,
           sortable: true
         }
       ]
+    }
+  },
+  methods: {
+    getDataType (val) {
+      const types = {
+        c: 'Char',
+        n: 'Eosio:name',
+        a: 'Asset',
+        t: 'Date',
+        s: 'String',
+        i: 'Integer'
+      }
+      return types[val]
     }
   }
 }

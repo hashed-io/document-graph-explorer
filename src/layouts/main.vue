@@ -1,7 +1,7 @@
 <template lang="pug">
 q-layout(view="hHh Lpr lFf")
   q-header
-    q-toolbar
+    q-toolbar(class='bg-brand-primary')
       q-btn(
         flat
         show-if-above
@@ -12,7 +12,7 @@ q-layout(view="hHh Lpr lFf")
         aria-label="Menu"
       )
       q-toolbar-title.flex.items-center
-        img.logo(src="statics/icons/TK_256.png")
+        img.logo(src="statics/icons/hashed.png")
       right-menu-authenticated(v-if="isAuthenticated")
       right-menu-guest(v-if="!isAuthenticated")
   q-drawer(
