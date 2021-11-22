@@ -124,6 +124,7 @@ class ApolloApi extends BaseEosApi {
           }
         }
       }
+    }
     `
     const { data } = await this.apollo.query({ query })
     return data
