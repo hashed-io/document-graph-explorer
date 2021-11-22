@@ -13,7 +13,9 @@ q-card(flat bordered)
         div {{ docInfo.docID }}
       .col-6
         div(:class="classes.titleDocInfo") Hash
-        div {{ docInfo.hash }}
+        div.column-responsive {{ docInfo.hash }}
+        q-popup-edit(v-model="docInfo.hash")
+          q-input(v-model='docInfo.hash' autogrow dense readonly)
       .col-6
         div(:class="classes.titleDocInfo") Owner
         div {{ docInfo.owner }}

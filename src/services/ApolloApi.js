@@ -101,6 +101,7 @@ class ApolloApi extends BaseEosApi {
     {
       __schema{
         types {
+          kind
           name
           fields{
             name
@@ -123,8 +124,7 @@ class ApolloApi extends BaseEosApi {
             }
           }
         }
-      }
-    }
+      }    
     `
     const { data } = await this.apollo.query({ query })
     return data
