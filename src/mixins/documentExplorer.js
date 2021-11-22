@@ -45,7 +45,11 @@ export const documentExplorer = {
       this.getEdges(edges)
     },
     async getContentGroup () {
-      let _props = this.getCatalog().get(this.documentInfo.documentType)
+      // let _props = this.getCatalog().get(this.documentInfo.documentType)
+      let _props = await this.getPropsType({
+        type: this.documentInfo.documentType
+      })
+      _props = _props['__type'].fields
       let props = ''
       let edges = []
       _props.forEach(element => {
@@ -53,13 +57,10 @@ export const documentExplorer = {
         if (type !== 'LIST' && type !== 'OBJECT') {
           props += element.name.toString() + '\n'
         } else if (!element.name.toLowerCase().includes('aggregate')) {
-          edges.push({ edge: element.name, direction: 'next', type: 'LIST' })
+          edges.push({ edge: element.name, direction: 'next', type: 'LIST', typeDoc: element.type.ofType.ofType.name })
         }
       })
-      console.log('+++++++++++++++++++++++')
-      console.log(props)
-      console.log(edges)
-      console.log('+++++++++++++++++++++++')
+      console.log({ props: props })
       const response = await this.getDocumentsByDocId({
         docID: this.documentInfo.docID,
         props: props,
@@ -94,15 +95,17 @@ export const documentExplorer = {
       return edges
     },
     async getEdges (edges) {
+      this.edges = []
+      console.log('0000000000000000000')
+      console.log(edges)
+      console.log('0000000000000000000')
       var query = ''
       var docInterface = this.getDocInterface()
-      let count = 0
-      // Filter [Aggregate] Only List Element
+      // Filter [Aggregate] Only List
       edges.map((element) => {
-        if (element.type === 'LIST' && count > 2 && element.edge !== 'vote') {
+        if (element.type === 'LIST' && element.edge !== 'vote') {
           query += `${element.edge}{${docInterface}}\n`
         }
-        count++
       })
 
       const responseEdges = await this.getDocumentsByDocId({
@@ -119,13 +122,15 @@ export const documentExplorer = {
       for (const key in QLresponse) {
         if (QLresponse[key]) {
           if (QLresponse[key].length > 0) {
-            // console.log(QLresponse[key])
+            console.log(QLresponse[key])
             relationEdgeNameType[QLresponse[key][0].type] = key
+            console.log(relationEdgeNameType)
             Array.prototype.push.apply(edgesMixed, QLresponse[key])
           }
         }
       }
       this.relationsEdges = relationEdgeNameType
+      console.log(this.relationsEdges)
       this.edges = edgesMixed
     }
   }
