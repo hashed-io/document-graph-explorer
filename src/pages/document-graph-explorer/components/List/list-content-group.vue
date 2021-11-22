@@ -1,6 +1,6 @@
 <template lang='pug'>
 div
-  div.q-py-md(:class="classes.titleSection") Content Groups
+  div.text-h6.q-py-md.q-py-md Content Groups
   ContentGroup(
     v-for="(content_group, index) in contents_groups",
     :content_group_data="content_group",
@@ -10,7 +10,7 @@ div
   q-btn(
     v-if="isEdit"
     unelevated
-    color='primary'
+    style="background: #08183c; color:white"
     label='New content_group'
   )
 </template>

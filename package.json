@@ -1,8 +1,8 @@
 {
-  "name": "DAO-LLC",
+  "name": "document_explorer",
   "version": "0.0.1",
-  "description": "DAO LLC",
-  "productName": "DAO LLC",
+  "description": "Document Explorer",
+  "productName": "Document Explorer",
   "cordovaId": "org.cordova.quasar.app",
   "author": "jmgayosso <jmgayosso@m1ghty.com>",
   "private": true,

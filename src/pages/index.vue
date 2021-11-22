@@ -1,7 +1,7 @@
 <template lang="pug">
 .flex.column
   .main-splash
-    img.imgSplash(src="src/app-splashscreen.png" data-cy="imgSplash")
+    img.imgSplash(src="statics/app-splashscreen.png")
   div.padding(data-cy="instructions")
     .row.text-body2(align='justify').q-pb-md
       span We’ve created this tool is to allow you to upload a copy of the official DAO LLC form to a public smart contract and help you comply with the DAO LLC requirement of generating a smart contract identifier required in Step 6 -

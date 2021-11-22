@@ -1,6 +1,7 @@
 <template lang="pug">
 div(class="q-pa-md items-start")
-  div.text-h6.q-py-md {{'Documents in the Graph'}}
+  div.text-h6.q-py-md(style="font-family: metropolis;")
+    | {{$t('pages.documentExplorer.listDocs.title')}}
   q-table(
     :data="documents"
     :columns="columns"
@@ -16,6 +17,45 @@ div(class="q-pa-md items-start")
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           @click='seeDocument(props.row)'
         ) {{ col.value }}
+    template(v-slot:pagination="scope")
+      q-btn(
+          v-if="scope.pagesNumber > 2"
+          icon="first_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.firstPage"
+      )
+      q-btn(
+          icon="chevron_left"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.prevPage"
+      )
+      q-btn(
+          icon="chevron_right"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.nextPage"
+      )
+      q-btn(
+          v-if="scope.pagesNumber > 2"
+          icon="last_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.lastPage"
+      )
 </template>
 
 <script>

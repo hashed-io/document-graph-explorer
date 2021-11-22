@@ -97,6 +97,18 @@ export default {
     },
     orderBook: {
       accountInfoTip: 'Account info'
+    },
+    documentExplorer: {
+      edges: {
+        noEdges: 'This document do not contain edges',
+        title: 'Edges',
+        search: {
+          empty: 'No edge found'
+        }
+      },
+      listDocs: {
+        title: 'Documents in the Graph'
+      }
     }
   }
 }

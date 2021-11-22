@@ -7,3 +7,6 @@ export const setCatalog = (state, mapType) => {
 export const setIsEdit = (state, edit) => {
   state.isEdit = edit
 }
+export const setTypesWithSystemNode = (state, typesArr) => {
+  state.typesWithSystemNode = typesArr
+}

@@ -56,7 +56,6 @@ class ApolloApi extends BaseEosApi {
     if (!props) {
       props = ''
     }
-    console.log({ docID, props, type })
     const query = gql`
       query {
         query${type}(filter: {docId: { eq: "${docID}"} } ) {

@@ -14,26 +14,23 @@
     table-header-class="hdTable"
   )
     template(#body="props")
-      q-tr(no-hover, :props="props")
+      q-tr(:props="props")
         q-td(
           key="key",
-          no-hover,
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ props.row.key }}
         q-td(
           key="value",
-          no-hover,
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ props.row.value }}
         q-td(
           key="dataType",
-          no-hover,
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ getDataType(props.row.dataType) }}
-  q-icon.q-py-sm(v-if='isEdit' color="primary", size="2rem", @click="alert('Adding new Content group')" )
+  q-icon.q-py-sm(v-if='isEdit' color="secondary", size="2rem", @click="alert('Adding new Content group')" )
     svg.h-6.w-6(
       fill="none",
       viewBox="0 0 24 24",
@@ -82,7 +79,7 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: ' width:40%',
+          headerStyle: ' width:40%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           classes: 'column-responsive',
           field: (row) => row.key,
@@ -92,9 +89,10 @@ export default {
           name: 'value',
           label: 'Value',
           align: 'left',
-          headerStyle: 'width:40%',
+          headerStyle: 'width:40%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           classes: 'column-responsive',
+          style: 'color: rgb(107,114,128);',
           field: (row) => row.value,
           sortable: true
         },
@@ -102,9 +100,10 @@ export default {
           name: 'dataType',
           label: 'Data Type',
           align: 'left',
-          headerStyle: 'width:20%',
+          headerStyle: 'width:20%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
           classes: 'column-responsive',
+          style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
           sortable: true
         }

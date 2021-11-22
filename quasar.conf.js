@@ -99,6 +99,7 @@ module.exports = function (ctx) {
         'QSpinner',
         'QSpinnerComment',
         'QSpinnerDots',
+        'QScrollArea',
         'QTime',
         'QToggle',
         'QToolbar',

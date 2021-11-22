@@ -46,22 +46,27 @@ export default {
   },
   methods: {
     ...mapActions('documentGraph', ['getSchema']),
-    ...mapMutations('documentGraph', ['setCatalog']),
+    ...mapMutations('documentGraph', ['setCatalog', 'setTypesWithSystemNode']),
     async loadCatalog () {
       try {
         const _response = await this.getSchema()
         const mapType = new Map()
+        const nodeLabelTypes = []
         _response.__schema.types.forEach(element => {
           if (!element.name.toLowerCase().includes('aggregate') && element.fields.length > 0) {
             let filteredField = []
             element.fields.forEach(field => {
               if (!field.name.includes('aggregate')) {
+                if (field.name === 'system_nodeLabel_s') {
+                  nodeLabelTypes.push(element.name)
+                }
                 filteredField.push(field)
               }
             })
             mapType.set(element.name, filteredField)
           }
         })
+        this.setTypesWithSystemNode(nodeLabelTypes)
         this.setCatalog(mapType)
       } catch (e) {
         this.showErrorMsg('An error ocurred while trying to get schema' + e)
