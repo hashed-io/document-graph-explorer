@@ -99,6 +99,18 @@ export default {
       accountInfoTip: 'Account info'
     },
     documentExplorer: {
+      explorer: {
+        title: 'Explore Document'
+      },
+      erase: {
+        title: 'Erase Document'
+      },
+      extend: {
+        title: 'Extend Document'
+      },
+      edit: {
+        title: 'Edit Document'
+      },
       edges: {
         noEdges: 'This document do not contain edges',
         title: 'Edges',

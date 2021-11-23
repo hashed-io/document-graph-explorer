@@ -1,5 +1,7 @@
 <template lang='pug'>
 div
+  div.text-h6.q-pb-md
+    | {{$t('pages.documentExplorer.erase.title')}}
   DocInformation(:docInfo="documentInfo")
   ListContentGroup(:contents_groups="contentsGroups")
   Edges(:edges="edges" :relations="relationsEdges")

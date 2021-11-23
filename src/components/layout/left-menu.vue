@@ -1,10 +1,17 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'left-menu-authenticated',
   computed: {
     ...mapGetters('accounts', ['isAuthenticated'])
+  },
+  methods: {
+    ...mapMutations('documentGraph', ['clearStack']),
+    clearStoreAndGo () {
+      this.clearStack()
+      this.$router.push({ name: 'listDocs' })
+    }
   }
 }
 </script>
@@ -39,7 +46,7 @@ q-scroll-area.fit
       q-item-section
         div Order Book
     q-item(
-      @click="$router.push({name:'listDocs'})"
+      @click="clearStoreAndGo()"
       data-cy='DGE'
       clickable
       v-ripple

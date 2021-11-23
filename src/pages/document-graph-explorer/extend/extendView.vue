@@ -1,8 +1,9 @@
 <template lang='pug'>
 div
   //- DocInformation(:docInfo="documentInfo")
-  .text-bolder.text-h6 Extend Document
-  .row
+  .text-h6.q-pb-md
+    | {{$t('pages.documentExplorer.extend.title')}}
+  .row.q-col-gutter-md
     .col-2
       TSelect(
         label='Direction'
@@ -10,8 +11,7 @@ div
         :options='options'
         :dense="true"
       )
-  .row
-    .col-2
+    .col-4
       TInput(
         label='Edge Name'
         v-model='form.edgeName'

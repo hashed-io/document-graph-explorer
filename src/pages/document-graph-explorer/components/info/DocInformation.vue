@@ -1,8 +1,6 @@
 <template lang='pug'>
 q-card(flat bordered)
   q-card-section
-    .text-h6
-      b Edit Document
     .label.text-subtitle1
       | {{docInfo.name}}
   q-separator(color='grey-3')
@@ -13,7 +11,9 @@ q-card(flat bordered)
         div {{ docInfo.docID }}
       .col-6
         div(:class="classes.titleDocInfo") Hash
-        div {{ docInfo.hash }}
+        div.column-responsive {{ docInfo.hash }}
+        q-popup-edit(v-model="docInfo.hash")
+          q-input(v-model='docInfo.hash' autogrow dense readonly)
       .col-6
         div(:class="classes.titleDocInfo") Owner
         div {{ docInfo.owner }}

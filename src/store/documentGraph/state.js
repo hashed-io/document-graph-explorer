@@ -1,4 +1,5 @@
 export default () => ({
+  stackNavigation: [],
   document: undefined,
   typeCatalog: undefined,
   isEdit: false,

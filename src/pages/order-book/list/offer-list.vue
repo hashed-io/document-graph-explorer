@@ -23,7 +23,7 @@ div
   )
     template(v-slot:body-cell-actions="props")
       q-td(:props="props")
-        q-icon(
+        q-icon.animated-icon(
           name="fact_check",
           label="Accept order",
           size="sm",

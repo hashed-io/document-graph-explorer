@@ -2,10 +2,9 @@
 .bg-white(:style="$q.platform.is.mobile ? 'width:80vw' : 'width:30vw'")
   .row
     .col-2
-      q-icon.floatingArrow(
+      q-icon.floatingArrow.animated-icon(
       data-cy='accountInfo'
       ref='accountInfo'
-      class="text-primary"
       style="font-size: 3em;"
       :name="showAccountInfo ? 'keyboard_arrow_right' : 'keyboard_arrow_left'",
       @click="toggleMenu()"
