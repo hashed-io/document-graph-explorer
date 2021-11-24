@@ -45,9 +45,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('documentGraph', ['getSchema']),
+    ...mapActions('documentGraph', ['getSchema', 'changeEndpoint']),
     ...mapMutations('documentGraph', ['setCatalog', 'setTypesWithSystemNode']),
     async loadCatalog () {
+      localStorage.setItem('apollo-endpoint', process.env.APOLLO_URL)
       try {
         const _response = await this.getSchema()
         const mapType = new Map()

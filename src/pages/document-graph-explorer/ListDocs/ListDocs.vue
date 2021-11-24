@@ -1,7 +1,26 @@
 <template lang="pug">
 div(class="q-pa-md items-start")
-  div.text-h6.q-py-md(style="font-family: metropolis;")
-    | {{$t('pages.documentExplorer.listDocs.title')}}
+  .row.q-pb-md
+    .col-8
+      div.text-h6.q-py-md(style="font-family: metropolis;")
+        | {{$t('pages.documentExplorer.listDocs.title')}}
+    .col-4
+      .row.justify-end
+        .col-12.q-pb-sm
+          TInput(
+            label='Endpoint'
+            v-model='endpoint'
+            dense
+            :placeholder="currentEndpoint"
+          )
+        .row.justify-end
+          .col-12
+            q-btn(
+                label='Load'
+                size='xs'
+                color='indigo-6'
+                @click='loadFromEndpoint'
+            )
   q-table(
     :data="documents"
     :columns="columns"
@@ -60,10 +79,13 @@ div(class="q-pa-md items-start")
 
 <script>
 import { mapActions, mapMutations } from 'vuex'
+import TInput from '../../../components/input/t-input.vue'
+import ApolloClient from 'apollo-boost'
 export default {
   name: 'ListDocs',
   data () {
     return {
+      endpoint: undefined,
       documents: undefined,
       assignment: undefined,
       columns: [
@@ -116,12 +138,18 @@ export default {
     }
   },
   mounted () {
-    this.onClickButton()
+    this.loadDocuments()
+  },
+  computed: {
+    currentEndpoint () {
+      return localStorage.getItem('apollo-endpoint')
+    }
   },
   methods: {
-    ...mapActions('documentGraph', ['getDocuments', 'getAssignment', 'getMembers']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation']),
-    async onClickButton () {
+    ...mapActions('documentGraph', ['getDocuments', 'getAssignment', 'getMembers', 'changeEndpoint', 'getSchema']),
+    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    async loadDocuments () {
+      this.documents = []
       const data = await this.getDocuments({ number: 1000, type: 'Document' })
       this.documents = data.queryDocument
     },
@@ -138,8 +166,59 @@ export default {
       this.setDocument(row)
       this.setIsEdit(false)
       this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })
+    },
+    async modifyApolloEndpoint (localStorage) {
+      let endpoint = this.endpoint
+      if (localStorage) {
+        endpoint = localStorage
+      }
+      const client = new ApolloClient({
+        uri: endpoint
+      })
+      await this.changeEndpoint({ client })
+    },
+    async loadFromEndpoint () {
+      try {
+        this.modifyApolloEndpoint()
+        localStorage.setItem('apollo-endpoint', this.endpoint)
+        await this.loadCatalog()
+        await this.loadDocuments()
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
+        let previousEndpoint = localStorage.getItem('apollo-endpoint')
+        await this.modifyApolloEndpoint(previousEndpoint)
+        await this.loadCatalog()
+        await this.loadDocuments()
+      }
+    },
+    async loadCatalog () {
+      try {
+        const _response = await this.getSchema()
+        const mapType = new Map()
+        const nodeLabelTypes = []
+        _response.__schema.types.forEach(element => {
+          if (!element.name.toLowerCase().includes('aggregate') && element.fields.length > 0) {
+            let filteredField = []
+            element.fields.forEach(field => {
+              if (!field.name.includes('aggregate')) {
+                if (field.name === 'system_nodeLabel_s') {
+                  nodeLabelTypes.push(element.name)
+                }
+                filteredField.push(field)
+              }
+            })
+            mapType.set(element.name, filteredField)
+          }
+        })
+        this.setTypesWithSystemNode(nodeLabelTypes)
+        this.setCatalog(mapType)
+      } catch (e) {
+        this.showErrorMsg('An error ocurred while trying to get schema' + e)
+        console.error('An error ocurred while trying to get schema ' + e)
+      }
     }
-  }
+  },
+  components: { TInput }
 }
 </script>
 

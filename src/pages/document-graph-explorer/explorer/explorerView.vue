@@ -86,10 +86,6 @@ export default {
     },
     navigateToEdgePrev (edgeData) {
       this.popDocNavigation()
-      // console.log('7777777777777')
-      // console.log(edgeData)
-      // console.log('7777777777777')
-      // // edgeData['documentType'] = edgeData.type
       this.setDocument(edgeData)
       this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
     },

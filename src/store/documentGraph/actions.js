@@ -43,3 +43,12 @@ export const getSchema = async function ({ commit }, params) {
     throw new Error(e)
   }
 }
+export const changeEndpoint = async function ({ commit }, params) {
+  try {
+    const response = await this.$apolloApi.changeEndpointApollo({ ...params })
+    return response
+  } catch (e) {
+    console.error('An error ocurred while trying to change endpoint api', e)
+    throw new Error(e)
+  }
+}
