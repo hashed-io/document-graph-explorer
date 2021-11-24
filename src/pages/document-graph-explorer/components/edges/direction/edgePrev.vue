@@ -4,33 +4,29 @@
     bordered
     flat
     square
+    @click="onNextNode(item)"
   )
       q-card-section(
         :key="index"
         :class="index % 2 === 0 ? 'cardWhite' : 'cardGrey'"
       )
-        .row.justify-end
+        .row.justifys-end
           .col-xs-6.col-sm-6
             .row.q-col-gutter-xl.justify-end
-              .col-xs-4.col-sm-3.q-col-gutter-md
-                q-icon.text-black(
-                  name="keyboard_double_arrow_left",
-                  style="font-size: 2rem",
-                  @click="onNextNode(item)"
-                ).animated-icon
+              .col-xs-4.col-sm-2.q-col-gutter-md
                 q-icon(
                   v-if='isEdit'
                   name='delete'
                   size='sm'
                   @click="removeEdge(item)"
                 ).animated-icon
-              .col-xs-4.col-sm-7
-                .text-bold
+              .col-xs-4.col-sm-8
+                .text-capitalize
                   | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
-                .text-caption.text-grey-6.text-bold
+                .text-caption.text-grey-6
                   | {{ item.documentType }}
-                .text-caption.text-grey-6.text-bold
-                  | {{ item.createdDate}}
+                .text-caption.text-grey-6
+                  | {{ dateToString(item.createdDate)}}
               .col-xs-4.col-sm-2
                 .text-caption.text-capitalize
                   | {{ item.edgeName }}
@@ -40,13 +36,13 @@
                     color='grey-5'
                     size='md'
                   ).animated-icon
-          .col-xs-0.col-sm-2
+          .col-xs-0.col-sm-1
             q-icon(
               name="location_on"
               color='red'
               size='sm'
             ).center
-          .col-xs-2.col-sm-3
+          .col-xs-2.col-sm-1
             //- q-icon(color="green", size="1.5rem").center
             //-   svg(
             //-     xmlns="http://www.w3.org/2000/svg",

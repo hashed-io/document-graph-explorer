@@ -1,10 +1,10 @@
 <template lang="pug">
 div.q-pt-md
   .row.q-pb-md
-    .col-10
+    .col-8
       .q-py-md.text-h6.text-capitalize(v-if="edges.length > 0")
         | Edges
-    .col-2
+    .col-4
       TInput(
         v-if="edges.length > 0"
         label='search'

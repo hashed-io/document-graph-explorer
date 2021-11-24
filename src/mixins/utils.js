@@ -42,6 +42,13 @@ export const utils = {
     },
     showIsLoading (state) {
       this.setIsLoading(state)
+    },
+    dateToString (_date) {
+      var date = new Date(_date.replace(/ /g, 'T'))
+      return [
+        'January', 'February', 'March', 'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'
+      ][date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
     }
   }
 }

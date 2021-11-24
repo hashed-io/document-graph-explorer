@@ -4,7 +4,7 @@ export const documentExplorer = {
   async mounted () {
     this.getDocumentInfo()
     let edges = await this.getContentGroup()
-    this.getEdges(edges)
+    if (edges.length > 0) { this.getEdges(edges) }
   },
   data () {
     return {
@@ -48,7 +48,7 @@ export const documentExplorer = {
     async loadData () {
       this.getDocumentInfo()
       let edges = await this.getContentGroup()
-      this.getEdges(edges)
+      if (edges.length > 0) { this.getEdges(edges) }
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()

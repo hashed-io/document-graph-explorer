@@ -107,7 +107,10 @@ export default {
           headerStyle: ' font-size:14px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
           style: 'color: rgb(107,114,128)',
-          field: (row) => row.createdDate
+          field: (row) => row.createdDate,
+          format: (val, row) => {
+            return this.dateToString(val)
+          }
         }
       ]
     }

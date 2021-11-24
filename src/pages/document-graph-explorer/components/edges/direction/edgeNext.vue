@@ -4,6 +4,7 @@
     bordered
     flat
     square
+    @click="onNextNode"
   )
       q-card-section(
         :key="index"
@@ -28,7 +29,7 @@
             //-       d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z",
             //-       clip-rule="evenodd"
             //-     )
-          .col-xs-6.col-sm-7
+          .col-xs-6.col-sm-8
             .row.q-col-gutter-xl.justify-end
               .col-xs-4.col-sm-3
                 .text-caption.text-capitalize
@@ -39,19 +40,14 @@
                     color='grey-5'
                     size='md'
                   ).animated-icon
-              .col-xs-4.col-sm-6
-                .text-bold
+              .col-xs-4.col-sm-7
+                .text-capitalize
                   | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
-                .text-caption.text-grey-6.text-bold
+                .text-caption.text-grey-6
                   | {{ item.type }}
-                .text-caption.text-grey-6.text-bold
-                  | {{ item.createdDate}}
-              .col-xs-4.col-sm-3.q-col-gutter-md
-                q-icon.text-black(
-                  name="keyboard_double_arrow_right",
-                  style="font-size: 2rem",
-                  @click="onNextNode"
-                ).animated-icon
+                .text-caption.text-grey-6
+                  | {{ dateToString(item.createdDate)}}
+              .col-xs-4.col-sm-2.q-col-gutter-md
                 q-icon(
                   v-if='isEdit'
                   name='delete'
