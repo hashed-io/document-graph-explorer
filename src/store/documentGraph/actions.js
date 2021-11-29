@@ -52,3 +52,15 @@ export const changeEndpoint = async function ({ commit }, params) {
     throw new Error(e)
   }
 }
+export const setApiEndpoint = function ({ commit }, params) {
+  localStorage.setItem(params.key, params.value)
+}
+export const getApiEndpoint = function ({ commit }, params) {
+  try {
+    let apiEndpoint = localStorage.getItem(params.key)
+    return apiEndpoint
+  } catch (e) {
+    console.error('An error ocurred while trying to retrieve api endpoint', e)
+    throw new Error(e)
+  }
+}

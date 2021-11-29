@@ -14,12 +14,12 @@ div(class="q-pa-md items-start")
             :placeholder="currentEndpoint"
           )
         .row.justify-end
-          .col-12
+          .col-12.btn-primary
             q-btn(
                 label='Load'
                 size='xs'
-                color='indigo-6'
                 @click='loadFromEndpoint'
+                unelevated
             )
   q-table(
     :data="documents"
@@ -88,6 +88,7 @@ export default {
       endpoint: undefined,
       documents: undefined,
       assignment: undefined,
+      currentEndpoint: undefined,
       columns: [
         {
           name: 'docid',
@@ -141,14 +142,16 @@ export default {
     this.loadDocuments()
   },
   computed: {
-    currentEndpoint () {
-      return localStorage.getItem('apollo-endpoint')
-    }
   },
   methods: {
-    ...mapActions('documentGraph', ['getDocuments', 'getAssignment', 'getMembers', 'changeEndpoint', 'getSchema']),
+    ...mapActions('documentGraph', ['getDocuments', 'getAssignment', 'getMembers', 'changeEndpoint', 'getSchema', 'getApiEndpoint', 'setApiEndpoint']),
     ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    async loadLocalStorage () {
+      let apiEndpoint = await this.getApiEndpoint({ key: 'apollo-endpoint' })
+      this.currentEndpoint = apiEndpoint
+    },
     async loadDocuments () {
+      this.loadLocalStorage()
       this.documents = []
       const data = await this.getDocuments({ number: 1000, type: 'Document' })
       this.documents = data.queryDocument
@@ -180,12 +183,12 @@ export default {
     async loadFromEndpoint () {
       try {
         this.modifyApolloEndpoint()
-        localStorage.setItem('apollo-endpoint', this.endpoint)
+        this.setApiEndpoint({ key: 'apollo-endpoint', value: this.endpoint })
         await this.loadCatalog()
         await this.loadDocuments()
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
-        let previousEndpoint = localStorage.getItem('apollo-endpoint')
+        let previousEndpoint = this.getApiEndpoint({ key: 'apollo-endpoint' })
         await this.modifyApolloEndpoint(previousEndpoint)
         await this.loadCatalog()
         await this.loadDocuments()
