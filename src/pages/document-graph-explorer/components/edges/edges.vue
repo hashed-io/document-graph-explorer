@@ -64,7 +64,6 @@ div.q-pt-md
 </style>
 <script>
 import { mapGetters } from 'vuex'
-import { cssClasses } from '~/mixins/css-class.js'
 import TInput from '~/components/input/t-input.vue'
 import { validation } from '~/mixins/validation'
 import EmptyEdges from './empty-component/empty-edges.vue'
@@ -93,7 +92,7 @@ export default {
       default: () => []
     }
   },
-  mixins: [cssClasses, validation],
+  mixins: [validation],
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit']),
     resultQuery () {

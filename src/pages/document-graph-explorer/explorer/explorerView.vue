@@ -50,7 +50,6 @@ div
 </template>
 
 <script>
-import { cssClasses } from 'src/mixins/css-class.js'
 import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
@@ -58,7 +57,7 @@ import { documentExplorer } from '~/mixins/documentExplorer'
 import { mapMutations } from 'vuex'
 export default {
   name: 'DocumentExplorer',
-  mixins: [cssClasses, documentExplorer],
+  mixins: [documentExplorer],
   components: {
     DocInformation,
     ListContentGroup,
