@@ -1,6 +1,6 @@
 <template lang="pug">
 .q-py-sm.text-capitalize
-  div.q-pb-md.text-subtitle1 {{content_group_data[0].title}}
+  div.q-pb-md.text-subtitle1.q-pl-md {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table(
     :data="content_group_data",
     :columns="columns",
@@ -15,17 +15,17 @@
   )
     template(#body="props")
       q-tr(:props="props")
-        q-td(
+        q-td.column-responsive(
           key="key",
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ props.row.key }}
-        q-td(
+        q-td.column-responsive(
           key="value",
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ props.row.value }}
-        q-td(
+        q-td.column-responsive(
           key="dataType",
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
@@ -35,7 +35,7 @@
       fill="none",
       viewBox="0 0 24 24",
       stroke="currentColor"
-    )
+    ).animated-icon
       path(
         stroke-linecap="round",
         stroke-linejoin="round",
@@ -79,7 +79,7 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: ' width:40%; font-size:12px;',
+          headerStyle: ' width:20%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           classes: 'column-responsive',
           field: (row) => row.key,
@@ -89,7 +89,7 @@ export default {
           name: 'value',
           label: 'Value',
           align: 'left',
-          headerStyle: 'width:40%; font-size:12px;',
+          headerStyle: 'width:60%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           classes: 'column-responsive',
           style: 'color: rgb(107,114,128);',
@@ -126,4 +126,13 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped></style>
+<style lang="stylus" scoped>
+.column-responsive
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  max-width: 300px
+.autogrow
+  overflow-wrap: break-word;
+  max-width: 300px
+</style>

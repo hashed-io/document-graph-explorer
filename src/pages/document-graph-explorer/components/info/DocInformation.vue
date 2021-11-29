@@ -1,33 +1,32 @@
 <template lang='pug'>
 q-card(flat bordered)
   q-card-section
-    .text-h6
-      b Edit Document
-    .label.text-subtitle1
+    .label.text-subtitle1.docInfoTitle
       | {{docInfo.name}}
   q-separator(color='grey-3')
   q-card-section
     .row.q-col-gutter-md
-      .col-6
+      .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Document ID
         div {{ docInfo.docID }}
-      .col-6
+      .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Hash
-        div.column-responsive {{ docInfo.hash }}
-        q-popup-edit(v-model="docInfo.hash")
-          q-input(v-model='docInfo.hash' autogrow dense readonly)
-      .col-6
+        div.column-responsive
+          | {{ docInfo.hash }}
+          q-popup-edit(v-model="docInfo.hash")
+            q-input(v-model='docInfo.hash' autogrow dense readonly)
+      .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Owner
         div {{ docInfo.owner }}
-      .col-6
+      .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Document Type
         div {{ docInfo.documentType }}
-      .col-6
+      .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Created Date
-        div {{ docInfo.createdDate }}
-      .col-6
+        div {{ dateToString(docInfo.createdDate) }}
+      .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Updated Date
-        div {{ docInfo.updatedDate }}
+        div {{ dateToString(docInfo.updatedDate) }}
 </template>
 
 <script>
@@ -55,11 +54,16 @@ export default {
 }
 </script>
 
-<style lang='sass'>
+<style lang='stylus' scoped>
 .label
   color: #9296A0
 .titleDocInfo
   text-subtitle2
   text-grey-6
   text-bold
+.column-responsive
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  max-width: 600px
 </style>

@@ -286,7 +286,6 @@ export default {
       // this.$router.push({ name: 'daoForm' })
     },
     async onClickSee (row) {
-      // TODO: add custom Regex
       if (/^bafk([a-zA-Z0-9]){55}$/.test(row.ipfs)) {
         let url = 'https://ipfs.io/ipfs/' + row.ipfs
         window.open(url, '_blank')

@@ -107,7 +107,10 @@ export default {
           headerStyle: ' font-size:14px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
           style: 'color: rgb(107,114,128)',
-          field: (row) => row.createdDate
+          field: (row) => row.createdDate,
+          format: (val, row) => {
+            return this.dateToString(val)
+          }
         }
       ]
     }
@@ -117,9 +120,9 @@ export default {
   },
   methods: {
     ...mapActions('documentGraph', ['getDocuments', 'getAssignment', 'getMembers']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit']),
+    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation']),
     async onClickButton () {
-      const data = await this.getDocuments({ number: 100, type: 'Document' })
+      const data = await this.getDocuments({ number: 1000, type: 'Document' })
       this.documents = data.queryDocument
     },
     async onClickAssignment () {
@@ -130,6 +133,8 @@ export default {
       return text.slice(0, 250) + '...'
     },
     seeDocument (row) {
+      // this.pushDocNavigation(row)
+      // this.popDocNavigation()
       this.setDocument(row)
       this.setIsEdit(false)
       this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })

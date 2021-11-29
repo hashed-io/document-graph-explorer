@@ -1,6 +1,4 @@
-# Telos (telos)
-
-TODO desc
+# Document Graph Explorer
 
 ## Install the dependencies
 ```bash

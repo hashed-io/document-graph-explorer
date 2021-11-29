@@ -1,5 +1,7 @@
 <template lang='pug'>
 div
+  div.text-h6.q-pb-md
+    | {{$t('pages.documentExplorer.erase.title')}}
   DocInformation(:docInfo="documentInfo")
   ListContentGroup(:contents_groups="contentsGroups")
   Edges(:edges="edges" :relations="relationsEdges")
@@ -8,7 +10,7 @@ div
 </template>
 
 <script>
-import { cssClasses } from 'src/mixins/css-class.js'
+import { cssClasses } from '~/mixins/css-class.js'
 import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
@@ -32,5 +34,5 @@ export default {
 }
 </script>
 
-<style lang='styl'>
+<style lang='stylus'>
 </style>

@@ -33,21 +33,25 @@ class ApolloApi extends BaseEosApi {
   }
   async getPropsType ({ type }) {
     const query = gql`
-      { 
-        __type(name:"${type}") {
-          fields {
-              name
-            type{
-              name
+    {
+      __type(name: "${type}") {
+        fields {
+          name
+          type {
+            name
+            kind
+            ofType {
               kind
+              name
               ofType{
                 kind
                 name
               }
             }
-          }  
+          }
         }
       }
+    }
     `
     const { data } = await this.apollo.query({ query })
     return data
@@ -124,7 +128,7 @@ class ApolloApi extends BaseEosApi {
             }
           }
         }
-      }    
+      }
     `
     const { data } = await this.apollo.query({ query })
     return data
