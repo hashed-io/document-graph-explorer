@@ -1,5 +1,5 @@
 <template lang='pug'>
-q-card(flat bordered).cardTailWind
+q-card(bordered).cardTailWind
   q-card-section
     .label.text-subtitle1.docInfoTitle
       | {{docInfo.name}}

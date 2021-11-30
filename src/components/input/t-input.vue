@@ -36,9 +36,11 @@ export default {
 .q-field--outlined .q-field__control
   border-width: 0.8px
   border-color: rgba(209,213,219,1)
-  border-radius: 8px
+  background-color: #FFF
+  border-radius: 10px
 .q-field__marginal
   font-size:16px
 .colorTailwind
   color: #374157
+
 </style>

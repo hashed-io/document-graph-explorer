@@ -11,6 +11,7 @@ div
     v-if="isEdit"
     unelevated
     label='New content_group'
+    no-caps
   ).btnTailwind
 </template>
 
@@ -48,8 +49,9 @@ export default {
 
 <style lang="stylus" scoped>
 .btnTailwind
-  border-radius: 7px
-  background-color: #4F46E5
+  border-radius: 10px
+  height: 2.5rem
+  font-size: 11px
   color:white
-
+  background: #4F46E5
 </style>

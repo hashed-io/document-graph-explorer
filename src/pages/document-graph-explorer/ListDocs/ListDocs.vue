@@ -14,19 +14,20 @@ div(class="q-pa-md items-start")
             :placeholder="currentEndpoint"
           )
         .row.justify-end
-          .col-12.btn-primary.btnTailwind
-            q-btn(
-                label='Load'
-                size='md'
-                @click='loadFromEndpoint'
-                unelevated
-            )
+          .col-12
+            div
+              q-btn(
+                  label='Load'
+                  @click='loadFromEndpoint'
+                  unelevated
+                  no-caps
+                  align="around"
+              ).btnTailwind
   q-table(
     :data="documents"
     :columns="columns"
     card-class="bg-grey-1"
-
-  )
+  ).TailWind
     template(v-slot:body="props")
       q-tr.cursor-pointer( :props="props")
         q-td(
@@ -228,6 +229,12 @@ export default {
 <style lang="stylus" scoped>
 .container
   height: 200px;
+.TailWind
+  border-radius: 10px
 .btnTailwind
-  border-radius: 7px
+  border-radius: 10px
+  height: 2rem
+  width: 7rem
+  color: white
+  background: #4F46E5
 </style>

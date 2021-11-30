@@ -58,7 +58,9 @@ export default {
 
 <style lang='stylus' scoped>
 .btnTailwind
-  border-radius: 7px
-  background-color: #4F46E5
+  border-radius: 10px
+  height: 2rem
+  width: 7rem
   color:white
+  background: #4F46E5
 </style>

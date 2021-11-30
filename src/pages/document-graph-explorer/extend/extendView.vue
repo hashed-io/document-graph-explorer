@@ -24,12 +24,10 @@ div
     q-btn(
       unelevated
       label='Save'
-      style="background: #4F46E5; color:white"
     ).btnTailwind
     q-btn(
       unelevated
       label='Cancel'
-      style="background: #4F46E5; color:white"
       @click='onCancel()'
     ).btnTailwind
 </template>
@@ -73,4 +71,8 @@ export default {
 <style lang='stylus' scoped>
 .btnTailwind
   border-radius: 10px
+  height: 2rem
+  width: 7rem
+  color:white
+  background: #4F46E5
 </style>

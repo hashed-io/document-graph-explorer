@@ -1,7 +1,7 @@
 <template lang='pug'>
 #EdgeNext
   q-card(
-    flat
+    square
     @click="onNextNode"
   ).tailWind
       q-card-section(
