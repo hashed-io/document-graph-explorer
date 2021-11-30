@@ -17,7 +17,7 @@ div(class="q-pa-md items-start")
           .col-12.btn-primary.btnTailwind
             q-btn(
                 label='Load'
-                size='xs'
+                size='md'
                 @click='loadFromEndpoint'
                 unelevated
             )
@@ -229,5 +229,5 @@ export default {
 .container
   height: 200px;
 .btnTailwind
-  border-radius: 10px
+  border-radius: 7px
 </style>
