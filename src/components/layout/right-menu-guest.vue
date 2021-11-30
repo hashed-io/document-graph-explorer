@@ -12,7 +12,7 @@ export default {
 <template lang="pug">
 div
   q-btn.q-mr-sm(
-    @click="$router.push({name: 'all-daos'})"
+    @click="$router.push({name: 'login'})"
     data-cy='loginButton'
     :size="$q.platform.is.mobile ? 'sm' : 'md' "
     :label="$t('pages.index.buttons.login')"

@@ -12,6 +12,7 @@
     hide-bottom,
     separator="none",
     table-header-class="hdTable"
+    :visible-columns="visibleColumns"
   )
     template(#body="props")
       q-tr(:props="props")
@@ -30,6 +31,17 @@
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ getDataType(props.row.dataType) }}
+        q-td.column-responsive(
+          v-if="isEdit"
+          key='Actions',
+          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+        )
+          .row.justify-center
+            q-icon.animated-icon(
+              size='sm'
+            )
+              svg(xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z")
   q-icon.q-py-sm(v-if='isEdit' color="secondary", size="2rem", @click="alert('Adding new Content group')" )
     svg.h-6.w-6(
       fill="none",
@@ -63,6 +75,7 @@ export default {
   mounted () {
     if (this.getIsEdit) {
       this.isEdit = true
+      this.visibleColumns.push('actions')
     } else {
       this.isEdit = false
     }
@@ -74,6 +87,7 @@ export default {
         rowsPerPage: 10,
         page: 1
       },
+      visibleColumns: ['key', 'value', 'dataType'],
       columns: [
         {
           name: 'key',
@@ -106,6 +120,16 @@ export default {
           style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
           sortable: true
+        },
+        {
+          name: 'actions',
+          label: 'Actions',
+          align: 'justify',
+          headerStyle: 'width:30%; font-size:12px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
+          classes: 'column-responsive',
+          style: 'color: rgb(107,114,128);',
+          sortable: false
         }
       ]
     }

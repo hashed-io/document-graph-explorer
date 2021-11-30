@@ -8,7 +8,7 @@ q-card(flat bordered)
     .row.q-col-gutter-md
       .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Document ID
-        div {{ docInfo.docID }}
+        div {{ docInfo.docId }}
       .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Hash
         div.column-responsive
@@ -17,10 +17,10 @@ q-card(flat bordered)
             q-input(v-model='docInfo.hash' autogrow dense readonly)
       .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Owner
-        div {{ docInfo.owner }}
+        div {{ docInfo.creator }}
       .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Document Type
-        div {{ docInfo.documentType }}
+        div {{ docInfo.type }}
       .col-6.docInfoInside
         div(:class="classes.titleDocInfo") Created Date
         div {{ dateToString(docInfo.createdDate) }}

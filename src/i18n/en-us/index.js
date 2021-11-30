@@ -103,7 +103,13 @@ export default {
         title: 'Explore Document'
       },
       erase: {
-        title: 'Erase Document'
+        title: 'Erase Document',
+        titleModal: 'Are you absolutely sure?',
+        msg: 'This action cannot be undone. This will permanently delete the doc with the ID: ',
+        typeMsg: 'Please type',
+        msgDel: 'document with id',
+        typeMsgContinue: 'to confirm',
+        btnErase: 'I understand the consequences, delete this document'
       },
       extend: {
         title: 'Extend Document'
