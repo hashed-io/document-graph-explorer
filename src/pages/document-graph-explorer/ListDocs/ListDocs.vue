@@ -14,7 +14,7 @@ div(class="q-pa-md items-start")
             :placeholder="currentEndpoint"
           )
         .row.justify-end
-          .col-12.btn-primary
+          .col-12.btn-primary.btnTailwind
             q-btn(
                 label='Load'
                 size='xs'
@@ -225,8 +225,9 @@ export default {
 }
 </script>
 
-<styles lang="stylus" scope>
-.container {
+<style lang="stylus" scoped>
+.container
   height: 200px;
-}
-</styles>
+.btnTailwind
+  border-radius: 10px
+</style>

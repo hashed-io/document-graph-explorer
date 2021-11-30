@@ -1,5 +1,5 @@
 <template lang='pug'>
-q-card(flat bordered)
+q-card(flat bordered).cardTailWind
   q-card-section
     .label.text-subtitle1.docInfoTitle
       | {{docInfo.name}}
@@ -60,4 +60,6 @@ export default {
   overflow: hidden
   text-overflow: ellipsis
   max-width: 600px
+.cardTailWind
+  border-radius: 10px
 </style>

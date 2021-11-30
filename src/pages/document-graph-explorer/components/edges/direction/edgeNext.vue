@@ -1,11 +1,9 @@
 <template lang='pug'>
 #EdgeNext
   q-card(
-    bordered
     flat
-    square
     @click="onNextNode"
-  )
+  ).tailWind
       q-card-section(
         :key="index"
         :class="index % 2 === 0 ? 'cardWhite' : 'cardGrey'"
@@ -15,8 +13,8 @@
           .col-xs-2.col-sm-1
             q-icon(
               name="location_on"
-              color='green'
               size='sm'
+              color='green'
             ).center.animated-icon
             //- q-icon(color="green", size="1.5rem").center
             //-   svg(
@@ -53,10 +51,20 @@
                   name='delete'
                   size='sm'
                   @click="removeEdge(item)"
-                ).animated-icon
+                ).animated-icon.iconTailwind
 </template>
 
-<style lang='stylus'>
+<style lang='stylus' scoped>
+.cardWhite
+  background: white
+  &:hover
+    background: #F7F7F7
+.cardGrey
+  background: #FAFAFA
+  &:hover
+    background: #F7F7F7
+.iconTailwind
+  color: #4254E0
 </style>
 <script>
 export default {

@@ -1,7 +1,7 @@
 <template lang="pug">
 .q-py-sm.text-capitalize
   div.q-pb-md.text-subtitle1.q-pl-md {{content_group_data[0].title}}
-  q-table.sticky-virtscroll-table(
+  q-table.sticky-virtscroll-table.TailWind(
     :data="content_group_data",
     :columns="columns",
     :row-key="(row) => row.label",
@@ -30,7 +30,7 @@
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         ) {{ getDataType(props.row.dataType) }}
-  q-icon.q-py-sm(v-if='isEdit' color="secondary", size="2rem", @click="alert('Adding new Content group')" )
+  q-icon.q-py-sm.iconTailwind(v-if='isEdit' size="2rem", @click="alert('Adding new Content group')" )
     svg.h-6.w-6(
       fill="none",
       viewBox="0 0 24 24",
@@ -135,4 +135,8 @@ export default {
 .autogrow
   overflow-wrap: break-word;
   max-width: 300px
+.TailWind
+  border-radius: 10px
+.iconTailwind
+  color: #4338CA
 </style>

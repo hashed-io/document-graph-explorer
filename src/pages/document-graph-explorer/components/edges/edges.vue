@@ -48,7 +48,7 @@ div.q-pt-md
             @navigate="onPrevNode(item)"
         )
 </template>
-<style lang="stylus">
+<style lang="stylus" scoped>
 .cardWhite
   background: white
   &:hover

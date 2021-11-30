@@ -10,9 +10,8 @@ div
   q-btn(
     v-if="isEdit"
     unelevated
-    style="background: #08183c; color:white"
     label='New content_group'
-  )
+  ).btnTailwind
 </template>
 
 <script>
@@ -47,5 +46,10 @@ export default {
 }
 </script>
 
-<style>
+<style lang="stylus" scoped>
+.btnTailwind
+  border-radius: 7px
+  background-color: #4F46E5
+  color:white
+
 </style>
