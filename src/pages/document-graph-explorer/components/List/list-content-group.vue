@@ -10,14 +10,13 @@ div
   q-btn(
     v-if="isEdit"
     unelevated
-    style="background: #08183c; color:white"
     label='New content_group'
-  )
+    no-caps
+  ).btnTailwind
 </template>
 
 <script>
 import ContentGroup from './Element/content-group.vue'
-import { cssClasses } from 'src/mixins/css-class.js'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ListContentsGroup',
@@ -30,7 +29,6 @@ export default {
   components: {
     ContentGroup
   },
-  mixins: [cssClasses],
   mounted () {
     if (this.getIsEdit) {
       this.isEdit = true
@@ -49,5 +47,11 @@ export default {
 }
 </script>
 
-<style>
+<style lang="stylus" scoped>
+.btnTailwind
+  border-radius: 10px
+  height: 2.5rem
+  font-size: 11px
+  color:white
+  background: #4F46E5
 </style>

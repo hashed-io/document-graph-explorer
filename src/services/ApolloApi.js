@@ -31,6 +31,9 @@ class ApolloApi extends BaseEosApi {
         __typename
     `
   }
+  changeEndpointApollo ({ client }) {
+    this.apollo = client
+  }
   async getPropsType ({ type }) {
     const query = gql`
     {

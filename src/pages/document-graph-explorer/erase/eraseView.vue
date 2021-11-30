@@ -10,7 +10,6 @@ div
 </template>
 
 <script>
-import { cssClasses } from '~/mixins/css-class.js'
 import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
@@ -18,7 +17,7 @@ import EraseBox from '../components/erase/eraseBox.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 export default {
   name: 'DocumentExplorer',
-  mixins: [cssClasses, documentExplorer],
+  mixins: [documentExplorer],
   components: {
     DocInformation,
     ListContentGroup,

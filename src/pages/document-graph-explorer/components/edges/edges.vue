@@ -21,32 +21,35 @@ div.q-pt-md
     v-if='edges.length > 0 && resultQuery.length === 0'
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
-  q-scroll-area(
-    :thumb-style="thumbStyle",
-    :barStyle="barStyle",
-    :style="(edges.length > 0 && resultQuery.length > 0) ? 'height:300px' : 'height: 0px'"
-    id="scroll-area-with-virtual-scroll-1"
-  )
-    q-virtual-scroll(
-      scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
-      :items="resultQuery"
-      type="list"
+  q-card(
+    bordered
+  ).cardTailWind
+    q-scroll-area(
+      :thumb-style="thumbStyle",
+      :barStyle="barStyle",
+      :style="(edges.length > 0 && resultQuery.length > 0) ? 'height:600px' : 'height: 0px'"
+      id="scroll-area-with-virtual-scroll-1"
     )
-      template(v-slot="{item, index}")
-        EdgeNext(
-            v-if="item.direction === 'next'"
-            :item="item"
-            :isEdit="isEdit"
-            :index="index"
-            @navigate="onNextNode(item)"
+      q-virtual-scroll(
+        scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
+        :items="resultQuery"
+        type="list"
+      )
+        template(v-slot="{item, index}")
+          EdgeNext(
+              v-if="item.direction === 'next'"
+              :item="item"
+              :isEdit="isEdit"
+              :index="index"
+              @navigate="onNextNode(item)"
+            )
+          EdgePrev(
+            v-if="item.direction === 'prev'"
+              :item="item"
+              :isEdit="isEdit"
+              :index="index"
+              @navigate="onPrevNode(item)"
           )
-        EdgePrev(
-          v-if="item.direction === 'prev'"
-            :item="item"
-            :isEdit="isEdit"
-            :index="index"
-            @navigate="onPrevNode(item)"
-        )
 </template>
 <style lang="stylus">
 .cardWhite
@@ -61,10 +64,13 @@ div.q-pt-md
   display: block
   margin: auto
   width: 40%
+.cardTailWind
+  border-radius: 10px
+.scroll
+  border-radius: 10px
 </style>
 <script>
 import { mapGetters } from 'vuex'
-import { cssClasses } from '~/mixins/css-class.js'
 import TInput from '~/components/input/t-input.vue'
 import { validation } from '~/mixins/validation'
 import EmptyEdges from './empty-component/empty-edges.vue'
@@ -93,7 +99,7 @@ export default {
       default: () => []
     }
   },
-  mixins: [cssClasses, validation],
+  mixins: [validation],
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit']),
     resultQuery () {

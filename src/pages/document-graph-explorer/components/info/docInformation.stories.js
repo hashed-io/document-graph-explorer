@@ -21,10 +21,10 @@ export const Example = Template.bind({})
 Example.args = {
   docInfo: {
     'name': 'dao.hypha',
-    'docID': '130',
+    'docId': '130',
     'hash': 'b52cb53ef44d4280928c3a3f0461e4bb6ca0b7e4f420a20b2beaafdc87a35dc8',
-    'owner': 'dao.hypha',
-    'documentType': 'Member',
+    'creator': 'dao.hypha',
+    'type': 'Member',
     'createdDate': '2021-02-14T17:39:44.5Z',
     'updatedDate': '2021-02-14T17:39:44.5Z'
   }

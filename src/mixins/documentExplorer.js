@@ -62,9 +62,27 @@ export const documentExplorer = {
         contentGroups
       )
       let contentGroup = this.matchingContentGroups(document)
-      let res = this.agroupByTitle(contentGroup)
-      this.contentsGroups = JSON.parse(JSON.stringify(res))
+      var res = this.agroupByTitle(contentGroup)
+      if (res.hasOwnProperty('system')) {
+        const sortContentGroups = this.sortResponseBySystem(res)
+        this.contentsGroups = JSON.parse(JSON.stringify(sortContentGroups))
+      } else {
+        this.contentsGroups = JSON.parse(JSON.stringify(res))
+      }
       return edges
+    },
+    sortResponseBySystem (res) {
+      let label = 'system'
+      let systemElement = res[label]
+      let newObj = {}
+
+      newObj[label] = systemElement
+      for (const key in res) {
+        if (key !== label) {
+          newObj[key] = res[key]
+        }
+      }
+      return newObj
     },
     async getSchemaOfType () {
       // Get from catalog

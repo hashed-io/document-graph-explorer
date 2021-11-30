@@ -12,18 +12,15 @@ div
     q-btn(
       unelevated
       label='Save'
-      style="background: #08183c; color: white"
-    )
+    ).btnTailwind
     q-btn(
       unelevated
       label='Cancel'
-      style="background: #08183c; color: white"
       @click='onCancel()'
-    )
+    ).btnTailwind
 </template>
 
 <script>
-import { cssClasses } from 'src/mixins/css-class.js'
 import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
@@ -31,7 +28,7 @@ import EdgeDialog from '../components/dialog/edgeDialog.vue'
 import { documentExplorer } from '../../../mixins/documentExplorer'
 export default {
   name: 'DocumentExplorer',
-  mixins: [cssClasses, documentExplorer],
+  mixins: [documentExplorer],
   components: {
     DocInformation,
     ListContentGroup,
@@ -59,5 +56,11 @@ export default {
 }
 </script>
 
-<style lang='stylus'>
+<style lang='stylus' scoped>
+.btnTailwind
+  border-radius: 10px
+  height: 2rem
+  width: 7rem
+  color:white
+  background: #4F46E5
 </style>

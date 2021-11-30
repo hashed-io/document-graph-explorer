@@ -1,7 +1,7 @@
 <template lang="pug">
 .q-py-sm.text-capitalize
   div.q-pb-md.text-subtitle1.q-pl-md {{content_group_data[0].title}}
-  q-table.sticky-virtscroll-table(
+  q-table.sticky-virtscroll-table.TailWind(
     :data="content_group_data",
     :columns="columns",
     :row-key="(row) => row.label",
@@ -137,12 +137,12 @@ export default {
   methods: {
     getDataType (val) {
       const types = {
-        c: 'Char',
-        n: 'Eosio:name',
+        c: 'Checksum256',
+        n: 'Name',
         a: 'Asset',
-        t: 'Date',
+        t: 'Time',
         s: 'String',
-        i: 'Integer'
+        i: 'Int64'
       }
       return types[val]
     }
@@ -159,4 +159,8 @@ export default {
 .autogrow
   overflow-wrap: break-word;
   max-width: 300px
+.TailWind
+  border-radius: 10px
+.iconTailwind
+  color: #4338CA
 </style>
