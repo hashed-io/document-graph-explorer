@@ -47,13 +47,12 @@
           @click='redirectTo()'
           id='redirectButton'
           ref='redirectButtonRef'
-          color="primary"
           :label="$t('pages.index.buttons.loginButton')"
           icon="app:login"
           rounded
           unelevated
           size="lg"
-        )
+        ).btn-primary
     div.text-caption
       | Further reading:
     ul

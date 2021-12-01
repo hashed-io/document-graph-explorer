@@ -2,18 +2,16 @@ import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 export const documentExplorer = {
   async mounted () {
-    this.getDocumentInfo()
-    let edges = await this.getContentGroup()
-    if (edges.length > 0) { this.getEdges(edges) }
+    this.loadData()
   },
   data () {
     return {
       documentInfo: {
         name: undefined,
-        docID: undefined,
+        docId: undefined,
         hash: undefined,
-        owner: undefined,
-        documentType: undefined,
+        creator: undefined,
+        type: undefined,
         createdDate: undefined,
         updatedDate: undefined,
         edgeName: undefined
@@ -38,24 +36,29 @@ export const documentExplorer = {
         this.$router.push({ name: 'listDocs' })
       }
       this.documentInfo.name = selectDocument.creator
-      this.documentInfo.docID = selectDocument.docId
       this.documentInfo.hash = selectDocument.hash
-      this.documentInfo.owner = selectDocument.creator
-      this.documentInfo.documentType = selectDocument.type
+      this.documentInfo.creator = selectDocument.creator
+      this.documentInfo.docId = selectDocument.docId
+      this.documentInfo.type = selectDocument.type
       this.documentInfo.createdDate = selectDocument.createdDate
       this.documentInfo.updatedDate = selectDocument.createdDate
     },
     async loadData () {
       this.getDocumentInfo()
       let edges = await this.getContentGroup()
-      if (edges.length > 0) { this.getEdges(edges) }
+      if (edges.length > 0) {
+        this.getEdges(edges)
+      } else {
+        let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
+        this.edges = [previousEdge]
+      }
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
       let document = await this.retrieveDoc(
-        this.documentInfo.docID,
-        this.documentInfo.documentType,
+        this.documentInfo.docId,
+        this.documentInfo.type,
         contentGroups
       )
       let contentGroup = this.matchingContentGroups(document)
@@ -68,7 +71,7 @@ export const documentExplorer = {
       // let _props = this.getCatalog().get(this.documentInfo.documentType)
       // Get by Query
       let typeSchema = await this.getPropsType({
-        type: this.documentInfo.documentType
+        type: this.documentInfo.type
       })
       return typeSchema['__type'].fields
     },
@@ -96,7 +99,7 @@ export const documentExplorer = {
       return response
     },
     matchingContentGroups (document) {
-      let queryLabel = 'query' + this.documentInfo.documentType
+      let queryLabel = 'query' + this.documentInfo.type
       var contentGroup = []
       for (const key in document[queryLabel][0]) {
         var regexContentGroup = new RegExp(customRegex.ISCONTENTGROUP)
@@ -164,15 +167,15 @@ export const documentExplorer = {
     },
     async retrieveQuery (query) {
       const responseEdges = await this.getDocumentsByDocId({
-        docID: this.documentInfo.docID,
+        docID: this.documentInfo.docId,
         props: query,
-        type: this.documentInfo.documentType,
+        type: this.documentInfo.type,
         docInterface: false
       })
       return responseEdges
     },
     processEdges (responseEdges) {
-      let queryLabel = 'query' + this.documentInfo.documentType
+      let queryLabel = 'query' + this.documentInfo.type
       var edgesMixed = []
       if (this.stackNavigation.length > 0) {
         let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]

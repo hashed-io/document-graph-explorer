@@ -5,7 +5,7 @@ div
     outlined
     color="indigo-8"
     v-model="content"
-    :placeholder="value"
+    :placeholder="placeholder"
     :debounce="debounce"
     :dense='dense'
     :rules="rules"
@@ -17,7 +17,7 @@ div
 
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder'],
   model: {
     prop: 'value',
     event: 'update'

@@ -44,6 +44,7 @@ export const utils = {
       this.setIsLoading(state)
     },
     dateToString (_date) {
+      if (!_date) return _date
       var date = new Date(_date.replace(/ /g, 'T'))
       return [
         'January', 'February', 'March', 'April', 'May', 'June', 'July',

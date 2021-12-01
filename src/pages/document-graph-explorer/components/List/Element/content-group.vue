@@ -113,12 +113,12 @@ export default {
   methods: {
     getDataType (val) {
       const types = {
-        c: 'Char',
-        n: 'Eosio:name',
+        c: 'Checksum256',
+        n: 'Name',
         a: 'Asset',
-        t: 'Date',
+        t: 'Time',
         s: 'String',
-        i: 'Integer'
+        i: 'Int64'
       }
       return types[val]
     }
