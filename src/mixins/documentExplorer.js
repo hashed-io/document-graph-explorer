@@ -50,7 +50,9 @@ export const documentExplorer = {
         this.getEdges(edges)
       } else {
         let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
-        this.edges = [previousEdge]
+        if (previousEdge) {
+          this.edges = [previousEdge]
+        }
       }
     },
     async getContentGroup () {
@@ -61,6 +63,7 @@ export const documentExplorer = {
         this.documentInfo.type,
         contentGroups
       )
+      console.log({ contentGroups, edges })
       let contentGroup = this.matchingContentGroups(document)
       var res = this.agroupByTitle(contentGroup)
       if (res.hasOwnProperty('system')) {

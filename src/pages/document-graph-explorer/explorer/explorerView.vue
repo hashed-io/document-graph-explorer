@@ -54,7 +54,7 @@ div
       | Edit
     q-dialog(
       v-model='deleteDoc'
-    )
+    ).eraseDialog
       EraseBox(
         :docTitle="documentInfo.docId"
       )

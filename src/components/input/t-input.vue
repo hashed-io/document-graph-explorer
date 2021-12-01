@@ -24,7 +24,7 @@ export default {
   },
   data () {
     return {
-      content: undefined
+      content: this.value
     }
   },
   methods: {

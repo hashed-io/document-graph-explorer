@@ -27,7 +27,7 @@ div.q-pt-md
     q-scroll-area(
       :thumb-style="thumbStyle",
       :barStyle="barStyle",
-      :style="(edges.length > 0 && resultQuery.length > 0) ? 'height:600px' : 'height: 0px'"
+      :style="calculateSizeEdges(edges.length, resultQuery.length)"
       id="scroll-area-with-virtual-scroll-1"
     )
       q-virtual-scroll(
@@ -189,6 +189,17 @@ export default {
     }
   },
   methods: {
+    calculateSizeEdges (edgesLength, resultQueryLength) {
+      if (edgesLength > 0 && resultQueryLength > 0) {
+        if (edgesLength === 1) {
+          return 'height: 95px'
+        } else {
+          return 'height: 600px'
+        }
+      } else {
+        return 'height: 0px'
+      }
+    },
     onPrevNode (edgeData) {
       this.$emit('edgeDataPrev', edgeData)
     },

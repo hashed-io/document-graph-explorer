@@ -2,7 +2,7 @@
 .q-py-sm.text-capitalize
   div.q-pb-md.text-subtitle1.q-pl-md {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table.TailWind(
-    :data="content_group_data",
+    :data="contentGroupCopy",
     :columns="columns",
     :row-key="(row) => row.label",
     :pagination="initialPagination",
@@ -13,35 +13,87 @@
     separator="none",
     table-header-class="hdTable"
     :visible-columns="visibleColumns"
+    wrap-cells
   )
     template(#body="props")
-      q-tr(:props="props")
-        q-td.column-responsive(
+      q-tr(:props="props" )
+        q-td(
           key="key",
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        ) {{ props.row.key }}
-        q-td.column-responsive(
+        )
+          template(
+            v-if="editableRow !== props.rowIndex"
+          ) {{ props.row.key }}
+          template(v-else)
+            TInput(
+              v-model="newData.key"
+              dense
+              placeholder="Key"
+            )
+
+        q-td(
           key="value",
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        ) {{ props.row.value }}
-        q-td.column-responsive(
+        )
+          div(
+            v-if="editableRow !== props.rowIndex"
+          ) {{ props.row.value }}
+          template(v-else)
+            TInput(
+              v-model="newData.value"
+              dense
+              placeholder="Value"
+            )
+        q-td(
           key="dataType",
           :props="props",
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        ) {{ getDataType(props.row.dataType) }}
-        q-td.column-responsive(
-          v-if="isEdit"
+        )
+          div(
+            v-if="editableRow !== props.rowIndex"
+          ) {{ getDataType(props.row.dataType) }}
+          template(v-else)
+            TInput(
+              v-model="newData.dataType"
+              dense
+            )
+        q-td(
+          v-if="isEdit  && editableRow !== props.rowIndex"
           key='Actions',
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         )
-          .row.justify-center
-            q-icon.animated-icon(
-              size='sm'
+          .row.q-gutter-sm
+            q-btn(
+              size='12px'
+              class='btnTailwind'
+              label='Edit'
+              unelevated
+              no-caps
+              @click='onEditRow(props.row, props.rowIndex )'
             )
-              svg(xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-                path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z")
+            q-btn(
+              size='12px'
+              label='Delete'
+              class='btnTailwind'
+              unelevated
+              no-caps
+              @click='onEraseRow(props.rowIndex )'
+            )
+        q-td(
+          v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex"
+          key='Save'
+          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+        )
+          q-btn(
+            size='12px'
+            class='btnTailwind'
+            label='Save'
+            unelevated
+            no-caps
+            @click='onSave(props.rowIndex)'
+          )
   q-icon.q-py-sm(v-if='isEdit' color="secondary", size="2rem", @click="alert('Adding new Content group')" )
     svg.h-6.w-6(
       fill="none",
@@ -58,8 +110,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import TInput from '~/components/input/t-input.vue'
 export default {
   name: 'ContentGroup',
+  components: {
+    TInput
+  },
   props: {
     content_group_data: {
       type: Array,
@@ -82,6 +138,14 @@ export default {
   },
   data () {
     return {
+      contentGroupCopy: this.content_group_data,
+      editableRow: undefined,
+      newData: {
+        title: undefined,
+        key: undefined,
+        value: undefined,
+        dataType: undefined
+      },
       isEdit: false,
       initialPagination: {
         rowsPerPage: 10,
@@ -95,7 +159,6 @@ export default {
           align: 'left',
           headerStyle: ' width:20%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          classes: 'column-responsive',
           field: (row) => row.key,
           sortable: true
         },
@@ -105,7 +168,6 @@ export default {
           align: 'left',
           headerStyle: 'width:60%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          classes: 'column-responsive',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.value,
           sortable: true
@@ -116,7 +178,6 @@ export default {
           align: 'left',
           headerStyle: 'width:20%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
-          classes: 'column-responsive',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
           sortable: true
@@ -124,10 +185,9 @@ export default {
         {
           name: 'actions',
           label: 'Actions',
-          align: 'justify',
-          headerStyle: 'width:30%; font-size:12px;',
+          align: 'center',
+          headerStyle: 'font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          classes: 'column-responsive',
           style: 'color: rgb(107,114,128);',
           sortable: false
         }
@@ -145,6 +205,21 @@ export default {
         i: 'Int64'
       }
       return types[val]
+    },
+    onEditRow (row, rowIndex) {
+      this.newData = row
+      console.log(this.newData)
+      this.editableRow = rowIndex
+      console.log({ row, rowIndex })
+    },
+    onEraseRow (rowIndex) {
+      this.contentGroupCopy.splice(rowIndex)
+      // TODO: Push into delete
+    },
+    onSave (rowIndex) {
+      this.contentGroupCopy.splice(rowIndex, this.newData)
+      this.editableRow = undefined
+      // TODO: send to the parent component to sign transaction
     }
   }
 }
@@ -163,4 +238,10 @@ export default {
   border-radius: 10px
 .iconTailwind
   color: #4338CA
+.btnTailwind
+  border-radius: 10px
+  height: 2rem
+  color:white
+  width: 3.5rem
+  background: #4F46E5
 </style>
