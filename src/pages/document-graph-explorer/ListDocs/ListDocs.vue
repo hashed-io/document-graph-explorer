@@ -2,7 +2,7 @@
 div(class="q-pa-md items-start")
   .row.q-pb-md
     .col-8
-      div.text-h6.q-py-md(style="font-family: metropolis;")
+      div.text-h6.q-py-md
         | {{$t('pages.documentExplorer.listDocs.title')}}
     .col-4
       .row.justify-end.q-col-gutter-sm
@@ -233,9 +233,8 @@ export default {
 .btnTailwind
   border-radius: 10px
   height: 2.2rem
+  top: 1.4rem
   width: 6rem
   color: white
   background: #4F46E5
-.spaceBtn
-  padding-top: 1.9rem
 </style>
