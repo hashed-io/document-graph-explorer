@@ -7,6 +7,8 @@ div
     v-model="content"
     :placeholder="value"
     :options="options"
+    emit-value
+    map-options
     :dense='dense'
     :rules="[rules.required]"
     @input="$emit('update', content)"

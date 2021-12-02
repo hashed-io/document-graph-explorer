@@ -42,6 +42,7 @@ div.q-pt-md
               :isEdit="isEdit"
               :index="index"
               @navigate="onNextNode(item)"
+              @deleteEdge="removeEdge(item,index)"
             )
           EdgePrev(
             v-if="item.direction === 'prev'"
@@ -134,6 +135,7 @@ export default {
   },
   data () {
     return {
+      edgesMutate: this.edges,
       search: undefined,
       isEdit: false,
       columns: [
@@ -194,7 +196,7 @@ export default {
         if (edgesLength === 1) {
           return 'height: 95px'
         } else {
-          return 'height: 600px'
+          return 'height: 300px'
         }
       } else {
         return 'height: 0px'
@@ -206,8 +208,10 @@ export default {
     onNextNode (edgeData) {
       this.$emit('edgeData', edgeData)
     },
-    removeEdge (edge, index) {
-      alert(JSON.stringify(edge))
+    removeEdge (item, index) {
+      // TODO: Information for delete action
+      console.log({ item, index })
+      this.edges.splice(index, 1)
     },
     addEdge () {
       this.$emit('showModal', true)

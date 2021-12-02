@@ -12,6 +12,7 @@ div
     unelevated
     label='New content_group'
     no-caps
+    @click="onAddContentGroup"
   ).btnTailwind
 </template>
 
@@ -43,10 +44,22 @@ export default {
     return {
       isEdit: false
     }
+  },
+  methods: {
+    onAddContentGroup () {
+      this.contents_groups['Content_group'] = [
+        {
+          title: 'content_group',
+          key: 'Key',
+          value: 'Value',
+          dataType: 's'
+        }
+      ]
+      this.$forceUpdate()
+    }
   }
 }
 </script>
-
 <style lang="stylus" scoped>
 .btnTailwind
   border-radius: 10px
