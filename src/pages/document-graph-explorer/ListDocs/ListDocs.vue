@@ -2,31 +2,31 @@
 div(class="q-pa-md items-start")
   .row.q-pb-md
     .col-8
-      div.text-h6.q-py-md(style="font-family: metropolis;")
+      div.text-h6.q-py-md
         | {{$t('pages.documentExplorer.listDocs.title')}}
     .col-4
-      .row.justify-end
-        .col-12.q-pb-sm
+      .row.justify-end.q-col-gutter-sm
+        .col-9.q-pb-sm
           TInput(
             label='Endpoint'
             v-model='endpoint'
             dense
             :placeholder="currentEndpoint"
           )
-        .row.justify-end
-          .col-12.btn-primary
-            q-btn(
-                label='Load'
-                size='xs'
-                @click='loadFromEndpoint'
-                unelevated
-            )
+        .col-3.spaceBtn
+            div
+              q-btn(
+                  label='Load'
+                  @click='loadFromEndpoint'
+                  unelevated
+                  no-caps
+                  align="around"
+              ).btnTailwind
   q-table(
     :data="documents"
     :columns="columns"
     card-class="bg-grey-1"
-
-  )
+  ).TailWind
     template(v-slot:body="props")
       q-tr.cursor-pointer( :props="props")
         q-td(
@@ -225,8 +225,16 @@ export default {
 }
 </script>
 
-<styles lang="stylus" scope>
-.container {
+<style lang="stylus" scoped>
+.container
   height: 200px;
-}
-</styles>
+.TailWind
+  border-radius: 10px
+.btnTailwind
+  border-radius: 10px
+  height: 2.2rem
+  top: 1.4rem
+  width: 6rem
+  color: white
+  background: #4F46E5
+</style>

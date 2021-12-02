@@ -10,9 +10,10 @@ div
   q-btn(
     v-if="isEdit"
     unelevated
-    style="background: #08183c; color:white"
     label='New content_group'
-  )
+    no-caps
+    @click="onAddContentGroup"
+  ).btnTailwind
 </template>
 
 <script>
@@ -43,9 +44,27 @@ export default {
     return {
       isEdit: false
     }
+  },
+  methods: {
+    onAddContentGroup () {
+      this.contents_groups['Content_group'] = [
+        {
+          title: 'content_group',
+          key: 'Key',
+          value: 'Value',
+          dataType: 's'
+        }
+      ]
+      this.$forceUpdate()
+    }
   }
 }
 </script>
-
-<style>
+<style lang="stylus" scoped>
+.btnTailwind
+  border-radius: 10px
+  height: 2.5rem
+  font-size: 11px
+  color:white
+  background: #4F46E5
 </style>

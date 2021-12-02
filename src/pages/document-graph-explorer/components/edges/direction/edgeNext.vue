@@ -1,11 +1,9 @@
 <template lang='pug'>
 #EdgeNext
   q-card(
-    bordered
-    flat
     square
     @click="onNextNode"
-  )
+  ).tailWind
       q-card-section(
         :key="index"
         :class="index % 2 === 0 ? 'cardWhite' : 'cardGrey'"
@@ -15,8 +13,8 @@
           .col-xs-2.col-sm-1
             q-icon(
               name="location_on"
-              color='green'
               size='sm'
+              color='green'
             ).center.animated-icon
             //- q-icon(color="green", size="1.5rem").center
             //-   svg(
@@ -47,16 +45,36 @@
                   | {{ item.type }}
                 .text-caption.text-grey-6
                   | {{ dateToString(item.createdDate)}}
-              .col-xs-4.col-sm-2.q-col-gutter-md
-                q-icon(
-                  v-if='isEdit'
-                  name='delete'
-                  size='sm'
-                  @click="removeEdge(item)"
-                ).animated-icon
+              .col-xs-4.col-sm-2(v-if="isEdit")
+                q-btn(
+                  size='12px'
+                  label='Delete'
+                  class='btnTailwind'
+                  unelevated
+                  align='around'
+                  no-caps
+                  @click='removeEdge(item)'
+                )
+
 </template>
 
-<style lang='stylus'>
+<style lang='stylus' scoped>
+.cardWhite
+  background: white
+  &:hover
+    background: #F7F7F7
+.cardGrey
+  background: #FAFAFA
+  &:hover
+    background: #F7F7F7
+.iconTailwind
+  color: #4254E0
+.btnTailwind
+  border-radius: 10px
+  height: 2rem
+  color:white
+  width: 3.5rem
+  background: #4F46E5
 </style>
 <script>
 export default {
@@ -81,6 +99,9 @@ export default {
   methods: {
     onNextNode () {
       this.$emit('navigate', this.item)
+    },
+    removeEdge (item) {
+      this.$emit('deleteEdge', { edge: item, index: this.index })
     }
   }
 }

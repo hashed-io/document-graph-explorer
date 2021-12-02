@@ -1,5 +1,5 @@
 <template lang="pug">
-q-layout(view="hHh Lpr lFf")
+q-layout(view="hHh Lpr lFf").bg-layout
   q-header
     q-toolbar(class='bg-brand-primary')
       q-btn(

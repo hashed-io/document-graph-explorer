@@ -21,32 +21,36 @@ div.q-pt-md
     v-if='edges.length > 0 && resultQuery.length === 0'
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
-  q-scroll-area(
-    :thumb-style="thumbStyle",
-    :barStyle="barStyle",
-    :style="(edges.length > 0 && resultQuery.length > 0) ? 'height:300px' : 'height: 0px'"
-    id="scroll-area-with-virtual-scroll-1"
-  )
-    q-virtual-scroll(
-      scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
-      :items="resultQuery"
-      type="list"
+  q-card(
+    bordered
+  ).cardTailWind
+    q-scroll-area(
+      :thumb-style="thumbStyle",
+      :barStyle="barStyle",
+      :style="calculateSizeEdges(edges.length, resultQuery.length)"
+      id="scroll-area-with-virtual-scroll-1"
     )
-      template(v-slot="{item, index}")
-        EdgeNext(
-            v-if="item.direction === 'next'"
-            :item="item"
-            :isEdit="isEdit"
-            :index="index"
-            @navigate="onNextNode(item)"
+      q-virtual-scroll(
+        scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
+        :items="resultQuery"
+        type="list"
+      )
+        template(v-slot="{item, index}")
+          EdgeNext(
+              v-if="item.direction === 'next'"
+              :item="item"
+              :isEdit="isEdit"
+              :index="index"
+              @navigate="onNextNode(item)"
+              @deleteEdge="removeEdge(item,index)"
+            )
+          EdgePrev(
+            v-if="item.direction === 'prev'"
+              :item="item"
+              :isEdit="isEdit"
+              :index="index"
+              @navigate="onPrevNode(item)"
           )
-        EdgePrev(
-          v-if="item.direction === 'prev'"
-            :item="item"
-            :isEdit="isEdit"
-            :index="index"
-            @navigate="onPrevNode(item)"
-        )
 </template>
 <style lang="stylus">
 .cardWhite
@@ -61,6 +65,10 @@ div.q-pt-md
   display: block
   margin: auto
   width: 40%
+.cardTailWind
+  border-radius: 10px
+.scroll
+  border-radius: 10px
 </style>
 <script>
 import { mapGetters } from 'vuex'
@@ -127,6 +135,7 @@ export default {
   },
   data () {
     return {
+      edgesMutate: this.edges,
       search: undefined,
       isEdit: false,
       columns: [
@@ -182,14 +191,27 @@ export default {
     }
   },
   methods: {
+    calculateSizeEdges (edgesLength, resultQueryLength) {
+      if (edgesLength > 0 && resultQueryLength > 0) {
+        if (edgesLength === 1) {
+          return 'height: 95px'
+        } else {
+          return 'height: 300px'
+        }
+      } else {
+        return 'height: 0px'
+      }
+    },
     onPrevNode (edgeData) {
       this.$emit('edgeDataPrev', edgeData)
     },
     onNextNode (edgeData) {
       this.$emit('edgeData', edgeData)
     },
-    removeEdge (edge, index) {
-      alert(JSON.stringify(edge))
+    removeEdge (item, index) {
+      // TODO: Information for delete action
+      console.log({ item, index })
+      this.edges.splice(index, 1)
     },
     addEdge () {
       this.$emit('showModal', true)
