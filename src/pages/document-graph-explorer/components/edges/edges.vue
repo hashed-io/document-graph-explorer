@@ -52,7 +52,7 @@ div.q-pt-md
               @navigate="onPrevNode(item)"
           )
 </template>
-<style lang="stylus">
+<style lang="stylus" scoped>
 .cardWhite
   background: white
   &:hover
@@ -64,7 +64,7 @@ div.q-pt-md
 .center
   display: block
   margin: auto
-  width: 40%
+  width: 10%
 .cardTailWind
   border-radius: 10px
 .scroll
