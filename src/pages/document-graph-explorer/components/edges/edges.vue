@@ -23,12 +23,14 @@ div.q-pt-md
     )
   q-card(
     bordered
+      style="min-height:50px; max-height:auto"
   ).cardTailWind
     q-scroll-area(
       :thumb-style="thumbStyle",
       :barStyle="barStyle",
       :style="calculateSizeEdges(edges.length, resultQuery.length)"
       id="scroll-area-with-virtual-scroll-1"
+      style="min-height:50px; height:1%"
     )
       q-virtual-scroll(
         scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
@@ -51,6 +53,15 @@ div.q-pt-md
               :index="index"
               @navigate="onPrevNode(item)"
           )
+  .row.justify-end
+    q-icon(
+        v-if='isEdit'
+        class='text-brand-primary q-py-sm animated-icon',
+        size="2rem",
+        @click="onAddRow()"
+      )
+        svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
+          path(fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd")
 </template>
 <style lang="stylus" scoped>
 .cardWhite
@@ -171,17 +182,17 @@ export default {
         }
       ],
       thumbStyle: {
-        right: '5px',
-        borderRadius: '16px',
-        backgroundColor: '#08183C',
-        width: '8px',
+        right: '2px',
+        borderRadius: '12px',
+        backgroundColor: '#4338CA',
+        width: '4px',
         opacity: 0.75
       },
       barStyle: {
         right: '2px',
-        borderRadius: '14px',
+        borderRadius: '20px',
         backgroundColor: '#FFFF',
-        width: '14px',
+        width: '7px',
         opacity: 0.2,
         marginTop: '-3px',
         marginBottom: '-3px',

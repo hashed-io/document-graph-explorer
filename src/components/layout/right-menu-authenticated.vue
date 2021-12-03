@@ -17,6 +17,9 @@ export default {
   q-btn(
     :label="$t('common.buttons.logout')"
     @click="logout"
-    color="secondary"
+    unelevated
+    flat
+    style="border-radius:10px; background:white; color:black "
+    no-caps
   )
 </template>

@@ -11,7 +11,7 @@
         .row.justify-end.q-col-gutter-md
           .col-xs-6.col-sm-3
             .row.center-block.justify-end
-              .col-xs-2.col-sm-4
+              .col-xs-2.col-sm-4.alignCenterEdge
                 template(id='icon')
                   q-icon(
                     name="location_on"
@@ -19,9 +19,9 @@
                     color='green'
                     class='center animated-icon'
                   )
-              .col-xs-8.col-sm-6
+              .col-xs-8.col-sm-6.alignCenterEdge
                 template(id='edgeName')
-                  .text-caption.text-capitalize.textWrap
+                  .text-caption.textWrap
                     | {{ item.edgeName }}
                   .text-caption
                     q-icon(
@@ -33,7 +33,7 @@
             .row.q-col-gutter-md
               .col-xs-6.col-sm-7.col-md-10
                 template(id='edgeInfo')
-                  .text-capitalize
+                  div
                     | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
                   .text-caption.text-grey-6
                     | {{ item.type }}
@@ -41,19 +41,20 @@
                     | {{ dateToString(item.createdDate)}}
               .col-xs-6.col-sm-3.col-md-2
                 template(v-if="isEdit" id='delete')
-                  q-btn(
-                    size='12px'
-                    label='Delete'
-                    class='btnTailwind'
-                    unelevated
-                    align='around'
-                    no-caps
+                  div(
+                    class='text-capitalize text-bold animated-icon alignCenter'
+                    style='color: #DC2626'
                     @click='removeEdge(item)'
                   )
-
+                    | Delete
 </template>
 
 <style lang='stylus' scoped>
+.alignCenterEdge
+  margin-top: 8%
+.alignCenter
+  margin: auto;
+  padding-top: 50%;
 .cardWhite
   background: white
   &:hover

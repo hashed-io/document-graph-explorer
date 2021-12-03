@@ -25,7 +25,7 @@
                   ).btnTailwind
               .col-xs-6.col-sm-7.col-md-11.alignItems
                 template(id='edgeInfo')
-                  .text-capitalize
+                  div
                     | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
                   .text-caption.text-grey-6
                     | {{ item.documentType }}
@@ -35,7 +35,7 @@
             .row.center-block.justify-start
               .col-xs-6.col-sm-6
                 template(id='edgeName')
-                  .text-caption.text-capitalize
+                  .text-caption
                     | {{ item.edgeName }}
                 q-icon(
                   name='east'

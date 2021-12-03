@@ -10,33 +10,38 @@ div
       v-if="documentInfo.creator === account"
       @click="extendDocument()",
       class='text-white btnTailwind'
-      size='12px'
       unelevated
       no-caps
     )
-      q-icon(
-        left
-        color="white",
-      )
-        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1")
-      div Extend
+      .row
+        .col-4
+          q-icon(
+            color="white",
+            left
+          )
+            svg(xmlns="http://www.w3.org/2000/svg" viewBox="-2 0 26 23" fill="currentColor")
+              path(fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z" clip-rule="evenodd")
+        .col-8
+          div Extend
     q-btn(
       v-if="documentInfo.creator === account"
       @click="eraseDocument()",
-      size='12px'
       class='text-white btnTailwind'
       unelevated
       no-caps
     )
-      q-icon(
-        color="white",
-        left
-        data-cy="editContracts"
-      )
-        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16")
-      div Erase
+      .row
+        .col-4
+          q-icon(
+            color="white",
+            size='20px'
+            left
+            data-cy="editContracts"
+          )
+            svg(xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 23" fill="currentColor")
+              path(fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd")
+        .col-8
+          div Erase
     q-btn(
       v-if="documentInfo.creator === account"
       @click="editDocument()",
@@ -45,18 +50,23 @@ div
       unelevated
       no-caps
     )
-      q-icon(
-        color="white",
-        left
-      )
-        svg(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01")
-      | Edit
+      .row
+        .col-4
+          q-icon(
+            color="white",
+            left
+          )
+            svg(xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 23" fill="currentColor")
+              path(d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z")
+              path(fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd")
+        .col-8
+          | Edit
     q-dialog(
       v-model='deleteDoc'
     ).eraseDialog
       EraseBox(
         :docTitle="documentInfo.docId"
+        :systemNodeLabel="documentInfo.systemNodeLabel"
       )
 </template>
 
@@ -123,7 +133,8 @@ export default {
 <style lang='stylus' scoped>
 .btnTailwind
   border-radius: 10px
-  height: 2rem
-  width: 7rem
+  height: 38px
+  width: 108px
+  font-size:14px !important
   background: #4F46E5
 </style>

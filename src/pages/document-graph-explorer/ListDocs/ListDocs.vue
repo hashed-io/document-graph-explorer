@@ -1,11 +1,11 @@
 <template lang="pug">
-div(class="q-pa-md items-start")
+div
   .row.q-pb-md
-    .col-8
+    .col-7
       div.text-h6.q-py-md
         | {{$t('pages.documentExplorer.listDocs.title')}}
-    .col-4
-      .row.justify-end.q-col-gutter-sm
+    .col-5
+      .row
         .col-9.q-pb-sm
           TInput(
             label='Endpoint'
@@ -226,15 +226,17 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.spaceBtn
+  padding-left: 16px
 .container
   height: 200px;
 .TailWind
   border-radius: 10px
 .btnTailwind
   border-radius: 10px
-  height: 2.2rem
-  top: 1.4rem
-  width: 6rem
+  height: 38px
+  top: 22px
+  width: 108px
   color: white
   background: #4F46E5
 </style>

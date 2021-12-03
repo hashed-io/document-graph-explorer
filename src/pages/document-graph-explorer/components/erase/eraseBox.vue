@@ -13,14 +13,14 @@ q-card.text-white(flat).eraseDialog
   q-separator
   q-card-section
     div.text-black.text-subtitle2
-      | {{$t('pages.documentExplorer.erase.msg')}} {{docTitle}}
+      | {{$t('pages.documentExplorer.erase.msg')}} {{(systemNodeLabel === undefined) ?  docTitle : systemNodeLabel}}
   q-separator
   q-card-section
     div.text-black.text-subtitle2.q-pb-md
       | {{$t('pages.documentExplorer.erase.typeMsg')}}
       b.q-px-xs
         | {{$t('pages.documentExplorer.erase.msgDel')}}
-        | {{docTitle}}
+        | {{(systemNodeLabel === undefined) ?  docTitle : systemNodeLabel}}
       | {{$t('pages.documentExplorer.erase.typeMsgContinue')}}
     TInput(focus label="", dense v-model="eraseInput", color="white" @input='verifyWrite' debounce="500")
   .row.justify-center.q-pb-md
@@ -38,6 +38,13 @@ export default {
     docTitle: {
       type: String,
       required: true
+    },
+    systemNodeLabel: {
+      type: String,
+      required: false,
+      default: function () {
+        return ''
+      }
     }
   },
   data () {
