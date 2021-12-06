@@ -19,7 +19,7 @@ export default {
     @click="logout"
     unelevated
     flat
-    style="border-radius:10px; background:white; color:black "
+    class="btnTailWindLogout"
     no-caps
   )
 </template>

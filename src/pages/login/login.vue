@@ -38,12 +38,12 @@ export default {
 div.q-mb-xl
   .flex.flex-center.q-mb-md
     img.logo(src="statics/icons/hashedLogin.png")
-  .flex.flex-center.q-mb-xl
-    .titleLogin {{'Sign in to your account'}}
   q-card.cardSize
     q-card-section
-      .row.justify-center.subtitleLogin
-        | {{'Select your wallet'}}
+      .flex.flex-center
+        .subtitleLogin {{'Sign in to your account,'}}
+      .flex.flex-center.subtitleLogin
+        | {{'select your wallet.'}}
     q-card-section
       .row.justify-center
         q-list(style="width: 60%;")
@@ -51,7 +51,7 @@ div.q-mb-xl
             v-for="(wallet, idx) in $ual.authenticators"
             :key="wallet.getStyle().text"
             v-ripple
-            :style="{ background: '#4F46E5', color: wallet.getStyle().textColor }"
+            :style="{ background: '#4F46E5', color: wallet.getStyle().textColor, borderRadius:'10px', marginTop:'10px'}"
             data-cy="loginButton"
             v-if="wallet.shouldRender()"
           )
@@ -118,7 +118,7 @@ div.q-mb-xl
   width: 35rem
 .btnTailwind
   border-radius: 10px
-  height: 3rem
+  height: 38px
   font-size:16px
   color:black
   width: 15rem

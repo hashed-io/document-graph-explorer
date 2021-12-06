@@ -13,13 +13,15 @@ div
       unelevated
       label='Save'
       no-caps
-    ).btnTailwind
+      class="btnTailwind"
+    )
     q-btn(
       unelevated
       label='Cancel'
       @click='onCancel()'
       no-caps
-    ).btnTailwind
+      class="btnTailwind"
+    )
 </template>
 
 <script>
@@ -59,10 +61,4 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
-.btnTailwind
-  border-radius: 10px
-  height: 38px
-  width: 108px
-  color:white
-  background: #4F46E5
 </style>

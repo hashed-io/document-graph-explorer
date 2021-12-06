@@ -54,7 +54,13 @@ export default {
   },
   computed: {
     verifyWrite () {
-      return !(this.eraseInput === 'document with id ' + this.docTitle)
+      if (this.systemNodeLabel === undefined) {
+        // docTitle
+        return !(this.eraseInput === 'document ' + this.docTitle)
+      } else {
+        // SystemNodeLabel
+        return !(this.eraseInput === 'document ' + this.systemNodeLabel)
+      }
     }
   },
   methods: {

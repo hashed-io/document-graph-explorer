@@ -37,19 +37,25 @@
                 template(id='edgeName')
                   .text-caption
                     | {{ item.edgeName }}
-                q-icon(
-                  name='east'
-                  color='grey-5'
-                  size='md'
-                ).animated-icon.text-caption
+                  q-icon(
+                    color='grey-5'
+                    class='animated-icon'
+                    style="width:47px; height:38px;"
+                  )
+                    svg(width="47" height="38" viewBox="0 0 47 38" fill="none" xmlns="http://www.w3.org/2000/svg")
+                      path(d="M38.5 14L47 19.5L38.5 25V14Z" fill="#BDBDBD")
+                      rect(y="18" width="39" height="2" fill="#BDBDBD")
               .col-xs-6.col-sm-4
                 template(id='icon')
                   q-icon(
-                    name="location_on"
-                    color='red'
-                    size='sm'
-                  ).center.animated-icon
-
+                    color='green'
+                    class='center animated-icon'
+                    style='width:48px; height: 38px;'
+                  )
+                    svg(width="48" height="38" viewBox="0 0 48 38" fill="none" xmlns="http://www.w3.org/2000/svg")
+                      circle(cx="38.5" cy="18.5" r="9.5" fill="#BDBDBD")
+                      path(d="M19.5 13.5L28 19L19.5 24.5V13.5Z" fill="#BDBDBD")
+                      rect(y="18" width="20" height="2" fill="#BDBDBD")
 </template>
 
 <style lang='stylus' scoped>

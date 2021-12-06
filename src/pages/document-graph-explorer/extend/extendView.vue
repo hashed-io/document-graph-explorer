@@ -23,13 +23,17 @@ div
   .row.q-gutter-md.q-py-xl
     q-btn(
       unelevated
+      no-caps
       label='Save'
-    ).btnTailwind
+      class='btnTailwind'
+    )
     q-btn(
       unelevated
+      no-caps
       label='Cancel'
       @click='onCancel()'
-    ).btnTailwind
+      class='btnTailwind'
+    )
 </template>
 
 <script>
@@ -69,10 +73,4 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
-.btnTailwind
-  border-radius: 10px
-  height: 2rem
-  width: 7rem
-  color:white
-  background: #4F46E5
 </style>

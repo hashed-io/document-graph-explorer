@@ -8,30 +8,35 @@
             .text-h6.q-px-md {{content_group_data[0].title}}
           .col-xs-12.col-sm-1
             q-btn(
-              class="btnEdit "
+              class="btnEdit btnTailwind"
               label='Edit'
               unelevated
               no-caps
               @click='editableTitle = true'
             )
-      .row.q-py-md(v-if="editableTitle")
-        .col-xs-12.col-sm-5
+      .row.q-py-lg(v-if="editableTitle")
+        .col-xs-12.col-sm-6
           TInput(
             label='Title'
             v-model='content_group_data[0].title'
             dense
           ).q-pr-md
-        .col-xs-12.col-sm-3
-          q-btn(
-            label='Save'
-            @click='onSaveTitle'
-            class="spaceBtn q-mr-sm"
-          )
-          q-btn(
-            label='Delete'
-            @click='onDeleteTitle'
-            class="spaceBtn"
-          )
+        .col-xs-12.col-sm-5
+          .row.q-col-gutter-md
+            .col-xs-6.col-sm-12.col-md-6
+              q-btn(
+                label='Save'
+                no-caps
+                @click='onSaveTitle'
+                class="spaceBtn q-mr-sm btnTailwind"
+              )
+            .col-xs-6.col-sm-12.col-md-6
+              q-btn(
+                no-caps
+                label='Delete'
+                @click='onDeleteTitle'
+                class="spaceBtn btnTailwind"
+              )
   div.q-pb-md.text-subtitle1.q-pl-md(v-else) {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
@@ -315,12 +320,6 @@ export default {
   border-radius: 10px
 .iconTailwind
   color: #4338CA
-.btnTailwind
-  border-radius: 10px
-  height: 38px
-  color:white
-  width: 108px
-  background: #4F46E5
 .spaceBtn
   top:40%
   border-radius: 10px
@@ -329,10 +328,8 @@ export default {
   width: 4rem
   background: #4F46E5
 .btnEdit
-  border-radius: 10px
-  height: 30px
+  height: 38px
   width : 85.78px
-  font-size:12px
-  background-color: #4F46E5
-  color:white
+.btnTailwind
+  width 108px
 </style>

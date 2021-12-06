@@ -11,15 +11,15 @@ export default {
 
 <template lang="pug">
 div
-  q-btn.q-mr-sm(
+  q-btn(
     @click="$router.push({name: 'login'})"
+    class="q-mr-sm btnTailWindLogin"
     data-cy='loginButton'
     :size="$q.platform.is.mobile ? 'sm' : 'md' "
     :label="$t('pages.index.buttons.login')"
     text-color="black"
     rounded
     no-caps
-    style="background: white; color: #4338CA"
   )
   //- q-btn(
   //-   to="/accounts/add"
@@ -30,6 +30,5 @@ div
 </template>
 
 <style lang="stylus" scoped>
-.btnTailwind
-  border-radius: 10px
+
 </style>
