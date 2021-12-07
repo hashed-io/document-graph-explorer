@@ -1,19 +1,19 @@
 <template lang="pug">
-div(class="q-pa-md items-start")
-  .row.q-pb-md
-    .col-8
+div
+  .row.q-pb-md.justify-between
+    .col-4
       div.text-h6.q-py-md
         | {{$t('pages.documentExplorer.listDocs.title')}}
-    .col-4
+    .col-5
       .row.justify-end.q-col-gutter-sm
-        .col-9.q-pb-sm
+        .col-xs-12.col-sm-12.col-md-9.q-pb-sm
           TInput(
             label='Endpoint'
             v-model='endpoint'
             dense
             :placeholder="currentEndpoint"
           )
-        .col-3.spaceBtn
+        .col-xs-12.col-sm-12.col-md-2.spaceBtn
             div
               q-btn(
                   label='Load'
@@ -230,11 +230,28 @@ export default {
   height: 200px;
 .TailWind
   border-radius: 10px
-.btnTailwind
-  border-radius: 10px
-  height: 2.2rem
-  top: 1.4rem
-  width: 6rem
-  color: white
-  background: #4F46E5
+@media screen and (max-width: 319px) and (min-width: 30px)
+  .btnTailwind
+    width: 50% !important
+    left: 50% !important
+@media screen and (max-width: 480px) and (min-width: 320px)
+  .btnTailwind
+    width: 50% !important
+    left: 50% !important
+@media screen and (max-width: 768px) and (min-width: 481px)
+  .btnTailwind
+    width: 50% !important
+    left: 50% !important
+@media screen and (max-width: 1024px) and (min-width: 769px)
+  .btnTailwind
+    width: 50% !important
+    left: 50% !important
+@media screen and (max-width: 1400px) and (min-width: 1025px)
+  .btnTailwind
+    width: 100% !important
+    top:22px
+@media screen and (min-width: 1401px)
+  .btnTailwind
+    width: 100% !important
+    top:22px
 </style>

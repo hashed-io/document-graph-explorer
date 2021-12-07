@@ -43,16 +43,21 @@
             | with other DAOs
     .col-9.flex.flex-center.col-grow.q-px-lg.q-pt-xl
       div
-        q-btn.full-width.q-mb-lg(
+        q-btn(
           @click='redirectTo()'
           id='redirectButton'
           ref='redirectButtonRef'
-          :label="$t('pages.index.buttons.loginButton')"
-          icon="app:login"
           rounded
           unelevated
-          size="lg"
-        ).btn-primary
+          no-caps
+          class='full-width q-mb-lg btn-primary'
+          size='lg'
+        )
+          .row.q-col-gutter-xs
+            div(style="width: 34px; height:34px; margin-top:2%;")
+              svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor")
+                path(fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd")
+            div(style='font-size:20px') {{$t('pages.index.buttons.loginButton')}}
     div.text-caption
       | Further reading:
     ul

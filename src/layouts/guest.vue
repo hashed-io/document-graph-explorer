@@ -12,7 +12,7 @@ export default {
 <template lang="pug">
 q-layout(view="hHh lpR fFf")
   q-page-container
-    q-page.flex.column.bg-secondary.relative-position
+    q-page.flex.column.relative-position.bg-background
       q-btn.back(
         color="primary"
         icon="fas fa-arrow-left"
@@ -22,7 +22,6 @@ q-layout(view="hHh lpR fFf")
         @click="$router.go(-1)"
       )
       .col-2.text-center.content-start
-        h1.text-primary {{ title }}
       .col-10.flex.flex-center.col-grow.q-pa-lg
         router-view
 </template>
@@ -33,7 +32,7 @@ q-layout(view="hHh lpR fFf")
     top: 25px
     left: 10px
   h1
-    color: $primary
+    color: white !important
     font-size: 16px
     padding: 0
     line-height: 60px

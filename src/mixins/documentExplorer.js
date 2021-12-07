@@ -14,7 +14,8 @@ export const documentExplorer = {
         type: undefined,
         createdDate: undefined,
         updatedDate: undefined,
-        edgeName: undefined
+        edgeName: undefined,
+        systemNodeLabel: undefined
       },
       contentsGroups: {},
       edges: [],
@@ -78,7 +79,7 @@ export const documentExplorer = {
       let label = 'system'
       let systemElement = res[label]
       let newObj = {}
-
+      this.documentInfo.systemNodeLabel = res[label][0].value
       newObj[label] = systemElement
       for (const key in res) {
         if (key !== label) {

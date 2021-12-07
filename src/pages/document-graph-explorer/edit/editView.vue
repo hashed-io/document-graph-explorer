@@ -1,7 +1,7 @@
 <template lang='pug'>
 div
   div.text-h6.q-pb-md
-    | {{$t('pages.documentExplorer.erase.title')}}
+    | {{$t('pages.documentExplorer.edit.title')}}
   DocInformation(:docInfo="documentInfo")
   ListContentGroup(:contents_groups="contentsGroups")
   Edges(:edges="edges" :relations="relationsEdges" @showModal="openModal")
@@ -12,12 +12,16 @@ div
     q-btn(
       unelevated
       label='Save'
-    ).btnTailwind
+      no-caps
+      class="btnTailwind"
+    )
     q-btn(
       unelevated
       label='Cancel'
       @click='onCancel()'
-    ).btnTailwind
+      no-caps
+      class="btnTailwind"
+    )
 </template>
 
 <script>
@@ -57,10 +61,4 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
-.btnTailwind
-  border-radius: 10px
-  height: 2rem
-  width: 7rem
-  color:white
-  background: #4F46E5
 </style>

@@ -54,7 +54,7 @@ export default {
     index: {
       buttons: {
         createAccount: 'Create account',
-        login: 'Login',
+        login: 'Sign In',
         loginButton: 'Login with Telos'
       }
     },
@@ -107,7 +107,7 @@ export default {
         titleModal: 'Are you absolutely sure?',
         msg: 'This action cannot be undone. This will permanently delete the doc with the ID: ',
         typeMsg: 'Please type',
-        msgDel: 'document with id',
+        msgDel: 'document',
         typeMsgContinue: 'to confirm',
         btnErase: 'I understand the consequences, delete this document'
       },

@@ -1,23 +1,42 @@
 <template lang="pug">
-.q-py-sm.text-capitalize
-  .row.q-py-md(v-if="isEdit")
-    .col-3
-      TInput(
-        label='Title'
-        v-model='content_group_data[0].title'
-        dense
-      ).q-pr-md
-    .col-3
-      q-btn(
-        label='Save'
-        @click='onSaveTitle'
-        class="spaceBtn q-mr-sm"
-      )
-      q-btn(
-        label='Delete'
-        @click='onDeleteTitle'
-        class="spaceBtn"
-      )
+.q-py-sm
+  template(v-if="isEdit")
+    #Title
+      template(v-if="!editableTitle")
+        .row.justify-start.q-pb-md
+          .col-xs-12.col-sm-2
+            .text-h6.q-px-md {{content_group_data[0].title}}
+          .col-xs-12.col-sm-1
+            q-btn(
+              class="btnEdit btnTailwind"
+              label='Edit'
+              unelevated
+              no-caps
+              @click='editableTitle = true'
+            )
+      .row.q-py-lg(v-if="editableTitle")
+        .col-xs-12.col-sm-6
+          TInput(
+            label='Title'
+            v-model='content_group_data[0].title'
+            dense
+          ).q-pr-md
+        .col-xs-12.col-sm-5
+          .row.q-col-gutter-md
+            .col-xs-6.col-sm-12.col-md-6
+              q-btn(
+                label='Save'
+                no-caps
+                @click='onSaveTitle'
+                class="spaceBtn q-mr-sm btnTailwind"
+              )
+            .col-xs-6.col-sm-12.col-md-6
+              q-btn(
+                no-caps
+                label='Delete'
+                @click='onDeleteTitle'
+                class="spaceBtn btnTailwind"
+              )
   div.q-pb-md.text-subtitle1.q-pl-md(v-else) {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
@@ -84,54 +103,40 @@
           key='Actions',
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         )
-          .row.q-gutter-sm
-            q-btn(
-              size='12px'
-              class='btnTailwind'
-              label='Edit'
-              unelevated
-              no-caps
-              @click='onEditRow(props.row, props.rowIndex )'
-            )
-            q-btn(
-              size='12px'
-              label='Delete'
-              class='btnTailwind'
-              unelevated
-              no-caps
-              @click='onEraseRow(props.rowIndex )'
-            )
+          .row.q-col-gutter-md
+            .col-6
+              div(
+                class='text-brand-primary text-capitalize text-bold animated-icon'
+                @click='onEditRow(props.row, props.rowIndex )'
+              )
+                | Edit
+            .col-6
+              div(
+                class='text-capitalize text-bold animated-icon'
+                style='color: #DC2626'
+                @click='onEraseRow(props.rowIndex )'
+              )
+                | Delete
         q-td(
           v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex"
           key='Save'
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         )
-          q-btn(
-            size='12px'
-            class='btnTailwind'
-            label='Save'
-            unelevated
-            no-caps
-            @click='onSave(props.rowIndex)'
-          )
+          .row.justify-center
+            div(
+              class='text-capitalize text-bold animated-icon text-brand-primary'
+              @click='onSave(props.rowIndex)'
+            )
+              | Save
   .row.justify-end
     q-icon(
         v-if='isEdit'
-        class='text-brand-primary q-py-sm',
+        class='text-brand-primary q-py-sm animated-icon',
         size="2rem",
         @click="onAddRow()"
       )
-      svg.h-6.w-6(
-        fill="none",
-        viewBox="0 0 24 24",
-        stroke="currentColor"
-      ).animated-icon
-        path(
-          stroke-linecap="round",
-          stroke-linejoin="round",
-          stroke-width="2",
-          d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-        )
+        svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
+          path(fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd")
 </template>
 
 <script>
@@ -168,7 +173,8 @@ export default {
     return {
       title: undefined,
       contentGroupCopy: this.content_group_data,
-      editableRow: undefined,
+      editableRow: false,
+      editableTitle: false,
       optionsSelect: [
         {
           label: 'Cheksum256',
@@ -231,7 +237,7 @@ export default {
           name: 'dataType',
           label: 'Data Type',
           align: 'left',
-          headerStyle: 'width:20%; font-size:12px;',
+          headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
@@ -241,7 +247,7 @@ export default {
           name: 'actions',
           label: 'Actions',
           align: 'center',
-          headerStyle: 'font-size:12px;',
+          headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           style: 'color: rgb(107,114,128);',
           sortable: false
@@ -291,6 +297,7 @@ export default {
       this.onEditRow(undefined, this.contentGroupCopy.length - 1)
     },
     onSaveTitle () {
+      this.editableTitle = false
       console.log('Save title ' + this.content_group_data[0].title)
     },
     onDeleteTitle () {
@@ -313,17 +320,17 @@ export default {
   border-radius: 10px
 .iconTailwind
   color: #4338CA
-.btnTailwind
-  border-radius: 10px
-  height: 2rem
-  color:white
-  width: 3.5rem
-  background: #4F46E5
 .spaceBtn
-  margin-top: 1.3rem
+  top:40%
   border-radius: 10px
   height: 2.2rem
   color:white
   width: 4rem
   background: #4F46E5
+.btnEdit
+  height: 38px
+  width : 85.78px
+.btnTailwind
+  width 108px
+
 </style>

@@ -10,53 +10,67 @@
         :key="index"
         :class="index % 2 === 0 ? 'cardWhite' : 'cardGrey'"
       )
-        .row.justifys-end
-          .col-xs-6.col-sm-6
-            .row.q-col-gutter-xl.justify-end
-              .col-xs-4.col-sm-2.q-col-gutter-md
-                q-icon(
-                  v-if='isEdit'
-                  name='delete'
-                  size='sm'
-                  @click="removeEdge(item)"
-                ).animated-icon
-              .col-xs-4.col-sm-8
-                .text-capitalize
-                  | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
-                .text-caption.text-grey-6
-                  | {{ item.documentType }}
-                .text-caption.text-grey-6
-                  | {{ dateToString(item.createdDate)}}
-              .col-xs-4.col-sm-2
-                .text-caption.text-capitalize
-                  | {{ item.edgeName }}
-                .text-caption
+        .row.justify-start.q-col-gutter-md
+          .col-xs-6.col-sm-4
+            .row.q-col-gutter-md
+              .col-xs-6.col-sm-3.col-md-1
+                template(v-if="isEdit" id='delete')
+                  q-btn(
+                    size='12px'
+                    label='Delete'
+                    unelevated
+                    align='around'
+                    no-caps
+                    @click='removeEdge(item)'
+                  ).btnTailwind
+              .col-xs-6.col-sm-7.col-md-11.alignItems
+                template(id='edgeInfo')
+                  div
+                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
+                  .text-caption.text-grey-6
+                    | {{ item.documentType }}
+                  .text-caption.text-grey-6
+                    | {{ dateToString(item.createdDate)}}
+          .col-xs-6.col-sm-3
+            .row.center-block.justify-start
+              .col-xs-6.col-sm-6
+                template(id='edgeName')
+                  .text-caption
+                    | {{ item.edgeName }}
                   q-icon(
-                    name='west'
                     color='grey-5'
-                    size='md'
-                  ).animated-icon
-          .col-xs-0.col-sm-1
-            q-icon(
-              name="location_on"
-              color='red'
-              size='sm'
-            ).center
-          .col-xs-2.col-sm-1
-            //- q-icon(color="green", size="1.5rem").center
-            //-   svg(
-            //-     xmlns="http://www.w3.org/2000/svg",
-            //-     viewbox="0 0 100 100",
-            //-     fill="currentColor"
-            //-   )
-            //-     path(
-            //-       fill-rule="evenodd",
-            //-       d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z",
-            //-       clip-rule="evenodd"
-            //-     )
+                    class='animated-icon'
+                    style="width:47px; height:38px;"
+                  )
+                    svg(width="47" height="38" viewBox="0 0 47 38" fill="none" xmlns="http://www.w3.org/2000/svg")
+                      path(d="M38.5 14L47 19.5L38.5 25V14Z" fill="#BDBDBD")
+                      rect(y="18" width="39" height="2" fill="#BDBDBD")
+              .col-xs-6.col-sm-4
+                template(id='icon')
+                  q-icon(
+                    color='green'
+                    class='center animated-icon'
+                    style='width:48px; height: 38px;'
+                  )
+                    svg(width="48" height="38" viewBox="0 0 48 38" fill="none" xmlns="http://www.w3.org/2000/svg")
+                      circle(cx="38.5" cy="18.5" r="9.5" fill="#BDBDBD")
+                      path(d="M19.5 13.5L28 19L19.5 24.5V13.5Z" fill="#BDBDBD")
+                      rect(y="18" width="20" height="2" fill="#BDBDBD")
 </template>
 
-<style lang='stylus'>
+<style lang='stylus' scoped>
+.center-block
+  text-align: center
+.center
+  left:5%
+.btnTailwind
+  border-radius: 10px
+  background: #4F46E5
+  height: 2rem
+  color:white
+  width: 3.5rem
+.alignItems
+  text-align: right
 </style>
 <script>
 export default {
@@ -81,6 +95,9 @@ export default {
   methods: {
     onNextNode (item) {
       this.$emit('navigate', item)
+    },
+    removeEdge (item) {
+      this.$emit('deleteEdge', { edge: item, index: this.index })
     }
   }
 }

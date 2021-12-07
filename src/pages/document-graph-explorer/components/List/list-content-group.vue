@@ -12,8 +12,9 @@ div
     unelevated
     label='New content_group'
     no-caps
+    class='btnTailwind'
     @click="onAddContentGroup"
-  ).btnTailwind
+  )
 </template>
 
 <script>
@@ -62,9 +63,5 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .btnTailwind
-  border-radius: 10px
-  height: 2.5rem
-  font-size: 11px
-  color:white
-  background: #4F46E5
+  width: 200px !important
 </style>
