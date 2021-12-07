@@ -3,13 +3,8 @@ export default () => ({
   document: undefined,
   typeCatalog: undefined,
   isEdit: false,
+  isHashed: false,
   typesWithSystemNode: undefined,
-  documentInterface: `
-    docId
-    docId_i
-    hash
-    type
-    creator
-    createdDate
-  `
+  contractInfo: undefined,
+  documentInterface: undefined
 })

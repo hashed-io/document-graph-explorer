@@ -73,7 +73,7 @@ import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import EraseBox from '../components/erase/eraseBox.vue'
 export default {
   name: 'DocumentExplorer',
@@ -95,7 +95,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('accounts', ['account'])
+    ...mapGetters('accounts', ['account']),
+    ...mapState('documentGraph', ['isHashed'])
   },
   methods: {
     ...mapMutations('documentGraph', ['pushDocNavigation', 'popDocNavigation', 'addInformation']),
@@ -106,12 +107,20 @@ export default {
         label: 'edgeName',
         value: edgeData.edgeName
       })
-      this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
+      if (this.isHashed) {
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.hash } })
+      } else {
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
+      }
     },
     navigateToEdgePrev (edgeData) {
       this.popDocNavigation()
       this.setDocument(edgeData)
-      this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
+      if (this.isHashed) {
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.hash } })
+      } else {
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
+      }
     },
     extendDocument () {
       this.$router.push({ name: 'extendDoc', query: { document_id: this.$route.query.document_id } })

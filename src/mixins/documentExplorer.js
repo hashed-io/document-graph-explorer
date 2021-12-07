@@ -23,7 +23,7 @@ export const documentExplorer = {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['stackNavigation'])
+    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface'])
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getDocInterface', 'getTypesWithSystemNode']),
@@ -39,7 +39,9 @@ export const documentExplorer = {
       this.documentInfo.name = selectDocument.creator
       this.documentInfo.hash = selectDocument.hash
       this.documentInfo.creator = selectDocument.creator
-      this.documentInfo.docId = selectDocument.docId
+      if (selectDocument.hasOwnProperty('docId')) {
+        this.documentInfo.docId = selectDocument.docId
+      }
       this.documentInfo.type = selectDocument.type
       this.documentInfo.createdDate = selectDocument.createdDate
       this.documentInfo.updatedDate = selectDocument.createdDate
@@ -58,11 +60,19 @@ export const documentExplorer = {
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()
+
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
+      // TODO: Hash version
+      let byElement = this.documentInfo.docId
+      console.log(this.isHashed)
+      if (this.isHashed) {
+        byElement = this.documentInfo.hash
+      }
       let document = await this.retrieveDoc(
-        this.documentInfo.docId,
+        byElement,
         this.documentInfo.type,
-        contentGroups
+        contentGroups,
+        this.isHashed
       )
       console.log({ contentGroups, edges })
       let contentGroup = this.matchingContentGroups(document)
@@ -112,11 +122,12 @@ export const documentExplorer = {
       })
       return { contentGroups, edges }
     },
-    async retrieveDoc (docId, docType, contentGroups) {
+    async retrieveDoc (byElement, docType, contentGroups, isHashed) {
       const response = await this.getDocumentsByDocId({
-        docID: docId,
+        byElement: byElement,
         props: contentGroups,
-        type: docType
+        type: docType,
+        isHashed: isHashed
       })
       return response
     },
@@ -162,17 +173,17 @@ export const documentExplorer = {
     },
     async getEdges (edges) {
       this.edges = []
-      let query = this.makeQueryForEdgeInfo(edges)
+      let query = await this.makeQueryForEdgeInfo(edges)
       let responseEdges = await this.retrieveQuery(query)
       this.edges = this.processEdges(responseEdges)
     },
-    makeQueryForEdgeInfo (edges) {
+    async makeQueryForEdgeInfo (edges) {
       var query = ''
-      var docInterface = this.getDocInterface()
+      var docInterface = this.documentInterface
       edges.map((element) => {
         let _props = this.getCatalog().get(element.typeDoc)
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        if (element.type === 'LIST' && element.edge !== 'vote') {
+        if (element.type === 'LIST' && element.edge !== 'vote' && element.edge !== 'passedprops') {
           if (found) {
             query += `${element.edge}{
               ${docInterface}
@@ -188,10 +199,18 @@ export const documentExplorer = {
       return query
     },
     async retrieveQuery (query) {
+      // TODO: reply according to retrieveDoc
+      let byElement = this.documentInfo.docId
+      if (this.isHashed) {
+        byElement = this.documentInfo.hash
+      }
+      let _isHashed = this.isHashed
+      console.log(query)
       const responseEdges = await this.getDocumentsByDocId({
-        docID: this.documentInfo.docId,
+        byElement: byElement,
         props: query,
         type: this.documentInfo.type,
+        isHashed: _isHashed,
         docInterface: false
       })
       return responseEdges

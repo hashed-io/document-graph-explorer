@@ -45,10 +45,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions('documentGraph', ['getSchema', 'changeEndpoint', 'setApiEndpoint']),
+    ...mapActions('documentGraph', ['getSchema', 'changeEndpoint', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setCatalog', 'setTypesWithSystemNode']),
     async loadCatalog () {
-      this.setApiEndpoint({
+      this.setLocalStorage({
         key: 'apollo-endpoint',
         value: process.env.APOLLO_URL
       })

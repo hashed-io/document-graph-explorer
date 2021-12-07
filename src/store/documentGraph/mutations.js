@@ -23,3 +23,12 @@ export const addInformation = (state, keyPair) => {
 export const clearStack = (state) => {
   state.stackNavigation = []
 }
+export const setDocInterface = (state, docInterface) => {
+  state.documentInterface = docInterface
+}
+export const setContractInfo = (state, contractInfo) => {
+  state.contractInfo = contractInfo
+}
+export const setIsHashed = (state, bool) => {
+  state.isHashed = bool
+}

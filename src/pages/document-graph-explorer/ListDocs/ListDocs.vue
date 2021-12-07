@@ -26,6 +26,7 @@ div
     :data="documents"
     :columns="columns"
     card-class="bg-grey-1"
+    :visible-columns='visibleColumns'
   ).TailWind
     template(v-slot:body="props")
       q-tr.cursor-pointer( :props="props")
@@ -78,7 +79,7 @@ div
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import TInput from '../../../components/input/t-input.vue'
 import ApolloClient from 'apollo-boost'
 export default {
@@ -89,6 +90,7 @@ export default {
       documents: undefined,
       assignment: undefined,
       currentEndpoint: undefined,
+      visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid'],
       columns: [
         {
           name: 'docid',
@@ -142,23 +144,62 @@ export default {
     this.loadDocuments()
   },
   computed: {
+    ...mapState('documentGraph', ['isHashed'])
   },
   methods: {
-    ...mapActions('documentGraph', ['getDocuments', 'getAssignment', 'getMembers', 'changeEndpoint', 'getSchema', 'getApiEndpoint', 'setApiEndpoint']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    ...mapActions('documentGraph', ['getContractInformation', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
+    ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
     async loadLocalStorage () {
-      let apiEndpoint = await this.getApiEndpoint({ key: 'apollo-endpoint' })
+      let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
       this.currentEndpoint = apiEndpoint
     },
     async loadDocuments () {
+      await this.getDocInterface()
+      await this.getContractInfo()
       this.loadLocalStorage()
       this.documents = []
       const data = await this.getDocuments({ number: 1000, type: 'Document' })
       this.documents = data.queryDocument
     },
-    async onClickAssignment () {
-      const data = await this.getAssignment()
-      this.assignment = data.queryAssignment
+    async getContractInfo () {
+      let contractInfo = await this.getContractInformation()
+      if (contractInfo) {
+        this.setContractInfo(contractInfo.queryDoccacheConfig[0])
+      } else {
+        this.setContractInfo('Default contract information')
+      }
+    },
+    async getDocInterface () {
+      let docInterface = await this.getPropsType({
+        type: 'Document'
+      })
+      let interfaceString = ''
+      let flag
+      docInterface['__type'].fields.forEach(element => {
+        if (element.name === 'docId') {
+          flag = 1
+        }
+        interfaceString += element.name + '\n'
+      })
+      const containDocId = (element) => element === 'docid'
+      let index = this.visibleColumns.findIndex(containDocId)
+      console.log(index)
+      if (!flag) {
+        this.setIsHashed(true)
+        if (index >= 0) {
+          this.visibleColumns.splice(index, 1)
+        }
+      } else {
+        this.setIsHashed(false)
+        if (index === -1) {
+          this.visibleColumns.push('docid')
+        }
+      }
+      this.setDocInterface(interfaceString)
+      await this.setLocalStorage({
+        key: 'documentInterface',
+        value: interfaceString
+      })
     },
     smallText (text) {
       return text.slice(0, 250) + '...'
@@ -168,7 +209,11 @@ export default {
       // this.popDocNavigation()
       this.setDocument(row)
       this.setIsEdit(false)
-      this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })
+      if (this.isHashed) {
+        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash } })
+      } else {
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })
+      }
     },
     async modifyApolloEndpoint (localStorage) {
       let endpoint = this.endpoint
@@ -183,12 +228,12 @@ export default {
     async loadFromEndpoint () {
       try {
         this.modifyApolloEndpoint()
-        this.setApiEndpoint({ key: 'apollo-endpoint', value: this.endpoint })
+        this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
         await this.loadCatalog()
         await this.loadDocuments()
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
-        let previousEndpoint = this.getApiEndpoint({ key: 'apollo-endpoint' })
+        let previousEndpoint = this.getLocalStorage({ key: 'apollo-endpoint' })
         await this.modifyApolloEndpoint(previousEndpoint)
         await this.loadCatalog()
         await this.loadDocuments()

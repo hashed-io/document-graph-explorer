@@ -6,7 +6,7 @@ q-card(bordered).cardTailWind
   q-separator(color='grey-3')
   q-card-section
     .row.q-col-gutter-md
-      .col-6.docInfoInside
+      .col-6.docInfoInside(v-if='docInfo.docId')
         div.text-subtitle2.text-grey-6.text-uppercase Document ID
         div {{ docInfo.docId }}
       .col-6.docInfoInside
