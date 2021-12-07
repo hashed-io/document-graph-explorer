@@ -51,7 +51,7 @@ div.q-mb-xl
             v-for="(wallet, idx) in $ual.authenticators"
             :key="wallet.getStyle().text"
             v-ripple
-            :style="{ background: '#4F46E5', color: wallet.getStyle().textColor, borderRadius:'10px', marginTop:'10px'}"
+            class='btn-login-wallet'
             data-cy="loginButton"
             v-if="wallet.shouldRender()"
           )

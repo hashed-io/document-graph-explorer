@@ -332,4 +332,5 @@ export default {
   width : 85.78px
 .btnTailwind
   width 108px
+
 </style>
