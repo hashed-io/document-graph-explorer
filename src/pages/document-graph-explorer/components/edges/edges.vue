@@ -140,7 +140,6 @@ export default {
             })
           }
         }
-        console.log('Second Filter', filter)
         return filter
       } else {
         return this.edges

@@ -183,7 +183,6 @@ export default {
       })
       const containDocId = (element) => element === 'docid'
       let index = this.visibleColumns.findIndex(containDocId)
-      console.log(index)
       if (!flag) {
         this.setIsHashed(true)
         if (index >= 0) {
@@ -291,7 +290,7 @@ export default {
   .btnTailwind
     width: 50% !important
     left: 50% !important
-@media screen and (max-width: 1400px) and (min-width: 1025px)
+@media screen and (max-width: 1400px) and (min-width: 1024px)
   .btnTailwind
     width: 100% !important
     top:22px

@@ -46,9 +46,6 @@ class ApolloApi extends BaseEosApi {
       }
     }
     `
-    console.log('3333333333')
-    console.log(query)
-    console.log('3333333333')
     const { data } = await this.apollo.query({ query })
     console.log(data)
     return data
@@ -57,9 +54,6 @@ class ApolloApi extends BaseEosApi {
     if (!props) {
       props = ''
     }
-    console.log('11111111111111111')
-    console.log({ byElement, props, type, docInterface, isHashed })
-    console.log('11111111111111111')
     const query = gql`
       query {
         query${type}(filter: {${isHashed ? 'hash' : 'docId'}: { eq: "${byElement}"} } ) {

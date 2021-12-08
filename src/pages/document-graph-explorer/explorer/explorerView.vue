@@ -73,7 +73,7 @@ import DocInformation from '../components/info/DocInformation.vue'
 import ListContentGroup from '../components/List/list-content-group.vue'
 import Edges from '../components/edges/edges.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
-import { mapGetters, mapMutations, mapState } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import EraseBox from '../components/erase/eraseBox.vue'
 export default {
   name: 'DocumentExplorer',
@@ -94,12 +94,17 @@ export default {
       deleteDoc: false
     }
   },
+  async mounted () {
+  },
   computed: {
     ...mapGetters('accounts', ['account']),
-    ...mapState('documentGraph', ['isHashed'])
+    ...mapState('documentGraph', ['isHashed', 'documentInterface'])
   },
   methods: {
+    ...mapActions('documentGraph', ['getDocumentsByDocId']),
     ...mapMutations('documentGraph', ['pushDocNavigation', 'popDocNavigation', 'addInformation']),
+    ...mapMutations('documentGraph', ['setContractInfo']),
+
     navigateToEdge (edgeData) {
       this.setDocument(edgeData)
       this.pushDocNavigation(this.documentInfo)

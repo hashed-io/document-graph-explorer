@@ -2,6 +2,29 @@ import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 export const documentExplorer = {
   async mounted () {
+    let queryParams = this.$route.query
+    if ((queryParams.hasOwnProperty('document_id') || queryParams.hasOwnProperty('hash')) && this.document === undefined) {
+      await this.getDocInterface()
+      // TODO: retrieve Doc with docID or hash
+      const docInterface = this.documentInterface
+      const documentID = (queryParams.hasOwnProperty('document_id')) ? queryParams.document_id : queryParams.hash
+      const response = await this.getDocumentsByDocId({
+        byElement: documentID,
+        type: 'Document',
+        props: '',
+        docInterface: docInterface,
+        isHashed: !(queryParams.hasOwnProperty('document_id'))
+      })
+
+      // TODO: retrieve document props using the function
+      this.setDocument(response.queryDocument[0])
+      this.setIsEdit(false)
+      // TODO: loadDocument()
+      this.loadData()
+      // TODO: assert correct queries
+    } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
+      this.setContractInfo({ contract: queryParams.contract })
+    }
     this.loadData()
   },
   data () {
@@ -23,12 +46,26 @@ export const documentExplorer = {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface'])
+    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document'])
   },
   methods: {
-    ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getDocInterface', 'getTypesWithSystemNode']),
-    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation']),
+    ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
+    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType', 'setLocalStorage']),
+    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation', 'setDocInterface']),
+    async getDocInterface () {
+      let docInterface = await this.getPropsType({
+        type: 'Document'
+      })
+      let interfaceString = ''
+      docInterface['__type'].fields.forEach(element => {
+        interfaceString += element.name + '\n'
+      })
+      this.setDocInterface(interfaceString)
+      await this.setLocalStorage({
+        key: 'documentInterface',
+        value: interfaceString
+      })
+    },
     getDocumentInfo () {
       this.edges = []
       this.contentsGroups = {}
@@ -62,9 +99,7 @@ export const documentExplorer = {
       let typeSchema = await this.getSchemaOfType()
 
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
-      // TODO: Hash version
       let byElement = this.documentInfo.docId
-      console.log(this.isHashed)
       if (this.isHashed) {
         byElement = this.documentInfo.hash
       }
@@ -199,13 +234,11 @@ export const documentExplorer = {
       return query
     },
     async retrieveQuery (query) {
-      // TODO: reply according to retrieveDoc
       let byElement = this.documentInfo.docId
       if (this.isHashed) {
         byElement = this.documentInfo.hash
       }
       let _isHashed = this.isHashed
-      console.log(query)
       const responseEdges = await this.getDocumentsByDocId({
         byElement: byElement,
         props: query,
@@ -224,7 +257,6 @@ export const documentExplorer = {
       }
       let QLresponse = responseEdges[queryLabel][0]
       delete QLresponse['__typename']
-      console.log(QLresponse)
       for (const key in QLresponse) {
         if (QLresponse[key]) {
           if (QLresponse[key].length > 0) {
