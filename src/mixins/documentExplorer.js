@@ -6,6 +6,8 @@ export const documentExplorer = {
     let queryParams = this.$route.query
     if (queryParams.hasOwnProperty('endpoint')) {
       this.endpoint = queryParams.endpoint
+      this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      await this.loadFromEndpoint()
     }
     if ((queryParams.hasOwnProperty('document_id') || queryParams.hasOwnProperty('hash')) && this.document === undefined) {
       await this.getDocInterface()
