@@ -209,9 +209,9 @@ export default {
       this.setDocument(row)
       this.setIsEdit(false)
       if (this.isHashed) {
-        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash, endpoint: this.endpoint } })
+        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash } })
       } else {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId, endpoint: this.endpoint } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })
       }
     },
     async modifyApolloEndpoint (localStorage) {
