@@ -1,11 +1,14 @@
 import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
     let queryParams = this.$route.query
+    if (queryParams.hasOwnProperty('endpoint')) {
+      this.endpoint = queryParams.endpoint
+    }
     if ((queryParams.hasOwnProperty('document_id') || queryParams.hasOwnProperty('hash')) && this.document === undefined) {
       await this.getDocInterface()
-      // TODO: retrieve Doc with docID or hash
       const docInterface = this.documentInterface
       const documentID = (queryParams.hasOwnProperty('document_id')) ? queryParams.document_id : queryParams.hash
       const response = await this.getDocumentsByDocId({
@@ -15,13 +18,9 @@ export const documentExplorer = {
         docInterface: docInterface,
         isHashed: !(queryParams.hasOwnProperty('document_id'))
       })
-
-      // TODO: retrieve document props using the function
       this.setDocument(response.queryDocument[0])
       this.setIsEdit(false)
-      // TODO: loadDocument()
       this.loadData()
-      // TODO: assert correct queries
     } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
       this.setContractInfo({ contract: queryParams.contract })
     }
@@ -40,6 +39,7 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      endpoint: undefined,
       contentsGroups: {},
       edges: [],
       relationsEdges: {}
@@ -50,21 +50,50 @@ export const documentExplorer = {
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
-    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType', 'setLocalStorage']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation', 'setDocInterface']),
+    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
+    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
     async getDocInterface () {
       let docInterface = await this.getPropsType({
         type: 'Document'
       })
       let interfaceString = ''
+      let flag
       docInterface['__type'].fields.forEach(element => {
+        if (element.name === 'docId') {
+          flag = 1
+        }
         interfaceString += element.name + '\n'
       })
+      if (!flag) {
+        this.setIsHashed(true)
+      } else {
+        this.setIsHashed(false)
+      }
       this.setDocInterface(interfaceString)
       await this.setLocalStorage({
         key: 'documentInterface',
         value: interfaceString
       })
+    },
+    async loadFromEndpoint () {
+      try {
+        this.modifyApolloEndpoint()
+        this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
+        let previousEndpoint = this.getLocalStorage({ key: 'apollo-endpoint' })
+        await this.modifyApolloEndpoint(previousEndpoint)
+      }
+    },
+    async modifyApolloEndpoint (localStorage) {
+      let endpoint = this.endpoint
+      if (localStorage) {
+        endpoint = localStorage
+      }
+      const client = new ApolloClient({
+        uri: endpoint
+      })
+      await this.changeEndpoint({ client })
     },
     getDocumentInfo () {
       this.edges = []
@@ -215,8 +244,12 @@ export const documentExplorer = {
     async makeQueryForEdgeInfo (edges) {
       var query = ''
       var docInterface = this.documentInterface
-      edges.map((element) => {
-        let _props = this.getCatalog().get(element.typeDoc)
+      for (const element of edges) {
+        let _props = await this.getPropsType({
+          type: element.typeDoc
+        })
+        _props = await _props['__type']['fields']
+        console.log(_props)
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
         if (element.type === 'LIST' && element.edge !== 'vote' && element.edge !== 'passedprops') {
           if (found) {
@@ -230,7 +263,7 @@ export const documentExplorer = {
             query += `${element.edge}{${docInterface}}\n`
           }
         }
-      })
+      }
       return query
     },
     async retrieveQuery (query) {

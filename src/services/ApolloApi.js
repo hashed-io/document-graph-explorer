@@ -47,7 +47,7 @@ class ApolloApi extends BaseEosApi {
     }
     `
     const { data } = await this.apollo.query({ query })
-    console.log(data)
+    // console.log(data)
     return data
   }
   async getDocumentsByDocId ({ byElement, props, type, docInterface, isHashed }) {
@@ -62,9 +62,9 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    console.log(query)
+    console.log({ QUERY: query })
     const { data } = await this.apollo.query({ query })
-    console.log(data)
+    console.log({ DATA: data })
     return data
   }
   async getDocuments ({ number, props, type }) {

@@ -209,9 +209,9 @@ export default {
       this.setDocument(row)
       this.setIsEdit(false)
       if (this.isHashed) {
-        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash } })
+        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash, endpoint: this.endpoint } })
       } else {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId, endpoint: this.endpoint } })
       }
     },
     async modifyApolloEndpoint (localStorage) {
@@ -228,13 +228,11 @@ export default {
       try {
         this.modifyApolloEndpoint()
         this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
-        await this.loadCatalog()
         await this.loadDocuments()
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
         let previousEndpoint = this.getLocalStorage({ key: 'apollo-endpoint' })
         await this.modifyApolloEndpoint(previousEndpoint)
-        await this.loadCatalog()
         await this.loadDocuments()
       }
     },

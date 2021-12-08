@@ -22,15 +22,16 @@ div.q-pt-md
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
   q-card(
+    v-if='edges.length > 0'
     bordered
-      style="min-height:50px; max-height:auto"
+    style="min-height:150px; max-height:auto"
   ).cardTailWind
     q-scroll-area(
       :thumb-style="thumbStyle",
       :barStyle="barStyle",
       :style="calculateSizeEdges(edges.length, resultQuery.length)"
       id="scroll-area-with-virtual-scroll-1"
-      style="min-height:50px; height:1%"
+      style="min-height:150px; height:1%"
     )
       q-virtual-scroll(
         scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
