@@ -7,17 +7,19 @@ div
     v-model="content"
     :placeholder="placeholder"
     :debounce="debounce"
+    :type="type"
     :dense='dense'
     :rules="rules"
     @input="$emit('update', content)"
   )
+    slot(name='append' class="centerIcon")
 </template>
 
 <script>
 
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'showIcon', 'isPwd'],
   model: {
     prop: 'value',
     event: 'update'

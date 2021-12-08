@@ -104,7 +104,6 @@ export default {
     ...mapActions('documentGraph', ['getDocumentsByDocId']),
     ...mapMutations('documentGraph', ['pushDocNavigation', 'popDocNavigation', 'addInformation']),
     ...mapMutations('documentGraph', ['setContractInfo']),
-
     navigateToEdge (edgeData) {
       this.setDocument(edgeData)
       this.pushDocNavigation(this.documentInfo)

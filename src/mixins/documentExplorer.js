@@ -4,8 +4,11 @@ import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
     let queryParams = this.$route.query
+    await this.getContractInfo()
     if (queryParams.hasOwnProperty('endpoint')) {
       this.endpoint = queryParams.endpoint
+      this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      await this.loadFromEndpoint()
     }
     if ((queryParams.hasOwnProperty('document_id') || queryParams.hasOwnProperty('hash')) && this.document === undefined) {
       await this.getDocInterface()
@@ -50,8 +53,16 @@ export const documentExplorer = {
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
-    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
+    ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    async getContractInfo () {
+      let contractInfo = await this.getContractInformation()
+      if (contractInfo) {
+        this.setContractInfo(contractInfo.queryDoccacheConfig[0])
+      } else {
+        this.setContractInfo('Default contract information')
+      }
+    },
     async getDocInterface () {
       let docInterface = await this.getPropsType({
         type: 'Document'

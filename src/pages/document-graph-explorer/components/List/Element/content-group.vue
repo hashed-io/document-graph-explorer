@@ -38,6 +38,7 @@
                 class="spaceBtn btnTailwind"
               )
   div.q-pb-md.text-subtitle1.q-pl-md(v-else) {{content_group_data[0].title}}
+  CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
     :columns="columns",
@@ -103,20 +104,18 @@
           key='Actions',
           :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
         )
-          .row.q-col-gutter-md
+          .row
             .col-6
               div(
                 class='text-brand-primary text-capitalize text-bold animated-icon'
                 @click='onEditRow(props.row, props.rowIndex )'
-              )
-                | Edit
+              ) Edit
             .col-6
               div(
                 class='text-capitalize text-bold animated-icon'
                 style='color: #DC2626'
                 @click='onEraseRow(props.rowIndex )'
-              )
-                | Delete
+              ) Delete
         q-td(
           v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex"
           key='Save'
@@ -143,11 +142,13 @@
 import { mapGetters } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import TSelect from '../../../../../components/select/t-select.vue'
+import CryptoDialog from './crypto-dialog.vue'
 export default {
   name: 'ContentGroup',
   components: {
     TInput,
-    TSelect
+    TSelect,
+    CryptoDialog
   },
   props: {
     content_group_data: {
@@ -171,6 +172,7 @@ export default {
   },
   data () {
     return {
+      openCryptoDialog: false,
       title: undefined,
       contentGroupCopy: this.content_group_data,
       editableRow: false,
@@ -218,7 +220,7 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: ' width:20%; font-size:12px;',
+          headerStyle: ' width:15%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           field: (row) => row.key,
           sortable: true
@@ -227,7 +229,7 @@ export default {
           name: 'value',
           label: 'Value',
           align: 'left',
-          headerStyle: 'width:60%; font-size:12px;',
+          headerStyle: 'width:64%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.value,
@@ -302,6 +304,10 @@ export default {
     },
     onDeleteTitle () {
       console.log('Delete title ' + this.content_group_data[0].title)
+    },
+    onCloseDialog (cryptoKey) {
+      this.openCryptoDialog = false
+      alert(cryptoKey)
     }
   }
 }
