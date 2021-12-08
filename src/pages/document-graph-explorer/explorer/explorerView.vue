@@ -113,18 +113,18 @@ export default {
         value: edgeData.edgeName
       })
       if (this.isHashed) {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.hash } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.hash, endpoint: this.endpoint } })
       } else {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId, endpoint: this.endpoint } })
       }
     },
     navigateToEdgePrev (edgeData) {
       this.popDocNavigation()
       this.setDocument(edgeData)
       if (this.isHashed) {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.hash } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.hash, endpoint: this.endpoint } })
       } else {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: edgeData.docId, endpoint: this.endpoint } })
       }
     },
     extendDocument () {
