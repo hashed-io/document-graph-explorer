@@ -141,7 +141,7 @@
                 no-hover
                 v-model='props.row.optional.encrypt'
                 label='Encrypt'
-                @input='onEncrypt(props.row.value)'
+                @input='onEncrypt(props.row)'
               )
               q-toggle(
                 size='xs'
@@ -470,7 +470,7 @@ export default {
 .iconTailwind
   color: #4338CA
 .spaceBtn
-  top:40%
+  top: 65%
   border-radius: 10px
   height: 2.2rem
   color:white
@@ -483,6 +483,4 @@ export default {
   width 108px
 .verticalCenter
   margin-top: 27px
-.q-toggle__inner--truthy
-  color: #4338CA !important
 </style>

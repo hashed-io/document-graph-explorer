@@ -20,7 +20,7 @@ div
   ListContentGroup(:contents_groups="contentsGroups")
   //- Edges(:edges="edges")
   #BtnSection
-  .row.q-gutter-md.q-py-xl
+  .row.q-gutter-md.q-py-sm
     q-btn(
       unelevated
       no-caps

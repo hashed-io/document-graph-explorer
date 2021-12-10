@@ -30,6 +30,7 @@ export const utils = {
         textColor: 'white',
         message: message,
         icon: icon,
+        position: 'top-right',
         timeout: timeOut,
         actions: [{ label: 'Close', color: 'white' }]
       })

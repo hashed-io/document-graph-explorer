@@ -1,29 +1,41 @@
 <template lang="pug">
 #NewEdgeDialog
-  q-card.full-width
+  q-card.cardTailWind
     q-toolbar
       q-toolbar-title New Edge Form
       q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
     q-card-section
-      Tinput(
-        v-model="form.direction"
-        label='Edge direction'
-      )
-      Tinput(
-        v-model="form.edge"
-        label='Edge Name'
-      )
-      Tinput(
-        v-model="form.name"
-        label='Destination Document '
-      )
-    q-card-actions
-      q-btn(
-        unelevated
-        color='primary'
-        label='Add edge'
-        @click ="addEdge"
-      )
+      .q-px-md
+        Tinput(
+          class="q-pt-md"
+          v-model="form.direction"
+          label='Edge direction'
+          dense
+        )
+        Tinput(
+          class="q-pt-md"
+          v-model="form.edgeName"
+          label='Edge Name'
+          dense
+        )
+        Tinput(
+          class="q-pt-md"
+          v-model="form.system_nodeLabel_s"
+          label='System Node Label'
+          dense
+        )
+        Tinput(
+          class="q-pt-md"
+          v-model="form.type"
+          label='Document Type'
+          dense
+        )
+        q-btn(
+          unelevated
+          class="btnTailwind q-mt-md"
+          label='Add edge'
+          @click ="addEdge"
+        )
 </template>
 
 <script>
@@ -36,9 +48,16 @@ export default {
   data () {
     return {
       form: {
+        createdDate: '2021-12-10T19:06:11.5Z',
+        creator: undefined,
         direction: undefined,
-        edge: undefined,
-        name: undefined
+        docId: undefined,
+        docId_i: undefined,
+        edgeName: undefined,
+        hash: undefined,
+        system_nodeLabel_s: undefined,
+        type: undefined,
+        edge: undefined
       }
     }
   },
@@ -50,5 +69,8 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="stylus" scoped>
+.cardTailWind
+  border-radius: 10px !important
+  width: 500px !important
 </style>

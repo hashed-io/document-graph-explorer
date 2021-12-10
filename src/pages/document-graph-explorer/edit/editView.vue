@@ -8,7 +8,7 @@ div
   q-dialog(v-model='showDialogEdge')
     EdgeDialog(@EdgeData='addNewEdge')
   #BtnSection
-  .row.q-gutter-md.q-py-xl
+  .row.q-gutter-md
     q-btn(
       unelevated
       label='Save'

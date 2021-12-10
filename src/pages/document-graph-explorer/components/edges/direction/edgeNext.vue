@@ -10,32 +10,19 @@
       )
         .row.justify-end.q-col-gutter-md
           .col-xs-6.col-sm-3
-            .row.center-block.justify-end
-              .col-xs-2.col-sm-4.alignCenterEdge
+            .row.center-block.justify-start
+              .col-xs-10.col-sm-9.alignCenterEdge
+                template(id='edgeName')
+                  .text-caption.textWrap
+                    | {{ item.edgeName }}
                 template(id='icon')
                   q-icon(
-                    color='green'
-                    class='center animated-icon'
                     style='width:48px; height: 38px;'
-                  )
+                  ).animated-icon
                   svg(width="48" height="38" viewBox="0 0 48 38" fill="none" xmlns="http://www.w3.org/2000/svg")
                     circle(cx="9.5" cy="18.5" r="9.5" fill="#BDBDBD")
                     path(d="M39.5 13.5L48 19L39.5 24.5V13.5Z" fill="#BDBDBD")
                     rect(x="20" y="18" width="20" height="2" fill="#BDBDBD")
-
-              .col-xs-8.col-sm-6.alignCenterEdge
-                template(id='edgeName')
-                  .text-caption.textWrap
-                    | {{ item.edgeName }}
-                  div
-                    q-icon(
-                      color='grey-5'
-                      class='animated-icon'
-                      style="width:47px; height:38px;"
-                    )
-                      svg(width="47" height="38" viewBox="0 0 47 38" fill="none" xmlns="http://www.w3.org/2000/svg")
-                        path(d="M38.5 14L47 19.5L38.5 25V14Z" fill="#BDBDBD")
-                        rect(y="18" width="39" height="2" fill="#BDBDBD")
           .col-xs-6.col-sm-4
             .row.q-col-gutter-md
               .col-xs-6.col-sm-7.col-md-10
@@ -49,7 +36,7 @@
               .col-xs-6.col-sm-3.col-md-2
                 template(v-if="isEdit" id='delete')
                   div(
-                    class='text-capitalize text-bold animated-icon alignCenter'
+                    class='text-capitalize animated-icon alignCenter'
                     style='color: #DC2626'
                     @click='removeEdge(item)'
                   )
@@ -58,7 +45,7 @@
 
 <style lang='stylus' scoped>
 .alignCenterEdge
-  margin-top: 8%
+  margin-top: 4%
 .alignCenter
   margin: auto;
   padding-top: 50%;
