@@ -10,6 +10,7 @@ div
     :type="type"
     :dense='dense'
     :rules="rules"
+    :autogrow='autogrow'
     @input="$emit('update', content)"
   )
     slot(name='append' class="centerIcon")
@@ -19,7 +20,7 @@ div
 
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'showIcon', 'isPwd'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow'],
   model: {
     prop: 'value',
     event: 'update'

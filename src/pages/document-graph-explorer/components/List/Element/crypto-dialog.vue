@@ -44,7 +44,7 @@ q-dialog(v-model="openDialog" persistent)
 
 <script>
 import { validation } from '~/mixins/validation'
-import TInput from '../../../../../components/input/t-input.vue'
+import TInput from '~/components/input/t-input.vue'
 
 export default {
   name: 'crypto-dialog',

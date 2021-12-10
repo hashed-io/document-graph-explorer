@@ -8,21 +8,20 @@ q-dialog(v-model="openDialog" persistent)
         class="q-gutter-md"
     )
       q-card-section
-        q-input(
-          v-model="cryptoKey"
-          id='keyInput'
-          data-cy='keyInput'
-          filled
-          :type="isPwd ? 'password' : 'text'"
-          label="Insert your key"
-          :rules="[rules.required]"
-        )
-          template(v-slot:append)
-            q-icon(
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class="cursor-pointer"
-              @click="isPwd = !isPwd"
-            )
+      TInput(
+        v-model="cryptoKey"
+        :type="isPwd ? 'password' : 'text'"
+        label="Insert your key"
+        id='keyInput'
+        data-cy='keyInput'
+        :rules="[rules.required]"
+      )
+        template(v-slot:append)
+          q-icon(
+            :name="isPwd ? 'visibility_off' : 'visibility'"
+            class="cursor-pointer"
+            @click="isPwd = !isPwd"
+          )
       q-card-actions(align="right")
         q-btn(
           color="primary"
@@ -35,6 +34,7 @@ q-dialog(v-model="openDialog" persistent)
 
 <script>
 import { validation } from '~/mixins/validation'
+import TInput from './input/t-input.vue'
 
 export default {
   name: 'crypto-dialog',
@@ -56,7 +56,8 @@ export default {
     onSubmit () {
       this.$emit('close-dialog', this.cryptoKey)
     }
-  }
+  },
+  components: { TInput }
 }
 </script>
 

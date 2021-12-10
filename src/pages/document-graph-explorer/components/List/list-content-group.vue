@@ -1,11 +1,14 @@
 <template lang='pug'>
 div
   div.text-h6.q-py-md.q-py-md Content Groups
+  CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
   ContentGroup(
     v-for="(content_group, index) in contents_groups",
     :content_group_data="content_group",
     :index_content_group="index"
     :key="content_group+`${index}`"
+    @openDialog="onOpenDialog"
+    :cryptoKey="keyToEncrypt"
   )
   q-btn(
     v-if="isEdit"
@@ -20,6 +23,7 @@ div
 <script>
 import ContentGroup from './Element/content-group.vue'
 import { mapGetters } from 'vuex'
+import CryptoDialog from './Element/crypto-dialog.vue'
 export default {
   name: 'ListContentsGroup',
   props: {
@@ -29,7 +33,8 @@ export default {
     }
   },
   components: {
-    ContentGroup
+    ContentGroup,
+    CryptoDialog
   },
   mounted () {
     if (this.getIsEdit) {
@@ -43,10 +48,17 @@ export default {
   },
   data () {
     return {
-      isEdit: false
+      isEdit: false,
+      openCryptoDialog: false,
+      keyToEncrypt: undefined,
+      textEncrypted: undefined,
+      fileNotEncrypted: undefined
     }
   },
   methods: {
+    onOpenDialog (bool) {
+      this.openCryptoDialog = bool
+    },
     onAddContentGroup () {
       this.contents_groups['Content_group'] = [
         {
@@ -57,6 +69,10 @@ export default {
         }
       ]
       this.$forceUpdate()
+    },
+    onCloseDialog (cryptoKey) {
+      this.openCryptoDialog = false
+      this.keyToEncrypt = cryptoKey
     }
   }
 }

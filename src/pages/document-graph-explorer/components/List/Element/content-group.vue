@@ -38,7 +38,6 @@
                 class="spaceBtn btnTailwind"
               )
   div.q-pb-md.text-subtitle1.q-pl-md(v-else) {{content_group_data[0].title}}
-  CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
     :columns="columns",
@@ -55,43 +54,106 @@
   )
     template(#body="props")
       q-tr(:props="props" )
-        q-td(
-          key="key",
-          :props="props",
-          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        )
-          template(
-            v-if="editableRow !== props.rowIndex"
-          ) {{ props.row.key }}
-          template(v-else)
+        template(v-if="editableRow !== props.rowIndex")#ReadMode
+          q-td(
+            key="key",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            template(
+            ) {{ props.row.key }}
+          q-td(
+            key="value",
+            :props="props",
+            style="word-break: break-all;"
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            div(
+            ) {{ /(T\d\d:\d\d:\d\d)/.test(props.row.value) ? dateToString(props.row.value) : props.row.value}}
+          q-td(
+            key="dataType",
+
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            div(
+            ) {{ getDataType(props.row.dataType) }}
+          q-td(
+            v-if="isEdit  && editableRow !== props.rowIndex"
+            key='Actions',
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            template(v-if="isIpfs(props.row.value)")
+              .row
+                .col-xs-12.col-sm-12.col-md-6
+                  div(
+                    class='text-brand-primary text-capitalize animated-icon'
+                    @click='openIPFS(props.row.value )'
+                  ) IPFS
+            template(v-if="isEncrypt(props.row.value)")
+              .row
+                .col-xs-12.col-sm-12.col-md-6
+                  div(
+                    class='text-brand-primary text-capitalize animated-icon'
+                    @click="decryptValue(props.row.value, props.row, props.rowIndex )"
+                  ) Decrypt
+            template
+              .row.justify-between
+                .col-xs-12.col-sm-12.col-md-6
+                  div(
+                    class='text-brand-primary text-capitalize animated-icon'
+                    @click='onEditRow(props.row, props.rowIndex )'
+                  ) Edit
+                .col-xs-12.col-sm-12.col-md-6
+                  div(
+                    class='text-capitalize animated-icon'
+                    style='color: #DC2626'
+                    @click='onEraseRow(props.rowIndex )'
+                  ) Delete
+        template(v-else)#EditMode
+          q-td(
+            key="key",
+            :props="props",
+            size="xl"
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
             TInput(
               v-model="newData.key"
               dense
               placeholder="Key"
             )
-        q-td(
-          key="value",
-          :props="props",
-          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        )
-          div(
-            v-if="editableRow !== props.rowIndex"
-          ) {{ /(T\d\d:\d\d:\d\d)/.test(props.row.value) ? dateToString(props.row.value) : props.row.value}}
-          template(v-else)
+          q-td(
+            key="value",
+            style="word-break: break-all;"
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
             TInput(
               v-model="newData.value"
               dense
+              :type="'textarea'"
+              class="verticalCenter"
               placeholder="Value"
             )
-        q-td(
-          key="dataType",
-          :props="props",
-          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        )
-          div(
-            v-if="editableRow !== props.rowIndex"
-          ) {{ getDataType(props.row.dataType) }}
-          template(v-else)
+            .row
+              q-toggle(
+                size='xs'
+                no-hover
+                v-model='props.row.optional.encrypt'
+                label='Encrypt'
+                @input='onEncrypt(props.row.value)'
+              )
+              q-toggle(
+                size='xs'
+                v-model='props.row.optional.ipfs'
+                label='IPFS'
+                @input='onIpfs(props.row.value,props.row.optional.ipfs)'
+              )
+          q-td(
+            key="dataType",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
             .q-mt-md
               TSelect(
                 v-model="newData.dataType"
@@ -99,34 +161,22 @@
                 :options="optionsSelect"
                 dense
                 )
-        q-td(
-          v-if="isEdit  && editableRow !== props.rowIndex"
-          key='Actions',
-          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        )
-          .row
-            .col-6
-              div(
-                class='text-brand-primary text-capitalize text-bold animated-icon'
-                @click='onEditRow(props.row, props.rowIndex )'
-              ) Edit
-            .col-6
-              div(
-                class='text-capitalize text-bold animated-icon'
-                style='color: #DC2626'
-                @click='onEraseRow(props.rowIndex )'
-              ) Delete
-        q-td(
-          v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex"
-          key='Save'
-          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        )
-          .row.justify-center
-            div(
-              class='text-capitalize text-bold animated-icon text-brand-primary'
-              @click='onSave(props.rowIndex)'
-            )
-              | Save
+          q-td(
+            v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex"
+            key='Save'
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            .row
+              .col-xs-12.col-sm-12.col-md-6
+                div(
+                  class='text-capitalize text-bold animated-icon text-brand-primary'
+                  @click='onSave(props.rowIndex, props.row)'
+                ) Save
+              .col-xs-12.col-sm-12.col-md-6
+                div(
+                  class='text-capitalize text-bold animated-icon text-brand-primary'
+                  @click='onCancel(props.rowIndex, props.row)'
+                ) Cancel
   .row.justify-end
     q-icon(
         v-if='isEdit'
@@ -139,16 +189,17 @@
 </template>
 
 <script>
+import BrowserIpfs from 'src/services/BrowserIpfs.js'
 import { mapGetters } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
-import TSelect from '../../../../../components/select/t-select.vue'
-import CryptoDialog from './crypto-dialog.vue'
+import TSelect from '~/components/select/t-select.vue'
+import Encrypt from '~/utils/EncryptUtil'
+import customRegex from 'src/const/customRegex.js'
 export default {
   name: 'ContentGroup',
   components: {
     TInput,
-    TSelect,
-    CryptoDialog
+    TSelect
   },
   props: {
     content_group_data: {
@@ -157,6 +208,10 @@ export default {
     },
     index_content_group: {
       type: String
+    },
+    cryptoKey: {
+      type: String,
+      required: false
     }
   },
   computed: {
@@ -164,6 +219,7 @@ export default {
   },
   mounted () {
     if (this.getIsEdit) {
+      this.modifiedData()
       this.isEdit = true
       this.visibleColumns.push('actions')
     } else {
@@ -172,7 +228,7 @@ export default {
   },
   data () {
     return {
-      openCryptoDialog: false,
+      typeInput: true,
       title: undefined,
       contentGroupCopy: this.content_group_data,
       editableRow: false,
@@ -204,6 +260,11 @@ export default {
         }
       ],
       newData: {
+        optional: {
+          encrypt: false,
+          ipfs: false,
+          file: undefined
+        },
         title: undefined,
         key: undefined,
         value: undefined,
@@ -220,7 +281,7 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: ' width:15%; font-size:12px;',
+          headerStyle: 'width:30%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           field: (row) => row.key,
           sortable: true
@@ -229,7 +290,7 @@ export default {
           name: 'value',
           label: 'Value',
           align: 'left',
-          headerStyle: 'width:64%; font-size:12px;',
+          headerStyle: 'width:45%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.value,
@@ -239,7 +300,7 @@ export default {
           name: 'dataType',
           label: 'Data Type',
           align: 'left',
-          headerStyle: 'width:10%; font-size:12px;',
+          headerStyle: 'width:15%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
@@ -258,6 +319,34 @@ export default {
     }
   },
   methods: {
+    openIPFS (cid) {
+      let url = 'https://ipfs.io/ipfs/' + cid
+      window.open(url, '_blank')
+    },
+    async saveStringIPFS (saveInIPFS, value) {
+      if (saveInIPFS) {
+        this.$q.loading.show({
+          message: 'Saving in IPFS...'
+        })
+        try {
+          var ipfsString = await BrowserIpfs.addAsJson({ data: value })
+        } catch (e) {
+          this.showErrorMsg('Error occurred while data was saving in IPFS. ' + e)
+        } finally {
+          this.$q.loading.hide()
+        }
+        return ipfsString
+      }
+    },
+    modifiedData () {
+      this.contentGroupCopy.forEach(element => {
+        element.optional = {
+          encrypt: false,
+          ipfs: false,
+          file: undefined
+        }
+      })
+    },
     getDataType (val) {
       const types = {
         c: 'Checksum256',
@@ -269,21 +358,79 @@ export default {
       }
       return types[val]
     },
+    encryptValue (value) {
+      if (this.cryptoKey) {
+        return Encrypt.encryptText(value, this.cryptoKey)
+      }
+    },
+    decryptValue (value, row, rowIndex) {
+      if (this.cryptoKey) {
+        row.value = (Encrypt.decryptText(value, this.cryptoKey))
+        this.contentGroupCopy.splice(rowIndex, row)
+      } else {
+        this.$emit('openDialog', true)
+      }
+    },
+    isEncrypt (value) {
+      return value.substring(0, 2) === 'U2'
+    },
+    isIpfs (value) {
+      var regexIPFS = new RegExp(customRegex.IPFS)
+      return regexIPFS.test(value)
+    },
+    onEncrypt (value) {
+      this.$forceUpdate()
+      if (!this.cryptoKey) {
+        this.$emit('openDialog', true)
+      }
+    },
+    async onIpfs (value, saveInIPFS) {
+      this.$forceUpdate()
+    },
     onEditRow (row, rowIndex) {
       if (row) {
         this.newData = row
       }
       console.log(this.newData)
       this.editableRow = rowIndex
+      // this.openCryptoDialog = true
     },
     onEraseRow (rowIndex) {
       this.contentGroupCopy.splice(rowIndex, 1)
       // TODO: Push into delete
     },
-    onSave (rowIndex) {
+    async onSave (rowIndex, row) {
+      let obj = row.optional
+      console.log(obj)
+      if (obj.encrypt && !obj.ipfs) {
+        this.newData.optional.encrypt = true
+        this.newData.optional.ipfs = false
+        if (!this.isEncrypt(this.newData.value)) {
+          this.newData.value = await this.encryptValue(this.newData.value)
+        }
+      } else if (!obj.encrypt && obj.ipfs) {
+        this.newData.optional.encrypt = false
+        this.newData.optional.ipfs = true
+        if (!this.isIpfs(this.newData.value) && this.newData.value) {
+          this.newData.value = await this.saveStringIPFS(true, this.newData.value)
+        }
+      } else if (obj.encrypt && obj.ipfs) {
+        this.newData.optional.encrypt = true
+        this.newData.optional.ipfs = true
+        // TODO: First retrieve ipfs
+        if (!this.isEncrypt(this.newData.value)) {
+          this.newData.value = await this.encryptValue(this.newData.value)
+        }
+        if (!this.isIpfs(this.newData.value) && this.newData.value) {
+          this.newData.value = await this.saveStringIPFS(true, this.newData.value)
+        }
+      }
       this.contentGroupCopy.splice(rowIndex, this.newData)
       this.editableRow = undefined
       // TODO: send to the parent component to sign transaction
+    },
+    onCancel () {
+      this.editableRow = undefined
     },
     onAddRow () {
       // TODO: Save the new row to sign
@@ -304,10 +451,6 @@ export default {
     },
     onDeleteTitle () {
       console.log('Delete title ' + this.content_group_data[0].title)
-    },
-    onCloseDialog (cryptoKey) {
-      this.openCryptoDialog = false
-      alert(cryptoKey)
     }
   }
 }
@@ -338,5 +481,8 @@ export default {
   width : 85.78px
 .btnTailwind
   width 108px
-
+.verticalCenter
+  margin-top: 27px
+.q-toggle__inner--truthy
+  color: #4338CA !important
 </style>
