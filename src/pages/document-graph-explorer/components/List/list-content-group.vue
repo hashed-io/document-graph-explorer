@@ -86,7 +86,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .btnTailwind
-  width: 200px !important
+  width: 170px !important
 .keyIcon
   font-size: 24px
   color: #4338CA !important

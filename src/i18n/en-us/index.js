@@ -115,7 +115,10 @@ export default {
         title: 'Extend Document'
       },
       edit: {
-        title: 'Edit Document'
+        title: 'Edit Document',
+        contentGroup: {
+          tooltip: 'Saved in IPFS'
+        }
       },
       edges: {
         noEdges: 'This document does not contain edges',

@@ -32,6 +32,7 @@
         )
         q-btn(
           unelevated
+          no-caps
           class="btnTailwind q-mt-md"
           label='Add edge'
           @click ="addEdge"

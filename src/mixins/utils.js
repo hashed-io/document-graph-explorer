@@ -44,13 +44,14 @@ export const utils = {
     showIsLoading (state) {
       this.setIsLoading(state)
     },
+    // TODO: 13 nov 2021
     dateToString (_date) {
       if (!_date) return _date
       var date = new Date(_date.replace(/ /g, 'T'))
-      return [
-        'January', 'February', 'March', 'April', 'May', 'June', 'July',
-        'August', 'September', 'October', 'November', 'December'
-      ][date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
+      return date.getDate() + ' ' + [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+        'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ][date.getMonth()] + ', ' + date.getFullYear()
     }
   }
 }

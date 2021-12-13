@@ -4,16 +4,11 @@
     #Title
       template(v-if="!editableTitle")
         .row.justify-start.q-pb-md
-          .col-xs-12.col-sm-2
-            .text-h6.q-px-md {{content_group_data[0].title}}
-          .col-xs-12.col-sm-1
-            q-btn(
-              class="btnEdit btnTailwind"
-              label='Edit'
-              unelevated
-              no-caps
+            .text-h6.q-pl-md {{content_group_data[0].title}}
+            div(
+              class='text-brand-primary text-capitalize animated-icon customAlign'
               @click='editableTitle = true'
-            )
+            ) Edit
       .row.q-py-lg(v-if="editableTitle")
         .col-xs-12.col-sm-6
           TInput(
@@ -23,20 +18,17 @@
           ).q-pr-md
         .col-xs-12.col-sm-5
           .row.q-col-gutter-md
-            .col-xs-6.col-sm-12.col-md-6
-              q-btn(
-                label='Save'
-                no-caps
+            .col-xs-6.col-sm-3.col-md-2
+              div(
+                class='text-brand-primary text-capitalize animated-icon alignButtons'
                 @click='onSaveTitle'
-                class="spaceBtn q-mr-sm btnTailwind"
-              )
-            .col-xs-6.col-sm-12.col-md-6
-              q-btn(
-                no-caps
-                label='Delete'
+              ) Save
+            .col-xs-6.col-sm-1.col-md-1
+              div(
+                class='text-brand-primary text-capitalize animated-icon alignButtons'
                 @click='onDeleteTitle'
-                class="spaceBtn btnTailwind"
-              )
+              ) Delete
+
   div.q-pb-md.text-subtitle1.q-pl-md(v-else) {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
@@ -53,7 +45,7 @@
     wrap-cells
   )
     template(#body="props")
-      q-tr(:props="props" )
+      q-tr(:props="props")
         template(v-if="editableRow !== props.rowIndex")#ReadMode
           q-td(
             key="key",
@@ -69,10 +61,26 @@
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             div(
+              v-if="!isIpfs(props.row.value)"
             ) {{ /(T\d\d:\d\d:\d\d)/.test(props.row.value) ? dateToString(props.row.value) : props.row.value}}
+            div(
+              v-else
+            )
+              a(
+                :href="'https://ipfs.io/ipfs/'+props.row.value"
+                target="_blank"
+                class="text-brand-primary"
+              ) {{props.row.value}}
+              q-tooltip(
+                content-class='bg-black'
+                transition-show="fade"
+                transition-hide="fade"
+                anchor="bottom middle"
+                self="top middle"
+                content-style="font-size: 12px"
+              ) {{$t('pages.documentExplorer.edit.contentGroup.tooltip')}}
           q-td(
             key="dataType",
-
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
@@ -83,13 +91,6 @@
             key='Actions',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            template(v-if="isIpfs(props.row.value)")
-              .row
-                .col-xs-12.col-sm-12.col-md-6
-                  div(
-                    class='text-brand-primary text-capitalize animated-icon'
-                    @click='openIPFS(props.row.value )'
-                  ) IPFS
             template(v-if="isEncrypt(props.row.value)")
               .row
                 .col-xs-12.col-sm-12.col-md-6
@@ -132,6 +133,7 @@
               v-model="newData.value"
               dense
               :type="'textarea'"
+              autogrow
               class="verticalCenter"
               placeholder="Value"
             )
@@ -169,12 +171,12 @@
             .row
               .col-xs-12.col-sm-12.col-md-6
                 div(
-                  class='text-capitalize text-bold animated-icon text-brand-primary'
+                  class='text-capitalize animated-icon text-brand-primary'
                   @click='onSave(props.rowIndex, props.row)'
                 ) Save
               .col-xs-12.col-sm-12.col-md-6
                 div(
-                  class='text-capitalize text-bold animated-icon text-brand-primary'
+                  class='text-capitalize animated-icon text-brand-primary'
                   @click='onCancel(props.rowIndex, props.row)'
                 ) Cancel
   .row.justify-end
@@ -281,7 +283,7 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: 'width:30%; font-size:12px;',
+          headerStyle: 'width:20%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           field: (row) => row.key,
           sortable: true
@@ -319,10 +321,6 @@ export default {
     }
   },
   methods: {
-    openIPFS (cid) {
-      let url = 'https://ipfs.io/ipfs/' + cid
-      window.open(url, '_blank')
-    },
     async saveStringIPFS (saveInIPFS, value) {
       if (saveInIPFS) {
         this.$q.loading.show({
@@ -457,6 +455,11 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.alignButtons
+  margin-top: 1.9rem
+.customAlign
+  margin-top: 0.4rem
+  margin-left: 2rem
 .column-responsive
   white-space: nowrap
   overflow: hidden
@@ -482,5 +485,5 @@ export default {
 .btnTailwind
   width 108px
 .verticalCenter
-  margin-top: 27px
+  margin-top: 30px
 </style>
