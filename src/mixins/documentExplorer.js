@@ -27,7 +27,11 @@ export const documentExplorer = {
     } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
       this.setContractInfo({ contract: queryParams.contract })
     }
-    this.loadData()
+    await this.loadData()
+    this.loading = false
+  },
+  beforeMount () {
+    this.loading = true
   },
   data () {
     return {
@@ -42,6 +46,7 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      loading: false,
       endpoint: undefined,
       contentsGroups: {},
       edges: [],

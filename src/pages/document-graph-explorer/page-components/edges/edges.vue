@@ -213,7 +213,7 @@ export default {
   methods: {
     calculateSizeEdges (edgesLength, resultQueryLength) {
       if (edgesLength > 0 && resultQueryLength > 0) {
-        let pixels = parseInt(edgesLength) * 110
+        let pixels = parseInt(edgesLength) * 95
         if (pixels > 600) {
           return 'height:' + '600' + 'px'
         } else {

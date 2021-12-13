@@ -117,7 +117,8 @@ export default {
       edit: {
         title: 'Edit Document',
         contentGroup: {
-          tooltip: 'Saved in IPFS'
+          ipfs: 'Saved in IPFS',
+          encrypt: 'Click to decrypt'
         }
       },
       edges: {

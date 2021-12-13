@@ -10,10 +10,10 @@ div
 </template>
 
 <script>
-import DocInformation from '../components/info/DocInformation.vue'
-import ListContentGroup from '../components/List/list-content-group.vue'
-import Edges from '../components/edges/edges.vue'
-import EraseBox from '../components/erase/eraseBox.vue'
+import DocInformation from '../page-components/info/DocInformation.vue'
+import ListContentGroup from '../page-components/List/list-content-group.vue'
+import Edges from '../page-components/edges/edges.vue'
+import EraseBox from '../page-components/erase/eraseBox.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 export default {
   name: 'DocumentExplorer',

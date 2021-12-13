@@ -80,7 +80,7 @@ div
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
-import TInput from '../../../components/input/t-input.vue'
+import TInput from '~/components/input/t-input.vue'
 import ApolloClient from 'apollo-boost'
 export default {
   name: 'ListDocs',
@@ -139,6 +139,8 @@ export default {
         }
       ]
     }
+  },
+  beforeMount () {
   },
   mounted () {
     this.loadDocuments()

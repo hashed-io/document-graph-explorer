@@ -8,7 +8,7 @@ div
   q-dialog(v-model='showDialogEdge')
     EdgeDialog(@EdgeData='addNewEdge')
   #BtnSection
-  .row.q-gutter-md
+  .row.q-gutter-md.q-py-md
     q-btn(
       unelevated
       label='Save'
@@ -25,11 +25,11 @@ div
 </template>
 
 <script>
-import DocInformation from '../components/info/DocInformation.vue'
-import ListContentGroup from '../components/List/list-content-group.vue'
-import Edges from '../components/edges/edges.vue'
-import EdgeDialog from '../components/dialog/edgeDialog.vue'
-import { documentExplorer } from '../../../mixins/documentExplorer'
+import DocInformation from '../page-components/info/DocInformation.vue'
+import ListContentGroup from '../page-components/List/list-content-group.vue'
+import Edges from '../page-components/edges/edges.vue'
+import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
+import { documentExplorer } from '~/mixins/documentExplorer'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],

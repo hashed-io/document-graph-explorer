@@ -1,7 +1,7 @@
 import camelCase from 'camelcase'
 // import { Asset, FiatAsset, TokenAsset } from '../domain'
-import Util from '../utils/Util'
-import TimeUtil from '../utils/TimeUtil'
+import Util from '~/utils/Util'
+import TimeUtil from '~/utils/TimeUtil'
 
 class BaseEosApi {
   constructor (eosApi, notifier, {

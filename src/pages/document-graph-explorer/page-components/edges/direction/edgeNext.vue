@@ -17,21 +17,25 @@
                     | {{ item.edgeName }}
                 template(id='icon')
                   q-icon(
-                    style='width:48px; height: 38px;'
                   ).animated-icon
-                  svg(width="48" height="38" viewBox="0 0 48 38" fill="none" xmlns="http://www.w3.org/2000/svg")
+                  svg(width="108" height="38" viewBox="0 0 108 38" fill="none" xmlns="http://www.w3.org/2000/svg")
+                    path(d="M98 13.5L106.5 19L98 24.5V13.5Z" fill="#BDBDBD")
+                    rect(x="19" y="18" width="82" height="2" fill="#BDBDBD")
                     circle(cx="9.5" cy="18.5" r="9.5" fill="#BDBDBD")
-                    path(d="M39.5 13.5L48 19L39.5 24.5V13.5Z" fill="#BDBDBD")
-                    rect(x="20" y="18" width="20" height="2" fill="#BDBDBD")
+
           .col-xs-6.col-sm-4
             .row.q-col-gutter-md
               .col-xs-6.col-sm-7.col-md-10
                 template(id='edgeInfo')
                   div
-                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
+                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.substring(0,40)+'...' : item.docId.substring(0,40)+'...'  }}
+                    q-tooltip(
+                      content-class='bg-black'
+                      transition-show="fade"
+                      transition-hide="fade"
+                    ) {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
                   .text-caption.text-grey-6
-                    | {{ item.type }}
-                  .text-caption.text-grey-6
+                    | {{ item.type+' | ' }}
                     | {{ dateToString(item.createdDate)}}
               .col-xs-6.col-sm-3.col-md-2
                 template(v-if="isEdit" id='delete')

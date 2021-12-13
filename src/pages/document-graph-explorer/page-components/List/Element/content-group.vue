@@ -4,7 +4,8 @@
     #Title
       template(v-if="!editableTitle")
         .row.justify-start.q-pb-md
-            .text-h6.q-pl-md {{content_group_data[0].title}}
+            div.q-pl-md
+              | {{content_group_data[0].title}}
             div(
               class='text-brand-primary text-capitalize animated-icon customAlign'
               @click='editableTitle = true'
@@ -29,7 +30,7 @@
                 @click='onDeleteTitle'
               ) Delete
 
-  div.q-pb-md.text-subtitle1.q-pl-md(v-else) {{content_group_data[0].title}}
+  div.q-pb-md.q-pl-md.fontSize(v-else) {{content_group_data[0].title}}
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
     :columns="columns",
@@ -55,16 +56,23 @@
             template(
             ) {{ props.row.key }}
           q-td(
+            key="dataType",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            div(
+            ) {{ getDataType(props.row.dataType) }}
+          q-td(
             key="value",
             :props="props",
             style="word-break: break-all;"
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             div(
-              v-if="!isIpfs(props.row.value)"
+              v-if="!isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             ) {{ /(T\d\d:\d\d:\d\d)/.test(props.row.value) ? dateToString(props.row.value) : props.row.value}}
             div(
-              v-else
+              v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
               a(
                 :href="'https://ipfs.io/ipfs/'+props.row.value"
@@ -78,26 +86,27 @@
                 anchor="bottom middle"
                 self="top middle"
                 content-style="font-size: 12px"
-              ) {{$t('pages.documentExplorer.edit.contentGroup.tooltip')}}
-          q-td(
-            key="dataType",
-            :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
+              ) {{$t('pages.documentExplorer.edit.contentGroup.ipfs')}}
             div(
-            ) {{ getDataType(props.row.dataType) }}
+              v-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
+            )
+              div(
+                style='color:#0ea5e9'
+                @click="decryptValue(props.row.value, props.row, props.rowIndex )"
+              ) {{props.row.value}}
+              q-tooltip(
+                content-class='bg-black'
+                transition-show="fade"
+                transition-hide="fade"
+                anchor="bottom middle"
+                self="top middle"
+                content-style="font-size: 12px"
+              ) {{$t('pages.documentExplorer.edit.contentGroup.encrypt')}}
           q-td(
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            template(v-if="isEncrypt(props.row.value)")
-              .row
-                .col-xs-12.col-sm-12.col-md-6
-                  div(
-                    class='text-brand-primary text-capitalize animated-icon'
-                    @click="decryptValue(props.row.value, props.row, props.rowIndex )"
-                  ) Decrypt
             template
               .row.justify-between
                 .col-xs-12.col-sm-12.col-md-6
@@ -115,42 +124,14 @@
           q-td(
             key="key",
             :props="props",
-            size="xl"
+            size="xl",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             TInput(
-              v-model="newData.key"
-              dense
+              v-model="newData.key",
+              dense,
               placeholder="Key"
             )
-          q-td(
-            key="value",
-            style="word-break: break-all;"
-            :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            TInput(
-              v-model="newData.value"
-              dense
-              :type="'textarea'"
-              autogrow
-              class="verticalCenter"
-              placeholder="Value"
-            )
-            .row
-              q-toggle(
-                size='xs'
-                no-hover
-                v-model='props.row.optional.encrypt'
-                label='Encrypt'
-                @input='onEncrypt(props.row)'
-              )
-              q-toggle(
-                size='xs'
-                v-model='props.row.optional.ipfs'
-                label='IPFS'
-                @input='onIpfs(props.row.value,props.row.optional.ipfs)'
-              )
           q-td(
             key="dataType",
             :props="props",
@@ -158,14 +139,42 @@
           )
             .q-mt-md
               TSelect(
-                v-model="newData.dataType"
-                :placeholder="newData.dataType"
+                v-model="newData.dataType",
+                :placeholder="newData.dataType",
                 :options="optionsSelect"
                 dense
                 )
           q-td(
-            v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex"
-            key='Save'
+            key="value",
+            style="word-break: break-all;",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            TInput(
+              v-model="newData.value",
+              dense,
+              :type="'textarea'",
+              autogrow,
+              class="verticalCenter",
+              placeholder="Value"
+            )
+            .row
+              q-toggle(
+                size='xs',
+                no-hover,
+                v-model='props.row.optional.encrypt',
+                label='Encrypt',
+                @input='onEncrypt(props.row)'
+              )
+              q-toggle(
+                size='xs',
+                v-model='props.row.optional.ipfs',
+                label='IPFS',
+                @input='onIpfs(props.row.value,props.row.optional.ipfs)'
+              )
+          q-td(
+            v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex",
+            key='Save',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             .row
@@ -283,29 +292,29 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: 'width:20%; font-size:12px;',
+          headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           field: (row) => row.key,
-          sortable: true
-        },
-        {
-          name: 'value',
-          label: 'Value',
-          align: 'left',
-          headerStyle: 'width:45%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
-          field: (row) => row.value,
           sortable: true
         },
         {
           name: 'dataType',
           label: 'Data Type',
           align: 'left',
-          headerStyle: 'width:15%; font-size:12px;',
+          headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
+          sortable: true
+        },
+        {
+          name: 'value',
+          label: 'Value',
+          align: 'left',
+          headerStyle: 'width:65%; font-size:12px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
+          style: 'color: rgb(107,114,128);',
+          field: (row) => row.value,
           sortable: true
         },
         {
@@ -370,11 +379,19 @@ export default {
       }
     },
     isEncrypt (value) {
-      return value.substring(0, 2) === 'U2'
+      if (value) {
+        return value.substring(0, 2) === 'U2'
+      } else {
+        return false
+      }
     },
     isIpfs (value) {
-      var regexIPFS = new RegExp(customRegex.IPFS)
-      return regexIPFS.test(value)
+      if (value) {
+        var regexIPFS = new RegExp(customRegex.IPFS)
+        return regexIPFS.test(value)
+      } else {
+        return false
+      }
     },
     onEncrypt (value) {
       this.$forceUpdate()
@@ -458,7 +475,6 @@ export default {
 .alignButtons
   margin-top: 1.9rem
 .customAlign
-  margin-top: 0.4rem
   margin-left: 2rem
 .column-responsive
   white-space: nowrap
@@ -486,4 +502,6 @@ export default {
   width 108px
 .verticalCenter
   margin-top: 30px
+.fontSize
+  font-size: 16px !important
 </style>

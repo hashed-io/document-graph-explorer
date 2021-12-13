@@ -21,10 +21,14 @@
               .col-xs-6.col-sm-7.col-md-10.alignItems
                 template(id='edgeInfo')
                   div
-                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
+                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.substring(0,40)+'...' : item.docId.substring(0,40)+'...'  }}
+                    q-tooltip(
+                      content-class='bg-black'
+                      transition-show="fade"
+                      transition-hide="fade"
+                    ) {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
                   .text-caption.text-grey-6
-                    | {{ item.type }}
-                  .text-caption.text-grey-6
+                    | {{ item.type+' | ' }}
                     | {{ dateToString(item.createdDate)}}
           .col-xs-6.col-sm-3
             .row.center-block.justify-end

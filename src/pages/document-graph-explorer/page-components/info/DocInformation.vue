@@ -1,31 +1,30 @@
 <template lang='pug'>
 q-card(bordered).cardTailWind
   q-card-section
-    .label.text-subtitle1.docInfoTitle
+    div.text-capitalize Document information
+    .label.docInfoTitle
       | {{docInfo.name}}
-  q-separator(color='grey-3')
+  q-separator.colorSeparator
   q-card-section
-    .row.q-col-gutter-md
-      .col-6.docInfoInside(v-if='docInfo.docId')
-        div.text-subtitle2.text-grey-6.text-uppercase Document ID
+    .row.q-gutter-lg
+      .docInfoInside(v-if='docInfo.docId')
+        div.text-grey-6.text-capitalize Document ID
         div {{ docInfo.docId }}
-      .col-6.docInfoInside
-        div.text-subtitle2.text-grey-6.text-uppercase Hash
+      .docInfoInside
+        div.text-grey-6.text-capitalize Hash
         div.column-responsive
           | {{ docInfo.hash }}
-          q-popup-edit(v-model="docInfo.hash")
-            q-input(v-model='docInfo.hash' autogrow dense readonly)
-      .col-6.docInfoInside
-        div.text-subtitle2.text-grey-6.text-uppercase Owner
+      .docInfoInside
+        div.text-grey-6.text-capitalize Owner
         div {{ docInfo.creator }}
-      .col-6.docInfoInside
-        div.text-subtitle2.text-grey-6.text-uppercase Document Type
+      .docInfoInside
+        div.text-grey-6.text-capitalize Document Type
         div {{ docInfo.type }}
-      .col-6.docInfoInside
-        div.text-subtitle2.text-grey-6.text-uppercase Created Date
+      .docInfoInside
+        div.text-grey-6.text-capitalize Created Date
         div {{ dateToString(docInfo.createdDate) }}
-      .col-6.docInfoInside
-        div.text-subtitle2.text-grey-6.text-uppercase Updated Date
+      .docInfoInside
+        div.text-grey-6.text-capitalize Updated Date
         div {{ dateToString(docInfo.updatedDate) }}
 </template>
 
@@ -53,6 +52,8 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
+.colorSeparator
+  color:#E5E7EB !important
 .label
   color: #9296A0
 .column-responsive
