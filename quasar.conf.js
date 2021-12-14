@@ -11,6 +11,7 @@ module.exports = function (ctx) {
     // https://quasar.dev/quasar-cli/cli-documentation/boot-files
     boot: [
       'layouts',
+      'markdown',
       'axios',
       'i18n',
       { path: 'ual', server: false },
@@ -106,7 +107,7 @@ module.exports = function (ctx) {
         'QStepperNavigation',
         'QTooltip',
         'QTimeline',
-        'QTimelineEntry'
+        'QTimelineEntry',
       ],
 
       directives: [

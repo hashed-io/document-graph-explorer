@@ -68,7 +68,7 @@
             style="word-break: break-all;"
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            div(
+            q-markdown(
               v-if="!isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             ) {{ /(T\d\d:\d\d:\d\d)/.test(props.row.value) ? dateToString(props.row.value) : props.row.value}}
             div(
