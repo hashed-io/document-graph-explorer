@@ -10,9 +10,9 @@ q-card(bordered).cardTailWind
       .docInfoInside(v-if='docInfo.docId')
         div.text-grey-6.text-capitalize Document ID
         div {{ docInfo.docId }}
-      .docInfoInside
+      .docInfoInside.column-responsive
         div.text-grey-6.text-capitalize Hash
-        div.column-responsive
+        div
           | {{ docInfo.hash }}
       .docInfoInside
         div.text-grey-6.text-capitalize Owner
@@ -52,6 +52,9 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
+.column-responsive
+  word-break: break-all
+
 .colorSeparator
   color:#E5E7EB !important
 .label

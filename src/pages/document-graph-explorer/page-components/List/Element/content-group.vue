@@ -26,7 +26,7 @@
               ) Save
             .col-xs-6.col-sm-1.col-md-1
               div(
-                class='text-brand-primary text-capitalize animated-icon alignButtons'
+                class='text-red-tail text-capitalize animated-icon alignButtons'
                 @click='onDeleteTitle'
               ) Delete
 
@@ -68,9 +68,10 @@
             style="word-break: break-all;"
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            q-markdown(
+            div(
               v-if="!isIpfs(props.row.value) && !isEncrypt(props.row.value)"
-            ) {{ /(T\d\d:\d\d:\d\d)/.test(props.row.value) ? dateToString(props.row.value) : props.row.value}}
+              :inner-html.prop="render(props.row.value, true)"
+            )
             div(
               v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
@@ -206,6 +207,7 @@ import TInput from '~/components/input/t-input.vue'
 import TSelect from '~/components/select/t-select.vue'
 import Encrypt from '~/utils/EncryptUtil'
 import customRegex from 'src/const/customRegex.js'
+import { marked } from 'marked'
 export default {
   name: 'ContentGroup',
   components: {
@@ -239,6 +241,7 @@ export default {
   },
   data () {
     return {
+      limitChars: 500,
       typeInput: true,
       title: undefined,
       contentGroupCopy: this.content_group_data,
@@ -330,6 +333,20 @@ export default {
     }
   },
   methods: {
+    render (val, split) {
+      if (val && typeof (val) === 'string') {
+        let chars = val.length
+        var md
+        if (chars > 500 && split) {
+          md = marked(val.substring(0, this.limitChars) + '**...**')
+        } else {
+          md = marked(val.substring(0, this.limitChars))
+        }
+        return md
+      } else {
+        return val
+      }
+    },
     async saveStringIPFS (saveInIPFS, value) {
       if (saveInIPFS) {
         this.$q.loading.show({
@@ -345,8 +362,9 @@ export default {
         return ipfsString
       }
     },
-    modifiedData () {
+    async modifiedData () {
       this.contentGroupCopy.forEach(element => {
+        // element.value = marked(element.value)
         element.optional = {
           encrypt: false,
           ipfs: false,
@@ -379,7 +397,7 @@ export default {
       }
     },
     isEncrypt (value) {
-      if (value) {
+      if (value && typeof (value) === 'string') {
         return value.substring(0, 2) === 'U2'
       } else {
         return false
@@ -472,6 +490,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.text-red-tail
+  color: #DC2626
 .alignButtons
   margin-top: 1.9rem
 .customAlign
