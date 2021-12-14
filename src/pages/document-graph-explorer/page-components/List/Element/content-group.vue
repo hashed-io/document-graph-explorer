@@ -71,6 +71,7 @@
             div(
               v-if="!isIpfs(props.row.value) && !isEncrypt(props.row.value)"
               :inner-html.prop="render(props.row.value, true)"
+              @click="seeValue(props.row.value)"
             )
             div(
               v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
@@ -202,12 +203,13 @@
 
 <script>
 import BrowserIpfs from 'src/services/BrowserIpfs.js'
-import { mapGetters } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import TSelect from '~/components/select/t-select.vue'
 import Encrypt from '~/utils/EncryptUtil'
 import customRegex from 'src/const/customRegex.js'
+import DOMPurify from 'dompurify'
 import { marked } from 'marked'
+import { mapGetters } from 'vuex'
 export default {
   name: 'ContentGroup',
   components: {
@@ -333,14 +335,32 @@ export default {
     }
   },
   methods: {
+    seeValue (value) {
+      if (value.length > this.limitChars) {
+        let md = DOMPurify.sanitize(marked(value))
+        this.$q.dialog({
+          title: 'Complete value',
+          style: 'border-radius:10px;',
+          position: 'standard',
+          seamless: false,
+          transitionShow: 'fade',
+          transitionHide: 'fade',
+          message: md,
+          html: true,
+          ok: false
+        }).onOk(() => {
+        // console.log('OK')
+        })
+      }
+    },
     render (val, split) {
       if (val && typeof (val) === 'string') {
         let chars = val.length
         var md
         if (chars > 500 && split) {
-          md = marked(val.substring(0, this.limitChars) + '**...**')
+          md = DOMPurify.sanitize(marked(val.substring(0, this.limitChars) + '<br>...'))
         } else {
-          md = marked(val.substring(0, this.limitChars))
+          md = DOMPurify.sanitize(marked(val.substring(0, this.limitChars)))
         }
         return md
       } else {
@@ -490,6 +510,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.cardTailWind
+  border-radius: 50px !important
+  width: 500px !important
 .text-red-tail
   color: #DC2626
 .alignButtons
