@@ -22,15 +22,16 @@ div.q-pt-md
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
   q-card(
+    v-if='edges.length > 0'
     bordered
-      style="min-height:50px; max-height:auto"
+    style="min-height:150px; max-height:auto"
   ).cardTailWind
     q-scroll-area(
       :thumb-style="thumbStyle",
       :barStyle="barStyle",
       :style="calculateSizeEdges(edges.length, resultQuery.length)"
       id="scroll-area-with-virtual-scroll-1"
-      style="min-height:50px; height:1%"
+      style="min-height:150px; height:1%"
     )
       q-virtual-scroll(
         scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
@@ -82,7 +83,7 @@ div.q-pt-md
   border-radius: 10px
 </style>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import { validation } from '~/mixins/validation'
 import EmptyEdges from './empty-component/empty-edges.vue'
@@ -114,6 +115,7 @@ export default {
   mixins: [validation],
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit']),
+    ...mapState('documentGraph', ['isHashed']),
     resultQuery () {
       if (this.search) {
         const value = this.search
@@ -123,14 +125,22 @@ export default {
           )
         })
         if (filter.length === 0) {
-          filter = this.edges.filter(function (edges) {
-            return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-            edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-            edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-            edges.docId.indexOf(value) > -1
-          })
+          if (this.isHashed) {
+            filter = this.edges.filter(function (edges) {
+              return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+              edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+              edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+              edges.docId.indexOf(value) > -1
+            })
+          } else {
+            filter = this.edges.filter(function (edges) {
+              return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+              edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+              edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
+              edges.hash.indexOf(value) > -1
+            })
+          }
         }
-        console.log('Second Filter', filter)
         return filter
       } else {
         return this.edges

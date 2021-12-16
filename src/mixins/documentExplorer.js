@@ -1,7 +1,31 @@
 import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
+    let queryParams = this.$route.query
+    if (queryParams.hasOwnProperty('endpoint')) {
+      this.endpoint = queryParams.endpoint
+      this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      await this.loadFromEndpoint()
+    }
+    if ((queryParams.hasOwnProperty('document_id') || queryParams.hasOwnProperty('hash')) && this.document === undefined) {
+      await this.getDocInterface()
+      const docInterface = this.documentInterface
+      const documentID = (queryParams.hasOwnProperty('document_id')) ? queryParams.document_id : queryParams.hash
+      const response = await this.getDocumentsByDocId({
+        byElement: documentID,
+        type: 'Document',
+        props: '',
+        docInterface: docInterface,
+        isHashed: !(queryParams.hasOwnProperty('document_id'))
+      })
+      this.setDocument(response.queryDocument[0])
+      this.setIsEdit(false)
+      this.loadData()
+    } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
+      this.setContractInfo({ contract: queryParams.contract })
+    }
     this.loadData()
   },
   data () {
@@ -17,18 +41,62 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      endpoint: undefined,
       contentsGroups: {},
       edges: [],
       relationsEdges: {}
     }
   },
   computed: {
-    ...mapState('documentGraph', ['stackNavigation'])
+    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document'])
   },
   methods: {
-    ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getDocInterface', 'getTypesWithSystemNode']),
-    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation']),
+    ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
+    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
+    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    async getDocInterface () {
+      let docInterface = await this.getPropsType({
+        type: 'Document'
+      })
+      let interfaceString = ''
+      let flag
+      docInterface['__type'].fields.forEach(element => {
+        if (element.name === 'docId') {
+          flag = 1
+        }
+        interfaceString += element.name + '\n'
+      })
+      if (!flag) {
+        this.setIsHashed(true)
+      } else {
+        this.setIsHashed(false)
+      }
+      this.setDocInterface(interfaceString)
+      await this.setLocalStorage({
+        key: 'documentInterface',
+        value: interfaceString
+      })
+    },
+    async loadFromEndpoint () {
+      try {
+        this.modifyApolloEndpoint()
+        this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
+        let previousEndpoint = this.getLocalStorage({ key: 'apollo-endpoint' })
+        await this.modifyApolloEndpoint(previousEndpoint)
+      }
+    },
+    async modifyApolloEndpoint (localStorage) {
+      let endpoint = this.endpoint
+      if (localStorage) {
+        endpoint = localStorage
+      }
+      const client = new ApolloClient({
+        uri: endpoint
+      })
+      await this.changeEndpoint({ client })
+    },
     getDocumentInfo () {
       this.edges = []
       this.contentsGroups = {}
@@ -39,7 +107,9 @@ export const documentExplorer = {
       this.documentInfo.name = selectDocument.creator
       this.documentInfo.hash = selectDocument.hash
       this.documentInfo.creator = selectDocument.creator
-      this.documentInfo.docId = selectDocument.docId
+      if (selectDocument.hasOwnProperty('docId')) {
+        this.documentInfo.docId = selectDocument.docId
+      }
       this.documentInfo.type = selectDocument.type
       this.documentInfo.createdDate = selectDocument.createdDate
       this.documentInfo.updatedDate = selectDocument.createdDate
@@ -58,11 +128,17 @@ export const documentExplorer = {
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()
+
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
+      let byElement = this.documentInfo.docId
+      if (this.isHashed) {
+        byElement = this.documentInfo.hash
+      }
       let document = await this.retrieveDoc(
-        this.documentInfo.docId,
+        byElement,
         this.documentInfo.type,
-        contentGroups
+        contentGroups,
+        this.isHashed
       )
       console.log({ contentGroups, edges })
       let contentGroup = this.matchingContentGroups(document)
@@ -112,11 +188,12 @@ export const documentExplorer = {
       })
       return { contentGroups, edges }
     },
-    async retrieveDoc (docId, docType, contentGroups) {
+    async retrieveDoc (byElement, docType, contentGroups, isHashed) {
       const response = await this.getDocumentsByDocId({
-        docID: docId,
+        byElement: byElement,
         props: contentGroups,
-        type: docType
+        type: docType,
+        isHashed: isHashed
       })
       return response
     },
@@ -162,17 +239,21 @@ export const documentExplorer = {
     },
     async getEdges (edges) {
       this.edges = []
-      let query = this.makeQueryForEdgeInfo(edges)
+      let query = await this.makeQueryForEdgeInfo(edges)
       let responseEdges = await this.retrieveQuery(query)
       this.edges = this.processEdges(responseEdges)
     },
-    makeQueryForEdgeInfo (edges) {
+    async makeQueryForEdgeInfo (edges) {
       var query = ''
-      var docInterface = this.getDocInterface()
-      edges.map((element) => {
-        let _props = this.getCatalog().get(element.typeDoc)
+      var docInterface = this.documentInterface
+      for (const element of edges) {
+        let _props = await this.getPropsType({
+          type: element.typeDoc
+        })
+        _props = await _props['__type']['fields']
+        console.log(_props)
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        if (element.type === 'LIST' && element.edge !== 'vote') {
+        if (element.type === 'LIST' && element.edge !== 'vote' && element.edge !== 'passedprops') {
           if (found) {
             query += `${element.edge}{
               ${docInterface}
@@ -184,14 +265,20 @@ export const documentExplorer = {
             query += `${element.edge}{${docInterface}}\n`
           }
         }
-      })
+      }
       return query
     },
     async retrieveQuery (query) {
+      let byElement = this.documentInfo.docId
+      if (this.isHashed) {
+        byElement = this.documentInfo.hash
+      }
+      let _isHashed = this.isHashed
       const responseEdges = await this.getDocumentsByDocId({
-        docID: this.documentInfo.docId,
+        byElement: byElement,
         props: query,
         type: this.documentInfo.type,
+        isHashed: _isHashed,
         docInterface: false
       })
       return responseEdges
@@ -205,7 +292,6 @@ export const documentExplorer = {
       }
       let QLresponse = responseEdges[queryLabel][0]
       delete QLresponse['__typename']
-      console.log(QLresponse)
       for (const key in QLresponse) {
         if (QLresponse[key]) {
           if (QLresponse[key].length > 0) {

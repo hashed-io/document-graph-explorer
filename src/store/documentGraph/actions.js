@@ -52,15 +52,23 @@ export const changeEndpoint = async function ({ commit }, params) {
     throw new Error(e)
   }
 }
-export const setApiEndpoint = function ({ commit }, params) {
+export const setLocalStorage = function ({ commit }, params) {
   localStorage.setItem(params.key, params.value)
 }
-export const getApiEndpoint = function ({ commit }, params) {
+export const getLocalStorage = function ({ commit }, params) {
   try {
     let apiEndpoint = localStorage.getItem(params.key)
     return apiEndpoint
   } catch (e) {
     console.error('An error ocurred while trying to retrieve api endpoint', e)
     throw new Error(e)
+  }
+}
+export const getContractInformation = async function ({ commit }, params) {
+  try {
+    let contractInfo = await this.$apolloApi.getContractInfo()
+    return contractInfo
+  } catch (e) {
+    return undefined
   }
 }

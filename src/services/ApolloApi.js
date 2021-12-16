@@ -3,7 +3,6 @@ import {
   Contracts
 } from '~/const/Contracts'
 import { gql } from 'apollo-boost'
-
 class ApolloApi extends BaseEosApi {
   constructor ({
     eosApi,
@@ -21,15 +20,6 @@ class ApolloApi extends BaseEosApi {
       }
     )
     this.apollo = apollo
-    this.DocumentInterface = `
-        docId
-        docId_i
-        hash
-        type
-        creator
-        createdDate
-        __typename
-    `
   }
   changeEndpointApollo ({ client }) {
     this.apollo = client
@@ -57,23 +47,24 @@ class ApolloApi extends BaseEosApi {
     }
     `
     const { data } = await this.apollo.query({ query })
+    // console.log(data)
     return data
   }
-  async getDocumentsByDocId ({ docID, props, type, docInterface }) {
+  async getDocumentsByDocId ({ byElement, props, type, docInterface, isHashed }) {
     if (!props) {
       props = ''
     }
     const query = gql`
       query {
-        query${type}(filter: {docId: { eq: "${docID}"} } ) {
-          ${docInterface ? this.DocumentInterface.toString() : ''}
+        query${type}(filter: {${isHashed ? 'hash' : 'docId'}: { eq: "${byElement}"} } ) {
+          ${docInterface ? localStorage.getItem('documentInterface').toString() : ''}
           ${props}
         }
       }
     `
-    console.log(query)
+    console.log({ QUERY: query })
     const { data } = await this.apollo.query({ query })
-    console.log(data)
+    console.log({ DATA: data })
     return data
   }
   async getDocuments ({ number, props, type }) {
@@ -83,7 +74,7 @@ class ApolloApi extends BaseEosApi {
     const query = gql`
       query {
         query${type}(first:${number}) {
-          ${this.DocumentInterface}
+          ${localStorage.getItem('documentInterface')}
           ${props}
         }
       }
@@ -96,7 +87,7 @@ class ApolloApi extends BaseEosApi {
     const query = gql`
     query {
       query${type} {
-          ${this.DocumentInterface}
+          ${localStorage.getItem('documentInterface')}
         }
       }
     `
@@ -132,6 +123,20 @@ class ApolloApi extends BaseEosApi {
           }
         }
       }
+    `
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
+  async getContractInfo () {
+    const query = gql`
+    query{
+      queryDoccacheConfig{
+        contract
+        eosEndpoint
+        documentsTable
+        edgesTable
+      }
+    }
     `
     const { data } = await this.apollo.query({ query })
     return data
