@@ -51,7 +51,7 @@ export const utils = {
       return date.getDate() + ' ' + [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
         'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ][date.getMonth()] + ', ' + date.getFullYear()
+      ][date.getMonth()] + ' ' + date.getFullYear()
     }
   }
 }

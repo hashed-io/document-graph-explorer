@@ -14,8 +14,10 @@
         .col-xs-12.col-sm-6
           TInput(
             label='Title'
+            placeholder="Enter the title"
             v-model='content_group_data[0].title'
             dense
+            :rules="[rules.required]"
           ).q-pr-md
         .col-xs-12.col-sm-5
           .row.q-col-gutter-md
@@ -30,7 +32,8 @@
                 @click='onDeleteTitle'
               ) Delete
 
-  div.q-pb-md.q-pl-md.fontSize(v-else) {{content_group_data[0].title}}
+  div.q-pb-md.q-pl-md.fontSize.titleClass(v-else) {{content_group_data[0].title}}
+  #TABLE
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
     :columns="columns",
@@ -55,13 +58,6 @@
           )
             template(
             ) {{ props.row.key }}
-          q-td(
-            key="dataType",
-            :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            div(
-            ) {{ getDataType(props.row.dataType) }}
           q-td(
             key="value",
             :props="props",
@@ -105,6 +101,13 @@
                 content-style="font-size: 12px"
               ) {{$t('pages.documentExplorer.edit.contentGroup.encrypt')}}
           q-td(
+            key="dataType",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            div(
+            ) {{ getDataType(props.row.dataType) }}
+          q-td(
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
@@ -135,18 +138,6 @@
               placeholder="Key"
             )
           q-td(
-            key="dataType",
-            :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            .q-mt-md
-              TSelect(
-                v-model="newData.dataType",
-                :placeholder="newData.dataType",
-                :options="optionsSelect"
-                dense
-                )
-          q-td(
             key="value",
             style="word-break: break-all;",
             :props="props",
@@ -158,7 +149,7 @@
               :type="'textarea'",
               autogrow,
               class="verticalCenter",
-              placeholder="Value"
+              placeholder="Enter the value"
             )
             .row
               q-toggle(
@@ -174,6 +165,18 @@
                 label='IPFS',
                 @input='onIpfs(props.row.value,props.row.optional.ipfs)'
               )
+          q-td(
+            key="dataType",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+          )
+            .q-mt-md
+              TSelect(
+                v-model="newData.dataType",
+                :placeholder="newData.dataType",
+                :options="optionsSelect"
+                dense
+                )
           q-td(
             v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex",
             key='Save',
@@ -208,10 +211,12 @@ import TSelect from '~/components/select/t-select.vue'
 import Encrypt from '~/utils/EncryptUtil'
 import customRegex from 'src/const/customRegex.js'
 import DOMPurify from 'dompurify'
+import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
 import { mapGetters } from 'vuex'
 export default {
   name: 'ContentGroup',
+  mixins: [validation],
   components: {
     TInput,
     TSelect
@@ -297,9 +302,20 @@ export default {
           name: 'key',
           label: 'Key',
           align: 'left',
-          headerStyle: 'width:10%; font-size:12px;',
+          headerStyle: 'width:15%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
+          style: 'color: rgb(107,114,128);',
           field: (row) => row.key,
+          sortable: true
+        },
+        {
+          name: 'value',
+          label: 'Value',
+          align: 'left',
+          headerStyle: 'width:55%; font-size:12px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
+          style: 'color: rgb(107,114,128);',
+          field: (row) => row.value,
           sortable: true
         },
         {
@@ -310,16 +326,6 @@ export default {
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.dataType,
-          sortable: true
-        },
-        {
-          name: 'value',
-          label: 'Value',
-          align: 'left',
-          headerStyle: 'width:65%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
-          field: (row) => row.value,
           sortable: true
         },
         {
@@ -394,12 +400,12 @@ export default {
     },
     getDataType (val) {
       const types = {
-        c: 'Checksum256',
-        n: 'Name',
-        a: 'Asset',
-        t: 'Time',
-        s: 'String',
-        i: 'Int64'
+        c: 'checksum256',
+        n: 'name',
+        a: 'asset',
+        t: 'time',
+        s: 'string',
+        i: 'int64'
       }
       return types[val]
     },
@@ -453,8 +459,17 @@ export default {
       // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
+      const foundIndexRepeat = (element) => element.key === this.newData.key
+      let index = this.contentGroupCopy.findIndex(foundIndexRepeat)
+      if (index !== this.contentGroupCopy.length - 1) {
+        this.showErrorMsg('The key value is repeated.')
+        return
+      }
+      if (!row.key) {
+        this.showErrorMsg('Fill the Key value')
+        return
+      }
       let obj = row.optional
-      console.log(obj)
       if (obj.encrypt && !obj.ipfs) {
         this.newData.optional.encrypt = true
         this.newData.optional.ipfs = false
@@ -482,15 +497,15 @@ export default {
       this.editableRow = undefined
       // TODO: send to the parent component to sign transaction
     },
-    onCancel () {
+    onCancel (index, row) {
       this.editableRow = undefined
     },
     onAddRow () {
       // TODO: Save the new row to sign
       let emptyObject = {
         title: this.content_group_data[0].title,
-        key: 'Key',
-        value: 'Value',
+        key: '',
+        value: '',
         dataType: 's'
       }
       console.log(emptyObject)
@@ -499,8 +514,14 @@ export default {
       this.onEditRow(undefined, this.contentGroupCopy.length - 1)
     },
     onSaveTitle () {
-      this.editableTitle = false
-      console.log('Save title ' + this.content_group_data[0].title)
+      this.$parent.titleIsRepeated()
+      console.log('test')
+      // if (this.content_group_data[0].title) {
+      //   this.editableTitle = false
+      //   console.log('Save title ' + this.content_group_data[0].title)
+      // } else {
+      //   this.showErrorMsg('Fill the title field')
+      // }
     },
     onDeleteTitle () {
       console.log('Delete title ' + this.content_group_data[0].title)
@@ -510,6 +531,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.titleClass
+  color: rgb(107, 114, 128);
 .cardTailWind
   border-radius: 50px !important
   width: 500px !important

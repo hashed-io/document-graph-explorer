@@ -13,6 +13,11 @@ div
     :rules="[rules.required]"
     @input="$emit('update', content)"
   )
+    template(v-slot:selected)
+      template(v-if="value")
+        | {{getDataType(content)}}
+      template(v-else)
+        div(style="color: #646464;") {{'Select an option'}}
 </template>
 
 <script>
@@ -28,14 +33,25 @@ export default {
   },
   data () {
     return {
-      content: undefined
+      content: this.value
     }
   },
   methods: {
+    getDataType (val) {
+      const types = {
+        c: 'Checksum256',
+        n: 'Name',
+        a: 'Asset',
+        t: 'Time',
+        s: 'String',
+        i: 'Int64'
+      }
+      return types[val]
+    }
   }
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 
 </style>

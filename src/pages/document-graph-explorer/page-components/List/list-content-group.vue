@@ -15,6 +15,7 @@ div
     :index_content_group="index"
     :key="content_group+`${index}`"
     @openDialog="onOpenDialog"
+    @deleteTitle="onDeleteTitle"
     :cryptoKey="keyToEncrypt"
   )
   q-btn(
@@ -63,6 +64,13 @@ export default {
     }
   },
   methods: {
+    titleIsRepeated () {
+
+    },
+    onDeleteTitle (title) {
+      delete this.contents_groups[title]
+      this.$forceUpdate()
+    },
     onOpenDialog (bool) {
       this.openCryptoDialog = bool
     },

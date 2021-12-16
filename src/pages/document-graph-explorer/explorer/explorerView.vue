@@ -3,7 +3,7 @@ div
   div(v-if="loading" class="center")
     q-spinner-tail(
       color="indigo"
-      size="10.5em"
+      size="5.5em"
     )
 
   div(v-if="!loading")
@@ -150,9 +150,11 @@ export default {
 
 <style lang='stylus' scoped>
 .center
-  position: absolute
-  left:45%
-  top:40%
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
 .btnTailwind
   width: 120px
   font-size: 14px !important

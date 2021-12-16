@@ -119,6 +119,9 @@ export default {
         contentGroup: {
           ipfs: 'Saved in IPFS',
           encrypt: 'Click to decrypt'
+        },
+        cancel: {
+          text: 'If you continue your changes will not be saved.'
         }
       },
       edges: {

@@ -4,10 +4,10 @@ div.q-pt-md
     .col-8
       .q-py-md.text-h6.text-capitalize(v-if="edges.length > 0")
         | Edges
-    .col-4
+    .col-4.searchInput
       TInput(
         v-if="edges.length > 0"
-        label='search'
+        placeholder='Search'
         v-model='search'
         :dense='true'
         :debounce="750"
@@ -64,6 +64,8 @@ div.q-pt-md
           path(fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd")
 </template>
 <style lang="stylus" scoped>
+.searchInput
+  margin-top: 10px !important
 .cardWhite
   background: white
   &:hover

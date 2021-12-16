@@ -22,6 +22,7 @@ div
       no-caps
       class="btnTailwind"
     )
+  CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
 </template>
 
 <script>
@@ -29,6 +30,7 @@ import DocInformation from '../page-components/info/DocInformation.vue'
 import ListContentGroup from '../page-components/List/list-content-group.vue'
 import Edges from '../page-components/edges/edges.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
+import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 export default {
   name: 'DocumentExplorer',
@@ -37,11 +39,13 @@ export default {
     DocInformation,
     ListContentGroup,
     Edges,
-    EdgeDialog
+    EdgeDialog,
+    CancelDialog
   },
   data () {
     return {
-      showDialogEdge: false
+      showDialogEdge: false,
+      openDialog: false
     }
   },
   methods: {
@@ -53,6 +57,15 @@ export default {
       this.showDialogEdge = false
     },
     onCancel () {
+      this.openDialog = !this.openDialog
+      this.$forceUpdate()
+    },
+    onCancelModal () {
+      this.openDialog = false
+      this.$forceUpdate()
+    },
+    onOkModal () {
+      this.openDialog = false
       this.setIsEdit(false)
       this.$router.push({ name: 'DocumentExplorer' })
     }
@@ -61,4 +74,5 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
+
 </style>

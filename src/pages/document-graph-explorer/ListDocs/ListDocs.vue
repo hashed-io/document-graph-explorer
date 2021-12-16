@@ -1,11 +1,11 @@
 <template lang="pug">
 div
-  div(v-if="loadingData" class="center")
-    q-spinner-tail(
-      color="indigo"
-      size="10.5em"
-    )
-
+  q-spinner-tail(
+    color="indigo"
+    size="5.5em"
+    class="center"
+    v-if="loadingData"
+  )
   div(v-if="!loadingData")
     .row.q-pb-md.justify-between
       .col-4
@@ -152,8 +152,13 @@ export default {
     this.loadingData = true
   },
   async mounted () {
-    await this.loadDocuments()
-    this.loadingData = false
+    try {
+      await this.loadDocuments()
+    } catch (e) {
+      this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
+    } finally {
+      this.loadingData = false
+    }
   },
   computed: {
     ...mapState('documentGraph', ['isHashed'])
@@ -281,9 +286,11 @@ export default {
 
 <style lang="stylus" scoped>
 .center
-  position: absolute
-  left:45%
-  top:40%
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
 .container
   height: 200px;
 .TailWind

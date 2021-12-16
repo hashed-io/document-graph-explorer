@@ -1,31 +1,28 @@
 <template lang='pug'>
 q-card(bordered).cardTailWind
   q-card-section
-    div.text-capitalize Document information
-    .label.docInfoTitle
-      | {{docInfo.name}}
+    div.text-capitalize.documentHeader Header
   q-separator.colorSeparator
   q-card-section
-    .row.q-gutter-lg
+    .row.q-gutter-lg.justify-between
       .docInfoInside(v-if='docInfo.docId')
-        div.text-grey-6.text-capitalize Document ID
-        div {{ docInfo.docId }}
+        div.headerTitle.text-uppercase ID
+        div.headerField {{ docInfo.docId }}
       .docInfoInside.column-responsive
-        div.text-grey-6.text-capitalize Hash
-        div
-          | {{ docInfo.hash }}
+        div.headerTitle.text-uppercase Hash
+        div.headerField {{ docInfo.hash }}
       .docInfoInside
-        div.text-grey-6.text-capitalize Owner
-        div {{ docInfo.creator }}
+        div.headerTitle.text-uppercase Owner
+        div.headerField {{ docInfo.creator }}
       .docInfoInside
-        div.text-grey-6.text-capitalize Document Type
-        div {{ docInfo.type }}
+        div.headerTitle.text-uppercase Type
+        div.headerField {{ docInfo.type }}
       .docInfoInside
-        div.text-grey-6.text-capitalize Created Date
-        div {{ dateToString(docInfo.createdDate) }}
+        div.headerTitle.text-uppercase Created Date
+        div.headerField {{ dateToString(docInfo.createdDate) }}
       .docInfoInside
-        div.text-grey-6.text-capitalize Updated Date
-        div {{ dateToString(docInfo.updatedDate) }}
+        div.headerTitle.text-uppercase Updated Date
+        div.headerField {{ dateToString(docInfo.updatedDate) }}
 </template>
 
 <script>
@@ -52,6 +49,8 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
+.header
+  background: #FAFAFA
 .column-responsive
   word-break: break-all
 
