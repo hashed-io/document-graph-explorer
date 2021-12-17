@@ -13,13 +13,16 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
   name: 'BackComponent',
   data () {
     return {}
   },
   methods: {
+    ...mapMutations('documentGraph', ['clearStack']),
     onClick () {
+      this.clearStack()
       this.$router.push({ name: 'listDocs' })
     }
   }
