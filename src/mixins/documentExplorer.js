@@ -144,6 +144,9 @@ export const documentExplorer = {
       let typeSchema = await this.getSchemaOfType()
 
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
+      console.log('-------------------------')
+      console.log({ contentGroups, edges })
+      console.log('-------------------------')
       let byElement = this.documentInfo.docId
       if (this.isHashed) {
         byElement = this.documentInfo.hash
@@ -190,6 +193,9 @@ export const documentExplorer = {
     filterPropsAndEdges (typeSchema) {
       let contentGroups = ''
       let edges = []
+      console.log('1111111111111111')
+      console.log(typeSchema)
+      console.log('1111111111111111')
       typeSchema.forEach(element => {
         let type = element.type.kind
         if (type !== 'LIST' && type !== 'OBJECT') {

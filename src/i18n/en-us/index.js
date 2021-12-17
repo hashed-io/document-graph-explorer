@@ -55,7 +55,8 @@ export default {
       buttons: {
         createAccount: 'Create account',
         login: 'Sign In',
-        loginButton: 'Login with Telos'
+        loginButton: 'Login with Telos',
+        redirectButton: 'DGE'
       }
     },
     general: {

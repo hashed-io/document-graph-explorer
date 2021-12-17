@@ -8,7 +8,7 @@
               | {{content_group_data[0].title}}
             div(
               class='text-brand-primary text-capitalize animated-icon customAlign'
-              @click='editableTitle = true'
+              @click='editableTitle = true; previousTitle = content_group_data[0].title'
             ) Edit
       .row.q-py-lg(v-if="editableTitle")
         .col-xs-12.col-sm-6
@@ -170,7 +170,7 @@
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            .q-mt-md
+            .topAlign
               TSelect(
                 v-model="newData.dataType",
                 :placeholder="newData.dataType",
@@ -251,9 +251,10 @@ export default {
       limitChars: 500,
       typeInput: true,
       title: undefined,
-      contentGroupCopy: this.content_group_data,
+      contentGroupCopy: JSON.parse(JSON.stringify(this.content_group_data)),
       editableRow: false,
       editableTitle: false,
+      previousTitle: undefined,
       optionsSelect: [
         {
           label: 'Cheksum256',
@@ -448,9 +449,8 @@ export default {
     },
     onEditRow (row, rowIndex) {
       if (row) {
-        this.newData = row
+        this.newData = JSON.parse(JSON.stringify(row))
       }
-      console.log(this.newData)
       this.editableRow = rowIndex
       // this.openCryptoDialog = true
     },
@@ -459,13 +459,12 @@ export default {
       // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
-      const foundIndexRepeat = (element) => element.key === this.newData.key
-      let index = this.contentGroupCopy.findIndex(foundIndexRepeat)
-      if (index !== this.contentGroupCopy.length - 1) {
+      let count = this.contentGroupCopy.filter((obj) => obj.key === this.newData.key).length
+      if (count > 0 && row.key !== this.newData.key) {
         this.showErrorMsg('The key value is repeated.')
         return
       }
-      if (!row.key) {
+      if (!this.newData.key) {
         this.showErrorMsg('Fill the Key value')
         return
       }
@@ -493,7 +492,7 @@ export default {
           this.newData.value = await this.saveStringIPFS(true, this.newData.value)
         }
       }
-      this.contentGroupCopy.splice(rowIndex, this.newData)
+      this.contentGroupCopy.splice(rowIndex, 1, this.newData)
       this.editableRow = undefined
       // TODO: send to the parent component to sign transaction
     },
@@ -503,34 +502,39 @@ export default {
     onAddRow () {
       // TODO: Save the new row to sign
       let emptyObject = {
+        optional: {
+          encrypt: false,
+          ipfs: false,
+          file: undefined
+        },
         title: this.content_group_data[0].title,
         key: '',
         value: '',
         dataType: 's'
       }
-      console.log(emptyObject)
-      this.contentGroupCopy.push(emptyObject)
-      this.newData = emptyObject
-      this.onEditRow(undefined, this.contentGroupCopy.length - 1)
+      this.contentGroupCopy.push(JSON.parse(JSON.stringify(emptyObject)))
+      this.newData = JSON.parse(JSON.stringify(emptyObject))
+      this.onEditRow(this.newData, this.contentGroupCopy.length - 1)
     },
     onSaveTitle () {
-      this.$parent.titleIsRepeated()
-      console.log('test')
-      // if (this.content_group_data[0].title) {
-      //   this.editableTitle = false
-      //   console.log('Save title ' + this.content_group_data[0].title)
-      // } else {
-      //   this.showErrorMsg('Fill the title field')
-      // }
+      // TODO: Propagate the title to rest of the array
+      console.log({ prev: this.previousTitle, current: this.content_group_data[0].title })
+      let bool = this.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.content_group_data[0].title })
+      if (bool) {
+        this.editableTitle = false
+      }
+      this.$forceUpdate()
     },
     onDeleteTitle () {
-      console.log('Delete title ' + this.content_group_data[0].title)
+      this.$emit('deleteTitle', this.content_group_data[0].title)
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+.topAlign
+  padding-top: 1.3rem
 .titleClass
   color: rgb(107, 114, 128);
 .cardTailWind

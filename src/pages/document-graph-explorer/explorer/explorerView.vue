@@ -7,6 +7,7 @@ div
     )
 
   div(v-if="!loading")
+    BackComponent
     div.text-h6.q-pb-md
       | {{$t('pages.documentExplorer.explorer.title')}}
     DocInformation(:docInfo="documentInfo")
@@ -82,6 +83,7 @@ import Edges from '../page-components/edges/edges.vue'
 import EraseBox from '../page-components/erase/eraseBox.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import BackComponent from '~/components/backButton/backComponent.vue'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],
@@ -89,7 +91,8 @@ export default {
     DocInformation,
     ListContentGroup,
     Edges,
-    EraseBox
+    EraseBox,
+    BackComponent
   },
   watch: {
     $route (to, from) {

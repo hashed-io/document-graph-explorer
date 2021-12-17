@@ -43,7 +43,8 @@ div
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
             @click='seeDocument(props.row)'
-          ) {{ col.value }}
+          )
+            div(style='color: grey') {{ col.value }}
       template(v-slot:pagination="scope")
         q-btn(
             v-if="scope.pagesNumber > 2"
@@ -89,6 +90,7 @@ div
 import { mapActions, mapMutations, mapState } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import ApolloClient from 'apollo-boost'
+
 export default {
   name: 'ListDocs',
   data () {

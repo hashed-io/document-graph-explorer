@@ -2,15 +2,15 @@
 q-layout(view="hHh Lpr lFf").bg-layout
   q-header
     q-toolbar(class='bg-brand-primary')
-      q-btn(
-        flat
-        show-if-above
-        round
-        data-cy='menuButton'
-        @click="menu = !menu"
-        icon="fas fa-bars"
-        aria-label="Menu"
-      )
+      //- q-btn(
+      //-   flat
+      //-   show-if-above
+      //-   round
+      //-   data-cy='menuButton'
+      //-   @click="menu = !menu"
+      //-   icon="fas fa-bars"
+      //-   aria-label="Menu"
+      //- )
       q-toolbar-title.flex.items-center
         img.logo(src="statics/icons/hashed.png")
       right-menu-authenticated(v-if="isAuthenticated")
@@ -33,7 +33,7 @@ q-layout(view="hHh Lpr lFf").bg-layout
 
 <style lang="stylus" scoped>
 .logo
-  padding-left: 0.1vw
+  margin-left: 0.5vw
   max-height: 40px
   max-width: 100px
 .badge-left

@@ -17,7 +17,7 @@ div
       template(v-if="value")
         | {{getDataType(content)}}
       template(v-else)
-        div(style="color: #646464;") {{'Select an option'}}
+        div(style="color: #646464;") {{'Choose direction'}}
 </template>
 
 <script>

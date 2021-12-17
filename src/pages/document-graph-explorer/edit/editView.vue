@@ -22,7 +22,7 @@ div
       no-caps
       class="btnTailwind"
     )
-  CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
+  //- CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
 </template>
 
 <script>
@@ -57,8 +57,10 @@ export default {
       this.showDialogEdge = false
     },
     onCancel () {
-      this.openDialog = !this.openDialog
-      this.$forceUpdate()
+      this.$router.push({ name: 'DocumentExplorer' })
+      this.setIsEdit(false)
+      // this.openDialog = !this.openDialog
+      // this.$forceUpdate()
     },
     onCancelModal () {
       this.openDialog = false

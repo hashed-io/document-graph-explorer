@@ -6,14 +6,13 @@ div
   .row.q-col-gutter-md
     .col-2
       TSelect(
-        label='Direction'
         v-model='form.direction'
         :options='options'
         :dense="true"
       )
     .col-4
       TInput(
-        label='Edge Name'
+        placeholder='Edge name'
         v-model='form.edgeName'
         :dense='true'
       )
@@ -34,7 +33,7 @@ div
       @click='onCancel()'
       class='btnTailwind'
     )
-    CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
+    //- CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
 </template>
 
 <script>
@@ -71,7 +70,9 @@ export default {
   methods: {
     onCancel () {
       this.openDialog = true
+      this.setIsEdit(false)
       this.$forceUpdate()
+      this.$router.push({ name: 'DocumentExplorer' })
     },
     onCancelModal () {
       this.openDialog = false

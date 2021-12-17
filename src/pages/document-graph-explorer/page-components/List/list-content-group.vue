@@ -12,6 +12,7 @@ div
   ContentGroup(
     v-for="(content_group, index) in contents_groups",
     :content_group_data="content_group",
+    ref="content_group"
     :index_content_group="index"
     :key="content_group+`${index}`"
     @openDialog="onOpenDialog"
@@ -64,8 +65,25 @@ export default {
     }
   },
   methods: {
-    titleIsRepeated () {
-
+    titleIsRepeated (obj) {
+      let { prev, current } = obj
+      console.log(prev, current)
+      console.log(this.contents_groups)
+      let keys = Object.keys(this.contents_groups)
+      let count = keys.filter((element) => element === current).length
+      if (count === 0 && prev !== 'content_group') {
+        this.contents_groups[current] = this.contents_groups[prev]
+        delete this.contents_groups[prev]
+      } else if (count === 0 && prev === 'content_group') {
+        this.contents_groups[current] = this.contents_groups['Content_group']
+        delete this.contents_groups['Content_group']
+      } else {
+        this.showErrorMsg('Label duplicated')
+        return false
+      }
+      this.$forceUpdate()
+      return true
+      // delete this.contents_groups[prev]
     },
     onDeleteTitle (title) {
       delete this.contents_groups[title]
