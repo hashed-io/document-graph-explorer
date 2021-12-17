@@ -5,46 +5,53 @@
       q-toolbar-title New Edge Form
       q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
     q-card-section
-      .q-px-md
-        Tinput(
+      q-form(ref='edgeForm' @submit="addEdge").q-px-md
+        TSelectEdge(
           class="q-pt-md"
           v-model="form.direction"
-          label='Edge direction'
+          :options="options"
           dense
         )
         Tinput(
           class="q-pt-md"
           v-model="form.edgeName"
-          label='Edge Name'
+          placeholder='Edge Name'
           dense
+          :rules="[rules.required]"
         )
         Tinput(
           class="q-pt-md"
           v-model="form.system_nodeLabel_s"
-          label='System Node Label'
+          placeholder='System Node Label'
           dense
+          :rules="[rules.required]"
         )
         Tinput(
           class="q-pt-md"
           v-model="form.type"
-          label='Document Type'
+          placeholder='Document Type'
           dense
+          :rules="[rules.required]"
         )
         q-btn(
           unelevated
           no-caps
           class="btnTailwind q-mt-md"
           label='Add edge'
-          @click ="addEdge"
+          type='submit'
         )
 </template>
 
 <script>
 import Tinput from '~/components/input/t-input'
+import TSelectEdge from '~/components/select/TSelectEdge.vue'
+import { validation } from '../../../../mixins/validation'
 export default {
   name: 'EdgeDialog',
+  mixins: [validation],
   components: {
-    Tinput
+    Tinput,
+    TSelectEdge
   },
   data () {
     return {
@@ -59,12 +66,28 @@ export default {
         system_nodeLabel_s: undefined,
         type: undefined,
         edge: undefined
-      }
+      },
+      options: [
+        {
+          label: 'Previos edge',
+          value: 'prev'
+        },
+        {
+          label: 'Next edge',
+          value: 'next'
+        }
+      ]
     }
   },
   methods: {
     addEdge () {
-      this.$emit('EdgeData', this.form)
+      this.$refs.edgeForm.validate().then(success => {
+        if (success) {
+          this.$emit('EdgeData', this.form)
+        } else {
+          this.showErrorMsg('Form')
+        }
+      })
     }
   }
 }

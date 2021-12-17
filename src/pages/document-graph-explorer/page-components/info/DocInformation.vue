@@ -7,22 +7,22 @@ q-card(bordered).cardTailWind
     .row.q-gutter-lg.justify-between
       .docInfoInside(v-if='docInfo.docId')
         div.headerTitle.text-uppercase ID
-        div.headerField {{ docInfo.docId }}
+        div.headerField.q-pt-sm {{ docInfo.docId }}
       .docInfoInside.column-responsive
         div.headerTitle.text-uppercase Hash
-        div.headerField {{ docInfo.hash }}
+        div.headerField.q-pt-sm {{ docInfo.hash }}
       .docInfoInside
         div.headerTitle.text-uppercase Owner
-        div.headerField {{ docInfo.creator }}
+        div.headerField.q-pt-sm {{ docInfo.creator }}
       .docInfoInside
         div.headerTitle.text-uppercase Type
-        div.headerField {{ docInfo.type }}
+        div.headerField.q-pt-sm {{ docInfo.type }}
       .docInfoInside
         div.headerTitle.text-uppercase Created Date
-        div.headerField {{ dateToString(docInfo.createdDate) }}
+        div.headerField.q-pt-sm {{ dateToString(docInfo.createdDate) }}
       .docInfoInside
         div.headerTitle.text-uppercase Updated Date
-        div.headerField {{ dateToString(docInfo.updatedDate) }}
+        div.headerField.q-pt-sm {{ dateToString(docInfo.updatedDate) }}
 </template>
 
 <script>

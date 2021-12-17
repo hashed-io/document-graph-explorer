@@ -1,28 +1,35 @@
 <template lang='pug'>
 div
-  div.text-h6.q-pb-md
-    | {{$t('pages.documentExplorer.edit.title')}}
-  DocInformation(:docInfo="documentInfo")
-  ListContentGroup(:contents_groups="contentsGroups")
-  Edges(:edges="edges" :relations="relationsEdges" @showModal="openModal")
-  q-dialog(v-model='showDialogEdge')
-    EdgeDialog(@EdgeData='addNewEdge')
-  #BtnSection
-  .row.q-gutter-md.q-py-md
-    q-btn(
-      unelevated
-      label='Save'
-      no-caps
-      class="btnTailwind"
+  div(v-if="loading" class="center")
+    q-spinner-tail(
+      color="indigo"
+      size="5.5em"
     )
-    q-btn(
-      unelevated
-      label='Cancel'
-      @click='onCancel()'
-      no-caps
-      class="btnTailwind"
-    )
-  //- CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
+
+  div(v-if="!loading")
+    div.text-h6.q-pb-md
+      | {{$t('pages.documentExplorer.edit.title')}}
+    DocInformation(:docInfo="documentInfo")
+    ListContentGroup(:contents_groups="contentsGroups")
+    Edges(:edges="edges" :relations="relationsEdges" @showModal="openModal")
+    q-dialog(v-model='showDialogEdge')
+      EdgeDialog(@EdgeData='addNewEdge')
+    #BtnSection
+    .row.q-gutter-md.q-py-md
+      q-btn(
+        unelevated
+        label='Save'
+        no-caps
+        class="btnTailwind"
+      )
+      q-btn(
+        unelevated
+        label='Cancel'
+        @click='onCancel()'
+        no-caps
+        class="btnTailwind"
+      )
+    //- CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
 </template>
 
 <script>
@@ -44,6 +51,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       showDialogEdge: false,
       openDialog: false
     }
@@ -52,8 +60,13 @@ export default {
     openModal () {
       this.showDialogEdge = true
     },
-    addNewEdge (form) {
+    async addNewEdge (form) {
+      console.log('¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿')
+      console.log(this.edges)
       this.edges.push(form)
+      await this.$nextTick()
+      console.log('¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿')
+      console.log(this.edges)
       this.showDialogEdge = false
     },
     onCancel () {
@@ -76,5 +89,10 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
-
+.center
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
 </style>

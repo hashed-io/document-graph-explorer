@@ -137,6 +137,7 @@ export default {
       }
     },
     extendDocument () {
+      this.setIsEdit(true)
       this.$router.push({ name: 'extendDoc', query: { document_id: this.$route.query.document_id } })
     },
     editDocument () {
@@ -145,7 +146,7 @@ export default {
     },
     eraseDocument () {
       this.deleteDoc = true
-      // this.$router.push({ name: 'eraseDoc', query: { document_id: this.$route.query.document_id } })
+      // CALL ACTION TO DELETE ALL DOCUMENT
     }
   }
 }

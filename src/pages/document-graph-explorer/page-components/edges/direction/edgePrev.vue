@@ -12,20 +12,20 @@
           .col-xs-6.col-sm-4
             .row.q-col-gutter-xs.q-pt-xs.justify-start
               .col-xs-6.col-sm-3.col-md-2
-                template(id='iconPrev')
-                  q-icon(style="width: 20px; height:20px" class="cursor-pointer text-brand-primary")
+                template(v-if="!isEdit" id='iconPrev')
+                  q-icon(style="width: 40px; height:40px" class="cursor-pointer text-brand-primary")
                     svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
                       path(fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd")
                 template(v-if="isEdit" id='delete')
                   div(
-                    class='text-capitalize animated-icon alignCenter'
+                    class='text-capitalize animated-icon'
                     style='color: #DC2626'
                     @click='removeEdge(item)'
                   ) Delete
               .col-xs-6.col-sm-7.col-md-10
                 template(id='edgeInfo')
                   div
-                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.substring(0,40)+'...' : item.docId.substring(0,40)+'...'  }}
+                    | {{ showEdgeInfo(item) }}
                     q-tooltip(
                       content-class='bg-black'
                       transition-show="fade"
@@ -42,7 +42,12 @@
                     .row
                       template(id='edgeName')
                         .text-caption.textWrap.alignCenterEdge
-                          | {{ item.edgeName }}
+                          | {{ (item.edgeName.length > 10) ? item.edgeName.substring(0,10)+'...' : item.edgeName  }}
+                          q-tooltip(
+                            content-class='bg-black'
+                            transition-show="fade"
+                            transition-hide="fade"
+                          ) {{ item.edgeName  }}
                     .row
                       template(id='arrowIcon')
                         q-icon(class="animated-icon" style="width: 24px; height:24px; top:-2px; color: #9e9e9e")
@@ -52,7 +57,7 @@
                   .col-5
                     template(id='icon')
                       q-icon(
-                        style="width:34px; height:34px; right:5px;"
+                        style="width:25px; height:25px; top:10px; right:5px;"
                         class='animated-icon'
                       )
                         svg(width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg")
@@ -60,6 +65,46 @@
 
 </template>
 
+<script>
+export default {
+  name: 'EdgePrev',
+  props: {
+    item: {
+      type: Object,
+      required: true
+    },
+    isEdit: {
+      type: Boolean,
+      required: true,
+      default: function () {
+        return false
+      }
+    },
+    index: {
+      type: Number,
+      required: true
+    }
+  },
+  methods: {
+    showEdgeInfo (item) {
+      let len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.docId.length
+      if (item.system_nodeLabel_s !== '' && len > 60) {
+        return item.system_nodeLabel_s.substring(0, 60) + '...'
+      } else if (item.system_nodeLabel_s === '' && len > 60) {
+        return item.docId.substring(0, 60) + '...'
+      } else {
+        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+      }
+    },
+    onNextNode (item) {
+      this.$emit('navigate', item)
+    },
+    removeEdge (item) {
+      this.$emit('deleteEdge', { edge: item, index: this.index })
+    }
+  }
+}
+</script>
 <style lang='stylus' scoped>
 .verticalContent
   border-color: red !important
@@ -94,33 +139,3 @@
   margin: auto;
   padding-top: 50%;
 </style>
-<script>
-export default {
-  name: 'EdgePrev',
-  props: {
-    item: {
-      type: Object,
-      required: true
-    },
-    isEdit: {
-      type: Boolean,
-      required: true,
-      default: function () {
-        return false
-      }
-    },
-    index: {
-      type: Number,
-      required: true
-    }
-  },
-  methods: {
-    onNextNode (item) {
-      this.$emit('navigate', item)
-    },
-    removeEdge (item) {
-      this.$emit('deleteEdge', { edge: item, index: this.index })
-    }
-  }
-}
-</script>

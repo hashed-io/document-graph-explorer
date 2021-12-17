@@ -16,7 +16,7 @@
                   .col-6
                     template(id='icon')
                       q-icon(
-                        style="width:34px; height:34px;"
+                        style="width:25px; height:25px; top:10px;"
                         class='animated-icon'
                       )
                         svg(width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg")
@@ -25,7 +25,12 @@
                     .row
                       template(id='edgeName')
                         .text-caption.textWrap
-                          | {{ item.edgeName }}
+                          | {{ (item.edgeName.length > 10) ? item.edgeName.substring(0,10)+'...' : item.edgeName  }}
+                          q-tooltip(
+                            content-class='bg-black'
+                            transition-show="fade"
+                            transition-hide="fade"
+                          ) {{ item.edgeName }}
                     .row
                       template(id='arrowIcon')
                         q-icon(class="animated-icon" style="width: 24px; height:24px; color:#9e9e9e")
@@ -37,7 +42,7 @@
               .col-xs-6.col-sm-7.col-md-10
                 template(id='edgeInfo')
                   div
-                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.substring(0,40)+'...' : item.docId.substring(0,40)+'...'  }}
+                    | {{showEdgeInfo(item)}}
                     q-tooltip(
                       content-class='bg-black'
                       transition-show="fade"
@@ -47,8 +52,8 @@
                     | {{ item.type+' | ' }}
                     | {{ dateToString(item.createdDate)}}
               .col-xs-6.col-sm-3.col-md-2
-                template(id='iconNext')
-                  q-icon(style="width: 20px; height:20px" class="cursor-pointer text-brand-primary")
+                template(v-if="!isEdit" id='iconNext')
+                  q-icon(style="width: 40px; height:40px" class="cursor-pointer text-brand-primary")
                     svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor")
                       path(fill-rule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd")
                       path(fill-rule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clip-rule="evenodd")
@@ -66,7 +71,7 @@
   margin-top: 4%
 .alignCenter
   margin: auto;
-  padding-top: 50%;
+  padding-left: 20%;
 .cardWhite
   background: white
   &:hover
@@ -86,7 +91,6 @@
 .center-block
   text-align: center
 .textWrap
-  word-break: break-all
   color:#9e9e9e
 </style>
 <script>
@@ -110,6 +114,16 @@ export default {
     }
   },
   methods: {
+    showEdgeInfo (item) {
+      let len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.docId.length
+      if (item.system_nodeLabel_s !== '' && len > 60) {
+        return item.system_nodeLabel_s.substring(0, 60) + '...'
+      } else if (item.system_nodeLabel_s === '' && len > 60) {
+        return item.docId.substring(0, 60) + '...'
+      } else {
+        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+      }
+    },
     onNextNode () {
       this.$emit('navigate', this.item)
     },

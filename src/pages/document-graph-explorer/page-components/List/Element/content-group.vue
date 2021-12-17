@@ -4,7 +4,7 @@
     #Title
       template(v-if="!editableTitle")
         .row.justify-start.q-pb-md
-            div.q-pl-md
+            div.q-pl-md.color
               | {{content_group_data[0].title}}
             div(
               class='text-brand-primary text-capitalize animated-icon customAlign'
@@ -72,34 +72,37 @@
             div(
               v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
-              a(
-                :href="'https://ipfs.io/ipfs/'+props.row.value"
-                target="_blank"
-                class="text-brand-primary"
-              ) {{props.row.value}}
-              q-tooltip(
-                content-class='bg-black'
-                transition-show="fade"
-                transition-hide="fade"
-                anchor="bottom middle"
-                self="top middle"
-                content-style="font-size: 12px"
-              ) {{$t('pages.documentExplorer.edit.contentGroup.ipfs')}}
+              q-chip(
+                :ripple="false"
+                size="12px"
+                clickable
+                @click="openIPFS(props.row.value)"
+              ) IPFS
+                q-tooltip(
+                  content-class='bg-black'
+                  transition-show="fade"
+                  transition-hide="fade"
+                  anchor="bottom middle"
+                  self="top middle"
+                  content-style="font-size: 12px"
+                ) {{$t('pages.documentExplorer.edit.contentGroup.ipfs')}}
             div(
               v-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
             )
-              div(
-                style='color:#0ea5e9'
+              q-chip(
+                :ripple="false"
+                size="12px"
+                clickable
                 @click="decryptValue(props.row.value, props.row, props.rowIndex )"
-              ) {{props.row.value}}
-              q-tooltip(
-                content-class='bg-black'
-                transition-show="fade"
-                transition-hide="fade"
-                anchor="bottom middle"
-                self="top middle"
-                content-style="font-size: 12px"
-              ) {{$t('pages.documentExplorer.edit.contentGroup.encrypt')}}
+              ) Encrypted
+                q-tooltip(
+                  content-class='bg-black'
+                  transition-show="fade"
+                  transition-hide="fade"
+                  anchor="bottom middle"
+                  self="top middle"
+                  content-style="font-size: 12px"
+                ) {{$t('pages.documentExplorer.edit.contentGroup.encrypt')}}
           q-td(
             key="dataType",
             :props="props",
@@ -332,7 +335,7 @@ export default {
         {
           name: 'actions',
           label: 'Actions',
-          align: 'center',
+          align: 'left',
           headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           style: 'color: rgb(107,114,128);',
@@ -342,6 +345,9 @@ export default {
     }
   },
   methods: {
+    openIPFS (cid) {
+      window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+    },
     seeValue (value) {
       if (value.length > this.limitChars) {
         let md = DOMPurify.sanitize(marked(value))
@@ -533,6 +539,11 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.color
+  color: #686E7C
+  font-weight: 500
+.colorEncrypt
+  color: #059669
 .topAlign
   padding-top: 1.3rem
 .titleClass

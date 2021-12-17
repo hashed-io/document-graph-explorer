@@ -12,13 +12,19 @@ div.q-pt-md
         :dense='true'
         :debounce="750"
       )
+
   EmptyEdges(
-    v-if='edges.length === 0'
+    v-if="edges.length === 0 && withoutEdges"
+    :label="$t('pages.documentExplorer.edges.title')"
+    :msg="$t('pages.documentExplorer.edges.extend')"
+  )
+  EmptyEdges(
+    v-if='edges.length === 0 && !withoutEdges'
     :label="$t('pages.documentExplorer.edges.title')"
     :msg="$t('pages.documentExplorer.edges.noEdges')"
     )
   EmptyEdges(
-    v-if='edges.length > 0 && resultQuery.length === 0'
+    v-if='edges.length > 0 && resultQuery.length === 0 && !withoutEdges'
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
   q-card(
@@ -111,6 +117,11 @@ export default {
       type: Array,
       required: true,
       default: () => []
+    },
+    withoutEdges: {
+      type: Boolean,
+      required: false,
+      default: () => false
     }
   },
   mixins: [validation],

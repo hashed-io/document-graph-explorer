@@ -5,10 +5,10 @@ div
     | {{$t('pages.documentExplorer.extend.title')}}
   .row.q-col-gutter-md
     .col-2
-      TSelect(
+      TSelectExtend(
         v-model='form.direction'
         :options='options'
-        :dense="true"
+        dense
       )
     .col-4
       TInput(
@@ -16,8 +16,10 @@ div
         v-model='form.edgeName'
         :dense='true'
       )
-  ListContentGroup(:contents_groups="contentsGroups")
-  //- Edges(:edges="edges")
+  ListContentGroup(:contents_groups="extendContentGroup")
+  Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
+  q-dialog(v-model='showDialogEdge')
+    EdgeDialog(@EdgeData='addNewEdge')
   #BtnSection
   .row.q-gutter-md.q-py-sm
     q-btn(
@@ -44,6 +46,8 @@ import TInput from '~/components/input/t-input.vue'
 import TSelect from '~/components/select/t-select.vue'
 import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
+import TSelectExtend from '~/components/select/TSelectExtend.vue'
+import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],
@@ -53,21 +57,53 @@ export default {
     Edges,
     TInput,
     TSelect,
-    CancelDialog
+    CancelDialog,
+    TSelectExtend,
+    EdgeDialog
   },
+
   data () {
     return {
+      extendContentGroup: {
+        Content_group: [
+          {
+            title: 'content_group',
+            key: 'Key',
+            value: 'Value',
+            dataType: 's'
+          }
+        ]
+      },
+      extendEdges: [],
       openDialog: false,
+      loading: false,
+      showDialogEdge: false,
+      openDialogEdge: false,
       form: {
         edgeName: undefined,
         direction: undefined
       },
       options: [
-        'To...', 'From...'
+        {
+          label: 'To ...',
+          value: 'To ...'
+        },
+        {
+          label: 'From ...',
+          value: 'From ...'
+        }
       ]
     }
   },
   methods: {
+    openModal () {
+      this.showDialogEdge = true
+    },
+    async addNewEdge (form) {
+      this.extendEdges.push(form)
+      await this.$nextTick()
+      this.showDialogEdge = false
+    },
     onCancel () {
       this.openDialog = true
       this.setIsEdit(false)

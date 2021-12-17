@@ -127,6 +127,7 @@ export default {
       },
       edges: {
         noEdges: 'This document does not contain edges',
+        extend: 'Add edges using the button below',
         title: 'Edges',
         search: {
           empty: 'No edge found'
