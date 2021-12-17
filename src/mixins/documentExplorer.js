@@ -4,6 +4,7 @@ import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
     let queryParams = this.$route.query
+    await this.getContractInfo()
     if (queryParams.hasOwnProperty('endpoint')) {
       this.endpoint = queryParams.endpoint
       this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
@@ -26,7 +27,11 @@ export const documentExplorer = {
     } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
       this.setContractInfo({ contract: queryParams.contract })
     }
-    this.loadData()
+    await this.loadData()
+    this.loading = false
+  },
+  beforeMount () {
+    this.loading = true
   },
   data () {
     return {
@@ -41,6 +46,7 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      loading: false,
       endpoint: undefined,
       contentsGroups: {},
       edges: [],
@@ -52,8 +58,16 @@ export const documentExplorer = {
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
-    ...mapActions('documentGraph', ['getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
-    ...mapMutations('documentGraph', ['setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
+    ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    async getContractInfo () {
+      let contractInfo = await this.getContractInformation()
+      if (contractInfo) {
+        this.setContractInfo(contractInfo.queryDoccacheConfig[0])
+      } else {
+        this.setContractInfo('Default contract information')
+      }
+    },
     async getDocInterface () {
       let docInterface = await this.getPropsType({
         type: 'Document'
@@ -130,6 +144,9 @@ export const documentExplorer = {
       let typeSchema = await this.getSchemaOfType()
 
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
+      console.log('-------------------------')
+      console.log({ contentGroups, edges })
+      console.log('-------------------------')
       let byElement = this.documentInfo.docId
       if (this.isHashed) {
         byElement = this.documentInfo.hash
@@ -176,6 +193,9 @@ export const documentExplorer = {
     filterPropsAndEdges (typeSchema) {
       let contentGroups = ''
       let edges = []
+      console.log('1111111111111111')
+      console.log(typeSchema)
+      console.log('1111111111111111')
       typeSchema.forEach(element => {
         let type = element.type.kind
         if (type !== 'LIST' && type !== 'OBJECT') {

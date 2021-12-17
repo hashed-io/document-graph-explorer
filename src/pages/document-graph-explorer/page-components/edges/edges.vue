@@ -4,34 +4,39 @@ div.q-pt-md
     .col-8
       .q-py-md.text-h6.text-capitalize(v-if="edges.length > 0")
         | Edges
-    .col-4
+    .col-4.searchInput
       TInput(
         v-if="edges.length > 0"
-        label='search'
+        placeholder='Search'
         v-model='search'
         :dense='true'
         :debounce="750"
       )
+
   EmptyEdges(
-    v-if='edges.length === 0'
+    v-if="edges.length === 0 && withoutEdges"
+    :label="$t('pages.documentExplorer.edges.title')"
+    :msg="$t('pages.documentExplorer.edges.extend')"
+  )
+  EmptyEdges(
+    v-if='edges.length === 0 && !withoutEdges'
     :label="$t('pages.documentExplorer.edges.title')"
     :msg="$t('pages.documentExplorer.edges.noEdges')"
     )
   EmptyEdges(
-    v-if='edges.length > 0 && resultQuery.length === 0'
+    v-if='edges.length > 0 && resultQuery.length === 0 && !withoutEdges'
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
   q-card(
     v-if='edges.length > 0'
     bordered
-    style="min-height:150px; max-height:auto"
+    :style="calculateSizeEdges(edges.length, resultQuery.length)"
   ).cardTailWind
     q-scroll-area(
       :thumb-style="thumbStyle",
       :barStyle="barStyle",
       :style="calculateSizeEdges(edges.length, resultQuery.length)"
       id="scroll-area-with-virtual-scroll-1"
-      style="min-height:150px; height:1%"
     )
       q-virtual-scroll(
         scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
@@ -59,12 +64,14 @@ div.q-pt-md
         v-if='isEdit'
         class='text-brand-primary q-py-sm animated-icon',
         size="2rem",
-        @click="onAddRow()"
+        @click="addEdge()"
       )
         svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
           path(fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd")
 </template>
 <style lang="stylus" scoped>
+.searchInput
+  margin-top: 10px !important
 .cardWhite
   background: white
   &:hover
@@ -110,6 +117,11 @@ export default {
       type: Array,
       required: true,
       default: () => []
+    },
+    withoutEdges: {
+      type: Boolean,
+      required: false,
+      default: () => false
     }
   },
   mixins: [validation],
@@ -214,10 +226,11 @@ export default {
   methods: {
     calculateSizeEdges (edgesLength, resultQueryLength) {
       if (edgesLength > 0 && resultQueryLength > 0) {
-        if (edgesLength === 1) {
-          return 'height: 95px'
+        let pixels = parseInt(edgesLength) * 75
+        if (pixels > 600) {
+          return 'height:' + '600' + 'px'
         } else {
-          return 'height: 300px'
+          return 'height:' + pixels.toString() + 'px'
         }
       } else {
         return 'height: 0px'

@@ -6,8 +6,7 @@ div
     class="bg-grey-1"
   )
     q-card-section
-      .row.justify-center
-        | {{msg}}
+      .row.justify-center.color {{msg}}
 </template>
 
 <script>
@@ -26,6 +25,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="stylus" scoped>
+.color
+  color: #6B7280 !important
+  font-weight: 500
+  font-size: 13px
 </style>

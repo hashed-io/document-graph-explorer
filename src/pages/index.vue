@@ -52,6 +52,16 @@
           no-caps
           class='full-width q-mb-lg btn-primary'
           size='lg'
+        ) {{$t('pages.index.buttons.redirectButton')}}
+        q-btn(
+          @click='redirectTo()'
+          id='redirectButton'
+          ref='redirectButtonRef'
+          rounded
+          unelevated
+          no-caps
+          class='full-width q-mb-lg btn-primary'
+          size='lg'
         )
           .row.q-col-gutter-xs
             div(style="width: 34px; height:34px; margin-top:2%;")
@@ -76,7 +86,10 @@ export default {
   name: 'pageIndex',
   methods: {
     redirectTo () {
-      this.$router.push('/login')
+      this.$router.push({ name: 'login' })
+    },
+    toListDocs () {
+      this.$router.push({ name: 'listDocs' })
     }
   }
 }

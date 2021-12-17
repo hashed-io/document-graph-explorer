@@ -15,7 +15,7 @@ div
   )
     template(v-slot:selected)
       template(v-if="value")
-        | {{getDataType(content)}}
+        | {{value}}
       template(v-else)
         div(style="color: #646464;") {{'Choose direction'}}
 </template>
@@ -24,7 +24,7 @@ div
 import { validation } from '~/mixins/validation'
 
 export default {
-  name: 'Tselect',
+  name: 'TSelectExtend',
   props: ['value', 'label', 'dense', 'options', 'case'],
   mixins: [validation],
   model: {
@@ -37,17 +37,6 @@ export default {
     }
   },
   methods: {
-    getDataType (val) {
-      const types = {
-        c: 'Checksum256',
-        n: 'Name',
-        a: 'Asset',
-        t: 'Time',
-        s: 'String',
-        i: 'Int64'
-      }
-      return types[val]
-    }
   }
 }
 </script>

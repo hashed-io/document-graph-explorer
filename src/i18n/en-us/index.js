@@ -55,7 +55,8 @@ export default {
       buttons: {
         createAccount: 'Create account',
         login: 'Sign In',
-        loginButton: 'Login with Telos'
+        loginButton: 'Login with Telos',
+        redirectButton: 'DGE'
       }
     },
     general: {
@@ -115,10 +116,18 @@ export default {
         title: 'Extend Document'
       },
       edit: {
-        title: 'Edit Document'
+        title: 'Edit Document',
+        contentGroup: {
+          ipfs: 'Saved in IPFS',
+          encrypt: 'Click to decrypt'
+        },
+        cancel: {
+          text: 'If you continue your changes will not be saved.'
+        }
       },
       edges: {
         noEdges: 'This document does not contain edges',
+        extend: 'Add edges using the button below',
         title: 'Edges',
         search: {
           empty: 'No edge found'

@@ -20,41 +20,16 @@ export default {
 q-scroll-area.fit
   q-list
     q-item(
-      @click="$router.push({name: 'daos'})"
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="business")
-      q-item-section {{ $t('menu.daos') }}
-    q-item(
-      @click="$router.push({name: 'all-daos'})"
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="list")
-      q-item-section {{ $t('menu.all_daos') }}
-    q-item(
-      @click="$router.push({name:'order-book'})"
-      data-cy='menuOrderBook'
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="info")
-      q-item-section
-        div Order Book
-    q-item(
       @click="clearStoreAndGo()"
       data-cy='DGE'
       clickable
       v-ripple
     )
       q-item-section(avatar)
-        q-icon(name="assignment")
+        q-icon(name="book")
       q-item-section
-        div Document Graph Explorer
+        div DGE
+
     q-item(
       @click="$router.push({name:'timeline-page'})"
       data-cy='timeLine'

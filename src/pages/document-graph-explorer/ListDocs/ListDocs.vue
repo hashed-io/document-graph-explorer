@@ -1,91 +1,101 @@
 <template lang="pug">
 div
-  .row.q-pb-md.justify-between
-    .col-4
-      div.text-h6.q-py-md
-        | {{$t('pages.documentExplorer.listDocs.title')}}
-    .col-5
-      .row.justify-end.q-col-gutter-sm
-        .col-xs-12.col-sm-12.col-md-9.q-pb-sm
-          TInput(
-            label='Endpoint'
-            v-model='endpoint'
-            dense
-            :placeholder="currentEndpoint"
+  q-spinner-tail(
+    color="indigo"
+    size="5.5em"
+    class="center"
+    v-if="loadingData"
+  )
+  div(v-if="!loadingData")
+    .row.q-pb-md.justify-between
+      .col-4
+        div.text-h6.q-py-md
+          | {{$t('pages.documentExplorer.listDocs.title')}}
+      .col-5
+        .row.justify-end.q-col-gutter-sm
+          .col-xs-12.col-sm-12.col-md-9.q-pb-sm
+            TInput(
+              label='Endpoint'
+              v-model='endpoint'
+              dense
+              :placeholder="currentEndpoint"
+            )
+          .col-xs-12.col-sm-12.col-md-2.spaceBtn
+              div
+                q-btn(
+                    label='Load'
+                    @click='loadFromEndpoint'
+                    unelevated
+                    no-caps
+                    align="around"
+                ).btnTailwind
+    q-table(
+      :data="documents"
+      :columns="columns"
+      card-class="bg-grey-1"
+      :visible-columns='visibleColumns'
+    ).TailWind
+      template(v-slot:body="props")
+        q-tr.cursor-pointer( :props="props")
+          q-td(
+            v-for="col in props.cols",
+            :key="col.name",
+            :props="props",
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            @click='seeDocument(props.row)'
           )
-        .col-xs-12.col-sm-12.col-md-2.spaceBtn
-            div
-              q-btn(
-                  label='Load'
-                  @click='loadFromEndpoint'
-                  unelevated
-                  no-caps
-                  align="around"
-              ).btnTailwind
-  q-table(
-    :data="documents"
-    :columns="columns"
-    card-class="bg-grey-1"
-    :visible-columns='visibleColumns'
-  ).TailWind
-    template(v-slot:body="props")
-      q-tr.cursor-pointer( :props="props")
-        q-td(
-          v-for="col in props.cols",
-          :key="col.name",
-          :props="props",
-          :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          @click='seeDocument(props.row)'
-        ) {{ col.value }}
-    template(v-slot:pagination="scope")
-      q-btn(
-          v-if="scope.pagesNumber > 2"
-          icon="first_page"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isFirstPage"
-          @click="scope.firstPage"
-      )
-      q-btn(
-          icon="chevron_left"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isFirstPage"
-          @click="scope.prevPage"
-      )
-      q-btn(
-          icon="chevron_right"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isLastPage"
-          @click="scope.nextPage"
-      )
-      q-btn(
-          v-if="scope.pagesNumber > 2"
-          icon="last_page"
-          color="grey-8"
-          round
-          dense
-          flat
-          :disable="scope.isLastPage"
-          @click="scope.lastPage"
-      )
+            div(style='color: grey') {{ col.value }}
+      template(v-slot:pagination="scope")
+        q-btn(
+            v-if="scope.pagesNumber > 2"
+            icon="first_page"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isFirstPage"
+            @click="scope.firstPage"
+        )
+        q-btn(
+            icon="chevron_left"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isFirstPage"
+            @click="scope.prevPage"
+        )
+        q-btn(
+            icon="chevron_right"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isLastPage"
+            @click="scope.nextPage"
+        )
+        q-btn(
+            v-if="scope.pagesNumber > 2"
+            icon="last_page"
+            color="grey-8"
+            round
+            dense
+            flat
+            :disable="scope.isLastPage"
+            @click="scope.lastPage"
+        )
 </template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
-import TInput from '../../../components/input/t-input.vue'
+import TInput from '~/components/input/t-input.vue'
 import ApolloClient from 'apollo-boost'
+
 export default {
   name: 'ListDocs',
   data () {
     return {
+      loadingData: false,
       endpoint: undefined,
       documents: undefined,
       assignment: undefined,
@@ -140,8 +150,17 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.loadDocuments()
+  beforeMount () {
+    this.loadingData = true
+  },
+  async mounted () {
+    try {
+      await this.loadDocuments()
+    } catch (e) {
+      this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
+    } finally {
+      this.loadingData = false
+    }
   },
   computed: {
     ...mapState('documentGraph', ['isHashed'])
@@ -209,9 +228,9 @@ export default {
       this.setDocument(row)
       this.setIsEdit(false)
       if (this.isHashed) {
-        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash } })
+        this.$router.push({ name: 'DocumentExplorer', query: { hash: row.hash, endpoint: this.currentEndpoint } })
       } else {
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: row.docId, endpoint: this.currentEndpoint } })
       }
     },
     async modifyApolloEndpoint (localStorage) {
@@ -268,6 +287,12 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.center
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
 .container
   height: 200px;
 .TailWind
