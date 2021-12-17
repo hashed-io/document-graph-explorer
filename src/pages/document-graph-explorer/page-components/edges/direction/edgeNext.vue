@@ -35,27 +35,17 @@
           .col-xs-6.col-sm-4
             .row
               .col-xs-6.col-sm-7.col-md-10
-                .row
-                  .col-2
-                    template(id='icon')
-                      q-icon(
-                        style="width:34px; height:34px;"
-                        class='animated-icon'
-                      )
-                        svg(width="33" height="33" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg")
-                          path(fill-rule="evenodd" clip-rule="evenodd" d="M16.5 32C25.0604 32 32 25.0604 32 16.5C32 7.93959 25.0604 1 16.5 1C7.93959 1 1 7.93959 1 16.5C1 25.0604 7.93959 32 16.5 32ZM16.5 27.8667C22.7776 27.8667 27.8667 22.7776 27.8667 16.5C27.8667 10.2224 22.7776 5.13333 16.5 5.13333C10.2224 5.13333 5.13333 10.2224 5.13333 16.5C5.13333 22.7776 10.2224 27.8667 16.5 27.8667Z" fill="#9e9e9e")
-                  .col-10
-                    template(id='edgeInfo')
-                      div
-                        | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.substring(0,40)+'...' : item.docId.substring(0,40)+'...'  }}
-                        q-tooltip(
-                          content-class='bg-black'
-                          transition-show="fade"
-                          transition-hide="fade"
-                        ) {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
-                      .text-caption.text-grey-6
-                        | {{ item.type+' | ' }}
-                        | {{ dateToString(item.createdDate)}}
+                template(id='edgeInfo')
+                  div
+                    | {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.substring(0,40)+'...' : item.docId.substring(0,40)+'...'  }}
+                    q-tooltip(
+                      content-class='bg-black'
+                      transition-show="fade"
+                      transition-hide="fade"
+                    ) {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
+                  .text-caption.text-grey-6
+                    | {{ item.type+' | ' }}
+                    | {{ dateToString(item.createdDate)}}
               .col-xs-6.col-sm-3.col-md-2
                 template(id='iconNext')
                   q-icon(style="width: 20px; height:20px" class="cursor-pointer text-brand-primary")
