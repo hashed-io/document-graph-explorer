@@ -62,9 +62,7 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    console.log({ QUERY: query })
     const { data } = await this.apollo.query({ query })
-    console.log({ DATA: data })
     return data
   }
   async getDocuments ({ number, props, type }) {

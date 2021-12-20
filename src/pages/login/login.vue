@@ -19,7 +19,7 @@ export default {
     ...mapActions('accounts', ['login', 'autoLogin']),
     async onLogin (idx) {
       this.idx = idx
-      await this.login({ idx: this.idx, returnUrl: '/list-docs' })
+      await this.login({ idx: this.idx, returnUrl: '/' })
     },
     async onAccountEntered (account) {
       await this.login({ idx: this.idx, account, returnUrl: this.$route.query.returnUrl })

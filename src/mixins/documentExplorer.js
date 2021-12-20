@@ -157,7 +157,6 @@ export const documentExplorer = {
         contentGroups,
         this.isHashed
       )
-      console.log({ contentGroups, edges })
       let contentGroup = this.matchingContentGroups(document)
       var res = this.agroupByTitle(contentGroup)
       if (res.hasOwnProperty('system')) {
@@ -193,9 +192,6 @@ export const documentExplorer = {
     filterPropsAndEdges (typeSchema) {
       let contentGroups = ''
       let edges = []
-      console.log('1111111111111111')
-      console.log(typeSchema)
-      console.log('1111111111111111')
       typeSchema.forEach(element => {
         let type = element.type.kind
         if (type !== 'LIST' && type !== 'OBJECT') {
@@ -260,8 +256,18 @@ export const documentExplorer = {
     async getEdges (edges) {
       this.edges = []
       let query = await this.makeQueryForEdgeInfo(edges)
-      let responseEdges = await this.retrieveQuery(query)
-      this.edges = this.processEdges(responseEdges)
+      let responseEdges
+      try {
+        responseEdges = await this.retrieveQuery(query)
+        this.edges = this.processEdges(responseEdges)
+      } catch (error) {
+        let edgesMixed = []
+        if (this.stackNavigation.length > 0) {
+          let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
+          edgesMixed.push(previousEdge)
+          this.edges = edgesMixed
+        }
+      }
     },
     async makeQueryForEdgeInfo (edges) {
       var query = ''
@@ -271,7 +277,6 @@ export const documentExplorer = {
           type: element.typeDoc
         })
         _props = await _props['__type']['fields']
-        console.log(_props)
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
         if (element.type === 'LIST' && element.edge !== 'vote' && element.edge !== 'passedprops') {
           if (found) {

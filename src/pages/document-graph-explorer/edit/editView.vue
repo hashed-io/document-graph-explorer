@@ -61,12 +61,8 @@ export default {
       this.showDialogEdge = true
     },
     async addNewEdge (form) {
-      console.log('¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿')
-      console.log(this.edges)
       this.edges.push(form)
       await this.$nextTick()
-      console.log('¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿')
-      console.log(this.edges)
       this.showDialogEdge = false
     },
     onCancel () {
