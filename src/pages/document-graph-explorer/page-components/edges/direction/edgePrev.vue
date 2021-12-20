@@ -30,7 +30,7 @@
                       content-class='bg-black'
                       transition-show="fade"
                       transition-hide="fade"
-                    ) {{ item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId  }}
+                    ) {{ showTooltip(item)  }}
                   .text-caption.text-grey-6
                     | {{ item.type+' | ' }}
                     | {{ dateToString(item.createdDate)}}
@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'EdgePrev',
   props: {
@@ -85,15 +86,38 @@ export default {
       required: true
     }
   },
+  computed: {
+    ...mapState('documentGraph', ['isHashed'])
+  },
   methods: {
+    showTooltip (item) {
+      if (this.isHashed) {
+        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.hash
+      } else {
+        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+      }
+    },
     showEdgeInfo (item) {
-      let len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.docId.length
+      let len
+      if (this.isHashed) {
+        len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.hash.length
+      } else {
+        len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.docId.length
+      }
       if (item.system_nodeLabel_s !== '' && len > 60) {
         return item.system_nodeLabel_s.substring(0, 60) + '...'
       } else if (item.system_nodeLabel_s === '' && len > 60) {
-        return item.docId.substring(0, 60) + '...'
+        if (this.isHashed) {
+          return item.hash.substring(0, 60) + '...'
+        } else {
+          return item.docId.substring(0, 60) + '...'
+        }
       } else {
-        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+        if (this.isHashed) {
+          return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.hash
+        } else {
+          return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+        }
       }
     },
     onNextNode (item) {
