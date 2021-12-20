@@ -524,7 +524,6 @@ export default {
     },
     onSaveTitle () {
       // TODO: Propagate the title to rest of the array
-      console.log({ prev: this.previousTitle, current: this.content_group_data[0].title })
       let bool = this.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.content_group_data[0].title })
       if (bool) {
         this.editableTitle = false

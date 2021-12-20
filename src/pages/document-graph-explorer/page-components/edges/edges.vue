@@ -244,7 +244,6 @@ export default {
     },
     removeEdge (item, index) {
       // TODO: Information for delete action
-      console.log({ item, index })
       this.edges.splice(index, 1)
     },
     addEdge () {

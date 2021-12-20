@@ -67,8 +67,6 @@ export default {
   methods: {
     titleIsRepeated (obj) {
       let { prev, current } = obj
-      console.log(prev, current)
-      console.log(this.contents_groups)
       let keys = Object.keys(this.contents_groups)
       let count = keys.filter((element) => element === current).length
       if (count === 0 && prev !== 'content_group') {
