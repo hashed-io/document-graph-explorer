@@ -39,7 +39,6 @@
     "*.{js,vue}": "yarn lint"
   },
   "dependencies": {
-    "@npmcli/fs": "^1.0.0",
     "@quasar/cli": "^1.2.1",
     "@quasar/extras": "^1.10.10",
     "@smontero/keycatjs": "^0.9.4",

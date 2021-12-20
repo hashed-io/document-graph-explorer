@@ -261,7 +261,6 @@ export const documentExplorer = {
         responseEdges = await this.retrieveQuery(query)
         this.edges = this.processEdges(responseEdges)
       } catch (error) {
-        alert(error)
         let edgesMixed = []
         if (this.stackNavigation.length > 0) {
           let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
