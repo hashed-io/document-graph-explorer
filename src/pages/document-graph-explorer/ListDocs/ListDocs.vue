@@ -100,7 +100,7 @@ export default {
       documents: undefined,
       assignment: undefined,
       currentEndpoint: undefined,
-      visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid'],
+      visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid', 'system'],
       columns: [
         {
           name: 'docid',
@@ -117,6 +117,15 @@ export default {
           align: 'left',
           style: 'color: rgb(107,114,128);',
           field: (row) => row.creator
+        },
+        {
+          name: 'system',
+          label: 'System NodeLabel',
+          headerStyle: 'font-size:14px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          align: 'left',
+          style: 'color: rgb(107,114,128);',
+          field: (row) => row.system_nodeLabel_s
         },
         {
           name: 'type',
@@ -163,10 +172,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['isHashed'])
+    ...mapState('documentGraph', ['isHashed', 'documentInterface'])
   },
   methods: {
-    ...mapActions('documentGraph', ['getContractInformation', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
+    ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
     async loadLocalStorage () {
       let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
@@ -176,9 +185,37 @@ export default {
       await this.getDocInterface()
       await this.getContractInfo()
       this.loadLocalStorage()
-      this.documents = []
-      const data = await this.getDocuments({ number: 1000, type: 'Document' })
-      this.documents = data.queryDocument
+      const data = await this.getDocuments({ number: 20, type: 'Document' })
+      var _documents = []
+      for (const doc of data.queryDocument) {
+        let typeSchema = await this.getPropsType({
+          type: doc['__typename']
+        })
+        let _props = typeSchema['__type'].fields
+        const found = _props.find(element => element.name === 'system_nodeLabel_s')
+        // const found = true
+        if (found) {
+          let byElement = doc.docId
+          if (this.isHashed) {
+            byElement = doc.hash
+          }
+          var query = `... on ${doc.type}{
+            system_nodeLabel_s
+          }`
+          let _isHashed = this.isHashed
+          let response = await this.getDocumentsByDocId({
+            byElement: byElement,
+            props: query,
+            type: doc['__typename'],
+            isHashed: _isHashed
+          })
+          doc['system_nodeLabel_s'] = response[`query${doc['__typename']}`][0]['system_nodeLabel_s']
+          _documents.push(doc)
+        }
+
+        query = ''
+      }
+      this.documents = _documents
     },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
@@ -244,6 +281,7 @@ export default {
       await this.changeEndpoint({ client })
     },
     async loadFromEndpoint () {
+      this.loadingData = true
       try {
         this.modifyApolloEndpoint()
         this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
@@ -253,6 +291,8 @@ export default {
         let previousEndpoint = this.getLocalStorage({ key: 'apollo-endpoint' })
         await this.modifyApolloEndpoint(previousEndpoint)
         await this.loadDocuments()
+      } finally {
+        this.loadingData = false
       }
     },
     async loadCatalog () {
