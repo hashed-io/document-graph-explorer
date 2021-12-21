@@ -17,7 +17,7 @@ div
       template(v-if="value")
         | {{value}}
       template(v-else)
-        div(style="color: #646464;") {{'Choose direction'}}
+        div(style="color: #646464;") {{message}}
 </template>
 
 <script>
@@ -25,7 +25,7 @@ import { validation } from '~/mixins/validation'
 
 export default {
   name: 'TSelectExtend',
-  props: ['value', 'label', 'dense', 'options', 'case'],
+  props: ['value', 'label', 'dense', 'options', 'case', 'message'],
   mixins: [validation],
   model: {
     prop: 'value',

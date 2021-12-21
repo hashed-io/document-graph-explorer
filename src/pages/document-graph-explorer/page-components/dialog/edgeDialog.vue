@@ -11,6 +11,7 @@
           v-model="form.direction"
           :options="options"
           dense
+          message='Choose direction'
         )
         Tinput(
           class="q-pt-md"
@@ -45,7 +46,7 @@
 <script>
 import Tinput from '~/components/input/t-input'
 import TSelectEdge from '~/components/select/TSelectEdge.vue'
-import { validation } from '../../../../mixins/validation'
+import { validation } from '~/mixins/validation'
 export default {
   name: 'EdgeDialog',
   mixins: [validation],

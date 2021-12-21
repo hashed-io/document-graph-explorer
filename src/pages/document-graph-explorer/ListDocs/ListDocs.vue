@@ -20,6 +20,7 @@ div
               value='Endpoints'
               :options="endpoints"
               class="q-pt-lg"
+              message='Choose the endpoint'
             )
           .col-xs-12.col-sm-12.col-md-2.spaceBtn
               div
@@ -162,7 +163,7 @@ export default {
       endpoints: [
         {
           label: 'Hypha',
-          value: 'https://alpha-stt.tekit.io/graphql'
+          value: 'https://alpha-st.tekit.io/graphql'
         },
         {
           label: 'Cannabis',
