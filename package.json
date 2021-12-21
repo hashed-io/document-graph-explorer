@@ -109,7 +109,7 @@
     "wallaby-vue-compiler": "^1.0.3"
   },
   "engines": {
-    "node": "15.x"
+    "node": "16.x"
   },
   "browserslist": [
     "last 1 version, not dead, ie >= 11"
