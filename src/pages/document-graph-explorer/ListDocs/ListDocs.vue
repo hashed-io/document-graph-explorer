@@ -14,11 +14,12 @@ div
       .col-5
         .row.justify-end.q-col-gutter-sm
           .col-xs-12.col-sm-12.col-md-9.q-pb-sm
-            TInput(
-              label='Endpoint'
-              v-model='endpoint'
+            TSelectEdge(
+              v-model="endpoint"
               dense
-              :placeholder="currentEndpoint"
+              value='Endpoints'
+              :options="endpoints"
+              class="q-pt-lg"
             )
           .col-xs-12.col-sm-12.col-md-2.spaceBtn
               div
@@ -28,7 +29,7 @@ div
                     unelevated
                     no-caps
                     align="around"
-                ).btnTailwind
+                ).btnTailwind.q-mt-xs
     q-table(
       :data="documents"
       :columns="columns"
@@ -90,6 +91,7 @@ div
 import { mapActions, mapMutations, mapState } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import ApolloClient from 'apollo-boost'
+import TSelectEdge from '~/components/select/TSelectEdge.vue'
 
 export default {
   name: 'ListDocs',
@@ -120,7 +122,7 @@ export default {
         },
         {
           name: 'system',
-          label: 'System NodeLabel',
+          label: 'Node Label',
           headerStyle: 'font-size:14px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
           align: 'left',
@@ -155,6 +157,20 @@ export default {
           format: (val, row) => {
             return this.dateToString(val)
           }
+        }
+      ],
+      endpoints: [
+        {
+          label: 'Hypha',
+          value: 'https://alpha-stt.tekit.io/graphql'
+        },
+        {
+          label: 'Cannabis',
+          value: 'https://hashed.systems/alpha-trace-test/graphql'
+        },
+        {
+          label: 'Social',
+          value: 'https://hashed.systems/alpha-dge-test/graphql'
         }
       ]
     }
@@ -322,7 +338,7 @@ export default {
       }
     }
   },
-  components: { TInput }
+  components: { TInput, TSelectEdge }
 }
 </script>
 
