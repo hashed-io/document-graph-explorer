@@ -120,7 +120,9 @@ module.exports = function (ctx) {
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
     supportIE: false,
-
+    externals: {
+      sharp: 'commonjs sharp'
+    },
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       env: {

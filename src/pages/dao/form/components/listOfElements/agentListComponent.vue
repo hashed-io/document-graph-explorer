@@ -36,7 +36,7 @@
               template(v-slot:append)
                 q-icon(name='search')
 </template>
-<style lang='sass'>
+<style lang='stylus'>
 
 </style>
 <script>

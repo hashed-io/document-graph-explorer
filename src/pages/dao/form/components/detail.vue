@@ -52,7 +52,7 @@ q-card(flat)
                               q-btn(v-close-popup, label='Close', color='primary', flat='flat')
                   p (If this filing is NOT to be effective immediately, enter the effective date within the next 90 calendar days.)
 </template>
-<style lang='sass' scoped>
+<style lang='stylus' scoped>
 .asterisk
   color: red
 .styleHR
