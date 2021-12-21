@@ -1,9 +1,18 @@
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'right-menu-guest',
   data () {
     return {
       sizeResponsive: true
+    }
+  },
+  methods: {
+    ...mapActions('accounts', ['login']),
+    async onLogin (idx) {
+      this.idx = 0
+      await this.login({ idx: this.idx, returnUrl: '/' })
     }
   }
 }
@@ -12,7 +21,7 @@ export default {
 <template lang="pug">
 div
   q-btn(
-    @click="$router.push({name: 'login'})"
+    @click="onLogin(idx)"
     class="q-mr-sm btnTailWindLogin"
     data-cy='loginButton'
     :size="$q.platform.is.mobile ? 'sm' : 'md' "
