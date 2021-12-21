@@ -182,7 +182,6 @@ export default {
       this.currentEndpoint = apiEndpoint
     },
     async loadDocuments () {
-      const start = Date.now()
       await this.getDocInterface()
       await this.getContractInfo()
       this.loadLocalStorage()
@@ -217,9 +216,6 @@ export default {
         query = ''
       }
       this.documents = _documents
-      const millis = Date.now() - start
-
-      console.log(`seconds elapsed = ${Math.floor(millis / 1000)}`)
     },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
