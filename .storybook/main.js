@@ -1,5 +1,5 @@
 const webpack = require('../webpack-config.js')
-
+const path = require("path")
 module.exports = {
   "stories": [
     "../src/**/*.stories.mdx",
@@ -7,7 +7,8 @@ module.exports = {
   ],
   "addons": [
     "@storybook/addon-links",
-    "@storybook/addon-essentials"
+    "@storybook/addon-essentials",
+    "@storybook/addon-actions"
   ],
   "webpackFinal": cfg => {
     cfg = webpack(cfg)

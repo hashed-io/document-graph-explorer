@@ -1,7 +1,7 @@
 import DocInformation from './DocInformation.vue'
 
 export default {
-  title: 'Document Explorer/Header',
+  title: 'Document Explorer/Doc Information',
   component: DocInformation,
   argTypes: {}
 }
