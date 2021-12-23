@@ -12,6 +12,8 @@ export const getDocumentsByDocId = async function ({ commit }, params) {
     const response = await this.$apolloApi.getDocumentsByDocId({ ...params })
     return response
   } catch (e) {
+    console.log(Object.keys(e))
+    console.log(e)
     console.error('An error ocurred while trying to get documents by doc id', e)
     throw new Error(e)
   }

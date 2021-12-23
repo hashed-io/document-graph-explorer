@@ -1,5 +1,5 @@
 import { Api, JsonRpc } from 'eosjs'
-import { DaoApi, ContractsApi, DocumentsGeneralApi, ApolloApi } from '~/services'
+import { DaoApi, ContractsApi, DocumentsGeneralApi, ApolloApi, ActionsApi } from '~/services'
 import { Contracts } from '~/const/Contracts'
 const signTransaction = async function (actions) {
   actions.forEach(action => {
@@ -69,6 +69,10 @@ export default ({ store }) => {
     eosApi: api,
     apollo
   })
+  const actionsApi = new ActionsApi({
+    eosApi: api,
+    mEosApi
+  }, Contracts.CONTRACT_DOC)
 
   store['$api'] = api
   store['$apiMethods'] = api
@@ -76,4 +80,5 @@ export default ({ store }) => {
   store['$contractsApi'] = contractsApi
   store['$documentsGeneralApi'] = documentsGeneralApi
   store['$apolloApi'] = apolloApi
+  store['$actionsApi'] = actionsApi
 }

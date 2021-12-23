@@ -90,6 +90,7 @@ div.q-pt-md
   border-radius: 10px
 </style>
 <script>
+import { ActionsApi } from '~/services'
 import { mapGetters, mapState } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import { validation } from '~/mixins/validation'
@@ -127,7 +128,8 @@ export default {
   mixins: [validation],
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit']),
-    ...mapState('documentGraph', ['isHashed']),
+    ...mapState('documentGraph', ['isHashed', 'document']),
+    ...mapState('accounts', ['account']),
     resultQuery () {
       if (this.search) {
         const value = this.search
@@ -242,9 +244,23 @@ export default {
     onNextNode (edgeData) {
       this.$emit('edgeData', edgeData)
     },
-    removeEdge (item, index) {
+    async removeEdge (item, index) {
       // TODO: Information for delete action
-      this.edges.splice(index, 1)
+      // TODO: Add hash version [not complete yet in smart contract]
+      try {
+        let _contractAccount = this.account
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        let fromNode = this.document.docId
+        let toNode = item.docId
+        let edgeName = item.edgeName
+        console.log({ fromNode, toNode, edgeName })
+        await this.ActionsApi.deleteEdge({ fromNode, toNode, edgeName })
+        this.edges.splice(index, 1)
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to delete the edge of the node' + error)
+      }
     },
     addEdge () {
       this.$emit('showModal', true)

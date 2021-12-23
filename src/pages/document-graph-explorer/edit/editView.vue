@@ -39,6 +39,8 @@ import Edges from '../page-components/edges/edges.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
+import { ActionsApi } from '~/services'
+import { mapState } from 'vuex'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],
@@ -56,13 +58,28 @@ export default {
       openDialog: false
     }
   },
+  computed: {
+    ...mapState('documentGraph', ['document']),
+    ...mapState('accounts', ['account'])
+  },
   methods: {
     openModal () {
       this.showDialogEdge = true
     },
     async addNewEdge (form) {
-      this.edges.push(form)
-      await this.$nextTick()
+      let _contractAccount = this.account
+      let _api = this.$store.$apiMethods
+      let mEosApi = this.$store.$defaultApi
+      this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+      let fromNode = this.document.docId
+      let toNode = form.direction
+      let edgeName = form.edgeName
+      let creator = this.account
+      console.log({ fromNode, toNode, edgeName, creator })
+      await this.ActionsApi.createEdge({ fromNode, toNode, edgeName, creator })
+      console.log(form)
+      // this.edges.push(form)
+      // await this.$nextTick()
       this.showDialogEdge = false
     },
     onCancel () {

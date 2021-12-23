@@ -17,16 +17,17 @@ div
         :dense='true'
       )
   ListContentGroup(:contents_groups="extendContentGroup")
-  Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
-  q-dialog(v-model='showDialogEdge')
-    EdgeDialog(@EdgeData='addNewEdge')
+  //- Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
+  //- q-dialog(v-model='showDialogEdge')
+  //-   EdgeDialog(@EdgeData='addNewEdge')
   #BtnSection
-  .row.q-gutter-md.q-py-sm
+  .row.q-gutter-md.q-py-lg
     q-btn(
       unelevated
       no-caps
       label='Save'
       class='btnTailwind'
+      @click='onSave()'
     )
     q-btn(
       unelevated
@@ -96,6 +97,9 @@ export default {
     }
   },
   methods: {
+    onSave () {
+
+    },
     openModal () {
       this.showDialogEdge = true
     },

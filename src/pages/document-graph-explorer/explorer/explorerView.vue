@@ -68,15 +68,17 @@ div
           .col-8
             div(style='margin-top:2px;') Edit
       q-dialog(
-        v-model='deleteDoc'
+        v-model='deleteDocument'
       ).eraseDialog
         EraseBox(
           :docTitle="documentInfo.docId"
           :systemNodeLabel="documentInfo.systemNodeLabel"
+          @onErase='callErase'
         )
 </template>
 
 <script>
+import { ActionsApi } from '~/services'
 import DocInformation from '../page-components/info/DocInformation.vue'
 import ListContentGroup from '../page-components/List/list-content-group.vue'
 import Edges from '../page-components/edges/edges.vue'
@@ -101,19 +103,22 @@ export default {
   },
   data () {
     return {
-      deleteDoc: false
+      deleteDocument: false,
+      ActionsApi: undefined
     }
   },
   async mounted () {
   },
   computed: {
     ...mapGetters('accounts', ['account']),
-    ...mapState('documentGraph', ['isHashed', 'documentInterface'])
+    ...mapState('documentGraph', ['isHashed', 'documentInterface']),
+    ...mapState('documentGraph', ['document'])
   },
   methods: {
     ...mapActions('documentGraph', ['getDocumentsByDocId']),
     ...mapMutations('documentGraph', ['pushDocNavigation', 'popDocNavigation', 'addInformation']),
     ...mapMutations('documentGraph', ['setContractInfo']),
+    ...mapActions('documentGraph', ['deleteDoc']),
     navigateToEdge (edgeData) {
       this.setDocument(edgeData)
       this.pushDocNavigation(this.documentInfo)
@@ -144,9 +149,23 @@ export default {
       this.setIsEdit(true)
       this.$router.push({ name: 'editDoc', query: { document_id: this.$route.query.document_id } })
     },
+
     eraseDocument () {
-      this.deleteDoc = true
+      this.deleteDocument = true
+    },
+    async callErase () {
       // CALL ACTION TO DELETE ALL DOCUMENT
+      try {
+        let _contractAccount = this.account
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        let docID = this.document.docId
+        await this.ActionsApi.deleteDoc({ documentID: docID })
+        this.showSuccessMsg('The document was erase')
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to delete document ' + error)
+      }
     }
   }
 }

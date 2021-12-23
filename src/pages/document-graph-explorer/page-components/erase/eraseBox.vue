@@ -65,7 +65,7 @@ export default {
   },
   methods: {
     onErase () {
-      this.showSuccessMsg('The document was erase')
+      this.$emit('onErase', true)
     },
     onCancel () {
       // this.$router.back()

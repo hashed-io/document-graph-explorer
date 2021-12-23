@@ -20,20 +20,20 @@
           dense
           :rules="[rules.required]"
         )
-        Tinput(
-          class="q-pt-md"
-          v-model="form.system_nodeLabel_s"
-          placeholder='System Node Label'
-          dense
-          :rules="[rules.required]"
-        )
-        Tinput(
-          class="q-pt-md"
-          v-model="form.type"
-          placeholder='Document Type'
-          dense
-          :rules="[rules.required]"
-        )
+        //- Tinput(
+        //-   class="q-pt-md"
+        //-   v-model="form.system_nodeLabel_s"
+        //-   placeholder='System Node Label'
+        //-   dense
+        //-   :rules="[rules.required]"
+        //- )
+        //- Tinput(
+        //-   class="q-pt-md"
+        //-   v-model="form.type"
+        //-   placeholder='Document Type'
+        //-   dense
+        //-   :rules="[rules.required]"
+        //- )
         q-btn(
           unelevated
           no-caps
@@ -70,12 +70,20 @@ export default {
       },
       options: [
         {
-          label: 'Previos edge',
-          value: 'prev'
+          label: '10',
+          value: '10'
         },
         {
-          label: 'Next edge',
-          value: 'next'
+          label: '9',
+          value: '9'
+        },
+        {
+          label: '8',
+          value: '8'
+        },
+        {
+          label: '7',
+          value: '7'
         }
       ]
     }
