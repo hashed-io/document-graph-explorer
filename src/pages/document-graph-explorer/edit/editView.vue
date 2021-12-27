@@ -3,7 +3,7 @@ div
   div(v-if="loading" class="center")
     q-spinner-tail(
       color="indigo"
-      size="5.5em"
+      size="1.5em"
     )
 
   div(v-if="!loading")
@@ -21,6 +21,7 @@ div
         label='Save'
         no-caps
         class="btnTailwind"
+        @click='onSave()'
       )
       q-btn(
         unelevated
@@ -40,7 +41,7 @@ import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import { ActionsApi } from '~/services'
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],
@@ -55,6 +56,7 @@ export default {
     return {
       loading: false,
       showDialogEdge: false,
+      currentEndpoint: undefined,
       openDialog: false
     }
   },
@@ -63,6 +65,71 @@ export default {
     ...mapState('accounts', ['account'])
   },
   methods: {
+    ...mapActions('documentGraph', ['getLocalStorage']),
+    async onSave () {
+      try {
+        this.formatContentGroups(this.contentsGroups)
+      } catch (error) {
+        this.showErrorMsg('An error occured while trying to save the changes ' + error)
+      }
+    },
+    formatContentGroups (contentgroups) {
+      // ADD the document type
+      try {
+        console.log('1--------------1')
+        console.log(contentgroups)
+        console.log('1--------------1')
+        const types = {
+          c: 'checksum256',
+          n: 'name',
+          a: 'asset',
+          t: 'time',
+          s: 'string',
+          i: 'int64'
+        }
+        var contentGroups = []
+        var contentGroup = []
+        for (let title in contentgroups) {
+          contentGroup.push({
+            label: 'content_group_label',
+            value: ['string', title]
+          })
+          contentGroup.push({
+            label: 'type',
+            value: ['name', this.documentInfo.type.toLowerCase()]
+          })
+          contentgroups[title].forEach(element => {
+            let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
+            contentGroup.push({
+              label: key,
+              value: [types[element.dataType], element.value]
+            })
+          })
+          contentGroups.push(contentGroup)
+          contentGroup = []
+        }
+        this.callEditAction(contentGroups)
+        console.log(contentGroups)
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to format the content groups ' + error)
+      }
+    },
+    async callEditAction (contentGroups) {
+      try {
+        let _contractAccount = this.account
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        let documentID = this.documentInfo.docId
+        await this.ActionsApi.editDoc({ documentID, contentGroups })
+        this.setIsEdit(false)
+        let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
+        this.currentEndpoint = apiEndpoint
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
+      }
+    },
     openModal () {
       this.showDialogEdge = true
     },

@@ -26,6 +26,28 @@ class ActionsApi extends BaseEosApi {
     return rows
   }
   /**
+   * To edit document need the DocId and contentGroups
+   * @param {*} param0
+   */
+  async editDoc ({ documentID, contentGroups }) {
+    var authorization = `${this.contractAccount}@active`
+    let [actor, permission] = authorization.split('@')
+    const actions = [{
+      account: this.contractAccount,
+      name: 'editdoc',
+      data: {
+        documentID: documentID,
+        content_groups: contentGroups
+      },
+      authorization: [{
+        actor,
+        permission
+      }]
+    }]
+    console.log('actions: ', actions)
+    return this.eosApi.signTransaction(actions)
+  }
+  /**
    * To delete the document need the id or hash
    * @param {documentID} param0
    * @returns transaction
