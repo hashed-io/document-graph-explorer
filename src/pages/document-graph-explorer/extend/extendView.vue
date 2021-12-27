@@ -7,6 +7,7 @@ div
     .col-2
       TSelectExtend(
         v-model='form.direction'
+        message='Choose direction'
         :options='options'
         dense
       )

@@ -40,7 +40,6 @@ import Edges from '../page-components/edges/edges.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
-import { ActionsApi } from '~/services'
 import { mapActions, mapState } from 'vuex'
 export default {
   name: 'DocumentExplorer',
@@ -66,7 +65,7 @@ export default {
   },
   methods: {
     ...mapActions('documentGraph', ['getLocalStorage']),
-    async onSave () {
+    onSave () {
       try {
         this.formatContentGroups(this.contentsGroups)
       } catch (error) {
@@ -116,10 +115,7 @@ export default {
     },
     async callEditAction (contentGroups) {
       try {
-        let _contractAccount = this.account
-        let _api = this.$store.$apiMethods
-        let mEosApi = this.$store.$defaultApi
-        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        await this.newInstance()
         let documentID = this.documentInfo.docId
         await this.ActionsApi.editDoc({ documentID, contentGroups })
         this.setIsEdit(false)
@@ -134,10 +130,7 @@ export default {
       this.showDialogEdge = true
     },
     async addNewEdge (form) {
-      let _contractAccount = this.account
-      let _api = this.$store.$apiMethods
-      let mEosApi = this.$store.$defaultApi
-      this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+      await this.newInstance()
       let fromNode = this.document.docId
       let toNode = form.direction
       let edgeName = form.edgeName

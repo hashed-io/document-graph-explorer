@@ -1,5 +1,6 @@
 import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { ActionsApi } from '~/services'
 import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
@@ -46,6 +47,7 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      ActionsApi: undefined,
       loading: false,
       endpoint: undefined,
       contentsGroups: {},
@@ -60,6 +62,15 @@ export const documentExplorer = {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
     ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    async newInstance () {
+      if (this.ActionsApi) {
+        return
+      }
+      let _contractAccount = this.account
+      let _api = this.$store.$apiMethods
+      let mEosApi = this.$store.$defaultApi
+      this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+    },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
       if (contractInfo) {

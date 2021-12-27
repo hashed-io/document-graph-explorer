@@ -115,6 +115,9 @@ export default {
       extend: {
         title: 'Extend Document'
       },
+      create: {
+        title: 'Create Document'
+      },
       edit: {
         title: 'Edit Document',
         contentGroup: {

@@ -17,6 +17,7 @@ div
     :key="content_group+`${index}`"
     @openDialog="onOpenDialog"
     @deleteTitle="onDeleteTitle"
+    @elementChanged='onChange'
     :cryptoKey="keyToEncrypt"
   )
   q-btn(
@@ -65,6 +66,12 @@ export default {
     }
   },
   methods: {
+    onChange (obj) {
+      let key = obj.key
+      console.log(obj)
+      this.contents_groups[key] = obj.data
+      this.$forceUpdate()
+    },
     titleIsRepeated (obj) {
       let { prev, current } = obj
       let keys = Object.keys(this.contents_groups)

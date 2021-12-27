@@ -2,15 +2,26 @@
 div
   q-spinner-tail(
     color="indigo"
-    size="5.5em"
+    size="1.5em"
     class="center"
     v-if="loadingData"
   )
   div(v-if="!loadingData")
     .row.q-pb-md.justify-between
       .col-4
-        div.text-h6.q-py-md
-          | {{$t('pages.documentExplorer.listDocs.title')}}
+        .row
+          .col-12
+            div.text-h6.q-py-md
+              | {{$t('pages.documentExplorer.listDocs.title')}}
+          .col-12
+            div
+              q-btn(
+                  label='New Document'
+                  @click='newDoc'
+                  unelevated
+                  no-caps
+                  align="around"
+              ).btnTailwind
       .col-5
         .row.justify-end.q-col-gutter-sm
           .col-xs-12.col-sm-12.col-md-9.q-pb-sm
@@ -20,17 +31,9 @@ div
               value='Endpoints'
               :options="endpoints"
               class="q-pt-lg"
+              @update="loadFromEndpoint"
               message='Choose the endpoint'
             )
-          .col-xs-12.col-sm-12.col-md-2.spaceBtn
-              div
-                q-btn(
-                    label='Load'
-                    @click='loadFromEndpoint'
-                    unelevated
-                    no-caps
-                    align="around"
-                ).btnTailwind.q-mt-xs
     q-table(
       :data="documents"
       :columns="columns"
@@ -194,6 +197,9 @@ export default {
   methods: {
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    newDoc () {
+      this.$router.push({ name: 'createView' })
+    },
     async loadLocalStorage () {
       let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
       this.currentEndpoint = apiEndpoint
@@ -354,28 +360,9 @@ export default {
   height: 200px;
 .TailWind
   border-radius: 10px
-@media screen and (max-width: 319px) and (min-width: 30px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 480px) and (min-width: 320px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 768px) and (min-width: 481px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 1024px) and (min-width: 769px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 1400px) and (min-width: 1024px)
-  .btnTailwind
-    width: 100% !important
-    top:22px
-@media screen and (min-width: 1401px)
-  .btnTailwind
-    width: 100% !important
-    top:22px
+.btnTailwind
+  height: 42px
+  width: 135px
+  font-weight: 500
+  font-size: 14px
 </style>

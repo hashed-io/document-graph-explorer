@@ -78,7 +78,6 @@ div
 </template>
 
 <script>
-import { ActionsApi } from '~/services'
 import DocInformation from '../page-components/info/DocInformation.vue'
 import ListContentGroup from '../page-components/List/list-content-group.vue'
 import Edges from '../page-components/edges/edges.vue'
@@ -156,10 +155,7 @@ export default {
     async callErase () {
       // CALL ACTION TO DELETE ALL DOCUMENT
       try {
-        let _contractAccount = this.account
-        let _api = this.$store.$apiMethods
-        let mEosApi = this.$store.$defaultApi
-        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        await this.newInstance()
         let docID = this.document.docId
         await this.ActionsApi.deleteDoc({ documentID: docID })
         this.showSuccessMsg('The document was erase')
