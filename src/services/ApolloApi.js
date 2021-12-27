@@ -46,11 +46,7 @@ class ApolloApi extends BaseEosApi {
       }
     }
     `
-    const { data } = await this.apollo.query({ query: query, errorPolicy: 'all' })
-    // const { loading, data, error } = await this.apollo.query({ query: query, errorPolicy: 'all' })
-    // console.log('--------------2')
-    // console.log({ loading, data, error })
-    // console.log('--------------2')
+    const { data } = await this.apollo.query({ query: query, errorPolicy: 'ignore' })
     return data
   }
   async getDocumentsByDocId ({ byElement, props, type, docInterface, isHashed }) {
@@ -66,7 +62,7 @@ class ApolloApi extends BaseEosApi {
       }
     `
 
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, errorPolicy: 'ignore' })
     return data
   }
   async getDocuments ({ number, props, type }) {
