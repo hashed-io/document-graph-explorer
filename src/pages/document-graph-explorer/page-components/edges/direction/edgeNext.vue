@@ -41,7 +41,7 @@
             .row
               .col-xs-6.col-sm-7.col-md-10
                 template(id='edgeInfo')
-                  div
+                  div.labelResponsive
                     | {{showEdgeInfo(item)}}
                     q-tooltip(
                       content-class='bg-black'
@@ -67,6 +67,9 @@
 </template>
 
 <style lang='stylus' scoped>
+.labelResponsive
+  overflow: hidden !important
+  text-overflow: ellipsis !important
 .alignCenterEdge
   margin-top: 4%
 .alignCenter

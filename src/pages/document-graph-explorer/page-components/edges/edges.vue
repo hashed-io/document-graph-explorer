@@ -144,17 +144,18 @@ export default {
               return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-              edges.docId.indexOf(value) > -1
+              edges.hash.indexOf(value) > -1
             })
           } else {
             filter = this.edges.filter(function (edges) {
               return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-              edges.hash.indexOf(value) > -1
+              edges.docId.indexOf(value) > -1
             })
           }
         }
+        // this.calculateSizeEdges(filter.length, 1)
         return filter
       } else {
         return this.edges
@@ -228,7 +229,7 @@ export default {
   methods: {
     calculateSizeEdges (edgesLength, resultQueryLength) {
       if (edgesLength > 0 && resultQueryLength > 0) {
-        let pixels = parseInt(edgesLength) * 75
+        let pixels = parseInt(resultQueryLength) * 75
         if (pixels > 600) {
           return 'height:' + '600' + 'px'
         } else {
