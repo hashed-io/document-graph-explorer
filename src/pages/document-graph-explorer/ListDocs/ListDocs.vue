@@ -22,18 +22,6 @@ div
                   no-caps
                   align="around"
               ).btnTailwind
-      .col-5
-        .row.justify-end.q-col-gutter-sm
-          .col-xs-12.col-sm-12.col-md-9.q-pb-sm
-            TSelectEdge(
-              v-model="endpoint"
-              dense
-              value='Endpoints'
-              :options="endpoints"
-              class="q-pt-lg"
-              @update="loadFromEndpoint"
-              message='Choose the endpoint'
-            )
     q-table(
       :data="documents"
       :columns="columns"
@@ -192,7 +180,25 @@ export default {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['isHashed', 'documentInterface'])
+    ...mapState('documentGraph', ['isHashed', 'documentInterface']),
+    ...mapState('documentGraph', ['endpointApollo']),
+    Endpoint () {
+      return this.endpointApollo
+    }
+  },
+  watch: {
+    async Endpoint (newValue, oldValue) {
+      this.loadingData = true
+      this.endpoint = newValue
+      this.loadFromEndpoint()
+      try {
+        await this.loadDocuments()
+      } catch (e) {
+        this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
+      } finally {
+        this.loadingData = false
+      }
+    }
   },
   methods: {
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),

@@ -32,3 +32,6 @@ export const setContractInfo = (state, contractInfo) => {
 export const setIsHashed = (state, bool) => {
   state.isHashed = bool
 }
+export const setEndpoint = (state, endpoint) => {
+  state.endpointApollo = endpoint
+}

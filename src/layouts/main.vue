@@ -22,12 +22,12 @@ q-layout(view="hHh Lpr lFf").bg-layout
     v-model="menu"
     side="left"
     :breakpoint="768"
-    :width="370"
+    :width="350"
     overlay
     bordered
     :content-style="{ backgroundColor: '#F3F4F6' }"
   )
-    left-menu(@close="menu = false" @switch="")
+    left-menu(@close="menu = false" @switch="saveEndpoint")
   q-page-container.q-mt-xl.contentContainer
     router-view
 </template>
@@ -65,7 +65,7 @@ q-layout(view="hHh Lpr lFf").bg-layout
 </style>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import LeftMenu from '~/components/layout/left-menu'
 import RightMenuAuthenticated from '~/components/layout/right-menu-authenticated'
 import RightMenuGuest from '~/components/layout/right-menu-guest'
@@ -87,7 +87,11 @@ export default {
     ...mapGetters('accounts', ['isAuthenticated'])
   },
   methods: {
-    ...mapActions('accounts', ['autoLogin'])
+    ...mapActions('accounts', ['autoLogin']),
+    ...mapMutations('documentGraph', ['setEndpoint']),
+    async saveEndpoint (endpoint) {
+      this.setEndpoint(endpoint)
+    }
   }
 }
 </script>
