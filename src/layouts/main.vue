@@ -12,30 +12,34 @@ q-layout(view="hHh Lpr lFf").bg-layout
       //-   aria-label="Menu"
       //- )
       q-toolbar-title.flex.items-center
-        img.logo(src="statics/icons/hashed.png")
+        img.logo(
+          src="statics/icons/hashed.png"
+          @click="menu = !menu"
+        )
       right-menu-authenticated(v-if="isAuthenticated")
       right-menu-guest(v-if="!isAuthenticated")
   q-drawer(
     v-model="menu"
     side="left"
     :breakpoint="768"
-    :width="250"
-    bordered
-    :mini='miniState'
-    @mouseover="miniState = false"
-    @mouseout="miniState = true"
+    :width="370"
     overlay
+    bordered
+    :content-style="{ backgroundColor: '#F3F4F6' }"
   )
-    left-menu
+    left-menu(@close="menu = false" @switch="")
   q-page-container.q-mt-xl.contentContainer
     router-view
 </template>
 
 <style lang="stylus" scoped>
+.contentDrawer
+  background-color: red
 .logo
   margin-left: 0.5vw
   max-height: 40px
   max-width: 100px
+  cursor:pointer
 .badge-left
   left: -5px
   right: auto
