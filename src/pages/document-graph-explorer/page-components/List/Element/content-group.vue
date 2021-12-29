@@ -217,11 +217,11 @@
 </template>
 
 <script>
-import BrowserIpfs from 'src/services/BrowserIpfs.js'
+import BrowserIpfs from '~/services/BrowserIpfs.js'
 import TInput from '~/components/input/t-input.vue'
 import TSelect from '~/components/select/t-select.vue'
 import Encrypt from '~/utils/EncryptUtil'
-import customRegex from 'src/const/customRegex.js'
+import customRegex from '~/const/customRegex.js'
 import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
