@@ -63,7 +63,16 @@ export default {
     this.setIsEdit(true)
   },
   computed: {
-    ...mapState('accounts', ['account'])
+    ...mapState('accounts', ['account']),
+    ...mapState('documentGraph', ['endpointApollo']),
+    Endpoint () {
+      return this.endpointApollo
+    }
+  },
+  watch: {
+    async Endpoint (newValue, oldValue) {
+      this.$router.push({ name: 'listDocs', query: { endpoint: newValue } })
+    }
   },
   data () {
     return {

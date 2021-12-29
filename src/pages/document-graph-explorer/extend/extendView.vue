@@ -50,6 +50,7 @@ import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import TSelectExtend from '~/components/select/TSelectExtend.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],
@@ -63,7 +64,17 @@ export default {
     TSelectExtend,
     EdgeDialog
   },
-
+  computed: {
+    ...mapState('documentGraph', ['endpointApollo']),
+    Endpoint () {
+      return this.endpointApollo
+    }
+  },
+  watch: {
+    async Endpoint (newValue, oldvalue) {
+      this.$router.push({ name: 'listDocs', query: { endpoint: newValue } })
+    }
+  },
   data () {
     return {
       extendContentGroup: {

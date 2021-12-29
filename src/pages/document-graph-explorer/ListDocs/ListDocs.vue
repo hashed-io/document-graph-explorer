@@ -188,11 +188,16 @@ export default {
       ]
     }
   },
-  beforeMount () {
+  async beforeMount () {
     this.loadingData = true
   },
   async mounted () {
     try {
+      if (this.$route.query.hasOwnProperty('endpoint')) {
+        this.endpoint = this.$route.query.endpoint
+        await this.modifyApolloEndpoint()
+        await this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      }
       await this.loadDocuments()
     } catch (e) {
       this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
@@ -350,7 +355,6 @@ export default {
     },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
-      console.log(contractInfo)
       if (contractInfo) {
         this.setContractInfo(contractInfo.queryDoccacheConfig[0])
       } else {

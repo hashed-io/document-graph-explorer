@@ -98,6 +98,9 @@ export default {
   watch: {
     $route (to, from) {
       this.loadData()
+    },
+    async Endpoint (newValue, oldValue) {
+      this.$router.push({ name: 'listDocs', query: { endpoint: newValue } })
     }
   },
   data () {
@@ -111,7 +114,11 @@ export default {
   computed: {
     ...mapGetters('accounts', ['account']),
     ...mapState('documentGraph', ['isHashed', 'documentInterface']),
-    ...mapState('documentGraph', ['document'])
+    ...mapState('documentGraph', ['document']),
+    ...mapState('documentGraph', ['endpointApollo']),
+    Endpoint () {
+      return this.endpointApollo
+    }
   },
   methods: {
     ...mapActions('documentGraph', ['getDocumentsByDocId']),
