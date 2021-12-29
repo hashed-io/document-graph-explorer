@@ -31,25 +31,49 @@ export default {
             }
           ]
         },
-        ksm: {
+        // ksm: {
+        //   selected: undefined,
+        //   logo: 'kusama.png',
+        //   name: 'Kusama',
+        //   color: '#101921',
+        //   endpoint: undefined,
+        //   options: [
+        //     {
+        //       label: 'ksm 1',
+        //       value: 'https://alpha-st.tekit.io/graphql',
+        //       color: 'black'
+        //     },
+        //     {
+        //       label: 'ksm 2',
+        //       value: 'https://hashed.systems/alpha-dge-test/graphql',
+        //       color: 'black'
+        //     },
+        //     {
+        //       label: 'ksm 3',
+        //       value: 'https://hashed.systems/alpha-trace-test/graphql',
+        //       color: 'black'
+        //     }
+        //   ]
+        // },
+        atom: {
           selected: undefined,
-          logo: 'kusama.png',
-          name: 'Kusama',
+          logo: 'cosmo.png',
+          name: 'Cosmos',
           color: '#101921',
           endpoint: undefined,
           options: [
             {
-              label: 'ksm 1',
+              label: 'Cosmos 1',
               value: 'https://alpha-st.tekit.io/graphql',
               color: 'black'
             },
             {
-              label: 'ksm 2',
+              label: 'Cosmos 2',
               value: 'https://hashed.systems/alpha-dge-test/graphql',
               color: 'black'
             },
             {
-              label: 'ksm 3',
+              label: 'Cosmos 3',
               value: 'https://hashed.systems/alpha-trace-test/graphql',
               color: 'black'
             }
@@ -83,7 +107,7 @@ export default {
           selected: undefined,
           logo: 'solana.png',
           name: 'Solana',
-          color: '#03E1FF',
+          color: '#DC1FFF',
           endpoint: undefined,
           options: [
             {
