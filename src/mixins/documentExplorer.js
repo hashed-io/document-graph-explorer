@@ -56,7 +56,8 @@ export const documentExplorer = {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document'])
+    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document']),
+    ...mapState('documentGraph', ['contractInfo'])
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
@@ -66,7 +67,13 @@ export const documentExplorer = {
       if (this.ActionsApi) {
         return
       }
-      let _contractAccount = this.account
+      var _contractAccount
+      console.log(typeof this.contractInfo)
+      if (typeof (this.contractInfo) === 'object') {
+        _contractAccount = this.contractInfo.contract
+      } else {
+        _contractAccount = this.account
+      }
       let _api = this.$store.$apiMethods
       let mEosApi = this.$store.$defaultApi
       this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)

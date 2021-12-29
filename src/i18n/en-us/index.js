@@ -106,6 +106,7 @@ export default {
       erase: {
         title: 'Erase Document',
         titleModal: 'Are you absolutely sure?',
+        warning: 'Unexpect bad things will happen if you don\'t read this!',
         msg: 'This action cannot be undone. This will permanently delete the doc with the ID: ',
         typeMsg: 'Please type',
         msgDel: 'document',

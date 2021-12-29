@@ -350,6 +350,7 @@ export default {
     },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
+      console.log(contractInfo)
       if (contractInfo) {
         this.setContractInfo(contractInfo.queryDoccacheConfig[0])
       } else {
