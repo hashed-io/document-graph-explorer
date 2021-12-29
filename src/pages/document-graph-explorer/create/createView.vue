@@ -44,7 +44,7 @@ import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import TSelectExtend from '~/components/select/TSelectExtend.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'createView',
   mixins: [documentExplorer],
@@ -59,6 +59,7 @@ export default {
     EdgeDialog
   },
   beforeMount () {
+    this.getTypesForSelect()
     this.setIsEdit(true)
   },
   computed: {
@@ -81,19 +82,30 @@ export default {
       showDialogEdge: false,
       openDialogEdge: false,
       documentType: undefined,
-      options: [
-        {
-          label: 'Lot',
-          value: 'lot'
-        },
-        {
-          label: 'Farmer',
-          value: 'farmer'
-        }
-      ]
+      options: undefined
     }
   },
   methods: {
+    ...mapActions('documentGraph', ['getTypes']),
+    async getTypesForSelect () {
+      try {
+        let response = await this.getTypes()
+        let data = response['__schema']['types']
+        console.log(data)
+        var types = []
+        data.forEach(element => {
+          if (element.interfaces.length > 0) {
+            types.push({
+              label: element.name,
+              value: element.name.toLowerCase()
+            })
+          }
+        })
+        this.options = types
+      } catch (error) {
+        this.showErrorMsg('An error occured while trying to retrieve the document types ' + error)
+      }
+    },
     onSave () {
       try {
         this.formatContentGroups(this.extendContentGroup)

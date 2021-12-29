@@ -3,7 +3,7 @@ div
   div(v-if="loading" class="center")
     q-spinner-tail(
       color="indigo"
-      size="5.5em"
+      size="1.5em"
     )
 
   div(v-if="!loading")

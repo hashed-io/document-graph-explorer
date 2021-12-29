@@ -4,14 +4,21 @@
     q-toolbar
       q-toolbar-title New Edge Form
       q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
+    q-card-section.modalInfo
+      .row.q-gutter-md
+        div(style="width: 5%;")
+          svg(xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z")
+        div(class='q-pt-xs') {{$t('pages.documentExplorer.edit.edges.modal')}}
+    q-separator
     q-card-section
       q-form(ref='edgeForm' @submit="addEdge").q-px-md
-        TSelectEdge(
+        Tinput(
           class="q-pt-md"
           v-model="form.direction"
-          :options="options"
+          placeholder='Enter the identifier of the document'
           dense
-          message='Choose direction'
+          :rules="[rules.required]"
         )
         Tinput(
           class="q-pt-md"
@@ -20,20 +27,6 @@
           dense
           :rules="[rules.required]"
         )
-        //- Tinput(
-        //-   class="q-pt-md"
-        //-   v-model="form.system_nodeLabel_s"
-        //-   placeholder='System Node Label'
-        //-   dense
-        //-   :rules="[rules.required]"
-        //- )
-        //- Tinput(
-        //-   class="q-pt-md"
-        //-   v-model="form.type"
-        //-   placeholder='Document Type'
-        //-   dense
-        //-   :rules="[rules.required]"
-        //- )
         q-btn(
           unelevated
           no-caps

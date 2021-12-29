@@ -123,31 +123,35 @@ export const documentExplorer = {
       await this.changeEndpoint({ client })
     },
     getDocumentInfo () {
-      this.edges = []
-      this.contentsGroups = {}
-      let selectDocument = this.getDocument()
-      if (!selectDocument) {
-        this.$router.push({ name: 'listDocs' })
+      if (this.$router.currentRoute.name !== 'createView') {
+        this.edges = []
+        this.contentsGroups = {}
+        let selectDocument = this.getDocument()
+        if (!selectDocument) {
+          this.$router.push({ name: 'listDocs' })
+        }
+        this.documentInfo.name = selectDocument.creator
+        this.documentInfo.hash = selectDocument.hash
+        this.documentInfo.creator = selectDocument.creator
+        if (selectDocument.hasOwnProperty('docId')) {
+          this.documentInfo.docId = selectDocument.docId
+        }
+        this.documentInfo.type = selectDocument.type
+        this.documentInfo.createdDate = selectDocument.createdDate
+        this.documentInfo.updatedDate = selectDocument.createdDate
       }
-      this.documentInfo.name = selectDocument.creator
-      this.documentInfo.hash = selectDocument.hash
-      this.documentInfo.creator = selectDocument.creator
-      if (selectDocument.hasOwnProperty('docId')) {
-        this.documentInfo.docId = selectDocument.docId
-      }
-      this.documentInfo.type = selectDocument.type
-      this.documentInfo.createdDate = selectDocument.createdDate
-      this.documentInfo.updatedDate = selectDocument.createdDate
     },
     async loadData () {
-      this.getDocumentInfo()
-      let edges = await this.getContentGroup()
-      if (edges.length > 0) {
-        this.getEdges(edges)
-      } else {
-        let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
-        if (previousEdge) {
-          this.edges = [previousEdge]
+      if (this.$router.currentRoute.name !== 'createView') {
+        this.getDocumentInfo()
+        let edges = await this.getContentGroup()
+        if (edges.length > 0) {
+          this.getEdges(edges)
+        } else {
+          let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
+          if (previousEdge) {
+            this.edges = [previousEdge]
+          }
         }
       }
     },

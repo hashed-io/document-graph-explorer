@@ -124,6 +124,9 @@ export default {
           ipfs: 'Saved in IPFS',
           encrypt: 'Click to decrypt'
         },
+        edges: {
+          modal: 'We are working on a document selector'
+        },
         cancel: {
           text: 'If you continue your changes will not be saved.'
         }

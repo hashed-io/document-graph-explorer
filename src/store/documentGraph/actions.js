@@ -18,6 +18,15 @@ export const getDocumentsByDocId = async function ({ commit }, params) {
     throw new Error(e)
   }
 }
+export const getTypes = async function ({ commit }) {
+  try {
+    const response = await this.$apolloApi.getAllTypes()
+    return response
+  } catch (error) {
+    console.error('An error ocurred while trying to get the types', error)
+    throw new Error(error)
+  }
+}
 export const getDocuments = async function ({ commit }, params) {
   try {
     const response = await this.$apolloApi.getDocuments({ ...params })

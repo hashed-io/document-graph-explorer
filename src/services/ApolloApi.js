@@ -65,13 +65,13 @@ class ApolloApi extends BaseEosApi {
     const { data } = await this.apollo.query({ query, errorPolicy: 'ignore' })
     return data
   }
-  async getDocuments ({ number, props, type }) {
+  async getDocuments ({ offset, limit, props, type }) {
     if (!props) {
       props = ''
     }
     const query = gql`
-      query {
-        query${type}(first:${number}) {
+      query  {
+        query${type}(first:${limit}, offset: ${offset}) {
           ${localStorage.getItem('documentInterface')}
           ${props}
         }
@@ -132,6 +132,22 @@ class ApolloApi extends BaseEosApi {
         eosEndpoint
         documentsTable
         edgesTable
+      }
+    }
+    `
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
+  async getAllTypes () {
+    const query = gql`
+    {
+      __schema{
+        types{
+          name
+          interfaces{
+            name
+          }
+        }
       }
     }
     `
