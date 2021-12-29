@@ -115,8 +115,7 @@ export default {
      */
     edges: {
       type: Array,
-      required: true,
-      default: () => []
+      required: true
     },
     withoutEdges: {
       type: Boolean,
