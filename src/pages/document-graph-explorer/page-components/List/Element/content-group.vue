@@ -7,6 +7,7 @@
             div.q-pl-md.color
               | {{content_group_data[0].title}}
             div(
+              v-if="!isEditSystem"
               class='text-brand-primary text-capitalize animated-icon customAlign'
               @click='editableTitle = true; previousTitle = content_group_data[0].title'
             ) Edit
@@ -135,8 +136,12 @@
             size="xl",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
+            template(
+              v-if="isEdit && isEditSystem"
+            ) {{ props.row.key }}
             TInput(
               v-model="newData.key",
+              v-if="isEdit && !isEditSystem"
               dense,
               placeholder="Key"
             )
@@ -173,8 +178,12 @@
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
+            template(
+              v-if="isEdit && isEditSystem"
+            ) {{getDataType(props.row.dataType)}}
             .topAlign
               TSelect(
+                v-if="isEdit && !isEditSystem"
                 v-model="newData.dataType",
                 :placeholder="newData.dataType",
                 :options="optionsSelect"
@@ -227,7 +236,7 @@ export default {
   props: {
     content_group_data: {
       type: Array,
-      required: true
+      required: false
     },
     index_content_group: {
       type: String
@@ -243,9 +252,16 @@ export default {
   mounted () {
     if (this.getIsEdit) {
       this.modifiedData()
-      this.isEdit = true
+      if (this.index_content_group !== 'system') {
+        this.isEdit = true
+        this.isEditSystem = false
+      } else {
+        this.isEditSystem = true
+        this.isEdit = true
+      }
       this.visibleColumns.push('actions')
     } else {
+      this.isEditSystem = false
       this.isEdit = false
     }
   },
@@ -462,6 +478,7 @@ export default {
     },
     onEraseRow (rowIndex) {
       this.contentGroupCopy.splice(rowIndex, 1)
+      this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
       // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
@@ -499,6 +516,7 @@ export default {
         }
       }
       this.contentGroupCopy.splice(rowIndex, 1, this.newData)
+      this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
       this.editableRow = undefined
       // TODO: send to the parent component to sign transaction
     },

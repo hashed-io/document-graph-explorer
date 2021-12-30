@@ -37,6 +37,9 @@ export default {
     },
     onConfirmed () {
       this.$emit('update:show', false)
+      /**
+       *  lorem ipsum
+       */
       this.$emit('Confirmed', true)
     }
   }

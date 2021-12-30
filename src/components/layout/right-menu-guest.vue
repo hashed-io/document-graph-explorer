@@ -5,7 +5,8 @@ export default {
   name: 'right-menu-guest',
   data () {
     return {
-      sizeResponsive: true
+      sizeResponsive: true,
+      idx: undefined
     }
   },
   methods: {

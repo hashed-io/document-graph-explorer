@@ -7,6 +7,7 @@ div
     .col-2
       TSelectExtend(
         v-model='form.direction'
+        message='Choose direction'
         :options='options'
         dense
       )
@@ -17,16 +18,17 @@ div
         :dense='true'
       )
   ListContentGroup(:contents_groups="extendContentGroup")
-  Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
-  q-dialog(v-model='showDialogEdge')
-    EdgeDialog(@EdgeData='addNewEdge')
+  //- Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
+  //- q-dialog(v-model='showDialogEdge')
+  //-   EdgeDialog(@EdgeData='addNewEdge')
   #BtnSection
-  .row.q-gutter-md.q-py-sm
+  .row.q-gutter-md.q-py-lg
     q-btn(
       unelevated
       no-caps
       label='Save'
       class='btnTailwind'
+      @click='onSave()'
     )
     q-btn(
       unelevated
@@ -48,6 +50,7 @@ import CancelDialog from '../page-components/cancel/cancelDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import TSelectExtend from '~/components/select/TSelectExtend.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
+import { mapState } from 'vuex'
 export default {
   name: 'DocumentExplorer',
   mixins: [documentExplorer],
@@ -61,7 +64,17 @@ export default {
     TSelectExtend,
     EdgeDialog
   },
-
+  computed: {
+    ...mapState('documentGraph', ['endpointApollo']),
+    Endpoint () {
+      return this.endpointApollo
+    }
+  },
+  watch: {
+    async Endpoint (newValue, oldvalue) {
+      this.$router.push({ name: 'listDocs', query: { endpoint: newValue } })
+    }
+  },
   data () {
     return {
       extendContentGroup: {
@@ -96,6 +109,9 @@ export default {
     }
   },
   methods: {
+    onSave () {
+
+    },
     openModal () {
       this.showDialogEdge = true
     },

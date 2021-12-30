@@ -2,36 +2,38 @@
 div
   q-spinner-tail(
     color="indigo"
-    size="5.5em"
+    size="1.5em"
     class="center"
     v-if="loadingData"
   )
   div(v-if="!loadingData")
-    .row.q-pb-md.justify-between
-      .col-4
+    .row.justify-between
+      .col-12
         div.text-h6.q-py-md
           | {{$t('pages.documentExplorer.listDocs.title')}}
-      .col-5
-        .row.justify-end.q-col-gutter-sm
-          .col-xs-12.col-sm-12.col-md-9.q-pb-sm
-            TSelectEdge(
-              v-model="endpoint"
-              dense
-              value='Endpoints'
-              :options="endpoints"
-              class="q-pt-lg"
-              message='Choose the endpoint'
-            )
-          .col-xs-12.col-sm-12.col-md-2.spaceBtn
-              div
-                q-btn(
-                    label='Load'
-                    @click='loadFromEndpoint'
-                    unelevated
-                    no-caps
-                    align="around"
-                ).btnTailwind.q-mt-xs
+    .row.q-pb-sm.justify-between
+      .col-4
+        div
+          q-btn(
+              label='New Document'
+              @click='newDoc'
+              unelevated
+              no-caps
+              align="around"
+          ).btnTailwind
+      .col-4
+        TInput(
+          v-model='search'
+          dense
+          debounce='500'
+          @update="onSearchDoc"
+          placeholder='Search'
+        )
     q-table(
+      :pagination.sync="pagination"
+      @request="onRequest"
+      binary-state-sort
+      :loading="loadingDocs"
       :data="documents"
       :columns="columns"
       card-class="bg-grey-1"
@@ -103,6 +105,16 @@ export default {
       documents: undefined,
       assignment: undefined,
       currentEndpoint: undefined,
+      search: undefined,
+      prevDoc: undefined,
+      loadingDocs: undefined,
+      pagination: {
+        sortBy: 'desc',
+        descending: false,
+        page: 1,
+        rowsPerPage: 5,
+        rowsNumber: 6
+      },
       visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid', 'system'],
       columns: [
         {
@@ -176,11 +188,16 @@ export default {
       ]
     }
   },
-  beforeMount () {
+  async beforeMount () {
     this.loadingData = true
   },
   async mounted () {
     try {
+      if (this.$route.query.hasOwnProperty('endpoint')) {
+        this.endpoint = this.$route.query.endpoint
+        await this.modifyApolloEndpoint()
+        await this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+      }
       await this.loadDocuments()
     } catch (e) {
       this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
@@ -189,20 +206,117 @@ export default {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['isHashed', 'documentInterface'])
+    ...mapState('documentGraph', ['isHashed', 'documentInterface']),
+    ...mapState('documentGraph', ['endpointApollo']),
+    Endpoint () {
+      return this.endpointApollo
+    }
+  },
+  watch: {
+    async Endpoint (newValue, oldValue) {
+      this.loadingData = true
+      this.endpoint = newValue
+      this.pagination.page = 1
+      this.pagination.rowsPerPage = 5
+      this.pagination.sortBy = 'desc'
+      this.pagination.descending = false
+      this.pagination.rowsNumber = 6
+      try {
+        await this.loadFromEndpoint()
+      } catch (e) {
+        this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
+      } finally {
+        this.loadingData = false
+      }
+    }
   },
   methods: {
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    async onSearchDoc () {
+      const docInterface = this.getLocalStorage('documentInterface')
+      const documentID = this.search
+      const isHashed = (this.search.length > 30)
+      const data = await this.getDocumentsByDocId({
+        byElement: documentID,
+        type: 'Document',
+        props: '',
+        docInterface: docInterface,
+        isHashed: isHashed
+      })
+      var _documents = []
+      for (const doc of data.queryDocument) {
+        let typeSchema = await this.getPropsType({
+          type: doc['__typename']
+        })
+        let _props = typeSchema['__type'].fields
+        const found = _props.find(element => element.name === 'system_nodeLabel_s')
+        // const found = true
+        if (found) {
+          let byElement = doc.docId
+          if (this.isHashed) {
+            byElement = doc.hash
+          }
+          var query = `... on ${doc.type}{
+            system_nodeLabel_s
+          }`
+          let _isHashed = this.isHashed
+          let response = await this.getDocumentsByDocId({
+            byElement: byElement,
+            props: query,
+            type: doc['__typename'],
+            isHashed: _isHashed
+          })
+          doc['system_nodeLabel_s'] = response[`query${doc['__typename']}`][0]['system_nodeLabel_s']
+          _documents.push(doc)
+        }
+        query = ''
+      }
+      if (_documents.length > 0) {
+        this.showSuccessMsg('Document found')
+        this.documents = _documents
+        return _documents.length
+      } else {
+        await this.loadDocuments()
+        if (this.search !== '') {
+          this.showErrorMsg('Document not found')
+        }
+      }
+    },
+    async onRequest (props) {
+      this.loadingDocs = true
+      const { page, rowsPerPage, sortBy, descending, rowsNumber } = props.pagination
+      let offset = (page - 1) * rowsPerPage
+      let limit = rowsPerPage
+      const numberDocs = await this.loadDocuments(limit, offset)
+      if (numberDocs) {
+        this.pagination.page = page
+        this.pagination.rowsPerPage = rowsPerPage
+        this.pagination.sortBy = sortBy
+        this.pagination.descending = descending
+        this.pagination.rowsNumber = rowsNumber + numberDocs
+      } else {
+        this.showSuccessMsg('There is no more data to display')
+      }
+      this.loadingDocs = false
+    },
+    newDoc () {
+      this.$router.push({ name: 'createView' })
+    },
     async loadLocalStorage () {
       let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
       this.currentEndpoint = apiEndpoint
     },
-    async loadDocuments () {
+    async loadDocuments (limit, offset) {
+      var data
       await this.getDocInterface()
       await this.getContractInfo()
       this.loadLocalStorage()
-      const data = await this.getDocuments({ number: 20, type: 'Document' })
+      if (!limit && !offset) {
+        data = await this.getDocuments({ limit: 5, offset: 0, type: 'Document' })
+      } else {
+        data = await this.getDocuments({ limit: limit, offset: offset, type: 'Document' })
+      }
       var _documents = []
       for (const doc of data.queryDocument) {
         let typeSchema = await this.getPropsType({
@@ -232,7 +346,12 @@ export default {
 
         query = ''
       }
-      this.documents = _documents
+      if (_documents.length > 0) {
+        this.documents = _documents
+        return _documents.length
+      } else {
+        return 0
+      }
     },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
@@ -354,28 +473,9 @@ export default {
   height: 200px;
 .TailWind
   border-radius: 10px
-@media screen and (max-width: 319px) and (min-width: 30px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 480px) and (min-width: 320px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 768px) and (min-width: 481px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 1024px) and (min-width: 769px)
-  .btnTailwind
-    width: 50% !important
-    left: 50% !important
-@media screen and (max-width: 1400px) and (min-width: 1024px)
-  .btnTailwind
-    width: 100% !important
-    top:22px
-@media screen and (min-width: 1401px)
-  .btnTailwind
-    width: 100% !important
-    top:22px
+.btnTailwind
+  height: 42px
+  width: 135px
+  font-weight: 500
+  font-size: 14px
 </style>

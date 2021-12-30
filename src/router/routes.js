@@ -5,6 +5,8 @@ const routes = [
   { path: '/login', component: () => import('pages/login/login.vue'), name: 'login', meta: { layout: 'guest', title: 'pages.login.title', guest: true } },
   // Timeline example
   { path: '/timeline', component: () => import('~/pages/timeline/timeline-page'), name: 'timeline-page', meta: { guest: true } },
+  // Page to create a new document
+  { path: '/create', component: () => import('~/pages/document-graph-explorer/create/createView'), name: 'createView', meta: { guest: true } },
   // Page to render all the data of the document [contains the edit button, erase and extend]
   { path: '/explore', component: () => import('~/pages/document-graph-explorer/explorer/explorerView'), name: 'DocumentExplorer', meta: { guest: true } },
   // Page to edit document [contains the buttons to edit]

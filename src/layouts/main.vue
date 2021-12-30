@@ -12,30 +12,34 @@ q-layout(view="hHh Lpr lFf").bg-layout
       //-   aria-label="Menu"
       //- )
       q-toolbar-title.flex.items-center
-        img.logo(src="statics/icons/hashed.png")
+        img.logo(
+          src="statics/icons/hashed.png"
+          @click="menu = !menu"
+        )
       right-menu-authenticated(v-if="isAuthenticated")
       right-menu-guest(v-if="!isAuthenticated")
   q-drawer(
     v-model="menu"
     side="left"
     :breakpoint="768"
-    :width="250"
-    bordered
-    :mini='miniState'
-    @mouseover="miniState = false"
-    @mouseout="miniState = true"
+    :width="350"
     overlay
+    bordered
+    :content-style="{ backgroundColor: '#F3F4F6' }"
   )
-    left-menu
+    left-menu(@close="menu = false" @switch="saveEndpoint")
   q-page-container.q-mt-xl.contentContainer
     router-view
 </template>
 
 <style lang="stylus" scoped>
+.contentDrawer
+  background-color: red
 .logo
   margin-left: 0.5vw
   max-height: 40px
   max-width: 100px
+  cursor:pointer
 .badge-left
   left: -5px
   right: auto
@@ -61,7 +65,7 @@ q-layout(view="hHh Lpr lFf").bg-layout
 </style>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import LeftMenu from '~/components/layout/left-menu'
 import RightMenuAuthenticated from '~/components/layout/right-menu-authenticated'
 import RightMenuGuest from '~/components/layout/right-menu-guest'
@@ -83,7 +87,13 @@ export default {
     ...mapGetters('accounts', ['isAuthenticated'])
   },
   methods: {
-    ...mapActions('accounts', ['autoLogin'])
+    ...mapActions('accounts', ['autoLogin']),
+    ...mapMutations('documentGraph', ['setEndpoint']),
+    ...mapMutations('documentGraph', ['clearStack']),
+    async saveEndpoint (endpoint) {
+      this.clearStack()
+      this.setEndpoint(endpoint)
+    }
   }
 }
 </script>

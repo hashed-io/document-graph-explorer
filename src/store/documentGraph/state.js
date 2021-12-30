@@ -6,5 +6,6 @@ export default () => ({
   isHashed: false,
   typesWithSystemNode: undefined,
   contractInfo: undefined,
-  documentInterface: undefined
+  documentInterface: undefined,
+  endpointApollo: undefined
 })

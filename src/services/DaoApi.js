@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import BaseEosApi from './BaseEosApi'
-import { Contracts } from 'src/const/Contracts.js'
+import { Contracts } from '~/const/Contracts.js'
 import eosjsAccountName from 'eosjs-account-name'
 import { Serialize } from 'eosjs'
 

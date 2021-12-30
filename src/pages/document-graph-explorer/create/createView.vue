@@ -1,35 +1,36 @@
 <template lang='pug'>
 div
-  div(v-if="loading" class="center")
-    q-spinner-tail(
-      color="indigo"
-      size="1.5em"
+  //- DocInformation(:docInfo="documentInfo")
+  .text-h6.q-pb-md
+    | {{$t('pages.documentExplorer.create.title')}}
+  .row
+    .col-4
+      TSelectExtend(
+        v-model='documentType'
+        message='Choose document type'
+        :options='options'
+        dense
+      )
+  ListContentGroup(:contents_groups="extendContentGroup")
+  //- Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
+  //- q-dialog(v-model='showDialogEdge')
+  //-   EdgeDialog(@EdgeData='addNewEdge')
+  #BtnSection
+  .row.q-gutter-md.q-py-lg
+    q-btn(
+      unelevated
+      no-caps
+      label='Save'
+      class='btnTailwind'
+      @click='onSave()'
     )
-
-  div(v-if="!loading")
-    div.text-h6.q-pb-md
-      | {{$t('pages.documentExplorer.edit.title')}}
-    DocInformation(:docInfo="documentInfo")
-    ListContentGroup(:contents_groups="contentsGroups")
-    Edges(:edges="edges" :relations="relationsEdges" @showModal="openModal")
-    q-dialog(v-model='showDialogEdge')
-      EdgeDialog(@EdgeData='addNewEdge')
-    #BtnSection
-    .row.q-gutter-md.q-py-md
-      q-btn(
-        unelevated
-        label='Save'
-        no-caps
-        class="btnTailwind"
-        @click='onSave()'
-      )
-      q-btn(
-        unelevated
-        label='Cancel'
-        @click='onCancel()'
-        no-caps
-        class="btnTailwind"
-      )
+    q-btn(
+      unelevated
+      no-caps
+      label='Cancel'
+      @click='onCancel()'
+      class='btnTailwind'
+    )
     //- CancelDialog(:show="openDialog" @close='onCancelModal' @ok='onOkModal')
 </template>
 
@@ -37,30 +38,31 @@ div
 import DocInformation from '../page-components/info/DocInformation.vue'
 import ListContentGroup from '../page-components/List/list-content-group.vue'
 import Edges from '../page-components/edges/edges.vue'
-import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
+import TInput from '~/components/input/t-input.vue'
+import TSelect from '~/components/select/t-select.vue'
 import CancelDialog from '../page-components/cancel/cancelDialog.vue'
+import TSelectExtend from '~/components/select/TSelectExtend.vue'
+import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import { mapActions, mapState } from 'vuex'
 export default {
-  name: 'DocumentExplorer',
+  name: 'createView',
   mixins: [documentExplorer],
   components: {
     DocInformation,
     ListContentGroup,
     Edges,
-    EdgeDialog,
-    CancelDialog
+    TInput,
+    TSelect,
+    CancelDialog,
+    TSelectExtend,
+    EdgeDialog
   },
-  data () {
-    return {
-      loading: false,
-      showDialogEdge: false,
-      currentEndpoint: undefined,
-      openDialog: false
-    }
+  beforeMount () {
+    this.getTypesForSelect()
+    this.setIsEdit(true)
   },
   computed: {
-    ...mapState('documentGraph', ['document']),
     ...mapState('accounts', ['account']),
     ...mapState('documentGraph', ['endpointApollo']),
     Endpoint () {
@@ -72,11 +74,50 @@ export default {
       this.$router.push({ name: 'listDocs', query: { endpoint: newValue } })
     }
   },
+  data () {
+    return {
+      extendContentGroup: {
+        system: [
+          {
+            title: 'system',
+            key: 'nodeLabel',
+            value: 'Value',
+            dataType: 's'
+          }
+        ]
+      },
+      openDialog: false,
+      loading: false,
+      showDialogEdge: false,
+      openDialogEdge: false,
+      documentType: undefined,
+      options: undefined
+    }
+  },
   methods: {
-    ...mapActions('documentGraph', ['getLocalStorage']),
+    ...mapActions('documentGraph', ['getTypes']),
+    async getTypesForSelect () {
+      try {
+        let response = await this.getTypes()
+        let data = response['__schema']['types']
+        console.log(data)
+        var types = []
+        data.forEach(element => {
+          if (element.interfaces.length > 0) {
+            types.push({
+              label: element.name,
+              value: element.name.toLowerCase()
+            })
+          }
+        })
+        this.options = types
+      } catch (error) {
+        this.showErrorMsg('An error occured while trying to retrieve the document types ' + error)
+      }
+    },
     onSave () {
       try {
-        this.formatContentGroups(this.contentsGroups)
+        this.formatContentGroups(this.extendContentGroup)
       } catch (error) {
         this.showErrorMsg('An error occured while trying to save the changes ' + error)
       }
@@ -84,9 +125,6 @@ export default {
     formatContentGroups (contentgroups) {
       // ADD the document type
       try {
-        console.log('1--------------1')
-        console.log(contentgroups)
-        console.log('1--------------1')
         const types = {
           c: 'checksum256',
           n: 'name',
@@ -104,7 +142,7 @@ export default {
           })
           contentGroup.push({
             label: 'type',
-            value: ['name', this.documentInfo.type.toLowerCase()]
+            value: ['name', this.documentType]
           })
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
@@ -116,21 +154,18 @@ export default {
           contentGroups.push(contentGroup)
           contentGroup = []
         }
-        this.callEditAction(contentGroups)
-        console.log(contentGroups)
+        this.callCreateAction(contentGroups)
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to format the content groups ' + error)
       }
     },
-    async callEditAction (contentGroups) {
+    async callCreateAction (contentGroups) {
       try {
         await this.newInstance()
-        let documentID = this.documentInfo.docId
-        await this.ActionsApi.editDoc({ documentID, contentGroups })
+        let creator = this.account
+        await this.ActionsApi.createDoc({ creator, contentGroups })
         this.setIsEdit(false)
-        let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
-        this.currentEndpoint = apiEndpoint
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
+        this.$router.push({ name: 'listDocs' })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
       }
@@ -139,23 +174,15 @@ export default {
       this.showDialogEdge = true
     },
     async addNewEdge (form) {
-      await this.newInstance()
-      let fromNode = this.document.docId
-      let toNode = form.direction
-      let edgeName = form.edgeName
-      let creator = this.account
-      console.log({ fromNode, toNode, edgeName, creator })
-      await this.ActionsApi.createEdge({ fromNode, toNode, edgeName, creator })
-      console.log(form)
-      // this.edges.push(form)
-      // await this.$nextTick()
+      this.extendEdges.push(form)
+      await this.$nextTick()
       this.showDialogEdge = false
     },
     onCancel () {
-      this.$router.push({ name: 'DocumentExplorer' })
+      this.openDialog = true
       this.setIsEdit(false)
-      // this.openDialog = !this.openDialog
-      // this.$forceUpdate()
+      this.$forceUpdate()
+      this.$router.push({ name: 'listDocs' })
     },
     onCancelModal () {
       this.openDialog = false
@@ -171,10 +198,4 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
-.center
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  margin-right: -50%;
-  transform: translate(-50%, -50%)
 </style>

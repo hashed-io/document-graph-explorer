@@ -1,7 +1,7 @@
 import BackComponent from './backComponent.vue'
 import Vuex from 'vuex'
 export default {
-  title: 'Document Explorer/BackComponent',
+  title: 'Components/BackComponent',
   component: BackComponent,
   argTypes: {}
 }

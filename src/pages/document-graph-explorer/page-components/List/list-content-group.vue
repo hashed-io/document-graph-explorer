@@ -17,6 +17,7 @@ div
     :key="content_group+`${index}`"
     @openDialog="onOpenDialog"
     @deleteTitle="onDeleteTitle"
+    @elementChanged='onChange'
     :cryptoKey="keyToEncrypt"
   )
   q-btn(
@@ -36,6 +37,15 @@ import CryptoDialog from './Element/crypto-dialog.vue'
 export default {
   name: 'ListContentsGroup',
   props: {
+    /**
+     * Contain all the tables to be render
+     * Each key in the object is an table.
+     * The following is the structure of this prop
+     * {
+     *  system: Array,
+     *  lorem: Array
+     * }
+     */
     contents_groups: {
       type: Object,
       required: true
@@ -65,6 +75,12 @@ export default {
     }
   },
   methods: {
+    onChange (obj) {
+      let key = obj.key
+      console.log(obj)
+      this.contents_groups[key] = obj.data
+      this.$forceUpdate()
+    },
     titleIsRepeated (obj) {
       let { prev, current } = obj
       let keys = Object.keys(this.contents_groups)

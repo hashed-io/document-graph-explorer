@@ -90,6 +90,7 @@ div.q-pt-md
   border-radius: 10px
 </style>
 <script>
+import { ActionsApi } from '~/services'
 import { mapGetters, mapState } from 'vuex'
 import TInput from '~/components/input/t-input.vue'
 import { validation } from '~/mixins/validation'
@@ -107,16 +108,27 @@ export default {
   props: {
     /**
      * This array must contain objects with the follow props {
-     * direction: String,
-     * name: String,
-     * label: String,
-     * edge: String
+     * docId
+     * docId_i
+     * hash
+     * type [document Type]
+     * creator
+     * createdDate
+     * system_nodeLabel_s
+     * edgeName
+     * __typename [comes from GraphQL]
+     * direction [next or prev]
+     *  NOTE: There are difference between next edge object and prev egde object
      * }
      */
     edges: {
       type: Array,
       required: true
     },
+    /**
+     * Allow identify if edges array is empty because don't contain
+     * edges or don't contain because is new document
+     */
     withoutEdges: {
       type: Boolean,
       required: false,
@@ -126,7 +138,8 @@ export default {
   mixins: [validation],
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit']),
-    ...mapState('documentGraph', ['isHashed']),
+    ...mapState('documentGraph', ['isHashed', 'document']),
+    ...mapState('accounts', ['account']),
     resultQuery () {
       if (this.search) {
         const value = this.search
@@ -141,17 +154,18 @@ export default {
               return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-              edges.docId.indexOf(value) > -1
+              edges.hash.indexOf(value) > -1
             })
           } else {
             filter = this.edges.filter(function (edges) {
               return edges.edgeName.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.type.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
               edges.createdDate.toLowerCase().indexOf(value.toLowerCase()) > -1 ||
-              edges.hash.indexOf(value) > -1
+              edges.docId.indexOf(value) > -1
             })
           }
         }
+        // this.calculateSizeEdges(filter.length, 1)
         return filter
       } else {
         return this.edges
@@ -225,7 +239,7 @@ export default {
   methods: {
     calculateSizeEdges (edgesLength, resultQueryLength) {
       if (edgesLength > 0 && resultQueryLength > 0) {
-        let pixels = parseInt(edgesLength) * 75
+        let pixels = parseInt(resultQueryLength) * 75
         if (pixels > 600) {
           return 'height:' + '600' + 'px'
         } else {
@@ -236,16 +250,39 @@ export default {
       }
     },
     onPrevNode (edgeData) {
+      /**
+       * This sends the row information to backward navigation
+       */
       this.$emit('edgeDataPrev', edgeData)
     },
     onNextNode (edgeData) {
+      /**
+       * This sends the row information to forward navigation
+       */
       this.$emit('edgeData', edgeData)
     },
-    removeEdge (item, index) {
+    async removeEdge (item, index) {
       // TODO: Information for delete action
-      this.edges.splice(index, 1)
+      // TODO: Add hash version [not complete yet in smart contract]
+      try {
+        let _contractAccount = this.account
+        let _api = this.$store.$apiMethods
+        let mEosApi = this.$store.$defaultApi
+        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+        let fromNode = this.document.docId
+        let toNode = item.docId
+        let edgeName = item.edgeName
+        console.log({ fromNode, toNode, edgeName })
+        await this.ActionsApi.deleteEdge({ fromNode, toNode, edgeName })
+        this.edges.splice(index, 1)
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to delete the edge of the node' + error)
+      }
     },
     addEdge () {
+      /**
+       * This change the v-model to show the edge form [EdgesDialog Component]
+       */
       this.$emit('showModal', true)
     }
   }

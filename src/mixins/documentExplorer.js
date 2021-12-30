@@ -1,5 +1,6 @@
 import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { ActionsApi } from '~/services'
 import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
@@ -46,20 +47,36 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      ActionsApi: undefined,
       loading: false,
       endpoint: undefined,
       contentsGroups: {},
-      edges: [],
-      relationsEdges: {}
+      edges: []
     }
   },
   computed: {
-    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document'])
+    ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document']),
+    ...mapState('documentGraph', ['contractInfo'])
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
     ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    async newInstance () {
+      if (this.ActionsApi) {
+        return
+      }
+      var _contractAccount
+      console.log(typeof this.contractInfo)
+      if (typeof (this.contractInfo) === 'object') {
+        _contractAccount = this.contractInfo.contract
+      } else {
+        _contractAccount = this.account
+      }
+      let _api = this.$store.$apiMethods
+      let mEosApi = this.$store.$defaultApi
+      this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
+    },
     async getContractInfo () {
       let contractInfo = await this.getContractInformation()
       if (contractInfo) {
@@ -112,31 +129,35 @@ export const documentExplorer = {
       await this.changeEndpoint({ client })
     },
     getDocumentInfo () {
-      this.edges = []
-      this.contentsGroups = {}
-      let selectDocument = this.getDocument()
-      if (!selectDocument) {
-        this.$router.push({ name: 'listDocs' })
+      if (this.$router.currentRoute.name !== 'createView') {
+        this.edges = []
+        this.contentsGroups = {}
+        let selectDocument = this.getDocument()
+        if (!selectDocument) {
+          this.$router.push({ name: 'listDocs' })
+        }
+        this.documentInfo.name = selectDocument.creator
+        this.documentInfo.hash = selectDocument.hash
+        this.documentInfo.creator = selectDocument.creator
+        if (selectDocument.hasOwnProperty('docId')) {
+          this.documentInfo.docId = selectDocument.docId
+        }
+        this.documentInfo.type = selectDocument.type
+        this.documentInfo.createdDate = selectDocument.createdDate
+        this.documentInfo.updatedDate = selectDocument.createdDate
       }
-      this.documentInfo.name = selectDocument.creator
-      this.documentInfo.hash = selectDocument.hash
-      this.documentInfo.creator = selectDocument.creator
-      if (selectDocument.hasOwnProperty('docId')) {
-        this.documentInfo.docId = selectDocument.docId
-      }
-      this.documentInfo.type = selectDocument.type
-      this.documentInfo.createdDate = selectDocument.createdDate
-      this.documentInfo.updatedDate = selectDocument.createdDate
     },
     async loadData () {
-      this.getDocumentInfo()
-      let edges = await this.getContentGroup()
-      if (edges.length > 0) {
-        this.getEdges(edges)
-      } else {
-        let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
-        if (previousEdge) {
-          this.edges = [previousEdge]
+      if (this.$router.currentRoute.name !== 'createView') {
+        this.getDocumentInfo()
+        let edges = await this.getContentGroup()
+        if (edges.length > 0) {
+          this.getEdges(edges)
+        } else {
+          let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
+          if (previousEdge) {
+            this.edges = [previousEdge]
+          }
         }
       }
     },
@@ -316,6 +337,7 @@ export const documentExplorer = {
         edgesMixed.push(previousEdge)
       }
       let QLresponse = responseEdges[queryLabel][0]
+      console.log(QLresponse)
       delete QLresponse['__typename']
       for (const key in QLresponse) {
         if (QLresponse[key]) {

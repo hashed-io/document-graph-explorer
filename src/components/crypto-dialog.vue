@@ -40,6 +40,9 @@ export default {
   name: 'crypto-dialog',
   mixins: [validation],
   props: {
+    /**
+     * Toggle to show the dialog
+     */
     openDialog: {
       required: true,
       type: Boolean,
@@ -53,7 +56,13 @@ export default {
     }
   },
   methods: {
+    /**
+     * This event is emitted when the modal is clicked on closed or out space
+     */
     onSubmit () {
+      /**
+       * When the key have filled, will send the key to parent component
+       */
       this.$emit('close-dialog', this.cryptoKey)
     }
   },
