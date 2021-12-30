@@ -29,6 +29,17 @@ q-card(bordered).cardTailWind
 export default {
   name: 'DocInformation',
   props: {
+    /**
+     * This props requires the follow structure: {
+     * name [creator]
+     * docId [id]
+     * hash
+     * creator [creator]
+     * type [Doc type]
+     * createdDate
+     * updatedDate
+     * }
+     */
     docInfo: {
       type: Object,
       required: true

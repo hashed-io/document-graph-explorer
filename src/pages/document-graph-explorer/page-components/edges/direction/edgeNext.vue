@@ -101,10 +101,16 @@ import { mapState } from 'vuex'
 export default {
   name: 'EdgeNext',
   props: {
+    /**
+     * This props contain all the information from the component [Edges]
+     */
     item: {
       type: Object,
       required: true
     },
+    /**
+     * This render the edition mode or read mode
+     */
     isEdit: {
       type: Boolean,
       required: true,
@@ -112,6 +118,9 @@ export default {
         return false
       }
     },
+    /**
+     * This number comes from the edges array [Edges component]
+     */
     index: {
       type: Number,
       required: true

@@ -35,8 +35,9 @@ const Template = (args, { argTypes }) => ({
 
 export const Base = Template.bind({})
 Base.args = {
-  contents_groups: { 'system': [{ 'key': 'nodeLabel', 'value': 'Lot ID: 243', 'dataType': 's', 'title': 'system' }] }
+  contents_groups: { 'system': [{ 'key': 'nodeLabel', 'value': 'Lot ID: 243', 'dataType': 's', 'title': 'system' }], 'details': [{ 'key': 'varaties', 'value': 'Trinitario', 'dataType': 's', 'title': 'details' }, { 'key': 'sortPriority', 'value': '5', 'dataType': 's', 'title': 'details' }, { 'key': 'organic', 'value': 'Yes', 'dataType': 's', 'title': 'details' }, { 'key': 'harvestDate', 'value': '2-11-2021', 'dataType': 's', 'title': 'details' }, { 'key': 'lotId', 'value': 243, 'dataType': 'i', 'title': 'details' }], 'fixedDetails': [{ 'key': 'owner', 'value': 'tlaclocmant2', 'dataType': 'n', 'title': 'fixedDetails' }, { 'key': 'type', 'value': 'document', 'dataType': 'n', 'title': 'fixedDetails' }] }
 }
 export const Example = Template.bind({})
 Example.args = {
-  contents_groups: { 'system': [{ 'key': 'nodeLabel', 'value': 'Lot ID: 243', 'dataType': 's', 'title': 'system' }], 'details': [{ 'key': 'varaties', 'value': 'Trinitario', 'dataType': 's', 'title': 'details' }, { 'key': 'sortPriority', 'value': '5', 'dataType': 's', 'title': 'details' }, { 'key': 'organic', 'value': 'Yes', 'dataType': 's', 'title': 'details' }, { 'key': 'harvestDate', 'value': '2-11-2021', 'dataType': 's', 'title': 'details' }, { 'key': 'lotId', 'value': 243, 'dataType': 'i', 'title': 'details' }], 'fixedDetails': [{ 'key': 'owner', 'value': 'tlaclocmant2', 'dataType': 'n', 'title': 'fixedDetails' }, { 'key': 'type', 'value': 'document', 'dataType': 'n', 'title': 'fixedDetails' }] } }
+  contents_groups: { 'system': [{ 'key': 'nodeLabel', 'value': 'Lot ID: 243', 'dataType': 's', 'title': 'system' }] }
+}

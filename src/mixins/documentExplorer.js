@@ -51,8 +51,7 @@ export const documentExplorer = {
       loading: false,
       endpoint: undefined,
       contentsGroups: {},
-      edges: [],
-      relationsEdges: {}
+      edges: []
     }
   },
   computed: {
@@ -338,6 +337,7 @@ export const documentExplorer = {
         edgesMixed.push(previousEdge)
       }
       let QLresponse = responseEdges[queryLabel][0]
+      console.log(QLresponse)
       delete QLresponse['__typename']
       for (const key in QLresponse) {
         if (QLresponse[key]) {

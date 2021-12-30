@@ -25,7 +25,14 @@ q-card.text-white(flat).eraseDialog
   .row.justify-center.q-pb-md
     q-btn(@click='onErase' no-caps outlined  flat :disable='verifyWrite' :label="$t('pages.documentExplorer.erase.btnErase')", style=" color:red")
 </template>
-<style lang='stylus'>
+<style lang='stylus' scoped>
+.modalTitle
+  color:black
+  font-weight: bolder
+  background: #F6F8FA
+.modalWarning
+  color: black
+  background: #FFF8C5
 .svg
   width: 5%
 @media screen and (max-width: 319px) and (min-width: 30px)
@@ -52,10 +59,16 @@ import TInput from '~/components/input/t-input.vue'
 export default {
   name: 'EraseBox',
   props: {
+    /**
+     * This replace the systemNodeLabel if the doc don't have
+     */
     docTitle: {
       type: String,
       required: true
     },
+    /**
+     * This props is necessary to write into the textfield and allow delete the doc
+     */
     systemNodeLabel: {
       type: String,
       required: false,
@@ -82,6 +95,9 @@ export default {
   },
   methods: {
     onErase () {
+      /**
+       *  Only invoke a function in the parent component
+       */
       this.$emit('onErase', true)
     },
     onCancel () {

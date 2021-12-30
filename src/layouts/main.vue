@@ -89,7 +89,9 @@ export default {
   methods: {
     ...mapActions('accounts', ['autoLogin']),
     ...mapMutations('documentGraph', ['setEndpoint']),
+    ...mapMutations('documentGraph', ['clearStack']),
     async saveEndpoint (endpoint) {
+      this.clearStack()
       this.setEndpoint(endpoint)
     }
   }

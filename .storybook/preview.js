@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Quasar from 'quasar'
 import iconSet from 'quasar/icon-set/fontawesome-v5'
+import "~/css/quasar.variables.styl";
+import "~/css/app.styl";
 // Import all the quasar css
 import 'quasar/dist/quasar.min.css'
 import '@quasar/extras/roboto-font/roboto-font.css'

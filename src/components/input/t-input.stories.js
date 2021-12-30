@@ -1,14 +1,13 @@
 import TInput from './t-input.vue'
 
 export default {
-  title: 'Document Explorer/TInput',
+  title: 'Components/TInput',
   component: TInput,
   parameters: {
     backgrounds: {
       values: [
-        { name: 'red', value: '#f00' },
-        { name: 'green', value: '#0f0' },
-        { name: 'blue', value: '#00f' }
+        { name: 'background', value: '#F3F4F6' },
+        { name: 'white', value: '#fff' }
       ]
     }
   },

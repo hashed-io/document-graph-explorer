@@ -85,6 +85,9 @@ export default {
     addEdge () {
       this.$refs.edgeForm.validate().then(success => {
         if (success) {
+          /**
+           * If the form is valid, this action will send the form to the parent component and call the action create edge
+           */
           this.$emit('EdgeData', this.form)
         } else {
           this.showErrorMsg('Form')

@@ -108,16 +108,27 @@ export default {
   props: {
     /**
      * This array must contain objects with the follow props {
-     * direction: String,
-     * name: String,
-     * label: String,
-     * edge: String
+     * docId
+     * docId_i
+     * hash
+     * type [document Type]
+     * creator
+     * createdDate
+     * system_nodeLabel_s
+     * edgeName
+     * __typename [comes from GraphQL]
+     * direction [next or prev]
+     *  NOTE: There are difference between next edge object and prev egde object
      * }
      */
     edges: {
       type: Array,
       required: true
     },
+    /**
+     * Allow identify if edges array is empty because don't contain
+     * edges or don't contain because is new document
+     */
     withoutEdges: {
       type: Boolean,
       required: false,
@@ -239,9 +250,15 @@ export default {
       }
     },
     onPrevNode (edgeData) {
+      /**
+       * This sends the row information to backward navigation
+       */
       this.$emit('edgeDataPrev', edgeData)
     },
     onNextNode (edgeData) {
+      /**
+       * This sends the row information to forward navigation
+       */
       this.$emit('edgeData', edgeData)
     },
     async removeEdge (item, index) {
@@ -263,6 +280,9 @@ export default {
       }
     },
     addEdge () {
+      /**
+       * This change the v-model to show the edge form [EdgesDialog Component]
+       */
       this.$emit('showModal', true)
     }
   }

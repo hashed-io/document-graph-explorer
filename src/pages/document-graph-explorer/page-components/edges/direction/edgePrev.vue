@@ -70,10 +70,16 @@ import { mapState } from 'vuex'
 export default {
   name: 'EdgePrev',
   props: {
+    /**
+     * This props contain all the information from the component [Edges]
+     */
     item: {
       type: Object,
       required: true
     },
+    /**
+     * This render the edition mode or read mode
+     */
     isEdit: {
       type: Boolean,
       required: true,
@@ -81,6 +87,9 @@ export default {
         return false
       }
     },
+    /**
+     * This number comes from the edges array [Edges component]
+     */
     index: {
       type: Number,
       required: true
@@ -121,9 +130,18 @@ export default {
       }
     },
     onNextNode (item) {
+      /**
+       * Parent component [Edges.vue]
+       * data to send [item]
+       * This action send to parent component all the information to navigate to the previous edge
+       */
       this.$emit('navigate', item)
     },
     removeEdge (item) {
+      /**
+       * This action send the edge data to delete in the parent component [Edges]
+       * data to send [item, index]
+       */
       this.$emit('deleteEdge', { edge: item, index: this.index })
     }
   }

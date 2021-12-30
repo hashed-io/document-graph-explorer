@@ -12,7 +12,7 @@ div
       | {{$t('pages.documentExplorer.explorer.title')}}
     DocInformation(:docInfo="documentInfo")
     ListContentGroup(:contents_groups="contentsGroups")
-    Edges(:edges="edges" :relations="relationsEdges" @edgeData="navigateToEdge" @edgeDataPrev="navigateToEdgePrev")
+    Edges(:edges="edges" @edgeData="navigateToEdge" @edgeDataPrev="navigateToEdgePrev")
     .q-py-md.row.q-gutter-md
       q-btn(
         v-if="documentInfo.creator === account"
@@ -127,7 +127,11 @@ export default {
     ...mapActions('documentGraph', ['deleteDoc']),
     navigateToEdge (edgeData) {
       this.setDocument(edgeData)
-      this.pushDocNavigation(this.documentInfo)
+      let data = JSON.parse(JSON.stringify(this.documentInfo))
+      delete data.creator
+      delete data.system_nodeLabel_s
+      delete data.updatedDate
+      this.pushDocNavigation(data)
       this.addInformation({
         label: 'edgeName',
         value: edgeData.edgeName

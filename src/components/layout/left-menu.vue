@@ -176,6 +176,9 @@ export default {
       if (!selected && this.custom.endpoint) {
         selected = this.custom.endpoint
       }
+      /**
+       * This send the endpoint selected to parent component [main.vue]
+       */
       this.$emit('switch', selected)
     }
   },
