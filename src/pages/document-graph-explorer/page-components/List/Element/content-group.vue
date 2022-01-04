@@ -7,6 +7,7 @@
             div.q-pl-md.color
               | {{content_group_data[0].title}}
             div(
+              data-cy='editTitleButton'
               v-if="!isEditSystem"
               class='text-brand-primary text-capitalize animated-icon customAlign'
               @click='editableTitle = true; previousTitle = content_group_data[0].title'
@@ -14,6 +15,7 @@
       .row.q-py-lg(v-if="editableTitle")
         .col-xs-12.col-sm-6
           TInput(
+            data-cy='titleInput'
             label='Title'
             placeholder="Enter the title"
             v-model='content_group_data[0].title'
@@ -24,11 +26,13 @@
           .row.q-col-gutter-md
             .col-xs-6.col-sm-3.col-md-2
               div(
+                data-cy='saveTitleButton'
                 class='text-brand-primary text-capitalize animated-icon alignButtons'
                 @click='onSaveTitle'
               ) Save
             .col-xs-6.col-sm-1.col-md-1
               div(
+                data-cy="deleteTitleButton"
                 class='text-red-tail text-capitalize animated-icon alignButtons'
                 @click='onDeleteTitle'
               ) Delete
@@ -120,11 +124,13 @@
               .row.justify-between
                 .col-xs-12.col-sm-12.col-md-6
                   div(
+                    data-cy="editRowButton"
                     class='text-brand-primary text-capitalize animated-icon'
                     @click='onEditRow(props.row, props.rowIndex )'
                   ) Edit
                 .col-xs-12.col-sm-12.col-md-6
                   div(
+                    data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
                     style='color: #DC2626'
                     @click='onEraseRow(props.rowIndex )'
@@ -140,6 +146,7 @@
               v-if="isEdit && isEditSystem"
             ) {{ props.row.key }}
             TInput(
+              data-cy='keyField'
               v-model="newData.key",
               v-if="isEdit && !isEditSystem"
               dense,
@@ -152,6 +159,7 @@
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             TInput(
+              data-cy="valueField"
               v-model="newData.value",
               dense,
               :type="'textarea'",
@@ -161,6 +169,7 @@
             )
             .row
               q-toggle(
+                data-cy='encryptToggle'
                 size='xs',
                 no-hover,
                 v-model='props.row.optional.encrypt',
@@ -168,6 +177,7 @@
                 @input='onEncrypt(props.row)'
               )
               q-toggle(
+                data-cy='ipfsToggle'
                 size='xs',
                 v-model='props.row.optional.ipfs',
                 label='IPFS',
@@ -183,6 +193,7 @@
             ) {{getDataType(props.row.dataType)}}
             .topAlign
               TSelect(
+                data-cy='selectType'
                 v-if="isEdit && !isEditSystem"
                 v-model="newData.dataType",
                 :placeholder="newData.dataType",
@@ -197,16 +208,19 @@
             .row
               .col-xs-12.col-sm-12.col-md-6
                 div(
+                  data-cy='saveEdit'
                   class='text-capitalize animated-icon text-brand-primary'
                   @click='onSave(props.rowIndex, props.row)'
                 ) Save
               .col-xs-12.col-sm-12.col-md-6
                 div(
+                  data-cy='cancelEdit'
                   class='text-capitalize animated-icon text-brand-primary'
                   @click='onCancel(props.rowIndex, props.row)'
                 ) Cancel
   .row.justify-end
     q-icon(
+        data-cy='addRowButton'
         v-if='isEdit'
         class='text-brand-primary q-py-sm animated-icon',
         size="2rem",

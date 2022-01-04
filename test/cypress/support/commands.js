@@ -25,6 +25,19 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import Faker from 'faker'
 import 'cypress-file-upload'
+Cypress.Commands.add('listDocs', (endpoint, search) => {
+  // 'https://alpha-st.tekit.io/graphql'
+  // 'https://hashed.systems/alpha-dge-test/graphql'
+  // 'https://hashed.systems/alpha-trace-test/graphql'
+  let endpoints = ['https://alpha-st.tekit.io/graphql', 'https://hashed.systems/alpha-dge-test/graphql', 'https://hashed.systems/alpha-trace-test/graphql']
+  if (endpoint) {
+    cy.visit('/?endpoint=' + endpoints[endpoint])
+  }
+  if (search) {
+    cy.dataCy('search')
+      .type(search)
+  }
+})
 Cypress.Commands.add('SaveBlockChain', () => {
   cy.dataCy('saveDataButton')
     .click()
@@ -98,6 +111,12 @@ Cypress.Commands.add('fileLabelFill', (fileName, encrypt) => {
       cy.fillCryptoDialog(json.keyToEncrypt)
     })
   }
+})
+Cypress.Commands.add('fillRow', () => {
+
+})
+Cypress.Commands.add('addNewContent', () => {
+
 })
 Cypress.Commands.add('addNewLabel', (typeLabelNumber, withCheckBox) => {
   let fakeValue
@@ -189,10 +208,10 @@ Cypress.Commands.add('qSelect', (dataCy, element) => {
     .click()
 })
 Cypress.Commands.add('loginAnchor', () => {
-  window.localStorage.setItem('anchor-link--alejandroga1@active-1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f', '{"type":"channel","data":{"identifier":"DAO LLC","chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f","auth":{"actor":"alejandroga1","permission":"active"},"publicKey":"PUB_K1_6i2Q4Lwa4H75PtTZ9jWaFXVDywLjG7Qt8vqMsW2u4FefNHWLvV","channel":{"url":"https://cb.anchor.link/d7823778-be21-4948-8045-750deb6e0017","key":"PUB_K1_8JsjM2qx7nU56FHpAvP8eJ6EyggcV9yMvaWwuscTkoB4eRnmTS","name":"Anchor Desktop"},"requestKey":"PVT_K1_2eLwYYJrCqbYjoFcce7p6R1sfiuUHC6sbtpC9kX6AdRefuXNwP"},"metadata":{"sameDevice":true,"timeout":120000,"name":"Anchor Desktop","request_key":"PUB_K1_6nyys4e9AzGhFDnJ7aBBo1Nuyk642PpVxCw5ncKVQu7gLVYtud"}}')
-  window.localStorage.setItem('account', 'alejandroga1')
+  window.localStorage.setItem('anchor-link--tlaclocmant2@active-1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f', '{"type":"channel","data":{"identifier":"DAO LLC","chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f","auth":{"actor":"tlaclocmant2","permission":"active"},"publicKey":"PUB_K1_52qknGJh69NqfFL2sZfiuNtSYrR41B38w18gX1rbaoPFdgBmjx","channel":{"url":"https://cb.anchor.link/d7823778-be21-4948-8045-750deb6e0017","key":"PUB_K1_8JsjM2qx7nU56FHpAvP8eJ6EyggcV9yMvaWwuscTkoB4eRnmTS","name":"Anchor Desktop"},"requestKey":"PVT_K1_2EskFCrXf8gLoH98dJRVC2Dp2bNSwnNAkTk9SNwhXMinpxVDP6"},"metadata":{"sameDevice":true,"timeout":120000,"name":"Anchor Desktop","request_key":"PUB_K1_5opVQfy7TG4R4ifuX7yR8PX6AhCaQ6T8nyQHaZ1wDYzMUH9z92"}}')
+  window.localStorage.setItem('account', 'tlaclocmant2')
   window.localStorage.setItem('autoLogin', 'Anchor')
-  window.localStorage.setItem('anchor-link--list', '[{"auth":{"actor":"alejandroga1","permission":"active"},"chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"}]')
+  window.localStorage.setItem('anchor-link--list', '[{"auth":{"actor":"tlaclocmant2","permission":"active"},"chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"}]')
   window.localStorage.setItem('returning', true)
 })
 Cypress.Commands.add('logoutAnchor', () => {

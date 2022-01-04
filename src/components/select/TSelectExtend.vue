@@ -2,6 +2,7 @@
 div
   .text-subtitle3 {{label}}
   q-select(
+    data-cy='selectDocType'
     outlined
     color='indigo-6'
     v-model="content"

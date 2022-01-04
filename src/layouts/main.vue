@@ -13,6 +13,7 @@ q-layout(view="hHh Lpr lFf").bg-layout
       //- )
       q-toolbar-title.flex.items-center
         img.logo(
+          data-cy='menu'
           src="statics/icons/hashed.png"
           @click="menu = !menu"
         )

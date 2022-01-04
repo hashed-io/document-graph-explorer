@@ -16,6 +16,7 @@ div
     .q-py-md.row.q-gutter-md
       q-btn(
         v-if="documentInfo.creator === account"
+        data-cy="extendButton"
         @click="extendDocument()",
         class='text-white btnTailwind'
         unelevated
@@ -33,6 +34,7 @@ div
             div(style='margin-top:2px;') Extend
       q-btn(
         v-if="documentInfo.creator === account"
+        data-cy="eraseButton"
         @click="eraseDocument()",
         class='text-white btnTailwind'
         unelevated
@@ -51,6 +53,7 @@ div
             div(style='margin-top:2px;') Erase
       q-btn(
         v-if="documentInfo.creator === account"
+        data-cy="editButton"
         @click="editDocument()",
         class='text-white btnTailwind'
         unelevated

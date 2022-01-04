@@ -21,6 +21,7 @@ div
     :cryptoKey="keyToEncrypt"
   )
   q-btn(
+    data-cy="newContentButton"
     v-if="isEdit"
     unelevated
     label='New content_group'
