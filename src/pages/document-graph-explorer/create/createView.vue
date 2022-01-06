@@ -18,6 +18,7 @@ div
   #BtnSection
   .row.q-gutter-md.q-py-lg
     q-btn(
+      data-cy='saveDoc'
       unelevated
       no-caps
       label='Save'
@@ -25,6 +26,7 @@ div
       @click='onSave()'
     )
     q-btn(
+      data-cy='cancelDoc'
       unelevated
       no-caps
       label='Cancel'

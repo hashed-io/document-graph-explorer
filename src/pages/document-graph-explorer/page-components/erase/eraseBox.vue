@@ -21,9 +21,9 @@ q-card.text-white(flat).eraseDialog
         | {{$t('pages.documentExplorer.erase.msgDel')}}
         | {{(systemNodeLabel === undefined) ?  docTitle : systemNodeLabel}}
       | {{$t('pages.documentExplorer.erase.typeMsgContinue')}}
-    TInput(focus label="", dense v-model="eraseInput", color="white" @input='verifyWrite' debounce="500")
+    TInput(data-cy='deleteInput' focus label="", dense v-model="eraseInput", color="white" @input='verifyWrite' debounce="500")
   .row.justify-center.q-pb-md
-    q-btn(@click='onErase' no-caps outlined  flat :disable='verifyWrite' :label="$t('pages.documentExplorer.erase.btnErase')", style=" color:red")
+    q-btn(data-cy='confirmDeleteButton' @click='onErase' no-caps outlined  flat :disable='verifyWrite' :label="$t('pages.documentExplorer.erase.btnErase')", style=" color:red")
 </template>
 <style lang='stylus' scoped>
 .modalTitle

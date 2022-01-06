@@ -76,7 +76,7 @@ Cypress.Commands.add('dateTimeInput', (dataCy, date, time) => {
    * @param {boolean} isEdit?
 */
 Cypress.Commands.add('stringLabelFill', (dataCy, encrypt, ipfs, fakeValue, isEdit) => {
-  const dataCyIpfs = 'checkboxIPFS'
+  const dataCyIpfs = 'ipfsToggle'
 
   if (ipfs) {
     cy.dataCy(dataCyIpfs)
@@ -112,8 +112,65 @@ Cypress.Commands.add('fileLabelFill', (fileName, encrypt) => {
     })
   }
 })
-Cypress.Commands.add('fillRow', () => {
-
+/**
+ *  key String
+ *  Value String
+ *  dataType Int []
+ */
+Cypress.Commands.add('fillRow', (keyValue, dataType, obj) => {
+  if (obj.isFirst) {
+    switch (dataType) {
+      // String
+      case 0:
+        // cy.log('String Label')
+        cy.dataCy('keyField')
+          .type('L')
+          .clear()
+          .type(Faker.lorem.sentence())
+        cy.dataCy('valueField')
+          .type('L')
+          .clear()
+          .type(Faker.lorem.sentence())
+        break
+    }
+  }
+})
+Cypress.Commands.add('fillRowEdit', (dataType) => {
+  cy.log(typeof dataType + '||' + dataType)
+  switch (dataType) {
+    // String
+    case 'string':
+      // cy.log('String Label')
+      cy.dataCy('keyField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      cy.dataCy('valueField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      break
+    case 'int64':
+      cy.dataCy('keyField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      cy.dataCy('valueField')
+        .type('0')
+        .clear()
+        .type(Faker.datatype.number)
+      break
+    case 'name':
+      cy.dataCy('keyField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      cy.dataCy('valueField')
+        .type('0')
+        .clear()
+        .type(Faker.lorem.word())
+      break
+  }
 })
 Cypress.Commands.add('addNewContent', () => {
 
@@ -193,12 +250,6 @@ Cypress.Commands.add('addNewLabel', (typeLabelNumber, withCheckBox) => {
   // Click in add field Button
   cy.dataCy('addFieldButton')
     .click()
-})
-Cypress.Commands.add('deleteLabel', () => {
-
-})
-Cypress.Commands.add('editLabel', () => {
-
 })
 Cypress.Commands.add('qSelect', (dataCy, element) => {
   cy.dataCy(dataCy)

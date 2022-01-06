@@ -11,12 +11,13 @@ div
       | {{$t('pages.documentExplorer.edit.title')}}
     DocInformation(:docInfo="documentInfo")
     ListContentGroup(:contents_groups="contentsGroups")
-    Edges(:edges="edges" :relations="relationsEdges" @showModal="openModal")
+    Edges(:edges="edges" @showModal="openModal")
     q-dialog(v-model='showDialogEdge')
       EdgeDialog(@EdgeData='addNewEdge')
     #BtnSection
     .row.q-gutter-md.q-py-md
       q-btn(
+        data-cy='saveDoc'
         unelevated
         label='Save'
         no-caps
@@ -24,6 +25,7 @@ div
         @click='onSave()'
       )
       q-btn(
+        data-cy='cancelDoc'
         unelevated
         label='Cancel'
         @click='onCancel()'
@@ -108,10 +110,17 @@ export default {
           })
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
-            contentGroup.push({
-              label: key,
-              value: [types[element.dataType], element.value]
-            })
+            if (types[element.dataType] === 'int64') {
+              contentGroup.push({
+                label: key,
+                value: [types[element.dataType], 0]
+              })
+            } else {
+              contentGroup.push({
+                label: key,
+                value: [types[element.dataType], element.value]
+              })
+            }
           })
           contentGroups.push(contentGroup)
           contentGroup = []

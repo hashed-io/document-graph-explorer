@@ -1,24 +1,32 @@
 import Faker from 'faker'
 const endpoints = ['https://alpha-st.tekit.io/graphql', 'https://hashed.systems/alpha-dge-test/graphql', 'https://hashed.systems/alpha-trace-test/graphql']
-const endpointSelect = 0
+const endpointSelect = 2
 before(() => {
   cy.loginAnchor()
   cy.visit('/?endpoint=' + endpoints[endpointSelect])
   cy.dataCy('loginButton')
     .click()
 })
-describe('Create new Document', () => {
+describe('Visualize doc', () => {
+  it('actions are shown', () => {
+    cy.dataCy('rowDoc')
+      .eq(1)
+      .click()
+    cy.scrollTo('bottom')
+    cy.dataCy('extendButton')
+      .click()
+  })
+})
+describe('Edge Name', () => {
+  it('Fill the edge name', () => {
+    let edgeName = Faker.lorem.word()
+    cy.dataCy('edgeNameInput')
+      .type(edgeName)
+  })
+})
+describe('Extend the Document', () => {
   it('Fill system node label table', () => {
     let fakeValue = Faker.lorem.sentence()
-    cy.dataCy('newDocButton')
-      .click()
-    cy.dataCy('selectDocType')
-      .click()
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(2)
-      .click()
     cy.dataCy('editRowButton')
       .click()
     cy.dataCy('valueField')
@@ -29,7 +37,7 @@ describe('Create new Document', () => {
       .click()
   })
 })
-describe('Create new document [For]', () => {
+describe('Extend document [For]', () => {
   Cypress._.times(2, (k) => {
     it('Fill random information', () => {
       cy.dataCy('newContentButton')
@@ -57,12 +65,6 @@ describe('Create new document [For]', () => {
       cy.fillRow(keyValue, dataType, { isFirst: true, isEncrypt: false, isIPFS: false })
       cy.dataCy('saveEdit')
         .click()
-      // Cypress._.times(2, (k) => {
-      //   cy.addNewContent()
-      //   cy.dataCy('addRowButton')
-      //     .eq(1)
-      //     .click()
-      // })
     })
   })
 })

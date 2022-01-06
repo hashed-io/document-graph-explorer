@@ -121,7 +121,7 @@
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template
-              .row.justify-between
+              .row.justify-center
                 .col-xs-12.col-sm-12.col-md-6
                   div(
                     data-cy="editRowButton"
@@ -130,6 +130,7 @@
                   ) Edit
                 .col-xs-12.col-sm-12.col-md-6
                   div(
+                    v-if="props.row.value"
                     data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
                     style='color: #DC2626'
@@ -145,29 +146,34 @@
             template(
               v-if="isEdit && isEditSystem"
             ) {{ props.row.key }}
-            TInput(
-              data-cy='keyField'
-              v-model="newData.key",
-              v-if="isEdit && !isEditSystem"
-              dense,
-              placeholder="Key"
-            )
+            q-form(ref='keyForm')
+              TInput(
+                :rules="[rules.required]"
+                data-cy='keyField'
+                v-model="newData.key",
+                v-if="isEdit && !isEditSystem"
+                dense,
+                placeholder="Key"
+              )
           q-td(
             key="value",
             style="word-break: break-all;",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            TInput(
-              data-cy="valueField"
-              v-model="newData.value",
-              dense,
-              :type="'textarea'",
-              autogrow,
-              class="verticalCenter",
-              placeholder="Enter the value"
-            )
-            .row
+            q-form(ref='valueForm')
+              TInput(
+                data-cy="valueField"
+                v-model="newData.value",
+                :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
+                dense,
+                :type="'textarea'",
+                :rules="getRules(newData.dataType)"
+                autogrow,
+                class="verticalCenter",
+                placeholder="Enter the value"
+              )
+            .row(v-if="newData.dataType === 's'")
               q-toggle(
                 data-cy='encryptToggle'
                 size='xs',
@@ -191,14 +197,16 @@
             template(
               v-if="isEdit && isEditSystem"
             ) {{getDataType(props.row.dataType)}}
-            .topAlign
+            q-form(ref='selectTypeForm').topAlign
               TSelect(
+                :rules="[rules.required]"
                 data-cy='selectType'
                 v-if="isEdit && !isEditSystem"
                 v-model="newData.dataType",
                 :placeholder="newData.dataType",
                 :options="optionsSelect"
                 dense
+                @update="verifyValue"
                 )
           q-td(
             v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex",
@@ -365,7 +373,7 @@ export default {
         {
           name: 'actions',
           label: 'Actions',
-          align: 'left',
+          align: 'justify',
           headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           style: 'color: rgb(107,114,128);',
@@ -375,6 +383,35 @@ export default {
     }
   },
   methods: {
+    async verifyValue () {
+      await this.$refs.valueForm.validate()
+      this.$forceUpdate()
+    },
+    getRules (selectType) {
+      let dataType = this.getDataType(selectType)
+      var rule
+      switch (dataType) {
+        case 'checksum256':
+          rule = 'isChecksum'
+          break
+        case 'name':
+          rule = 'isEosAccount'
+          break
+        case 'asset':
+          rule = 'required'
+          break
+        case 'time':
+          rule = 'required'
+          break
+        case 'string':
+          rule = 'required'
+          break
+        case 'int64':
+          rule = 'isInteger'
+          break
+      }
+      return [this.rules[rule]]
+    },
     openIPFS (cid) {
       window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
     },
@@ -496,42 +533,44 @@ export default {
       // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
-      let count = this.contentGroupCopy.filter((obj) => obj.key === this.newData.key).length
-      if (count > 0 && row.key !== this.newData.key) {
-        this.showErrorMsg('The key value is repeated.')
-        return
+      if (await this.$refs.keyForm.validate() && await this.$refs.valueForm.validate() && await this.$refs.selectTypeForm.validate()) {
+        let count = this.contentGroupCopy.filter((obj) => obj.key === this.newData.key).length
+        if (count > 0 && row.key !== this.newData.key) {
+          this.showErrorMsg('The key value is repeated.')
+          return
+        }
+        if (!this.newData.key) {
+          this.showErrorMsg('Fill the Key value')
+          return
+        }
+        let obj = row.optional
+        if (obj.encrypt && !obj.ipfs) {
+          this.newData.optional.encrypt = true
+          this.newData.optional.ipfs = false
+          if (!this.isEncrypt(this.newData.value)) {
+            this.newData.value = await this.encryptValue(this.newData.value)
+          }
+        } else if (!obj.encrypt && obj.ipfs) {
+          this.newData.optional.encrypt = false
+          this.newData.optional.ipfs = true
+          if (!this.isIpfs(this.newData.value) && this.newData.value) {
+            this.newData.value = await this.saveStringIPFS(true, this.newData.value)
+          }
+        } else if (obj.encrypt && obj.ipfs) {
+          this.newData.optional.encrypt = true
+          this.newData.optional.ipfs = true
+          // TODO: First retrieve ipfs
+          if (!this.isEncrypt(this.newData.value)) {
+            this.newData.value = await this.encryptValue(this.newData.value)
+          }
+          if (!this.isIpfs(this.newData.value) && this.newData.value) {
+            this.newData.value = await this.saveStringIPFS(true, this.newData.value)
+          }
+        }
+        this.contentGroupCopy.splice(rowIndex, 1, this.newData)
+        this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
+        this.editableRow = undefined
       }
-      if (!this.newData.key) {
-        this.showErrorMsg('Fill the Key value')
-        return
-      }
-      let obj = row.optional
-      if (obj.encrypt && !obj.ipfs) {
-        this.newData.optional.encrypt = true
-        this.newData.optional.ipfs = false
-        if (!this.isEncrypt(this.newData.value)) {
-          this.newData.value = await this.encryptValue(this.newData.value)
-        }
-      } else if (!obj.encrypt && obj.ipfs) {
-        this.newData.optional.encrypt = false
-        this.newData.optional.ipfs = true
-        if (!this.isIpfs(this.newData.value) && this.newData.value) {
-          this.newData.value = await this.saveStringIPFS(true, this.newData.value)
-        }
-      } else if (obj.encrypt && obj.ipfs) {
-        this.newData.optional.encrypt = true
-        this.newData.optional.ipfs = true
-        // TODO: First retrieve ipfs
-        if (!this.isEncrypt(this.newData.value)) {
-          this.newData.value = await this.encryptValue(this.newData.value)
-        }
-        if (!this.isIpfs(this.newData.value) && this.newData.value) {
-          this.newData.value = await this.saveStringIPFS(true, this.newData.value)
-        }
-      }
-      this.contentGroupCopy.splice(rowIndex, 1, this.newData)
-      this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
-      this.editableRow = undefined
       // TODO: send to the parent component to sign transaction
     },
     onCancel (index, row) {
@@ -576,7 +615,7 @@ export default {
 .colorEncrypt
   color: #059669
 .topAlign
-  padding-top: 1.3rem
+  padding-top: 0.1rem
 .titleClass
   color: rgb(107, 114, 128);
 .cardTailWind
