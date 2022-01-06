@@ -148,7 +148,7 @@ class ActionsApi extends BaseEosApi {
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
-  async extendDoc ({ creator, fromNode }) {
+  async extendDoc ({ creator, fromNode, edgeName, contentGroups }) {
     var authorization = `${this.contractAccount}@active`
     let [actor, permission] = authorization.split('@')
     const actions = [{
@@ -156,7 +156,9 @@ class ActionsApi extends BaseEosApi {
       name: 'extenddoc',
       data: {
         creator: creator,
-        fromNode: fromNode
+        fromNode: fromNode,
+        edgeName: edgeName,
+        content_groups: contentGroups
       },
       authorization: [{
         actor,
