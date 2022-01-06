@@ -71,7 +71,7 @@ class ApolloApi extends BaseEosApi {
     }
     const query = gql`
       query  {
-        query${type}(first:${limit}, offset: ${offset}) {
+        query${type}(first:${limit}, offset: ${offset}, order: {desc: createdDate}) {
           ${localStorage.getItem('documentInterface')}
           ${props}
         }
