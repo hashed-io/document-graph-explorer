@@ -251,10 +251,12 @@ export const documentExplorer = {
               value: 'prev'
             })
           }
+          let val = document[queryLabel][0][key]
+          let value = val || ''
           contentGroup.push(
             {
               key: words[1],
-              value: document[queryLabel][0][key],
+              value: value,
               dataType: words[2],
               title: words[0]
             }
