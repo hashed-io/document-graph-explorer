@@ -2,6 +2,7 @@ import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { ActionsApi } from '~/services'
 import ApolloClient from 'apollo-boost'
+import Faker from 'faker'
 export const documentExplorer = {
   async mounted () {
     let queryParams = this.$route.query
@@ -28,6 +29,7 @@ export const documentExplorer = {
     } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
       this.setContractInfo({ contract: queryParams.contract })
     }
+    this.getCertificates()
     await this.loadData()
     this.loading = false
   },
@@ -47,6 +49,7 @@ export const documentExplorer = {
         edgeName: undefined,
         systemNodeLabel: undefined
       },
+      certificates: [],
       ActionsApi: undefined,
       loading: false,
       endpoint: undefined,
@@ -62,6 +65,21 @@ export const documentExplorer = {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
     ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    getCertificates () {
+      let _certificates = []
+      for (let index = 0; index < 4; index++) {
+        _certificates.push({
+          account: Faker.name.firstName(),
+          date: '2001-01-30',
+          notes: ['### note 1\n * __lorem__', '* lorem **ipsum**']
+        })
+      }
+      this.certificates = _certificates
+    },
+    /**
+     *
+     * @returns The data is in documentExplorer. this.actionsApi is the instance
+     */
     async newInstance () {
       if (this.ActionsApi) {
         return

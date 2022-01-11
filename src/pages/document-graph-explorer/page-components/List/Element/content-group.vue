@@ -1,43 +1,12 @@
 <template lang="pug">
 .q-py-sm
-  template(v-if="isEdit")
-    #Title
-      template(v-if="!editableTitle")
-        .row.justify-start.q-pb-md
-            div.q-pl-md.color
-              | {{content_group_data[0].title}}
-            div(
-              data-cy='editTitleButton'
-              v-if="!isEditSystem"
-              class='text-brand-primary text-capitalize animated-icon customAlign'
-              @click='editableTitle = true; previousTitle = content_group_data[0].title'
-            ) Edit
-      .row.q-py-lg(v-if="editableTitle")
-        .col-xs-12.col-sm-6
-          TInput(
-            data-cy='titleInput'
-            label='Title'
-            placeholder="Enter the title"
-            v-model='content_group_data[0].title'
-            dense
-            :rules="[rules.required]"
-          ).q-pr-md
-        .col-xs-12.col-sm-5
-          .row.q-col-gutter-md
-            .col-xs-6.col-sm-3.col-md-2
-              div(
-                data-cy='saveTitleButton'
-                class='text-brand-primary text-capitalize animated-icon alignButtons'
-                @click='onSaveTitle'
-              ) Save
-            .col-xs-6.col-sm-1.col-md-1
-              div(
-                data-cy="deleteTitleButton"
-                class='text-red-tail text-capitalize animated-icon alignButtons'
-                @click='onDeleteTitle'
-              ) Delete
-
-  div.q-pb-md.q-pl-md.fontSize.titleClass(v-else) {{content_group_data[0].title}}
+  TitleContentGroup(
+    :isEditSystem="isEditSystem"
+    :isEdit="isEdit"
+    :title="content_group_data[0].title"
+    @deleteTitle="onDeleteTitle"
+    @onSaveTitle="onSaveTitle"
+  )
   #TABLE
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
@@ -150,6 +119,7 @@
               TInput(
                 :rules="[rules.required]"
                 data-cy='keyField'
+                autofocus
                 v-model="newData.key",
                 v-if="isEdit && !isEditSystem"
                 dense,
@@ -248,12 +218,14 @@ import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
 import { mapGetters } from 'vuex'
+import TitleContentGroup from './titleContentGroup.vue'
 export default {
   name: 'ContentGroup',
   mixins: [validation],
   components: {
     TInput,
-    TSelect
+    TSelect,
+    TitleContentGroup
   },
   props: {
     content_group_data: {
@@ -289,6 +261,7 @@ export default {
   },
   data () {
     return {
+      isEditSystem: false,
       limitChars: 500,
       typeInput: true,
       title: undefined,
@@ -593,25 +566,17 @@ export default {
       this.newData = JSON.parse(JSON.stringify(emptyObject))
       this.onEditRow(this.newData, this.contentGroupCopy.length - 1)
     },
-    onSaveTitle () {
-      // TODO: Propagate the title to rest of the array
-      let bool = this.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.content_group_data[0].title })
-      if (bool) {
-        this.editableTitle = false
-      }
-      this.$forceUpdate()
+    onSaveTitle (title) {
+      this.content_group_data[0].title = title
     },
-    onDeleteTitle () {
-      this.$emit('deleteTitle', this.content_group_data[0].title)
+    onDeleteTitle (title) {
+      this.$emit('deleteTitle', title)
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.color
-  color: #686E7C
-  font-weight: 500
 .colorEncrypt
   color: #059669
 .topAlign
@@ -621,12 +586,6 @@ export default {
 .cardTailWind
   border-radius: 50px !important
   width: 500px !important
-.text-red-tail
-  color: #DC2626
-.alignButtons
-  margin-top: 1.9rem
-.customAlign
-  margin-left: 2rem
 .column-responsive
   white-space: nowrap
   overflow: hidden
