@@ -3,20 +3,16 @@
   .flex
     div(v-for="certificate in certificates" :key="certificate.account")
       div(v-html="getIdenticon(certificate, identicon.size)" class="q-mx-xs")
-      q-tooltip(content-class='bg-blue-grey-9 text-white')
+      q-tooltip(content-class='bg-white text-black shadow-1 shadow-transition')
         div(class='tooltipContent')
-          .row.justify-center
-            div(v-html="getIdenticonTooltip(certificate, identicon.size + 20)")
-          .row.justify-center
-            div {{certificate.account}}
-          .row.justify-center
-            div {{certificate.date}}
-          //-   b Account
-          //- .row.q-gutter-xl
-          //-   b Date
-          hr(class="hrStyle")
-          .flex.flex-center
-          div(v-html="getNotes(certificate)")
+          .row.justify-between
+            .col-6
+              div(v-html="getIdenticonTooltip(certificate, identicon.size + 20)")
+            .col-6.q-pt-sm
+              div {{certificate.account}}
+              div {{certificate.date}}
+          .flex.flex-start.q-pa-sm
+            div(v-html="getNotes(certificate)")
 </template>
 
 <script>
@@ -78,7 +74,7 @@ export default {
         //   color: 0.00,
         //   grayscale: 0.00
         // },
-        backColor: '#fff'
+        // backColor: '#a1a1a12d'
       })
       return toSvg(rowData.account, size)
     },
@@ -103,7 +99,7 @@ export default {
 
 <style lang="stylus" scoped>
 .hrStyle
-  border: 0.5px solid white;
+  border: 0.5px solid grey;
   border-radius: 5px;
 .tooltipContent
   width: 250px

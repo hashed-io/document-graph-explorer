@@ -71,7 +71,7 @@ export const documentExplorer = {
         _certificates.push({
           account: Faker.name.firstName(),
           date: '2001-01-30',
-          notes: ['### note 1\n * __lorem__', '* lorem **ipsum**']
+          notes: ['### Certificate\n * __lorem__', '* lorem **ipsum** Sit consectetur quiquia tempora sit adipisci ipsum est. Sit consectetur quiquia tempora sit adipisci ipsum est.']
         })
       }
       this.certificates = _certificates

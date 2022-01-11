@@ -86,7 +86,7 @@
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template
-              .row.justify-center
+              .row.justify-center.q-col-gutter-md
                 .col-xs-12.col-sm-12.col-md-6
                   div(
                     data-cy="editRowButton"
@@ -104,7 +104,6 @@
           q-td(
             key="key",
             :props="props",
-            size="xl",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template(
@@ -133,6 +132,8 @@
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
                 :autofocus="isEdit && isEditSystem"
                 dense,
+                :rules="getRules(newData.dataType)"
+                :autogrow="getType(newData.dataType) === 'textarea'"
                 :type="getType(newData.dataType)",
                 class="verticalCenter",
                 placeholder="Enter the value"
@@ -177,7 +178,7 @@
             key='Save',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            .row
+            .row.q-col-gutter-md.q-pb-md
               .col-xs-12.col-sm-12.col-md-6
                 div(
                   data-cy='saveEdit'
@@ -382,7 +383,7 @@ export default {
           rule = 'required'
           break
         case 'int64':
-          rule = 'isNumber'
+          rule = 'required'
           break
       }
       return [this.rules[rule]]
