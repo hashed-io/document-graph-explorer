@@ -319,7 +319,7 @@ export const documentExplorer = {
         })
         _props = await _props['__type']['fields']
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        if (element.type === 'LIST' && element.edge !== 'vote' && element.edge !== 'passedprops') {
+        if (element.type === 'LIST') {
           if (found) {
             query += `${element.edge}{
               ${docInterface}

@@ -95,7 +95,6 @@
                   ) Edit
                 .col-xs-12.col-sm-12.col-md-6
                   div(
-                    v-if="props.row.value"
                     data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
                     style='color: #DC2626'
@@ -134,9 +133,7 @@
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
                 :autofocus="isEdit && isEditSystem"
                 dense,
-                :type="'textarea'",
-                :rules="getRules(newData.dataType)"
-                autogrow,
+                :type="getType(newData.dataType)",
                 class="verticalCenter",
                 placeholder="Enter the value"
               )
@@ -356,6 +353,14 @@ export default {
     async verifyValue () {
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
+    },
+    getType (selectType) {
+      let dataType = this.getDataType(selectType)
+      if (dataType === 'int64') {
+        return 'number'
+      } else {
+        return 'textarea'
+      }
     },
     getRules (selectType) {
       let dataType = this.getDataType(selectType)
