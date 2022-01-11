@@ -1,6 +1,6 @@
 <template lang="pug">
-div.q-pt-md
-  .row.q-pb-md
+div.q-pt-xs
+  .row
     .col-8
       .q-py-md.text-h6.text-capitalize(v-if="edges.length > 0")
         | Edges

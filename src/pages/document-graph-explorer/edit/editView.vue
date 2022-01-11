@@ -7,9 +7,7 @@ div
     )
 
   div(v-if="!loading")
-    div.text-h6.q-pb-md
-      | {{$t('pages.documentExplorer.edit.title')}}
-    DocInformation(:docInfo="documentInfo")
+    DocInformation(:docInfo="documentInfo" :title="$t('pages.documentExplorer.edit.title')")
     ListContentGroup(:contents_groups="contentsGroups")
     Edges(:edges="edges" @showModal="openModal")
     q-dialog(v-model='showDialogEdge')

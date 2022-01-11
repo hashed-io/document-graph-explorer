@@ -1,7 +1,6 @@
 <template lang='pug'>
 div
-  div.text-h6.q-py-md
-    | {{label}}
+  div.text-h6.q-pb-md {{label}}
   q-card(
     class="bg-grey-1"
   )
