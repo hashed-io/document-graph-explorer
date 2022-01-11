@@ -59,8 +59,10 @@ export default {
     CertificateSection
   },
   watch: {
-    $route (to, from) {
-      this.loadData()
+    async $route (to, from) {
+      this.loading = true
+      await this.loadData()
+      this.loading = false
     },
     async Endpoint (newValue, oldValue) {
       this.$router.push({ name: 'listDocs', query: { endpoint: newValue } })
