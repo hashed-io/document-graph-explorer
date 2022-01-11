@@ -29,9 +29,7 @@
             key="key",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            template(
-            ) {{ props.row.key }}
+          ) {{ props.row.key }}
           q-td(
             key="value",
             :props="props",
@@ -81,9 +79,7 @@
             key="dataType",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            div(
-            ) {{ getDataType(props.row.dataType) }}
+          ) {{ getDataType(props.row.dataType) }}
           q-td(
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
@@ -136,6 +132,7 @@
                 data-cy="valueField"
                 v-model="newData.value",
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
+                :autofocus="isEdit && isEditSystem"
                 dense,
                 :type="'textarea'",
                 :rules="getRules(newData.dataType)"
@@ -368,7 +365,7 @@ export default {
           rule = 'isChecksum'
           break
         case 'name':
-          rule = 'isEosAccount'
+          rule = 'accountFormat'
           break
         case 'asset':
           rule = 'required'
@@ -380,7 +377,7 @@ export default {
           rule = 'required'
           break
         case 'int64':
-          rule = 'isInteger'
+          rule = 'isNumber'
           break
       }
       return [this.rules[rule]]
