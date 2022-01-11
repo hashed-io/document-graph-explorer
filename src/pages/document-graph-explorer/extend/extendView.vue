@@ -4,15 +4,16 @@ div
   .text-h6.q-pb-md
     | {{$t('pages.documentExplorer.extend.title')}}
   .row.q-col-gutter-md
-    .col-2
-      TSelectExtend(
-        v-model='form.direction'
-        message='Choose direction'
-        :options='options'
-        dense
-      )
+    //- .col-2
+    //-   TSelectExtend(
+    //-     v-model='form.direction'
+    //-     message='Choose direction'
+    //-     :options='options'
+    //-     dense
+    //-   )
     .col-4
       TInput(
+        data-cy='edgeNameInput'
         placeholder='Edge name'
         v-model='form.edgeName'
         :dense='true'
@@ -24,6 +25,7 @@ div
   #BtnSection
   .row.q-gutter-md.q-py-lg
     q-btn(
+      data-cy="saveDoc"
       unelevated
       no-caps
       label='Save'
@@ -31,6 +33,7 @@ div
       @click='onSave()'
     )
     q-btn(
+      data-cy="cancelDoc"
       unelevated
       no-caps
       label='Cancel'
@@ -66,6 +69,7 @@ export default {
   },
   computed: {
     ...mapState('documentGraph', ['endpointApollo']),
+    ...mapState('accounts', ['account']),
     Endpoint () {
       return this.endpointApollo
     }
@@ -78,11 +82,11 @@ export default {
   data () {
     return {
       extendContentGroup: {
-        Content_group: [
+        system: [
           {
-            title: 'content_group',
-            key: 'Key',
-            value: 'Value',
+            title: 'system',
+            key: 'nodeLabel',
+            value: '',
             dataType: 's'
           }
         ]
@@ -95,22 +99,80 @@ export default {
       form: {
         edgeName: undefined,
         direction: undefined
-      },
-      options: [
-        {
-          label: 'To ...',
-          value: 'To ...'
-        },
-        {
-          label: 'From ...',
-          value: 'From ...'
-        }
-      ]
+      }
+      // options: [
+      //   {
+      //     label: 'To ...',
+      //     value: 'To ...'
+      //   },
+      //   {
+      //     label: 'From ...',
+      //     value: 'From ...'
+      //   }
+      // ]
     }
   },
   methods: {
     onSave () {
-
+      try {
+        this.formatContentGroups(this.extendContentGroup)
+      } catch (error) {
+        this.showErrorMsg('An error occured while trying to save the changes ' + error)
+      }
+    },
+    formatContentGroups (contentgroups) {
+      // ADD the document type
+      try {
+        console.log('1--------------1')
+        console.log(contentgroups)
+        console.log('1--------------1')
+        const types = {
+          c: 'checksum256',
+          n: 'name',
+          a: 'asset',
+          t: 'time',
+          s: 'string',
+          i: 'int64'
+        }
+        var contentGroups = []
+        var contentGroup = []
+        for (let title in contentgroups) {
+          contentGroup.push({
+            label: 'content_group_label',
+            value: ['string', title]
+          })
+          contentGroup.push({
+            label: 'type',
+            value: ['name', this.documentInfo.type.toLowerCase()]
+          })
+          contentgroups[title].forEach(element => {
+            let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
+            contentGroup.push({
+              label: key,
+              value: [types[element.dataType], element.value]
+            })
+          })
+          contentGroups.push(contentGroup)
+          contentGroup = []
+        }
+        this.callExtendAction(contentGroups)
+        console.log(contentGroups)
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to format the content groups ' + error)
+      }
+    },
+    async callExtendAction (contentGroups) {
+      try {
+        await this.newInstance()
+        let fromNode = this.documentInfo.docId
+        let edgeName = this.form.edgeName
+        let creator = this.account
+        await this.ActionsApi.extendDoc({ creator, edgeName, fromNode, contentGroups })
+        this.setIsEdit(false)
+        this.onCancel()
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
+      }
     },
     openModal () {
       this.showDialogEdge = true

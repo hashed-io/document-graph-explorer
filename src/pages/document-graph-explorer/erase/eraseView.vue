@@ -4,7 +4,7 @@ div
     | {{$t('pages.documentExplorer.erase.title')}}
   DocInformation(:docInfo="documentInfo")
   ListContentGroup(:contents_groups="contentsGroups")
-  Edges(:edges="edges" :relations="relationsEdges")
+  Edges(:edges="edges")
   div.q-py-md
     EraseBox
 </template>

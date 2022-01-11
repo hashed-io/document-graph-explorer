@@ -15,6 +15,7 @@ div
       .col-4
         div
           q-btn(
+              data-cy="newDocButton"
               label='New Document'
               @click='newDoc'
               unelevated
@@ -23,6 +24,7 @@ div
           ).btnTailwind
       .col-4
         TInput(
+          data-cy='search'
           v-model='search'
           dense
           debounce='500'
@@ -42,6 +44,7 @@ div
       template(v-slot:body="props")
         q-tr.cursor-pointer( :props="props")
           q-td(
+            data-cy="rowDoc"
             v-for="col in props.cols",
             :key="col.name",
             :props="props",
@@ -70,6 +73,7 @@ div
             @click="scope.prevPage"
         )
         q-btn(
+            data-cy="nextPage"
             icon="chevron_right"
             color="grey-8"
             round
@@ -79,6 +83,7 @@ div
             @click="scope.nextPage"
         )
         q-btn(
+            data-cy="lastPage"
             v-if="scope.pagesNumber > 2"
             icon="last_page"
             color="grey-8"
@@ -236,13 +241,12 @@ export default {
     async onSearchDoc () {
       const docInterface = this.getLocalStorage('documentInterface')
       const documentID = this.search
-      const isHashed = (this.search.length > 30)
       const data = await this.getDocumentsByDocId({
         byElement: documentID,
         type: 'Document',
         props: '',
         docInterface: docInterface,
-        isHashed: isHashed
+        isHashed: this.isHashed
       })
       var _documents = []
       for (const doc of data.queryDocument) {
@@ -301,6 +305,7 @@ export default {
       this.loadingDocs = false
     },
     newDoc () {
+      this.setIsEdit(true)
       this.$router.push({ name: 'createView' })
     },
     async loadLocalStorage () {

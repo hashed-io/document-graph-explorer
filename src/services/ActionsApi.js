@@ -29,6 +29,30 @@ class ActionsApi extends BaseEosApi {
    * To edit document need the DocId and contentGroups
    * @param {*} param0
    */
+  async certifyDoc ({ documentID, certifier, signature, notes }) {
+    var authorization = `${this.contractAccount}@active`
+    let [actor, permission] = authorization.split('@')
+    const actions = [{
+      account: this.contractAccount,
+      name: 'certify',
+      data: {
+        certifier: certifier,
+        document_id: documentID,
+        signature: signature,
+        notes: notes
+      },
+      authorization: [{
+        actor,
+        permission
+      }]
+    }]
+    console.log('actions: ', actions)
+    return this.eosApi.signTransaction(actions)
+  }
+  /**
+   * To edit document need the DocId and contentGroups
+   * @param {*} param0
+   */
   async editDoc ({ documentID, contentGroups }) {
     var authorization = `${this.contractAccount}@active`
     let [actor, permission] = authorization.split('@')
@@ -148,7 +172,7 @@ class ActionsApi extends BaseEosApi {
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
-  async extendDoc ({ creator, fromNode }) {
+  async extendDoc ({ creator, fromNode, edgeName, contentGroups }) {
     var authorization = `${this.contractAccount}@active`
     let [actor, permission] = authorization.split('@')
     const actions = [{
@@ -156,7 +180,9 @@ class ActionsApi extends BaseEosApi {
       name: 'extenddoc',
       data: {
         creator: creator,
-        fromNode: fromNode
+        fromNode: fromNode,
+        edgeName: edgeName,
+        content_groups: contentGroups
       },
       authorization: [{
         actor,

@@ -1,28 +1,30 @@
 <template lang='pug'>
-q-card(bordered).cardTailWind
-  q-card-section
-    div.text-capitalize.documentHeader Header
-  q-separator.colorSeparator
-  q-card-section
-    .row.q-gutter-lg.justify-between
-      .docInfoInside(v-if='docInfo.docId')
-        div.headerTitle.text-uppercase ID
-        div.headerField.q-pt-sm {{ docInfo.docId }}
-      .docInfoInside.column-responsive
-        div.headerTitle.text-uppercase Hash
-        div.headerField.q-pt-sm {{ docInfo.hash }}
-      .docInfoInside
-        div.headerTitle.text-uppercase Owner
-        div.headerField.q-pt-sm {{ docInfo.creator }}
-      .docInfoInside
-        div.headerTitle.text-uppercase Type
-        div.headerField.q-pt-sm {{ docInfo.type }}
-      .docInfoInside
-        div.headerTitle.text-uppercase Created Date
-        div.headerField.q-pt-sm {{ dateToString(docInfo.createdDate) }}
-      .docInfoInside
-        div.headerTitle.text-uppercase Updated Date
-        div.headerField.q-pt-sm {{ dateToString(docInfo.updatedDate) }}
+div
+  div.text-h6.q-pb-md {{title}}
+  q-card(bordered class='q-pt-md cardTailWind')
+    q-card-section
+      div.text-capitalize.documentHeader Header
+    q-separator.colorSeparator
+    q-card-section
+      .row.q-gutter-lg.justify-between
+        .docInfoInside(v-if='docInfo.docId')
+          div.headerTitle.text-uppercase ID
+          div.headerField.q-pt-sm {{ docInfo.docId }}
+        .docInfoInside.column-responsive(v-if="docInfo.hash")
+          div.headerTitle.text-uppercase Hash
+          div.headerField.q-pt-sm {{ docInfo.hash }}
+        .docInfoInside
+          div.headerTitle.text-uppercase Owner
+          div.headerField.q-pt-sm {{ docInfo.creator }}
+        .docInfoInside
+          div.headerTitle.text-uppercase Type
+          div.headerField.q-pt-sm {{ docInfo.type }}
+        .docInfoInside
+          div.headerTitle.text-uppercase Created Date
+          div.headerField.q-pt-sm {{ dateToString(docInfo.createdDate) }}
+        .docInfoInside
+          div.headerTitle.text-uppercase Updated Date
+          div.headerField.q-pt-sm {{ dateToString(docInfo.updatedDate) }}
 </template>
 
 <script>
@@ -42,6 +44,13 @@ export default {
      */
     docInfo: {
       type: Object,
+      required: true
+    },
+    /**
+     * This is the title of the page
+     */
+    title: {
+      type: String,
       required: true
     }
   },

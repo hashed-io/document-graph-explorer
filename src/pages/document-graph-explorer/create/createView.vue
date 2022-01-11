@@ -18,6 +18,7 @@ div
   #BtnSection
   .row.q-gutter-md.q-py-lg
     q-btn(
+      data-cy='saveDoc'
       unelevated
       no-caps
       label='Save'
@@ -25,6 +26,7 @@ div
       @click='onSave()'
     )
     q-btn(
+      data-cy='cancelDoc'
       unelevated
       no-caps
       label='Cancel'
@@ -58,8 +60,8 @@ export default {
     TSelectExtend,
     EdgeDialog
   },
-  beforeMount () {
-    this.getTypesForSelect()
+  async beforeMount () {
+    await this.getTypesForSelect()
     this.setIsEdit(true)
   },
   computed: {
@@ -100,7 +102,6 @@ export default {
       try {
         let response = await this.getTypes()
         let data = response['__schema']['types']
-        console.log(data)
         var types = []
         data.forEach(element => {
           if (element.interfaces.length > 0) {

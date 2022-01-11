@@ -8,6 +8,7 @@ div
     :placeholder="placeholder"
     :debounce="debounce"
     :type="type"
+    :autofocus="autofocus"
     :dense='dense'
     :rules="rules"
     :autogrow='autogrow'
@@ -20,7 +21,7 @@ div
 
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus'],
   model: {
     prop: 'value',
     event: 'update'

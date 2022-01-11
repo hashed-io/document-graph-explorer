@@ -1,39 +1,12 @@
 <template lang="pug">
 .q-py-sm
-  template(v-if="isEdit")
-    #Title
-      template(v-if="!editableTitle")
-        .row.justify-start.q-pb-md
-            div.q-pl-md.color
-              | {{content_group_data[0].title}}
-            div(
-              v-if="!isEditSystem"
-              class='text-brand-primary text-capitalize animated-icon customAlign'
-              @click='editableTitle = true; previousTitle = content_group_data[0].title'
-            ) Edit
-      .row.q-py-lg(v-if="editableTitle")
-        .col-xs-12.col-sm-6
-          TInput(
-            label='Title'
-            placeholder="Enter the title"
-            v-model='content_group_data[0].title'
-            dense
-            :rules="[rules.required]"
-          ).q-pr-md
-        .col-xs-12.col-sm-5
-          .row.q-col-gutter-md
-            .col-xs-6.col-sm-3.col-md-2
-              div(
-                class='text-brand-primary text-capitalize animated-icon alignButtons'
-                @click='onSaveTitle'
-              ) Save
-            .col-xs-6.col-sm-1.col-md-1
-              div(
-                class='text-red-tail text-capitalize animated-icon alignButtons'
-                @click='onDeleteTitle'
-              ) Delete
-
-  div.q-pb-md.q-pl-md.fontSize.titleClass(v-else) {{content_group_data[0].title}}
+  TitleContentGroup(
+    :isEditSystem="isEditSystem"
+    :isEdit="isEdit"
+    :title="content_group_data[0].title"
+    @deleteTitle="onDeleteTitle"
+    @onSaveTitle="onSaveTitle"
+  )
   #TABLE
   q-table.sticky-virtscroll-table.TailWind(
     :data="contentGroupCopy",
@@ -56,9 +29,7 @@
             key="key",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            template(
-            ) {{ props.row.key }}
+          ) {{ props.row.key }}
           q-td(
             key="value",
             :props="props",
@@ -108,23 +79,24 @@
             key="dataType",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-          )
-            div(
-            ) {{ getDataType(props.row.dataType) }}
+          ) {{ getDataType(props.row.dataType) }}
           q-td(
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template
-              .row.justify-between
+              .row.justify-center
                 .col-xs-12.col-sm-12.col-md-6
                   div(
+                    data-cy="editRowButton"
                     class='text-brand-primary text-capitalize animated-icon'
                     @click='onEditRow(props.row, props.rowIndex )'
                   ) Edit
                 .col-xs-12.col-sm-12.col-md-6
                   div(
+                    v-if="props.row.value"
+                    data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
                     style='color: #DC2626'
                     @click='onEraseRow(props.rowIndex )'
@@ -139,28 +111,38 @@
             template(
               v-if="isEdit && isEditSystem"
             ) {{ props.row.key }}
-            TInput(
-              v-model="newData.key",
-              v-if="isEdit && !isEditSystem"
-              dense,
-              placeholder="Key"
-            )
+            q-form(ref='keyForm')
+              TInput(
+                :rules="[rules.required]"
+                data-cy='keyField'
+                autofocus
+                v-model="newData.key",
+                v-if="isEdit && !isEditSystem"
+                dense,
+                placeholder="Key"
+              )
           q-td(
             key="value",
             style="word-break: break-all;",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            TInput(
-              v-model="newData.value",
-              dense,
-              :type="'textarea'",
-              autogrow,
-              class="verticalCenter",
-              placeholder="Enter the value"
-            )
-            .row
+            q-form(ref='valueForm')
+              TInput(
+                data-cy="valueField"
+                v-model="newData.value",
+                :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
+                :autofocus="isEdit && isEditSystem"
+                dense,
+                :type="'textarea'",
+                :rules="getRules(newData.dataType)"
+                autogrow,
+                class="verticalCenter",
+                placeholder="Enter the value"
+              )
+            .row(v-if="newData.dataType === 's'")
               q-toggle(
+                data-cy='encryptToggle'
                 size='xs',
                 no-hover,
                 v-model='props.row.optional.encrypt',
@@ -168,6 +150,7 @@
                 @input='onEncrypt(props.row)'
               )
               q-toggle(
+                data-cy='ipfsToggle'
                 size='xs',
                 v-model='props.row.optional.ipfs',
                 label='IPFS',
@@ -181,13 +164,16 @@
             template(
               v-if="isEdit && isEditSystem"
             ) {{getDataType(props.row.dataType)}}
-            .topAlign
+            q-form(ref='selectTypeForm').topAlign
               TSelect(
+                :rules="[rules.required]"
+                data-cy='selectType'
                 v-if="isEdit && !isEditSystem"
                 v-model="newData.dataType",
                 :placeholder="newData.dataType",
                 :options="optionsSelect"
                 dense
+                @update="verifyValue"
                 )
           q-td(
             v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex",
@@ -197,16 +183,19 @@
             .row
               .col-xs-12.col-sm-12.col-md-6
                 div(
+                  data-cy='saveEdit'
                   class='text-capitalize animated-icon text-brand-primary'
                   @click='onSave(props.rowIndex, props.row)'
                 ) Save
               .col-xs-12.col-sm-12.col-md-6
                 div(
+                  data-cy='cancelEdit'
                   class='text-capitalize animated-icon text-brand-primary'
                   @click='onCancel(props.rowIndex, props.row)'
                 ) Cancel
   .row.justify-end
     q-icon(
+        data-cy='addRowButton'
         v-if='isEdit'
         class='text-brand-primary q-py-sm animated-icon',
         size="2rem",
@@ -226,12 +215,14 @@ import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
 import { mapGetters } from 'vuex'
+import TitleContentGroup from './titleContentGroup.vue'
 export default {
   name: 'ContentGroup',
   mixins: [validation],
   components: {
     TInput,
-    TSelect
+    TSelect,
+    TitleContentGroup
   },
   props: {
     content_group_data: {
@@ -267,6 +258,7 @@ export default {
   },
   data () {
     return {
+      isEditSystem: false,
       limitChars: 500,
       typeInput: true,
       title: undefined,
@@ -351,7 +343,7 @@ export default {
         {
           name: 'actions',
           label: 'Actions',
-          align: 'left',
+          align: 'justify',
           headerStyle: 'width:10%; font-size:12px;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
           style: 'color: rgb(107,114,128);',
@@ -361,6 +353,35 @@ export default {
     }
   },
   methods: {
+    async verifyValue () {
+      await this.$refs.valueForm.validate()
+      this.$forceUpdate()
+    },
+    getRules (selectType) {
+      let dataType = this.getDataType(selectType)
+      var rule
+      switch (dataType) {
+        case 'checksum256':
+          rule = 'isChecksum'
+          break
+        case 'name':
+          rule = 'accountFormat'
+          break
+        case 'asset':
+          rule = 'required'
+          break
+        case 'time':
+          rule = 'required'
+          break
+        case 'string':
+          rule = 'required'
+          break
+        case 'int64':
+          rule = 'isNumber'
+          break
+      }
+      return [this.rules[rule]]
+    },
     openIPFS (cid) {
       window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
     },
@@ -482,42 +503,44 @@ export default {
       // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
-      let count = this.contentGroupCopy.filter((obj) => obj.key === this.newData.key).length
-      if (count > 0 && row.key !== this.newData.key) {
-        this.showErrorMsg('The key value is repeated.')
-        return
+      if (await this.$refs.keyForm.validate() && await this.$refs.valueForm.validate() && await this.$refs.selectTypeForm.validate()) {
+        let count = this.contentGroupCopy.filter((obj) => obj.key === this.newData.key).length
+        if (count > 0 && row.key !== this.newData.key) {
+          this.showErrorMsg('The key value is repeated.')
+          return
+        }
+        if (!this.newData.key) {
+          this.showErrorMsg('Fill the Key value')
+          return
+        }
+        let obj = row.optional
+        if (obj.encrypt && !obj.ipfs) {
+          this.newData.optional.encrypt = true
+          this.newData.optional.ipfs = false
+          if (!this.isEncrypt(this.newData.value)) {
+            this.newData.value = await this.encryptValue(this.newData.value)
+          }
+        } else if (!obj.encrypt && obj.ipfs) {
+          this.newData.optional.encrypt = false
+          this.newData.optional.ipfs = true
+          if (!this.isIpfs(this.newData.value) && this.newData.value) {
+            this.newData.value = await this.saveStringIPFS(true, this.newData.value)
+          }
+        } else if (obj.encrypt && obj.ipfs) {
+          this.newData.optional.encrypt = true
+          this.newData.optional.ipfs = true
+          // TODO: First retrieve ipfs
+          if (!this.isEncrypt(this.newData.value)) {
+            this.newData.value = await this.encryptValue(this.newData.value)
+          }
+          if (!this.isIpfs(this.newData.value) && this.newData.value) {
+            this.newData.value = await this.saveStringIPFS(true, this.newData.value)
+          }
+        }
+        this.contentGroupCopy.splice(rowIndex, 1, this.newData)
+        this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
+        this.editableRow = undefined
       }
-      if (!this.newData.key) {
-        this.showErrorMsg('Fill the Key value')
-        return
-      }
-      let obj = row.optional
-      if (obj.encrypt && !obj.ipfs) {
-        this.newData.optional.encrypt = true
-        this.newData.optional.ipfs = false
-        if (!this.isEncrypt(this.newData.value)) {
-          this.newData.value = await this.encryptValue(this.newData.value)
-        }
-      } else if (!obj.encrypt && obj.ipfs) {
-        this.newData.optional.encrypt = false
-        this.newData.optional.ipfs = true
-        if (!this.isIpfs(this.newData.value) && this.newData.value) {
-          this.newData.value = await this.saveStringIPFS(true, this.newData.value)
-        }
-      } else if (obj.encrypt && obj.ipfs) {
-        this.newData.optional.encrypt = true
-        this.newData.optional.ipfs = true
-        // TODO: First retrieve ipfs
-        if (!this.isEncrypt(this.newData.value)) {
-          this.newData.value = await this.encryptValue(this.newData.value)
-        }
-        if (!this.isIpfs(this.newData.value) && this.newData.value) {
-          this.newData.value = await this.saveStringIPFS(true, this.newData.value)
-        }
-      }
-      this.contentGroupCopy.splice(rowIndex, 1, this.newData)
-      this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
-      this.editableRow = undefined
       // TODO: send to the parent component to sign transaction
     },
     onCancel (index, row) {
@@ -540,40 +563,26 @@ export default {
       this.newData = JSON.parse(JSON.stringify(emptyObject))
       this.onEditRow(this.newData, this.contentGroupCopy.length - 1)
     },
-    onSaveTitle () {
-      // TODO: Propagate the title to rest of the array
-      let bool = this.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.content_group_data[0].title })
-      if (bool) {
-        this.editableTitle = false
-      }
-      this.$forceUpdate()
+    onSaveTitle (title) {
+      this.content_group_data[0].title = title
     },
-    onDeleteTitle () {
-      this.$emit('deleteTitle', this.content_group_data[0].title)
+    onDeleteTitle (title) {
+      this.$emit('deleteTitle', title)
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.color
-  color: #686E7C
-  font-weight: 500
 .colorEncrypt
   color: #059669
 .topAlign
-  padding-top: 1.3rem
+  padding-top: 0.1rem
 .titleClass
   color: rgb(107, 114, 128);
 .cardTailWind
   border-radius: 50px !important
   width: 500px !important
-.text-red-tail
-  color: #DC2626
-.alignButtons
-  margin-top: 1.9rem
-.customAlign
-  margin-left: 2rem
 .column-responsive
   white-space: nowrap
   overflow: hidden
