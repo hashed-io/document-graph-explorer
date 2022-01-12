@@ -208,7 +208,6 @@ import BrowserIpfs from '~/services/BrowserIpfs.js'
 import TInput from '~/components/input/t-input.vue'
 import TSelect from '~/components/select/t-select.vue'
 import Encrypt from '~/utils/EncryptUtil'
-import customRegex from '~/const/customRegex.js'
 import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
@@ -470,21 +469,6 @@ export default {
         this.contentGroupCopy.splice(rowIndex, row)
       } else {
         this.$emit('openDialog', true)
-      }
-    },
-    isEncrypt (value) {
-      if (value && typeof (value) === 'string') {
-        return value.substring(0, 2) === 'U2'
-      } else {
-        return false
-      }
-    },
-    isIpfs (value) {
-      if (value) {
-        var regexIPFS = new RegExp(customRegex.IPFS)
-        return regexIPFS.test(value)
-      } else {
-        return false
       }
     },
     onEncrypt (value) {

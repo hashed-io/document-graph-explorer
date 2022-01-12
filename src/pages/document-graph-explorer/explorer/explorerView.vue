@@ -10,8 +10,12 @@ div
     BackComponent
     DocInformation(:docInfo="documentInfo" :title="$t('pages.documentExplorer.explorer.title')")
     ListContentGroup(:contents_groups="contentsGroups")
-    CertificateSection(:certificates='certificates' :show='true')
     Edges(:edges="edges" @edgeData="navigateToEdge" @edgeDataPrev="navigateToEdgePrev")
+    CertificateSection(
+      v-if="certificates.length > 0"
+      :certificates='certificates'
+      show
+    )
     ActionsButtons(
       @extend='extendDocument'
       @edit='editDocument'
@@ -152,6 +156,8 @@ export default {
           signature: objDialog.signature,
           notes: objDialog.notes
         })
+        this.signDocument = false
+        this.showSuccessMsg('The document was certify correctly')
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying certify the doc ' + error)
         console.log('An error ocurred while trying certify the doc ' + error)

@@ -1,4 +1,5 @@
 import { mapMutations } from 'vuex'
+import customRegex from '~/const/customRegex.js'
 export const utils = {
   methods: {
     ...mapMutations('general', ['setErrorMsg', 'setSuccessMsg', 'setIsLoading']),
@@ -52,6 +53,21 @@ export const utils = {
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
         'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
       ][date.getMonth()] + ' ' + date.getFullYear()
+    },
+    isEncrypt (value) {
+      if (value && typeof (value) === 'string') {
+        return value.substring(0, 2) === 'U2'
+      } else {
+        return false
+      }
+    },
+    isIpfs (value) {
+      if (value) {
+        var regexIPFS = new RegExp(customRegex.IPFS)
+        return regexIPFS.test(value)
+      } else {
+        return false
+      }
     }
   }
 }
