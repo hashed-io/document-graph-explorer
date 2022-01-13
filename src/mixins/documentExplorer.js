@@ -2,7 +2,6 @@ import customRegex from '~/const/customRegex.js'
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import { ActionsApi } from '~/services'
 import ApolloClient from 'apollo-boost'
-import Faker from 'faker'
 export const documentExplorer = {
   async mounted () {
     let queryParams = this.$route.query
@@ -28,9 +27,9 @@ export const documentExplorer = {
       this.loadData()
     } else if (this.$route.query.hasOwnProperty('contract') && this.document === undefined) {
       this.setContractInfo({ contract: queryParams.contract })
+    } else {
+      await this.loadData()
     }
-    this.getCertificates()
-    await this.loadData()
     this.loading = false
   },
   beforeMount () {
@@ -50,6 +49,7 @@ export const documentExplorer = {
         systemNodeLabel: undefined
       },
       certificates: [],
+      showCertificates: false,
       ActionsApi: undefined,
       loading: false,
       endpoint: undefined,
@@ -63,19 +63,8 @@ export const documentExplorer = {
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
-    ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint']),
+    ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint', 'getCertificate']),
     ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
-    getCertificates () {
-      let _certificates = []
-      for (let index = 0; index < 4; index++) {
-        _certificates.push({
-          account: Faker.name.firstName(),
-          date: '2001-01-30',
-          notes: ['### note 1\n * __lorem__', '* lorem **ipsum**']
-        })
-      }
-      this.certificates = _certificates
-    },
     /**
      *
      * @returns The data is in documentExplorer. this.actionsApi is the instance
@@ -85,7 +74,6 @@ export const documentExplorer = {
         return
       }
       var _contractAccount
-      console.log(typeof this.contractInfo)
       if (typeof (this.contractInfo) === 'object') {
         _contractAccount = this.contractInfo.contract
       } else {
@@ -166,6 +154,7 @@ export const documentExplorer = {
       }
     },
     async loadData () {
+      this.certificates = []
       if (this.$router.currentRoute.name !== 'createView') {
         this.getDocumentInfo()
         let edges = await this.getContentGroup()
@@ -177,15 +166,20 @@ export const documentExplorer = {
             this.edges = [previousEdge]
           }
         }
+        // Load certificates
+        if (this.certificates.length > 0) {
+          this.showCertificates = true
+        } else {
+          this.showCertificates = false
+        }
       }
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()
-
       let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
-      console.log('-------------------------')
-      console.log({ contentGroups, edges })
-      console.log('-------------------------')
+      // console.log('-------------------------')
+      // console.log({ contentGroups, edges })
+      // console.log('-------------------------')
       let byElement = this.documentInfo.docId
       if (this.isHashed) {
         byElement = this.documentInfo.hash
@@ -296,15 +290,26 @@ export const documentExplorer = {
     },
     async getEdges (edges) {
       this.edges = []
+      this.certificates = []
       let query = await this.makeQueryForEdgeInfo(edges)
       let responseEdges
+      let edgesMixed = []
+      let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
       try {
         responseEdges = await this.retrieveQuery(query)
-        this.edges = this.processEdges(responseEdges)
+        let { edges, certificates } = this.processEdges(responseEdges)
+        // console.log('-------------------------')
+        // console.log({ edges, certificates })
+        // console.log('-------------------------')
+        // get data from certificate
+        this.edges = edges
+        this.certificates = await this.retrieveCertificates(certificates)
+        if (this.stackNavigation.length > 0 && this.edges.length === 0) {
+          edgesMixed.push(previousEdge)
+          this.edges = edgesMixed
+        }
       } catch (error) {
-        let edgesMixed = []
         if (this.stackNavigation.length > 0) {
-          let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
           edgesMixed.push(previousEdge)
           this.edges = edgesMixed
         }
@@ -319,7 +324,7 @@ export const documentExplorer = {
         })
         _props = await _props['__type']['fields']
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        if (element.type === 'LIST' && element.edge !== 'vote' && element.edge !== 'passedprops') {
+        if (element.type === 'LIST') {
           if (found) {
             query += `${element.edge}{
               ${docInterface}
@@ -352,12 +357,12 @@ export const documentExplorer = {
     processEdges (responseEdges) {
       let queryLabel = 'query' + this.documentInfo.type
       var edgesMixed = []
+      var certificates = []
       if (this.stackNavigation.length > 0) {
         let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
         edgesMixed.push(previousEdge)
       }
       let QLresponse = responseEdges[queryLabel][0]
-      console.log(QLresponse)
       delete QLresponse['__typename']
       for (const key in QLresponse) {
         if (QLresponse[key]) {
@@ -369,6 +374,9 @@ export const documentExplorer = {
               element['edgeName'] = key
               element['direction'] = 'next'
             })
+            if (this.isCertificate(QLresponse[key][0])) {
+              Array.prototype.push.apply(certificates, QLresponse[key])
+            }
             Array.prototype.push.apply(edgesMixed, QLresponse[key])
           } else if (typeof (QLresponse[key]) === 'object' && !QLresponse[key].hasOwnProperty('length')) {
             if (!QLresponse[key].hasOwnProperty('system_nodeLabel_s')) {
@@ -380,7 +388,20 @@ export const documentExplorer = {
           }
         }
       }
-      return edgesMixed
+      return { edges: edgesMixed, certificates: certificates }
+    },
+    isCertificate (objCertificate) {
+      return objCertificate.edgeName === 'certifiedBy'
+    },
+    async retrieveCertificates (certificates) {
+      for (const certificate of certificates) {
+        let response = await this.getCertificate({
+          docId: certificate.docId
+        })
+        certificate.notes = response['queryCertificate'][0]['fixedDetails_notes_s']
+        certificate.signature = response['queryCertificate'][0]['fixedDetails_signature_s']
+      }
+      return certificates
     }
   }
 }

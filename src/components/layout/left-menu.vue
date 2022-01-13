@@ -25,7 +25,7 @@ export default {
               color: 'black'
             },
             {
-              label: 'Cannabis',
+              label: 'Cacao',
               value: 'https://hashed.systems/alpha-trace-test/graphql',
               color: 'black'
             }

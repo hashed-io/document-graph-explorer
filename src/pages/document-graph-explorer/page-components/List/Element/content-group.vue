@@ -86,7 +86,7 @@
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template
-              .row.justify-center
+              .row.justify-center.q-col-gutter-md
                 .col-xs-12.col-sm-12.col-md-6
                   div(
                     data-cy="editRowButton"
@@ -95,7 +95,6 @@
                   ) Edit
                 .col-xs-12.col-sm-12.col-md-6
                   div(
-                    v-if="props.row.value"
                     data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
                     style='color: #DC2626'
@@ -105,7 +104,6 @@
           q-td(
             key="key",
             :props="props",
-            size="xl",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template(
@@ -134,9 +132,9 @@
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
                 :autofocus="isEdit && isEditSystem"
                 dense,
-                :type="'textarea'",
                 :rules="getRules(newData.dataType)"
-                autogrow,
+                :autogrow="getType(newData.dataType) === 'textarea'"
+                :type="getType(newData.dataType)",
                 class="verticalCenter",
                 placeholder="Enter the value"
               )
@@ -180,7 +178,7 @@
             key='Save',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
-            .row
+            .row.q-col-gutter-md.q-pb-md
               .col-xs-12.col-sm-12.col-md-6
                 div(
                   data-cy='saveEdit'
@@ -210,7 +208,6 @@ import BrowserIpfs from '~/services/BrowserIpfs.js'
 import TInput from '~/components/input/t-input.vue'
 import TSelect from '~/components/select/t-select.vue'
 import Encrypt from '~/utils/EncryptUtil'
-import customRegex from '~/const/customRegex.js'
 import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
@@ -357,6 +354,14 @@ export default {
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
     },
+    getType (selectType) {
+      let dataType = this.getDataType(selectType)
+      if (dataType === 'int64') {
+        return 'number'
+      } else {
+        return 'textarea'
+      }
+    },
     getRules (selectType) {
       let dataType = this.getDataType(selectType)
       var rule
@@ -377,7 +382,7 @@ export default {
           rule = 'required'
           break
         case 'int64':
-          rule = 'isNumber'
+          rule = 'required'
           break
       }
       return [this.rules[rule]]
@@ -464,21 +469,6 @@ export default {
         this.contentGroupCopy.splice(rowIndex, row)
       } else {
         this.$emit('openDialog', true)
-      }
-    },
-    isEncrypt (value) {
-      if (value && typeof (value) === 'string') {
-        return value.substring(0, 2) === 'U2'
-      } else {
-        return false
-      }
-    },
-    isIpfs (value) {
-      if (value) {
-        var regexIPFS = new RegExp(customRegex.IPFS)
-        return regexIPFS.test(value)
-      } else {
-        return false
       }
     },
     onEncrypt (value) {

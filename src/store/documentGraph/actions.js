@@ -83,3 +83,13 @@ export const getContractInformation = async function ({ commit }, params) {
     return undefined
   }
 }
+
+export const getCertificate = async function ({ commit }, params) {
+  try {
+    const response = await this.$apolloApi.getCertificate({ ...params })
+    return response
+  } catch (e) {
+    console.error('An error ocurred while trying to get certitificate ', e)
+    throw new Error(e)
+  }
+}

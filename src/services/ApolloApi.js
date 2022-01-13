@@ -154,6 +154,18 @@ class ApolloApi extends BaseEosApi {
     const { data } = await this.apollo.query({ query })
     return data
   }
+  async getCertificate ({ docId }) {
+    const query = gql`
+      query {
+        queryCertificate(filter: { docId: { eq: "${docId}" } }) {
+          fixedDetails_notes_s
+          fixedDetails_signature_s
+        }
+      }
+    `
+    const { data } = await this.apollo.query({ query })
+    return data
+  }
 }
 
 export default ApolloApi

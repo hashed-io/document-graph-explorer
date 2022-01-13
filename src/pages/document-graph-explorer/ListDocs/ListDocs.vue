@@ -41,6 +41,17 @@ div
       card-class="bg-grey-1"
       :visible-columns='visibleColumns'
     ).TailWind
+      template(v-slot:loading)
+        transition(
+          appear
+          enter-active-class="animated fadeIn"
+          leave-active-class="animated fadeOut"
+        )
+        q-inner-loading(showing)
+          q-spinner-tail(
+            color="indigo"
+            size="1.5em"
+          )
       template(v-slot:body="props")
         q-tr.cursor-pointer( :props="props")
           q-td(

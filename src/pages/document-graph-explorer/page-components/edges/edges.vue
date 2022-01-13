@@ -27,38 +27,73 @@ div.q-pt-xs
     v-if='edges.length > 0 && resultQuery.length === 0 && !withoutEdges'
     :msg="$t('pages.documentExplorer.edges.search.empty')"
     )
-  q-card(
+  q-table(
     v-if='edges.length > 0'
-    bordered
-    :style="calculateSizeEdges(edges.length, resultQuery.length)"
-  ).cardTailWind
-    q-scroll-area(
-      :thumb-style="thumbStyle",
-      :barStyle="barStyle",
-      :style="calculateSizeEdges(edges.length, resultQuery.length)"
-      id="scroll-area-with-virtual-scroll-1"
-    )
-      q-virtual-scroll(
-        scroll-target="#scroll-area-with-virtual-scroll-1 > .scroll"
-        :items="resultQuery"
-        type="list"
-      )
-        template(v-slot="{item, index}")
-          EdgeNext(
-              v-if="item.direction === 'next'"
-              :item="item"
-              :isEdit="isEdit"
-              :index="index"
-              @navigate="onNextNode(item)"
-              @deleteEdge="removeEdge(item,index)"
-            )
-          EdgePrev(
-            v-if="item.direction === 'prev'"
-              :item="item"
-              :isEdit="isEdit"
-              :index="index"
-              @navigate="onPrevNode(item)"
+    :data="resultQuery"
+    hide-header,
+    dense
+    :columns="columns"
+    card-class="bg-grey-1"
+    class="cardTailWind"
+  )
+    template(#body="props")
+      q-tr(:props="props")
+        EdgeNext(
+            v-if="props.row.direction === 'next'"
+            :item="props.row"
+            :isEdit="isEdit"
+            :index="props.rowIndex"
+            @navigate="onNextNode(props.row)"
+            @deleteEdge="removeEdge(props.row,props.rowIndex)"
           )
+        EdgePrev(
+          v-if="props.row.direction === 'prev'"
+            :item="props.row"
+            :isEdit="isEdit"
+            :index="props.rowIndex"
+            @navigate="onPrevNode(props.row)"
+        )
+    template(v-slot:pagination="scope")
+      q-btn(
+          v-if="scope.pagesNumber > 2"
+          icon="first_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.firstPage"
+      )
+      q-btn(
+          icon="chevron_left"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.prevPage"
+      )
+      q-btn(
+          data-cy="nextPage"
+          icon="chevron_right"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.nextPage"
+      )
+      q-btn(
+          data-cy="lastPage"
+          v-if="scope.pagesNumber > 2"
+          icon="last_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.lastPage"
+      )
   .row.justify-end
     q-icon(
         v-if='isEdit'
@@ -165,7 +200,6 @@ export default {
             })
           }
         }
-        // this.calculateSizeEdges(filter.length, 1)
         return filter
       } else {
         return this.edges
@@ -186,54 +220,16 @@ export default {
       isEdit: false,
       columns: [
         {
-          name: 'direction',
-          label: 'Direction',
-          align: 'left',
+          name: 'edge',
+          label: 'Edge',
+          align: 'center',
           headerStyle: 'font-weight: bolder;',
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-bold',
           classes: '',
           field: (row) => row.direction,
           sortable: true
-        },
-        {
-          name: 'name',
-          label: 'Name',
-          align: 'left',
-          headerStyle: 'font-weight: bolder;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-bold',
-          classes: '',
-          field: (row) => row.name,
-          sortable: true
-        },
-        {
-          name: 'edge',
-          label: 'Edge',
-          align: 'left',
-          headerStyle: 'font-weight: bolder;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-bold',
-          classes: '',
-          field: (row) => row.edge,
-          sortable: true
         }
-      ],
-      thumbStyle: {
-        right: '2px',
-        borderRadius: '12px',
-        backgroundColor: '#4338CA',
-        width: '4px',
-        opacity: 0.75
-      },
-      barStyle: {
-        right: '2px',
-        borderRadius: '20px',
-        backgroundColor: '#FFFF',
-        width: '7px',
-        opacity: 0.2,
-        marginTop: '-3px',
-        marginBottom: '-3px',
-        paddingTop: '3px',
-        paddingBottom: '3px'
-      }
+      ]
     }
   },
   methods: {

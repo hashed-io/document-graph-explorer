@@ -42,7 +42,7 @@
                     .row
                       template(id='edgeName')
                         .text-caption.textWrap.alignCenterEdge
-                          | {{ (item.edgeName.length > 10) ? item.edgeName.substring(0,10)+'...' : item.edgeName  }}
+                          | {{ (item.edgeName.length > 20) ? item.edgeName.substring(0,20)+'...' : item.edgeName  }}
                           q-tooltip(
                             content-class='bg-black'
                             transition-show="fade"

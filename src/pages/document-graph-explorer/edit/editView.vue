@@ -108,7 +108,7 @@ export default {
           })
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
-            if (types[element.dataType] === 'int64') {
+            if (types[element.dataType] === 'int64' && !element.value) {
               contentGroup.push({
                 label: key,
                 value: [types[element.dataType], 0]
