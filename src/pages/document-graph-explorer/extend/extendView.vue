@@ -12,12 +12,14 @@ div
     //-     dense
     //-   )
     .col-4
-      TInput(
-        data-cy='edgeNameInput'
-        placeholder='Edge name'
-        v-model='form.edgeName'
-        :dense='true'
-      )
+      q-form(ref='edgeNameForm')
+        TInput(
+          data-cy='edgeNameInput'
+          placeholder='Edge name'
+          :rules="[rules.required]"
+          v-model='form.edgeName'
+          :dense='true'
+        )
   ListContentGroup(:contents_groups="extendContentGroup")
   //- Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
   //- q-dialog(v-model='showDialogEdge')
@@ -54,9 +56,10 @@ import { documentExplorer } from '~/mixins/documentExplorer'
 import TSelectExtend from '~/components/select/TSelectExtend.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import { mapState } from 'vuex'
+import { validation } from '~/mixins/validation'
 export default {
   name: 'DocumentExplorer',
-  mixins: [documentExplorer],
+  mixins: [documentExplorer, validation],
   components: {
     DocInformation,
     ListContentGroup,
@@ -113,7 +116,11 @@ export default {
     }
   },
   methods: {
-    onSave () {
+    async onSave () {
+      if (!await this.$refs.edgeNameForm.validate()) {
+        this.showErrorMsg('Edge Name is required')
+        return
+      }
       try {
         this.formatContentGroups(this.extendContentGroup)
       } catch (error) {

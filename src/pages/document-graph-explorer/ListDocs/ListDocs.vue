@@ -37,6 +37,7 @@ div
       binary-state-sort
       :loading="loadingDocs"
       :data="documents"
+      :grid="$q.screen.xs"
       :columns="columns"
       card-class="bg-grey-1"
       :visible-columns='visibleColumns'
@@ -104,6 +105,34 @@ div
             :disable="scope.isLastPage"
             @click="scope.lastPage"
         )
+      template(v-slot:item='props')
+        .q-pa-xs.col-xs-12.col-sm-6.col-md-4
+          q-card(
+            @click="seeDocument(props.row)"
+            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-2'"
+          )
+            q-card-section.text-justify
+              br
+              .row.q-col-gutter-md
+                .col-4
+                  strong DOC ID
+                  div {{ props.row.docId }}
+                .col-4
+                  strong CREATOR
+                  div {{ props.row.creator }}
+                .col-4
+                  strong TYPE
+                  div {{ props.row.type }}
+              .row.q-pt-md.q-col-gutter-md
+                .col-4
+                  strong NODE LABEL
+                  div {{ props.row.system_nodeLabel_s }}
+                .col-4.wrap(v-if="props.row.hasOwnProperty('hash')")
+                  strong HASH
+                  div {{ props.row.hash.substring(0,9)+'\n...' }}
+                div(:class="props.row.hasOwnProperty('hash') ? 'col-4' : 'col-8'")
+                  strong CREATED AT
+                  div {{ props.row.createdDate }}
 </template>
 
 <script>

@@ -96,10 +96,10 @@ export const documentExplorer = {
         type: 'Document'
       })
       let interfaceString = ''
-      let flag
+      let flag = 1
       docInterface['__type'].fields.forEach(element => {
-        if (element.name === 'docId') {
-          flag = 1
+        if (element.name === 'hash') {
+          flag = 0
         }
         interfaceString += element.name + '\n'
       })
@@ -173,6 +173,7 @@ export const documentExplorer = {
           this.showCertificates = false
         }
       }
+      console.log('Loading Data')
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()

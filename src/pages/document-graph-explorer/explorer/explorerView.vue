@@ -1,22 +1,23 @@
 <template lang='pug'>
 div
-  div(v-if="loading" class="center")
+  div(v-show="loading" class="center")
     q-spinner-tail(
       color="indigo"
       size="1.5em"
     )
 
-  div(v-if="!loading")
+  div(v-show="!loading")
     BackComponent
     DocInformation(:docInfo="documentInfo" :title="$t('pages.documentExplorer.explorer.title')")
     ListContentGroup(:contents_groups="contentsGroups")
     Edges(:edges="edges" @edgeData="navigateToEdge" @edgeDataPrev="navigateToEdgePrev")
     CertificateSection(
-      v-if="certificates.length > 0"
+      v-show="certificates.length > 0"
       :certificates='certificates'
       show
     )
     ActionsButtons(
+      :docInfo="documentInfo"
       @extend='extendDocument'
       @edit='editDocument'
       @erase='eraseDocument'
