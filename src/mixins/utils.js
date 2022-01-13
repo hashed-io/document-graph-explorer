@@ -45,7 +45,6 @@ export const utils = {
     showIsLoading (state) {
       this.setIsLoading(state)
     },
-    // TODO: 13 nov 2021
     dateToString (_date) {
       if (!_date) return _date
       var date = new Date(_date.replace(/ /g, 'T'))

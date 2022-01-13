@@ -70,7 +70,6 @@ export default {
   },
   methods: {
     onSaveTitle () {
-      // TODO: Propagate the title to rest of the array
       let bool = this.$parent.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.titleContent })
       if (bool) {
         this.$emit('onSaveTitle', this.titleContent)

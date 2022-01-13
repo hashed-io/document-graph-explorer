@@ -145,7 +145,6 @@ export default {
       }
     },
     openCertificateModal () {
-      // TODO: Open a modal to fill sign data
       this.signDocument = true
     },
     async onCertify (objDialog) {

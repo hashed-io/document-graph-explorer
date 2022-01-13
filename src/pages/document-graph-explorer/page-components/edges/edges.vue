@@ -258,8 +258,6 @@ export default {
       this.$emit('edgeData', edgeData)
     },
     async removeEdge (item, index) {
-      // TODO: Information for delete action
-      // TODO: Add hash version [not complete yet in smart contract]
       try {
         let _contractAccount = this.account
         let _api = this.$store.$apiMethods

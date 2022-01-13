@@ -485,7 +485,6 @@ export default {
     onEraseRow (rowIndex) {
       this.contentGroupCopy.splice(rowIndex, 1)
       this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
-      // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
       if (await this.$refs.keyForm.validate() && await this.$refs.valueForm.validate() && await this.$refs.selectTypeForm.validate()) {
@@ -514,7 +513,6 @@ export default {
         } else if (obj.encrypt && obj.ipfs) {
           this.newData.optional.encrypt = true
           this.newData.optional.ipfs = true
-          // TODO: First retrieve ipfs
           if (!this.isEncrypt(this.newData.value)) {
             this.newData.value = await this.encryptValue(this.newData.value)
           }
@@ -526,13 +524,11 @@ export default {
         this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
         this.editableRow = undefined
       }
-      // TODO: send to the parent component to sign transaction
     },
     onCancel (index, row) {
       this.editableRow = undefined
     },
     onAddRow () {
-      // TODO: Save the new row to sign
       let emptyObject = {
         optional: {
           encrypt: false,

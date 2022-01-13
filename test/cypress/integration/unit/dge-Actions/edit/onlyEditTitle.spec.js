@@ -1,5 +1,3 @@
-// TODO: Only edit the title and save the using the action
-//
 import Faker from 'faker'
 const endpoints = ['https://alpha-st.tekit.io/graphql', 'https://hashed.systems/alpha-dge-test/graphql', 'https://hashed.systems/alpha-trace-test/graphql']
 const endpointSelect = 2
