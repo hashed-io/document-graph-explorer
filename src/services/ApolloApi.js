@@ -1,7 +1,4 @@
 import BaseEosApi from './BaseEosApi'
-import {
-  Contracts
-} from '~/const/Contracts'
 import { gql } from 'apollo-boost'
 class ApolloApi extends BaseEosApi {
   constructor ({
@@ -13,7 +10,6 @@ class ApolloApi extends BaseEosApi {
       eosApi,
       notifier,
       {
-        contractAccount: Contracts.HYPHA,
         table: '',
         tableId: 'id',
         defaultSortField: 'key'

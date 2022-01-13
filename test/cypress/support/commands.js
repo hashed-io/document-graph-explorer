@@ -64,10 +64,6 @@ Cypress.Commands.add('fillCryptoDialog', (key) => {
     }
   })
 })
-Cypress.Commands.add('dateTimeInput', (dataCy, date, time) => {
-  cy.dataCy(dataCy)
-    .type(date + ' ' + time)
-})
 /**
    * @param {string} dataCy
    * @param {boolean} encrypt?
@@ -174,82 +170,6 @@ Cypress.Commands.add('fillRowEdit', (dataType) => {
 })
 Cypress.Commands.add('addNewContent', () => {
 
-})
-Cypress.Commands.add('addNewLabel', (typeLabelNumber, withCheckBox) => {
-  let fakeValue
-  let dataCy
-  let fieldName = Faker.name.findName()
-  // Open modal to create new Label
-  cy.get('#addFieldButton')
-    .click()
-  // Fill field name input
-  cy.dataCy('FieldNameInput')
-    .type(fieldName)
-    // Open selector in the modal
-  cy.dataCy('typeInput')
-    .click()
-    .get('.q-item__label')
-    .eq(typeLabelNumber)
-    .click()
-  switch (typeLabelNumber) {
-    // String
-    case 0:
-      cy.log('String Label')
-      dataCy = 'stringInput'
-      let encrypt = true
-      let ipfs = Faker.datatype.boolean()
-      let isEdit = false
-      fakeValue = Faker.name.findName()
-      cy.stringLabelFill(dataCy, encrypt, ipfs, fakeValue, isEdit)
-      break
-      // Asset
-    case 1:
-      dataCy = 'assetInput'
-      fakeValue = Faker.finance.amount() + ' TLOS'
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // Name
-    case 2:
-      dataCy = 'nameInput'
-      fakeValue = 'alejandroga1'
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // Int 64
-    case 3:
-      dataCy = 'inputLabel'
-      fakeValue = Faker.datatype.number()
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // Time point
-    case 4:
-      dataCy = 'timePointInput'
-      let date = '2021-10-16'
-      let time = '14:04'
-      cy.dateTimeInput(dataCy, date, time)
-      // fakeValue = Faker.datatype.datetime()
-      break
-      // Checksum
-    case 5:
-      dataCy = 'checkSumInput'
-      fakeValue = 'Bdf12Fcb73D8eF8Ba771fbAC5B274D29DA12aa2CBEaacB7Da1239884e1174B8c'
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // File
-    case 6:
-      // Files must exist inside of folder /fixture
-      let fileName = 'pdf-test.pdf'
-      let encryptFile = Faker.datatype.boolean()
-      cy.fileLabelFill(fileName, encryptFile)
-      break
-  }
-
-  // Click in add field Button
-  cy.dataCy('addFieldButton')
-    .click()
 })
 Cypress.Commands.add('qSelect', (dataCy, element) => {
   cy.dataCy(dataCy)
