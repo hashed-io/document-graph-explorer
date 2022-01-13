@@ -107,7 +107,7 @@
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             template(
-              v-if="isEdit && isEditSystem"
+              v-if="isEdit && !isEditSystem && props.row.key === 'nodeLabel'"
             ) {{ props.row.key }}
             q-form(ref='keyForm')
               TInput(
@@ -115,7 +115,7 @@
                 data-cy='keyField'
                 autofocus
                 v-model="newData.key",
-                v-if="isEdit && !isEditSystem"
+                v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'"
                 dense,
                 placeholder="Key"
               )
@@ -240,13 +240,8 @@ export default {
   mounted () {
     if (this.getIsEdit) {
       this.modifiedData()
-      if (this.index_content_group !== 'system') {
-        this.isEdit = true
-        this.isEditSystem = false
-      } else {
-        this.isEditSystem = true
-        this.isEdit = true
-      }
+      this.isEditSystem = false
+      this.isEdit = true
       this.visibleColumns.push('actions')
     } else {
       this.isEditSystem = false

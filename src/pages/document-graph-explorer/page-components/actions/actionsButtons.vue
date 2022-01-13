@@ -1,7 +1,7 @@
 <template lang="pug">
 .q-py-md.row.q-gutter-md
   q-btn(
-    v-if="documentInfo.creator === account"
+    v-if="docInfo.creator === account"
     data-cy="extendButton"
     @click="extendDocument()",
     class='text-white btnTailwind'
@@ -19,7 +19,7 @@
       .col-8
         div(style='margin-top:2px;') Extend
   q-btn(
-    v-if="documentInfo.creator === account"
+    v-if="docInfo.creator === account"
     data-cy="eraseButton"
     @click="eraseDocument()",
     class='text-white btnTailwind'
@@ -38,7 +38,7 @@
       .col-8
         div(style='margin-top:2px;') Erase
   q-btn(
-    v-if="documentInfo.creator === account"
+    v-if="docInfo.creator === account"
     data-cy="editButton"
     @click="editDocument()",
     class='text-white btnTailwind'
@@ -80,13 +80,16 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { documentExplorer } from '~/mixins/documentExplorer'
-
 export default {
   name: 'ActionsButton',
-  mixins: [ documentExplorer ],
   computed: {
     ...mapGetters('accounts', ['account'])
+  },
+  props: {
+    docInfo: {
+      type: Object,
+      required: true
+    }
   },
   methods: {
     extendDocument () {

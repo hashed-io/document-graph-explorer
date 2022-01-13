@@ -6,7 +6,7 @@ div(v-if="isEdit")
           div.q-px-md.color {{title}}
           div(
             data-cy='editTitleButton'
-            v-if="!isEditSystem"
+            v-if="!isEditSystem && title !== 'system'"
             class='text-brand-primary text-capitalize animated-icon customAlign'
             @click='editableTitle = true; previousTitle = title'
           ) Edit

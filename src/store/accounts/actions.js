@@ -65,7 +65,7 @@ export const logout = async function ({ commit }) {
   } catch (error) {
     console.log('Authenticator logout error', error)
   }
-  commit('profiles/setProfile', undefined, { root: true })
+  // commit('profiles/setProfile', undefined, { root: true })
   commit('setAccount')
   localStorage.removeItem('autoLogin')
   this.$api = null
