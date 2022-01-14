@@ -16,6 +16,7 @@ div
         div
           q-btn(
               data-cy="newDocButton"
+              v-if="account"
               label='New Document'
               @click='newDoc'
               unelevated
@@ -253,6 +254,7 @@ export default {
   computed: {
     ...mapState('documentGraph', ['isHashed', 'documentInterface']),
     ...mapState('documentGraph', ['endpointApollo']),
+    ...mapState('accounts', ['account']),
     Endpoint () {
       return this.endpointApollo
     }
