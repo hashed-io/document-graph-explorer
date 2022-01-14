@@ -5,10 +5,11 @@ div
     | {{$t('pages.documentExplorer.create.title')}}
   .row
     .col-4
-      TSelectExtend(
+      TSelectFilter(
         v-model='documentType'
-        message='Choose document type'
-        :options='options'
+        :debounce="0"
+        message='Choose document type and press enter'
+        :stringOptions='options'
         dense
       )
   ListContentGroup(:contents_groups="extendContentGroup")
@@ -47,6 +48,7 @@ import TSelectExtend from '~/components/select/TSelectExtend.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import { mapActions, mapState } from 'vuex'
+import TSelectFilter from '../../../components/select/TSelectFilter.vue'
 export default {
   name: 'createView',
   mixins: [documentExplorer],
@@ -58,7 +60,8 @@ export default {
     TSelect,
     CancelDialog,
     TSelectExtend,
-    EdgeDialog
+    EdgeDialog,
+    TSelectFilter
   },
   async beforeMount () {
     await this.getTypesForSelect()
@@ -105,10 +108,7 @@ export default {
         var types = []
         data.forEach(element => {
           if (element.interfaces.length > 0) {
-            types.push({
-              label: element.name,
-              value: element.name.toLowerCase()
-            })
+            types.push(element.name)
           }
         })
         this.options = types
@@ -124,7 +124,6 @@ export default {
       }
     },
     formatContentGroups (contentgroups) {
-      // ADD the document type
       try {
         const types = {
           c: 'checksum256',
