@@ -102,10 +102,12 @@ export default {
             label: 'content_group_label',
             value: ['string', title]
           })
-          contentGroup.push({
-            label: 'type',
-            value: ['name', this.documentInfo.type.toLowerCase()]
-          })
+          if (title === 'system') {
+            contentGroup.push({
+              label: 'type',
+              value: ['name', this.documentInfo.type.toLowerCase()]
+            })
+          }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             if (types[element.dataType] === 'int64' && !element.value) {
@@ -131,10 +133,10 @@ export default {
     },
     async callEditAction (contentGroups) {
       try {
-        await this.newInstance()
-        let documentID = this.documentInfo.docId
-        await this.ActionsApi.editDoc({ documentID, contentGroups })
-        this.setIsEdit(false)
+        // await this.newInstance()
+        // let documentID = this.documentInfo.docId
+        // await this.ActionsApi.editDoc({ documentID, contentGroups })
+        // this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
         this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })

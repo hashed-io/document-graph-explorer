@@ -140,10 +140,12 @@ export default {
             label: 'content_group_label',
             value: ['string', title]
           })
-          contentGroup.push({
-            label: 'type',
-            value: ['name', this.documentType]
-          })
+          if (title === 'system') {
+            contentGroup.push({
+              label: 'type',
+              value: ['name', this.documentType.toLowerCase()]
+            })
+          }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             contentGroup.push({
