@@ -42,7 +42,7 @@ class ApolloApi extends BaseEosApi {
       }
     }
     `
-    const { data } = await this.apollo.query({ query: query, errorPolicy: 'ignore' })
+    const { data } = await this.apollo.query({ query: query, errorPolicy: 'ignore', fetchPolicy: 'no-cache' })
     return data
   }
   async getDocumentsByDocId ({ byElement, props, type, docInterface, isHashed }) {
@@ -58,7 +58,7 @@ class ApolloApi extends BaseEosApi {
       }
     `
 
-    const { data } = await this.apollo.query({ query, errorPolicy: 'ignore' })
+    const { data } = await this.apollo.query({ query, errorPolicy: 'ignore', fetchPolicy: 'no-cache' })
     return data
   }
   async getDocuments ({ offset, limit, props, type }) {
@@ -73,7 +73,10 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
+    console.log('data----------------------')
+    console.log(data)
+    console.log('data----------------------')
     return data
   }
   async getAllDocuments ({ type }) {
@@ -84,7 +87,7 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
     return data
   }
   async getSchema () {
@@ -117,7 +120,7 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
     return data
   }
   async getContractInfo () {
@@ -131,7 +134,7 @@ class ApolloApi extends BaseEosApi {
       }
     }
     `
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
     return data
   }
   async getAllTypes () {
@@ -147,7 +150,7 @@ class ApolloApi extends BaseEosApi {
       }
     }
     `
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
     return data
   }
   async getCertificate ({ docId }) {
@@ -159,7 +162,7 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    const { data } = await this.apollo.query({ query })
+    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
     return data
   }
 }

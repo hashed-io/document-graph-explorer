@@ -9,7 +9,8 @@ export default {
   },
   data () {
     return {
-      idx: null
+      idx: null,
+      loading: false
     }
   },
   computed: {

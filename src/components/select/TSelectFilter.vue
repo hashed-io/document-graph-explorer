@@ -2,6 +2,8 @@
 div
   div( v-if="message" class="q-pb-sm text-caption") {{message}}
   q-select(
+    data-cy='docType'
+    :rules="rules"
     outlined,
     dense
     v-model="content",
@@ -22,7 +24,7 @@ div
 <script>
 export default {
   name: 'TSelectFilter',
-  props: ['value', 'message', 'dense', 'stringOptions', 'debounce', 'placeholder'],
+  props: ['value', 'message', 'dense', 'stringOptions', 'debounce', 'placeholder', 'rules'],
   model: {
     prop: 'value',
     event: 'update'
