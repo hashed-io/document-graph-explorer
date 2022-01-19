@@ -7,7 +7,7 @@ q-card.signDialog
           path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z")
     q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
   q-card-section
-    q-form(ref='edgeForm' @submit="signDoc").q-px-md
+    q-form(ref='certifyForm' @submit="signDoc").q-px-md
       Tinput(
         data-cy="signature"
         class="q-pt-md"
@@ -100,9 +100,6 @@ export default {
     }
   },
   methods: {
-    signDoc () {
-
-    },
     onEncryptSignature () {
       if (!this.cryptoKey) {
         this.cryptoDialog = true
@@ -159,11 +156,13 @@ export default {
       }
     },
     async onCertify () {
-      let dataToSave = {
-        signature: this.form.signature.data,
-        notes: this.form.notes.data
+      if (await this.$refs.certifyForm.validate()) {
+        let dataToSave = {
+          signature: this.form.signature.data,
+          notes: this.form.notes.data
+        }
+        this.$emit('onCertify', dataToSave)
       }
-      this.$emit('onCertify', dataToSave)
     }
   }
 }
