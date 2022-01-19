@@ -4,15 +4,17 @@ div
   .text-h6.q-pb-md
     | {{$t('pages.documentExplorer.create.title')}}
   .row
-    .col-4
+    q-form(ref='docTypeSelect').col-4
       TSelectFilter(
+        :rules="[rules.required]"
         v-model='documentType'
         :debounce="0"
         message='Choose document type and press enter'
         :stringOptions='options'
         dense
       )
-  ListContentGroup(:contents_groups="extendContentGroup")
+  q-form(ref='contentGroup')
+    ListContentGroup(:contents_groups="extendContentGroup")
   //- Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
   //- q-dialog(v-model='showDialogEdge')
   //-   EdgeDialog(@EdgeData='addNewEdge')
@@ -48,10 +50,11 @@ import TSelectExtend from '~/components/select/TSelectExtend.vue'
 import EdgeDialog from '../page-components/dialog/edgeDialog.vue'
 import { documentExplorer } from '~/mixins/documentExplorer'
 import { mapActions, mapState } from 'vuex'
-import TSelectFilter from '../../../components/select/TSelectFilter.vue'
+import TSelectFilter from '~/components/select/TSelectFilter.vue'
+import { validation } from '~/mixins/validation'
 export default {
   name: 'createView',
-  mixins: [documentExplorer],
+  mixins: [documentExplorer, validation],
   components: {
     DocInformation,
     ListContentGroup,
@@ -116,9 +119,13 @@ export default {
         this.showErrorMsg('An error occured while trying to retrieve the document types ' + error)
       }
     },
-    onSave () {
+    async onSave () {
       try {
-        this.formatContentGroups(this.extendContentGroup)
+        if (await this.$refs.contentGroup.validate() && await this.$refs.docTypeSelect.validate()) {
+          this.formatContentGroups(this.extendContentGroup)
+        } else {
+          this.showErrorMsg('Fill the information')
+        }
       } catch (error) {
         this.showErrorMsg('An error occured while trying to save the changes ' + error)
       }
@@ -129,7 +136,7 @@ export default {
           c: 'checksum256',
           n: 'name',
           a: 'asset',
-          t: 'time',
+          t: 'time_point',
           s: 'string',
           i: 'int64'
         }
@@ -167,6 +174,11 @@ export default {
         let creator = this.account
         await this.ActionsApi.createDoc({ creator, contentGroups })
         this.setIsEdit(false)
+        this.$q.loading.show({
+          message: 'Refresh cache'
+        })
+        await new Promise(resolve => setTimeout(resolve, 1250))
+        this.$q.loading.hide()
         this.$router.push({ name: 'listDocs' })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)

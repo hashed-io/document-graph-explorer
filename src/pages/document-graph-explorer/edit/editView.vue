@@ -8,7 +8,8 @@ div
 
   div(v-if="!loading")
     DocInformation(:docInfo="documentInfo" :title="$t('pages.documentExplorer.edit.title')")
-    ListContentGroup(:contents_groups="contentsGroups")
+    q-form(ref='contentGroup')
+      ListContentGroup(:contents_groups="contentsGroups")
     Edges(:edges="edges" @showModal="openModal")
     q-dialog(v-model='showDialogEdge')
       EdgeDialog(@EdgeData='addNewEdge')
@@ -74,9 +75,13 @@ export default {
   },
   methods: {
     ...mapActions('documentGraph', ['getLocalStorage']),
-    onSave () {
+    async onSave () {
       try {
-        this.formatContentGroups(this.contentsGroups)
+        if (await this.$refs.contentGroup.validate()) {
+          this.formatContentGroups(this.contentsGroups)
+        } else {
+          this.showErrorMsg('Fill the information')
+        }
       } catch (error) {
         this.showErrorMsg('An error occured while trying to save the changes ' + error)
       }
@@ -84,14 +89,11 @@ export default {
     formatContentGroups (contentgroups) {
       // ADD the document type
       try {
-        console.log('1--------------1')
-        console.log(contentgroups)
-        console.log('1--------------1')
         const types = {
           c: 'checksum256',
           n: 'name',
           a: 'asset',
-          t: 'time',
+          t: 'time_point',
           s: 'string',
           i: 'int64'
         }
@@ -133,13 +135,16 @@ export default {
     },
     async callEditAction (contentGroups) {
       try {
-        // await this.newInstance()
-        // let documentID = this.documentInfo.docId
-        // await this.ActionsApi.editDoc({ documentID, contentGroups })
-        // this.setIsEdit(false)
+        await this.newInstance()
+        let documentID = this.documentInfo.docId
+        await this.ActionsApi.editDoc({ documentID, contentGroups })
+        this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
-        this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
+        await new Promise(resolve => setTimeout(resolve, 500))
+        await this.showSuccessMsg('The changes was saved')
+        this.loadData()
+        // this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
       }
@@ -155,10 +160,13 @@ export default {
       let creator = this.account
       console.log({ fromNode, toNode, edgeName, creator })
       await this.ActionsApi.createEdge({ fromNode, toNode, edgeName, creator })
-      console.log(form)
-      // this.edges.push(form)
-      // await this.$nextTick()
       this.showDialogEdge = false
+      this.$q.loading.show({
+        message: 'Waiting doc cache'
+      })
+      await new Promise(resolve => setTimeout(resolve, 1250))
+      this.loadData()
+      this.$q.loading.hide()
     },
     onCancel () {
       this.$router.push({ name: 'DocumentExplorer' })

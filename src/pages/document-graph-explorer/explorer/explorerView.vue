@@ -14,7 +14,6 @@ div
     CertificateSection(
       v-show="certificates.length > 0"
       :certificates='certificates'
-      show
     )
     ActionsButtons(
       :docInfo="documentInfo"
@@ -134,11 +133,12 @@ export default {
       this.deleteDocument = true
     },
     async callErase () {
-      // CALL ACTION TO DELETE ALL DOCUMENT
       try {
         await this.newInstance()
         let docID = this.document.docId
         await this.ActionsApi.deleteDoc({ documentID: docID })
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        this.$router.push({ name: 'listDocs' })
         this.showSuccessMsg('The document was erase')
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to delete document ' + error)
@@ -156,8 +156,10 @@ export default {
           signature: objDialog.signature,
           notes: objDialog.notes
         })
-        this.signDocument = false
+        await new Promise(resolve => setTimeout(resolve, 1500))
         this.showSuccessMsg('The document was certify correctly')
+        await this.loadData()
+        this.signDocument = false
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying certify the doc ' + error)
         console.log('An error ocurred while trying certify the doc ' + error)
