@@ -1,6 +1,5 @@
 import { Api, JsonRpc } from 'eosjs'
-import { DaoApi, ContractsApi, DocumentsGeneralApi, ApolloApi, ActionsApi } from '~/services'
-import { Contracts } from '~/const/Contracts'
+import { ApolloApi, ActionsApi } from '~/services'
 const signTransaction = async function (actions) {
   actions.forEach(action => {
     if (!action.authorization || !action.authorization.length) {
@@ -52,18 +51,6 @@ export default ({ store }) => {
     signTransaction: signTransaction.bind(store),
     getTableRows: getTableRows.bind(store)
   }
-  const daoApi = new DaoApi({
-    eosApi: api,
-    mEosApi
-  })
-  const contractsApi = new ContractsApi({
-    eosApi: api,
-    mEosApi
-  }, Contracts.CONTRACT_DOC)
-  const documentsGeneralApi = new DocumentsGeneralApi({
-    eosApi: api,
-    mEosApi
-  }, Contracts.CONTRACT_DOC)
 
   const apolloApi = new ApolloApi({
     eosApi: api,
@@ -72,13 +59,10 @@ export default ({ store }) => {
   const actionsApi = new ActionsApi({
     eosApi: api,
     mEosApi
-  }, Contracts.CONTRACT_DOC)
+  })
 
   store['$api'] = api
   store['$apiMethods'] = api
-  store['$daoApi'] = daoApi
-  store['$contractsApi'] = contractsApi
-  store['$documentsGeneralApi'] = documentsGeneralApi
   store['$apolloApi'] = apolloApi
   store['$actionsApi'] = actionsApi
 }
