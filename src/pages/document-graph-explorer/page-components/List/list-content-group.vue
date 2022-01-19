@@ -24,7 +24,7 @@ div
     data-cy="newContentButton"
     v-if="isEdit"
     unelevated
-    label='New content_group'
+    label='New content group'
     no-caps
     class='btnTailwind'
     @click="onAddContentGroup"
@@ -78,7 +78,6 @@ export default {
   methods: {
     onChange (obj) {
       let key = obj.key
-      console.log(obj)
       this.contents_groups[key] = obj.data
       this.$forceUpdate()
     },
