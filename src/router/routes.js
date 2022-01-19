@@ -20,7 +20,7 @@ if (process.env.MODE !== 'ssr') {
   routes.push({
     path: '*',
     component: () => import('pages/404.vue'),
-    meta: { layout: 'empty' }
+    meta: { layout: 'empty', guest: true }
   })
 }
 
