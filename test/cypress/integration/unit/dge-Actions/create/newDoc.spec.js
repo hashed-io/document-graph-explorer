@@ -12,13 +12,15 @@ describe('Create new Document', () => {
     let fakeValue = Faker.lorem.sentence()
     cy.dataCy('newDocButton')
       .click()
-    cy.dataCy('selectDocType')
+    cy.dataCy('docType')
+      .last()
       .click()
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(2)
-      .click()
+      .type('newDocType')
+      .type('{enter}')
+    // cy.get('.q-virtual-scroll__content')
+    //   .children()
+    //   .eq(2)
+    //   .click()
     cy.dataCy('editRowButton')
       .click()
     cy.dataCy('valueField')
@@ -65,6 +67,10 @@ describe('Create new document [For]', () => {
       // })
     })
   })
+})
+describe('Create new document [Select type]', () => {
+// TODO: check all different types
+// TODO: in string [encrypt & ipfs]
 })
 describe('Save doc', () => {
   it('Saving using Anchor', () => {
