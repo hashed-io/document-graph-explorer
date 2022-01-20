@@ -13,7 +13,7 @@ export default {
     ...mapActions('accounts', ['login']),
     async onLogin (idx) {
       this.idx = 0
-      await this.login({ idx: this.idx, returnUrl: '/' })
+      await this.login({ idx: this.idx, returnUrl: this.$router.currentRoute.fullPath })
     }
   }
 }

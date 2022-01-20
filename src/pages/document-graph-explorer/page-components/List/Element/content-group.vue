@@ -3,7 +3,7 @@
   TitleContentGroup(
     :isEditSystem="isEditSystem"
     :isEdit="isEdit"
-    :title="content_group_data[0].title"
+    :title="index_content_group"
     @deleteTitle="onDeleteTitle"
     @onSaveTitle="onSaveTitle"
   )
@@ -93,7 +93,7 @@
                     class='text-brand-primary text-capitalize animated-icon'
                     @click='onEditRow(props.row, props.rowIndex )'
                   ) Edit
-                .col-xs-12.col-sm-12.col-md-6
+                .col-xs-12.col-sm-12.col-md-6(v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'")
                   div(
                     data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
@@ -145,7 +145,7 @@
                 no-hover,
                 v-model='props.row.optional.encrypt',
                 label='Encrypt',
-                @input='onEncrypt(props.row)'
+                @input='onEncrypt(props.rowIndex,props.row)'
               )
               q-toggle(
                 data-cy='ipfsToggle'
@@ -383,7 +383,9 @@ export default {
       return [this.rules[rule]]
     },
     openIPFS (cid) {
-      window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+      cid.substring(0, 7) === 'ipfs://'
+        ? window.open(`https://ipfs.io/ipfs/${cid.substring(7)}`, '_blank')
+        : window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
     },
     seeValue (value) {
       if (value.length > this.limitChars) {
@@ -447,7 +449,7 @@ export default {
         c: 'checksum256',
         n: 'name',
         a: 'asset',
-        t: 'time',
+        t: 'time_point',
         s: 'string',
         i: 'int64'
       }
@@ -466,8 +468,9 @@ export default {
         this.$emit('openDialog', true)
       }
     },
-    onEncrypt (value) {
-      this.$forceUpdate()
+    async onEncrypt (rowIndex, value) {
+      value.value = this.newData.value
+      await this.$forceUpdate()
       if (!this.cryptoKey) {
         this.$emit('openDialog', true)
       }
@@ -485,7 +488,6 @@ export default {
     onEraseRow (rowIndex) {
       this.contentGroupCopy.splice(rowIndex, 1)
       this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
-      // TODO: Push into delete
     },
     async onSave (rowIndex, row) {
       if (await this.$refs.keyForm.validate() && await this.$refs.valueForm.validate() && await this.$refs.selectTypeForm.validate()) {
@@ -514,7 +516,6 @@ export default {
         } else if (obj.encrypt && obj.ipfs) {
           this.newData.optional.encrypt = true
           this.newData.optional.ipfs = true
-          // TODO: First retrieve ipfs
           if (!this.isEncrypt(this.newData.value)) {
             this.newData.value = await this.encryptValue(this.newData.value)
           }
@@ -526,20 +527,22 @@ export default {
         this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
         this.editableRow = undefined
       }
-      // TODO: send to the parent component to sign transaction
     },
-    onCancel (index, row) {
-      this.editableRow = undefined
+    async onCancel (index, row) {
+      if (await this.$refs.keyForm.validate()) {
+        this.editableRow = undefined
+      } else {
+        this.showErrorMsg('The key is necessary')
+      }
     },
     onAddRow () {
-      // TODO: Save the new row to sign
       let emptyObject = {
         optional: {
           encrypt: false,
           ipfs: false,
           file: undefined
         },
-        title: this.content_group_data[0].title,
+        title: this.index_content_group,
         key: '',
         value: '',
         dataType: 's'
@@ -549,7 +552,7 @@ export default {
       this.onEditRow(this.newData, this.contentGroupCopy.length - 1)
     },
     onSaveTitle (title) {
-      this.content_group_data[0].title = title
+      // this.content_group_data[0].title = title
     },
     onDeleteTitle (title) {
       this.$emit('deleteTitle', title)

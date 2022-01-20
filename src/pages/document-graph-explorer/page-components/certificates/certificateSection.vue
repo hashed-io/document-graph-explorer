@@ -3,7 +3,7 @@ div.text-h6.q-pt-md
   .row
     div Certificates
   .row
-    ListCertificates(v-if='toggle' :certificates="certificates")
+    ListCertificates( :certificates="certificates")
 </template>
 <script>
 import ListCertificates from './list/ListCertificates.vue'
@@ -18,19 +18,10 @@ export default {
     certificates: {
       type: Array,
       required: false
-    },
-    /**
-     * The props control if the certificates are shown or not
-     */
-    show: {
-      type: Boolean,
-      required: true,
-      default: false
     }
   },
   data () {
     return {
-      toggle: this.show
     }
   },
   methods: {

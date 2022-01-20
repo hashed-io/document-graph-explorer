@@ -58,12 +58,15 @@ export default {
     return {
       identicon: {
         size: 35
-      }
+      },
+      limitChar: 150
     }
   },
   methods: {
     getHTML (data) {
-      return DOMPurify.sanitize(marked(data + '\n\n'))
+      return (data.length > this.limitChar)
+        ? DOMPurify.sanitize(marked(data.substring(0, this.limitChar) + '\n ...' + '\n\n'))
+        : DOMPurify.sanitize(marked(data + '\n\n'))
     },
     dateToString (_date) {
       if (!_date) return _date

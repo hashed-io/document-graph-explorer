@@ -6,13 +6,13 @@ const routes = [
   // Timeline example
   { path: '/timeline', component: () => import('~/pages/timeline/timeline-page'), name: 'timeline-page', meta: { guest: true } },
   // Page to create a new document
-  { path: '/create', component: () => import('~/pages/document-graph-explorer/create/createView'), name: 'createView', meta: { guest: true } },
+  { path: '/create', component: () => import('~/pages/document-graph-explorer/create/createView'), name: 'createView', meta: { guest: false } },
   // Page to render all the data of the document [contains the edit button, erase and extend]
   { path: '/explore', component: () => import('~/pages/document-graph-explorer/explorer/explorerView'), name: 'DocumentExplorer', meta: { guest: true } },
   // Page to edit document [contains the buttons to edit]
-  { path: '/edit', component: () => import('~/pages/document-graph-explorer/edit/editView.vue'), name: 'editDoc', meta: { guest: true } },
+  { path: '/edit', component: () => import('~/pages/document-graph-explorer/edit/editView.vue'), name: 'editDoc', meta: { guest: false } },
   // Page to extend, blank page to fill the document data
-  { path: '/extend', component: () => import('~/pages/document-graph-explorer/extend/extendView.vue'), name: 'extendDoc', meta: { guest: true } }
+  { path: '/extend', component: () => import('~/pages/document-graph-explorer/extend/extendView.vue'), name: 'extendDoc', meta: { guest: false } }
 ]
 
 // Always leave this as last one
@@ -20,7 +20,7 @@ if (process.env.MODE !== 'ssr') {
   routes.push({
     path: '*',
     component: () => import('pages/404.vue'),
-    meta: { layout: 'empty' }
+    meta: { layout: 'empty', guest: true }
   })
 }
 

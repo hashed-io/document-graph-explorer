@@ -30,7 +30,6 @@ export const documentExplorer = {
     } else {
       await this.loadData()
     }
-    this.loading = false
   },
   beforeMount () {
     this.loading = true
@@ -154,12 +153,13 @@ export const documentExplorer = {
       }
     },
     async loadData () {
+      this.loading = true
       this.certificates = []
       if (this.$router.currentRoute.name !== 'createView') {
-        this.getDocumentInfo()
+        await this.getDocumentInfo()
         let edges = await this.getContentGroup()
         if (edges.length > 0) {
-          this.getEdges(edges)
+          await this.getEdges(edges)
         } else {
           let previousEdge = this.stackNavigation[this.stackNavigation.length - 1]
           if (previousEdge) {
@@ -173,7 +173,7 @@ export const documentExplorer = {
           this.showCertificates = false
         }
       }
-      console.log('Loading Data')
+      this.loading = false
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()

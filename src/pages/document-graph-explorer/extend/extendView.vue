@@ -20,7 +20,8 @@ div
           v-model='form.edgeName'
           :dense='true'
         )
-  ListContentGroup(:contents_groups="extendContentGroup")
+  q-form(ref='contentGroup')
+    ListContentGroup(:contents_groups="extendContentGroup")
   //- Edges(:edges="extendEdges" @showModal="openModal" :withoutEdges="true")
   //- q-dialog(v-model='showDialogEdge')
   //-   EdgeDialog(@EdgeData='addNewEdge')
@@ -89,7 +90,7 @@ export default {
           {
             title: 'system',
             key: 'nodeLabel',
-            value: '',
+            value: 'Node label value',
             dataType: 's'
           }
         ]
@@ -117,12 +118,14 @@ export default {
   },
   methods: {
     async onSave () {
-      if (!await this.$refs.edgeNameForm.validate()) {
-        this.showErrorMsg('Edge Name is required')
-        return
-      }
       try {
-        this.formatContentGroups(this.extendContentGroup)
+        let edgeName = await this.$refs.edgeNameForm.validate()
+        let contentGroup = await this.$refs.contentGroup.validate()
+        if (edgeName && contentGroup) {
+          this.formatContentGroups(this.extendContentGroup)
+        } else {
+          this.showErrorMsg('Fill the information')
+        }
       } catch (error) {
         this.showErrorMsg('An error occured while trying to save the changes ' + error)
       }
@@ -130,14 +133,11 @@ export default {
     formatContentGroups (contentgroups) {
       // ADD the document type
       try {
-        console.log('1--------------1')
-        console.log(contentgroups)
-        console.log('1--------------1')
         const types = {
           c: 'checksum256',
           n: 'name',
           a: 'asset',
-          t: 'time',
+          t: 'time_point',
           s: 'string',
           i: 'int64'
         }
@@ -148,10 +148,12 @@ export default {
             label: 'content_group_label',
             value: ['string', title]
           })
-          contentGroup.push({
-            label: 'type',
-            value: ['name', this.documentInfo.type.toLowerCase()]
-          })
+          if (title === 'system') {
+            contentGroup.push({
+              label: 'type',
+              value: ['name', this.documentInfo.type.toLowerCase()]
+            })
+          }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             contentGroup.push({
@@ -175,8 +177,12 @@ export default {
         let edgeName = this.form.edgeName
         let creator = this.account
         await this.ActionsApi.extendDoc({ creator, edgeName, fromNode, contentGroups })
+        await new Promise(resolve => setTimeout(resolve, 1500))
+        this.showSuccessMsg('The document was extended correctly')
         this.setIsEdit(false)
-        this.onCancel()
+        let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
+        this.currentEndpoint = apiEndpoint
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
       }

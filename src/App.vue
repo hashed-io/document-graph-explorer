@@ -34,7 +34,7 @@ export default {
     }
   },
   async mounted () {
-    await this.setApolloEndpoint()
+    await this.loadCatalog()
   },
   created () {
     this.$q.iconMapFn = (iconName) => {

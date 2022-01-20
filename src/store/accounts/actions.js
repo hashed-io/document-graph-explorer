@@ -34,7 +34,7 @@ export const login = async function ({ commit, dispatch }, { idx, account, retur
       console.log('returnUrl', returnUrl)
       console.log('defaultReturnUrl', defaultReturnUrl)
       // this.$router.push({ path: '/home' })
-      this.$router.push({ path: returnUrl || defaultReturnUrl })
+      // this.$router.push({ path: returnUrl || defaultReturnUrl })
       return this.$ualUser
     }
   } catch (e) {
