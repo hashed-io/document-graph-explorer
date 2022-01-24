@@ -28,7 +28,7 @@ div
           data-cy='search'
           v-model='search'
           dense
-          debounce='500'
+          debounce='750'
           @update="onSearchDoc"
           placeholder='Search'
         )
@@ -37,6 +37,7 @@ div
       @request="onRequest"
       binary-state-sort
       :loading="loadingDocs"
+      no-data-label="I didn't find anything for you"
       :data="documents"
       :grid="$q.screen.xs"
       :columns="columns"
@@ -134,6 +135,13 @@ div
                 div(:class="props.row.hasOwnProperty('hash') ? 'col-4' : 'col-8'")
                   strong CREATED AT
                   div {{ props.row.createdDate }}
+      template(v-slot:no-data="{ icon, message }")
+        .full-width.row.flex-center.q-gutter-sm
+          div(v-if="search" style="width: 20px; height: 20px;")
+            svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 10 10" fill="currentColor")
+              path(fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd")
+          .text-caption.text-grey.text-bold
+            | {{ search ? $t('pages.documentExplorer.explorer.noDataOnSearch')+' \"' + search +'\"' : message }}
 </template>
 
 <script>
@@ -161,7 +169,7 @@ export default {
         rowsPerPage: 5,
         rowsNumber: 6
       },
-      visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid', 'system'],
+      visibleColumns: ['creator', 'type', 'createdDate', 'docid', 'system'],
       columns: [
         {
           name: 'docid',
@@ -216,20 +224,14 @@ export default {
           format: (val, row) => {
             return this.dateToString(val)
           }
-        }
-      ],
-      endpoints: [
-        {
-          label: 'Hypha',
-          value: 'https://alpha-st.tekit.io/graphql'
         },
         {
-          label: 'Cannabis',
-          value: 'https://hashed.systems/alpha-trace-test/graphql'
-        },
-        {
-          label: 'Social',
-          value: 'https://hashed.systems/alpha-dge-test/graphql'
+          name: 'score',
+          label: 'Score',
+          headerStyle: ' font-size:14px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          style: 'color: rgb(107,114,128)',
+          field: (row) => row.score
         }
       ]
     }
@@ -278,55 +280,44 @@ export default {
     }
   },
   methods: {
+    ...mapActions('elasticSearch', ['searchDoc']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
     async onSearchDoc () {
-      const docInterface = this.getLocalStorage('documentInterface')
-      const documentID = this.search
-      const data = await this.getDocumentsByDocId({
-        byElement: documentID,
-        type: 'Document',
-        props: '',
-        docInterface: docInterface,
-        isHashed: this.isHashed
-      })
-      var _documents = []
-      for (const doc of data.queryDocument) {
-        let typeSchema = await this.getPropsType({
-          type: doc['__typename']
+      this.documents = []
+      if (this.search !== '') {
+        this.loadingDocs = true
+        let response = await this.searchDoc({
+          search: this.search,
+          params: undefined
         })
-        let _props = typeSchema['__type'].fields
-        const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        // const found = true
-        if (found) {
-          let byElement = doc.docId
-          if (this.isHashed) {
-            byElement = doc.hash
-          }
-          var query = `... on ${doc.type}{
-            system_nodeLabel_s
-          }`
-          let _isHashed = this.isHashed
-          let response = await this.getDocumentsByDocId({
-            byElement: byElement,
-            props: query,
-            type: doc['__typename'],
-            isHashed: _isHashed
+        response = response.hits.hits.length > 0 ? response.hits.hits : undefined
+        if (response) {
+          var docsArr = []
+          response.forEach(element => {
+            let _element = element._source
+            let obj = {
+              contract: _element.contract,
+              createdDate: _element.createdDate,
+              creator: _element.creator,
+              docId: _element.docId,
+              docId_i: _element.docId_i,
+              system_nodeLabel_s: _element.system_nodeLabel_s,
+              type: _element.type,
+              updatedDate: _element.updatedDate,
+              __typename: _element.type,
+              score: element._score.toString()
+            }
+            docsArr.push(obj)
           })
-          doc['system_nodeLabel_s'] = response[`query${doc['__typename']}`][0]['system_nodeLabel_s']
-          _documents.push(doc)
+          this.documents = docsArr
+          this.visibleColumns.push('score')
         }
-        query = ''
-      }
-      if (_documents.length > 0) {
-        this.showSuccessMsg('Document found')
-        this.documents = _documents
-        return _documents.length
+        this.loadingDocs = false
       } else {
+        this.loadingDocs = true
         await this.loadDocuments()
-        if (this.search !== '') {
-          this.showErrorMsg('Document not found')
-        }
+        this.loadingDocs = false
       }
     },
     async onRequest (props) {
@@ -425,7 +416,7 @@ export default {
       if (!flag) {
         this.setIsHashed(true)
         if (index >= 0) {
-          this.visibleColumns.splice(index, 1)
+          this.visibleColumns.splice(index, 1, 'hash')
         }
       } else {
         this.setIsHashed(false)

@@ -5,6 +5,7 @@ import accounts from './accounts'
 import transfers from './transfers'
 import general from './general'
 import documentGraph from './documentGraph'
+import elasticSearch from './elasticSearch'
 
 Vue.use(Vuex)
 Vue.config.devtools = true
@@ -19,7 +20,8 @@ export default function (/* { ssrContext } */) {
       accounts,
       transfers,
       general,
-      documentGraph
+      documentGraph,
+      elasticSearch
     },
 
     // enable strict mode (adds overhead!)

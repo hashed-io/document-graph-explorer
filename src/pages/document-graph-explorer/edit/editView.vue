@@ -141,7 +141,7 @@ export default {
         this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
-        await new Promise(resolve => setTimeout(resolve, 500))
+        await new Promise(resolve => setTimeout(resolve, 1500))
         await this.showSuccessMsg('The changes was saved')
         this.loadData()
         // this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })

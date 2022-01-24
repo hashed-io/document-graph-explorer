@@ -137,7 +137,7 @@ export default {
         await this.newInstance()
         let docID = this.document.docId
         await this.ActionsApi.deleteDoc({ documentID: docID })
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await new Promise(resolve => setTimeout(resolve, 2000))
         this.$router.push({ name: 'listDocs' })
         this.showSuccessMsg('The document was erase')
       } catch (error) {
