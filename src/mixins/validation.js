@@ -19,7 +19,18 @@ export const validation = {
         isEqual: value => val => val === value || this.$t('forms.errors.positiveInteger', { value }),
         isEmail: val => /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(val.toLowerCase()) || this.$t('forms.errors.email'),
         isChecksum: val => /(^[a-f0-9A-F]{64}$)/.test(val.toLowerCase()) || this.$t('forms.errors.checksum'),
-        isEosAccount: val => /(^[a-z1-5]{0,12}$)/.test(val) || this.$t('forms.errors.eosaccount')
+        isEosAccount: val => /(^[a-z1-5]{0,12}$)/.test(val) || this.$t('forms.errors.eosaccount'),
+        isTimePoint: val => {
+          let flagDate, flagTime
+          let arr = val.split(' ')
+          let timeArr = arr[1].split(':')
+          let timestamp = Date.parse(arr[0])
+          timestamp = timestamp > 0 ? timestamp : NaN
+          flagDate = !isNaN(timestamp)
+          flagTime = timeArr[0] < 24 && timeArr[1] < 60
+          console.log({ flagTime, flagDate })
+          return flagTime && flagDate ? true : this.$t('forms.errors.invalidTimePoint')
+        }
       }
     }
   },
