@@ -136,7 +136,9 @@ module.exports = function (ctx) {
         BLOCKCHAIN_EXPLORER: process.env.BLOCKCHAIN_EXPLORER,
         GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
         IPFS_URL: process.env.IPFS_URL,
-        APOLLO_URL: process.env.APOLLO_URL
+        APOLLO_URL: process.env.APOLLO_URL,
+        ELASTICSEARCH_API_KEY: process.env.ELASTICSEARCH_API_KEY,
+        ELASTICSEARCH_ENDPOINT: process.env.ELASTICSEARCH_ENDPOINT
       },
       scopeHoisting: true,
       vueRouterMode: 'history',

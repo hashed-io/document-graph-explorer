@@ -162,6 +162,12 @@ export default {
       search: undefined,
       prevDoc: undefined,
       loadingDocs: undefined,
+      paramsElastic: {
+        from: 0,
+        size: 10,
+        fields: ['*'],
+        fuzziness: 'auto'
+      },
       pagination: {
         sortBy: 'desc',
         descending: false,
@@ -284,12 +290,11 @@ export default {
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
     async onSearchDoc () {
-      this.documents = []
       if (this.search !== '') {
         this.loadingDocs = true
         let response = await this.searchDoc({
           search: this.search,
-          params: undefined
+          params: this.paramsElastic
         })
         response = response.hits.hits.length > 0 ? response.hits.hits : undefined
         if (response) {
@@ -312,6 +317,8 @@ export default {
           })
           this.documents = docsArr
           this.visibleColumns.push('score')
+        } else {
+          this.documents = []
         }
         this.loadingDocs = false
       } else {

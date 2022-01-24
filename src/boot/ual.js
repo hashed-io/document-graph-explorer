@@ -24,7 +24,7 @@ export default async ({ Vue, store }) => {
     // new Metamask([mainChain], { appName: process.env.APP_NAME })
   ]
 
-  const ual = new UAL([mainChain], 'DAO-LLC', authenticators)
+  const ual = new UAL([mainChain], 'DGE', authenticators)
   store['$ual'] = ual
   Vue.prototype.$ual = ual
 }
