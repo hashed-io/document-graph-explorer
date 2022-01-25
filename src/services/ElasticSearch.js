@@ -12,6 +12,11 @@ class ElasticSearchApi {
           'fuzziness': params.fuzziness,
           'fields': params.fields
         }
+      },
+      'highlight': {
+        'fields': {
+          '*': {}
+        }
       }
     })
     var config = {
@@ -29,6 +34,7 @@ class ElasticSearchApi {
     }
     try {
       responseElastic = await axios.post(process.env.ELASTICSEARCH_ENDPOINT, data, config)
+      console.log(responseElastic.data)
       return responseElastic.data
     } catch (e) {
       throw new Error(e)
