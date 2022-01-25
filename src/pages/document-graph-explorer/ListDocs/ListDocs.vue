@@ -37,8 +37,8 @@ div
       @request="onRequest"
       binary-state-sort
       :loading="loadingDocs"
-      no-data-label="I didn't find anything for you"
       :data="documents"
+      :dense="$q.screen.sm"
       :grid="$q.screen.xs"
       :columns="columns"
       card-class="bg-grey-1"
@@ -65,7 +65,15 @@ div
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
             @click='seeDocument(props.row)'
           )
-            div(style='color: grey') {{ col.value }}
+            div(v-if="col.name !== 'highlight'" style='color: grey') {{ col.value }}
+            div(class="text-left" v-else)
+              div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
+                q-badge(rounded class="badgeColor1") {{getContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" color="indigo")
+                q-badge(rounded class="badgeColor2") {{getNameContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" color="indigo")
+                q-badge(rounded class="badgeColor3")
+                  div(v-html="item[0]")
       template(v-slot:pagination="scope")
         q-btn(
             v-if="scope.pagesNumber > 2"
@@ -238,6 +246,23 @@ export default {
           headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
           style: 'color: rgb(107,114,128)',
           field: (row) => row.score
+        },
+        {
+          name: 'highlight',
+          label: 'Highlight',
+          headerStyle: ' font-size:14px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          style: 'color: rgb(107,114,128)',
+          field: (row) => row.highlight
+          // format: (val, row) => {
+          //   let rowHighlight = row.highlight
+          //   for (const key in rowHighlight) {
+          //     const splitKey = key.split('_')
+          //     text += splitKey[0] + ' > ' + splitKey[1] + ' > '
+          //     text += rowHighlight[key][0] + '<br>'
+          //   }
+          //   return text
+          // }
         }
       ]
     }
@@ -289,6 +314,14 @@ export default {
     ...mapActions('elasticSearch', ['searchDoc']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    getContentGroup (row) {
+      let contentGroup = row.split('_')
+      return contentGroup[0]
+    },
+    getNameContentGroup (row) {
+      let contentGroup = row.split('_')
+      return contentGroup[1]
+    },
     async onSearchDoc () {
       if (this.search !== '') {
         this.loadingDocs = true
@@ -311,24 +344,37 @@ export default {
               type: _element.type,
               updatedDate: _element.updatedDate,
               __typename: _element.type,
-              score: element._score.toString()
+              score: element._score.toString(),
+              highlight: element.highlight
             }
             docsArr.push(obj)
           })
           this.documents = docsArr
           this.visibleColumns.push('score')
+          this.visibleColumns.push('highlight')
         } else {
           this.documents = []
+          this.clearElasticColumns()
         }
         this.loadingDocs = false
       } else {
         this.loadingDocs = true
+        this.clearElasticColumns()
         await this.loadDocuments()
         this.loadingDocs = false
       }
     },
+    clearElasticColumns () {
+      const existScore = (element) => element === 'score'
+      let index = this.visibleColumns.findIndex(existScore)
+      if (index >= 0) {
+        this.visibleColumns.pop()
+        this.visibleColumns.pop()
+      }
+    },
     async onRequest (props) {
       this.loadingDocs = true
+      this.clearElasticColumns()
       const { page, rowsPerPage, sortBy, descending, rowsNumber } = props.pagination
       let offset = (page - 1) * rowsPerPage
       let limit = rowsPerPage
@@ -508,6 +554,12 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.badgeColor1
+  background: #1e40af
+.badgeColor2
+  background: #1d4ed8
+.badgeColor3
+  background: #2563eb
 .center
   position: absolute;
   top: 45%;

@@ -11,7 +11,11 @@ div
     q-form(ref='contentGroup')
       ListContentGroup(:contents_groups="contentsGroups")
     Edges(:edges="edges" @showModal="openModal")
-    q-dialog(v-model='showDialogEdge')
+    q-dialog(
+      v-model='showDialogEdge'
+      transition-show="fade"
+      transition-hide="fade"
+    )
       EdgeDialog(@EdgeData='addNewEdge')
     #BtnSection
     .row.q-gutter-md.q-py-md
