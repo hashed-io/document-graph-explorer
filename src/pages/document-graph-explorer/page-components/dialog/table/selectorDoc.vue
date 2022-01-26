@@ -1,101 +1,103 @@
 <template lang="pug">
-q-table(
-  :data="documents"
-  :columns='columns'
-  row-key='docId'
-  :dense="$q.screen.lt.md"
-  :loading="loadingDocs"
-).TailWind
-  template(v-slot:top-left)
-    .row.text-h5 Selector document
-    .row ID {{selected}}
-  template(v-slot:top-right)
+div
+  .row.justify-between
+    div(class="q-mt-lg text-h5") {{'Document'}}
     TInput(
-      class="q-pt-md"
+      class="q-pb-md"
       v-model="search"
       placeholder='Search document'
       dense
+      label='search'
       :debounce="500"
       @update="onSearch"
     )
-  template(v-slot:loading)
-    transition(
-      appear
-      enter-active-class="animated fadeIn"
-      leave-active-class="animated fadeOut"
-    )
-    q-inner-loading(showing)
-      q-spinner-tail(
-        color="indigo"
-        size="1.5em"
+  q-table(
+    :data="documents"
+    :columns='columns'
+    row-key='docId'
+    flat
+    bordered
+    :dense="$q.screen.lt.md"
+    :loading="loadingDocs"
+  ).TailWind
+    template(v-slot:loading)
+      transition(
+        appear
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
       )
-  template(v-slot:pagination="scope")
-    q-btn(
-        v-if="scope.pagesNumber > 2"
-        icon="first_page"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isFirstPage"
-        @click="scope.firstPage"
-    )
-    q-btn(
-        icon="chevron_left"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isFirstPage"
-        @click="scope.prevPage"
-    )
-    q-btn(
-        data-cy="nextPage"
-        icon="chevron_right"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isLastPage"
-        @click="scope.nextPage"
-    )
-    q-btn(
-        data-cy="lastPage"
-        v-if="scope.pagesNumber > 2"
-        icon="last_page"
-        color="grey-8"
-        round
-        dense
-        flat
-        :disable="scope.isLastPage"
-        @click="scope.lastPage"
-    )
-  template(v-slot:no-data="{ icon, message }")
-    .full-width.row.flex-center.q-gutter-sm
-      div(v-if="search" style="width: 20px; height: 20px;")
-        svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 10 10" fill="currentColor")
-          path(fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd")
-      .text-caption.text-grey.text-bold
-        | {{ search ? $t('pages.documentExplorer.explorer.noDataOnSearch')+' \"' + search +'\"' : message }}
-  template(v-slot:body="props")
-    q-tr.cursor-pointer( :props="props")
-      q-td(
-        data-cy="rowDoc"
-        v-for="col in props.cols",
-        :key="col.name",
-        :props="props",
-        :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
-        @click='onClick(props.row)'
+      q-inner-loading(showing)
+        q-spinner-tail(
+          color="indigo"
+          size="1.5em"
+        )
+    template(v-slot:pagination="scope")
+      q-btn(
+          v-if="scope.pagesNumber > 2"
+          icon="first_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.firstPage"
       )
-        div(v-if="col.name !== 'highlight'" style='color: grey') {{ col.value }}
-        div(class="text-left" v-else)
-          div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
-            q-badge(rounded class="badgeColor1") {{getContentGroup(index)}}
-            q-icon(size="1.5em" name="chevron_right" color="indigo")
-            q-badge(rounded class="badgeColor2") {{getNameContentGroup(index)}}
-            q-icon(size="1.5em" name="chevron_right" color="indigo")
-            q-badge(rounded class="badgeColor3")
-              div(v-html="item[0]")
+      q-btn(
+          icon="chevron_left"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isFirstPage"
+          @click="scope.prevPage"
+      )
+      q-btn(
+          data-cy="nextPage"
+          icon="chevron_right"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.nextPage"
+      )
+      q-btn(
+          data-cy="lastPage"
+          v-if="scope.pagesNumber > 2"
+          icon="last_page"
+          color="grey-8"
+          round
+          dense
+          flat
+          :disable="scope.isLastPage"
+          @click="scope.lastPage"
+      )
+    template(v-slot:no-data="{ icon, message }")
+      .full-width.row.flex-center.q-gutter-sm
+        div(v-if="search" style="width: 20px; height: 20px;")
+          svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 10 10" fill="currentColor")
+            path(fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd")
+        .text-caption.text-grey.text-bold
+          | {{ search ? $t('pages.documentExplorer.explorer.noDataOnSearch')+' \"' + search +'\"' : message }}
+    template(v-slot:body="props")
+      q-tr.cursor-pointer( :props="props")
+        q-td(
+          data-cy="rowDoc"
+          v-for="col in props.cols",
+          :key="col.name",
+          :props="props",
+          :class="getClass(props.rowIndex)"
+          @click='onClick(props.row, props.rowIndex)'
+        )
+          div(v-if="col.name !== 'highlight'" style='color: grey') {{ col.value }}
+          div(class="text-left" v-else)
+            div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
+              q-badge(rounded class="badgeColor") {{getContentGroup(index)}}
+              q-icon(size="1.5em" name="chevron_right" color="grey")
+              q-badge(rounded class="badgeColor") {{getNameContentGroup(index)}}
+              q-icon(size="1.5em" name="chevron_right" color="grey")
+              q-badge(rounded class="badgeColor")
+                div(v-html="item[0]")
 </template>
 <script>
 import TInput from '~/components/input/t-input.vue'
@@ -192,8 +194,8 @@ export default {
       return contentGroup[1]
     },
     async onSearch () {
+      this.loadingDocs = true
       if (this.search !== '') {
-        this.loadingDocs = true
         let response = await this.searchDoc({
           search: this.search,
           params: this.paramsElastic
@@ -220,25 +222,30 @@ export default {
           })
           this.documents = docsArr
         }
-        this.loadingDocs = false
       } else {
         this.documents = []
       }
+      this.loadingDocs = false
     },
-    onClick (rowData) {
-      this.selected = rowData.docId
+    onClick (rowData, rowIndex) {
+      this.selected = rowIndex
       this.$emit('onSelectDoc', rowData.docId)
+    },
+    getClass (rowIndex) {
+      if (this.selected === rowIndex) {
+        return 'selectColor text-white'
+      } else {
+        return rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'
+      }
     }
   }
 }
 </script>
 <style lang="stylus" scoped>
-.badgeColor1
-  background: #1e40af
-.badgeColor2
-  background: #1d4ed8
-.badgeColor3
-  background: #2563eb
+.selectColor
+  background: #e2e8f0
+.badgeColor
+  background: #a1a1aa
 .TailWind
   border-radius: 10px !important
 </style>

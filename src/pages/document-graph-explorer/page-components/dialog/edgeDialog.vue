@@ -1,14 +1,14 @@
 <template lang="pug">
 q-card.cardTailWind
   q-toolbar
-    q-toolbar-title New Edge Form
+    q-toolbar-title New Edge
     q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
   q-card-section
     q-form(ref='edgeForm' @submit="addEdge").q-px-md
       Tinput(
-
+        label='Edge'
         v-model="form.edgeName"
-        placeholder='Edge Name'
+        placeholder='Edge'
         dense
         :rules="[rules.required]"
       )
