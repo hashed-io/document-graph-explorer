@@ -30,7 +30,8 @@ export const validation = {
           flagTime = timeArr[0] < 24 && timeArr[1] < 60
           console.log({ flagTime, flagDate })
           return flagTime && flagDate ? true : this.$t('forms.errors.invalidTimePoint')
-        }
+        },
+        isURL: val => /^https?:\/\/[a-z]*.*\/(graphql){1}$/.test(val) || this.$t('forms.errors.isURL')
       }
     }
   },

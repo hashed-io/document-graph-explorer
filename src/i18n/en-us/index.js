@@ -38,7 +38,8 @@ export default {
       email: 'Invalid email',
       checksum: 'Invalid checksum. Must contain 64 characters and letters between A to F',
       eosaccount: 'Invalid Eos account name',
-      invalidTimePoint: 'Invalid time point. format 24hrs'
+      invalidTimePoint: 'Invalid time point. format 24hrs',
+      isURL: 'The input must be a valid URL'
     }
   },
   menu: {

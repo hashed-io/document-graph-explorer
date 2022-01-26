@@ -2,15 +2,13 @@
 q-layout(view="hHh Lpr lFf").bg-layout
   q-header
     q-toolbar(class='bg-brand-primary')
-      //- q-btn(
-      //-   flat
-      //-   show-if-above
-      //-   round
-      //-   data-cy='menuButton'
-      //-   @click="menu = !menu"
-      //-   icon="fas fa-bars"
-      //-   aria-label="Menu"
-      //- )
+      q-icon(
+        data-cy='menuButton'
+        @click="menu = !menu"
+        class="sizeIcon animated-icon"
+      )
+        svg.h-5.w-5(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor")
+          path(fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd")
       q-toolbar-title.flex.items-center
         img.logo(
           data-cy='menu'
@@ -23,10 +21,10 @@ q-layout(view="hHh Lpr lFf").bg-layout
     v-model="menu"
     side="left"
     :breakpoint="768"
-    :width="350"
+    :width="300"
     overlay
     bordered
-    :content-style="{ backgroundColor: '#F3F4F6' }"
+    :content-style="{ backgroundColor: '#FFFFFF' }"
   )
     left-menu(@close="menu = false" @switch="saveEndpoint")
   q-page-container.q-mt-xl.contentContainer
@@ -34,6 +32,9 @@ q-layout(view="hHh Lpr lFf").bg-layout
 </template>
 
 <style lang="stylus" scoped>
+.sizeIcon
+  width: 20px
+  height: 20px
 .contentDrawer
   background-color: red
 .logo
@@ -92,6 +93,7 @@ export default {
     ...mapMutations('documentGraph', ['setEndpoint']),
     ...mapMutations('documentGraph', ['clearStack']),
     async saveEndpoint (endpoint) {
+      this.menu = false
       this.clearStack()
       this.setEndpoint(endpoint)
     }

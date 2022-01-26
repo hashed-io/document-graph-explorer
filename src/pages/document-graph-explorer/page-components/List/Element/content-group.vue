@@ -374,12 +374,6 @@ export default {
     }
   },
   methods: {
-    // fromBack (rowData) {
-    //   delete rowData.optional
-    //   // console.log({ include: this.content_group_back.includes(rowData), content: this.content_group_back, row: rowData })
-    //   console.log(this.content_group_back)
-    //   return this.content_group_back.some(obj => obj.key === rowData.key)
-    // },
     async verifyValue () {
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
