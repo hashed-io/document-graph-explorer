@@ -1,9 +1,8 @@
 <template lang="pug">
 div
   q-spinner-tail(
-    color="indigo"
+    class="text-brand-primary center"
     size="1.5em"
-    class="center"
     v-if="loadingData"
   )
   div(v-if="!loadingData")
@@ -13,10 +12,9 @@ div
           | {{$t('pages.documentExplorer.listDocs.title')}}
     .row.q-pb-sm.justify-between
       .col-4
-        div
+        div(v-show="account")
           q-btn(
               data-cy="newDocButton"
-              v-if="account"
               label='New Document'
               @click='newDoc'
               unelevated
@@ -41,7 +39,7 @@ div
       :dense="$q.screen.sm"
       :grid="$q.screen.xs"
       :columns="columns"
-      card-class="bg-grey-1"
+      card-class="tableColor"
       :visible-columns='visibleColumns'
     ).TailWind
       template(v-slot:loading)
@@ -52,7 +50,7 @@ div
         )
         q-inner-loading(showing)
           q-spinner-tail(
-            color="indigo"
+            class="text-brand-primary"
             size="1.5em"
           )
       template(v-slot:body="props")
@@ -62,23 +60,23 @@ div
             v-for="col in props.cols",
             :key="col.name",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
             @click='seeDocument(props.row)'
           )
-            div(v-if="col.name !== 'highlight'" style='color: grey') {{ col.value }}
+            div(v-if="col.name !== 'highlight'") {{ col.value }}
             div(class="text-left" v-else)
               div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
-                q-badge(rounded class="badgeColor1") {{getContentGroup(index)}}
-                q-icon(size="1.5em" name="chevron_right" color="indigo")
-                q-badge(rounded class="badgeColor2") {{getNameContentGroup(index)}}
-                q-icon(size="1.5em" name="chevron_right" color="indigo")
-                q-badge(rounded class="badgeColor3")
+                q-badge(rounded class="badgeColor") {{getContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" class="arrow")
+                q-badge(rounded class="badgeColor") {{getNameContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" class="arrow")
+                q-badge(rounded class="badgeColor")
                   div(v-html="item[0]")
       template(v-slot:pagination="scope")
         q-btn(
+            class="colorPagination"
             v-if="scope.pagesNumber > 2"
             icon="first_page"
-            color="grey-8"
             round
             dense
             flat
@@ -86,8 +84,8 @@ div
             @click="scope.firstPage"
         )
         q-btn(
+            class="colorPagination"
             icon="chevron_left"
-            color="grey-8"
             round
             dense
             flat
@@ -95,9 +93,9 @@ div
             @click="scope.prevPage"
         )
         q-btn(
+            class="colorPagination"
             data-cy="nextPage"
             icon="chevron_right"
-            color="grey-8"
             round
             dense
             flat
@@ -105,10 +103,10 @@ div
             @click="scope.nextPage"
         )
         q-btn(
+            class="colorPagination"
             data-cy="lastPage"
             v-if="scope.pagesNumber > 2"
             icon="last_page"
-            color="grey-8"
             round
             dense
             flat
@@ -119,7 +117,6 @@ div
         .q-pa-xs.col-xs-12.col-sm-6.col-md-4
           q-card(
             @click="seeDocument(props.row)"
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-2'"
           )
             q-card-section.text-justify
               br
@@ -189,51 +186,46 @@ export default {
           name: 'docid',
           label: 'Doc id',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.docId
         },
         {
           name: 'creator',
           label: 'Creator',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128);',
           field: (row) => row.creator
         },
         {
           name: 'system',
           label: 'Node Label',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128);',
           field: (row) => row.system_nodeLabel_s
         },
         {
           name: 'type',
           label: 'Type',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128)',
           field: (row) => row.type
         },
         {
           name: 'hash',
           label: 'Hash',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128)',
           field: (row) => row.hash
         },
         {
           name: 'createdDate',
           label: 'Created Date',
           headerStyle: ' font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
-          style: 'color: rgb(107,114,128)',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.createdDate,
           format: (val, row) => {
             return this.dateToString(val)
@@ -243,16 +235,14 @@ export default {
           name: 'score',
           label: 'Score',
           headerStyle: ' font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
-          style: 'color: rgb(107,114,128)',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.score
         },
         {
           name: 'highlight',
           label: 'Highlight',
           headerStyle: ' font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
-          style: 'color: rgb(107,114,128)',
+          headerClasses: 'tableColor text-subtitle2 text-grey-8 text-uppercase',
           field: (row) => row.highlight
           // format: (val, row) => {
           //   let rowHighlight = row.highlight
@@ -323,6 +313,66 @@ export default {
       return contentGroup[1]
     },
     async onSearchDoc () {
+      if (await this.getEndpointToSearch()) {
+        await this.searchOnElastic()
+      } else {
+        await this.searchOnDgraph()
+      }
+    },
+    async getEndpointToSearch () {
+      // TODO: identify if the current DGraph endpoint has elastic search endpoint.
+      return await this.getLocalStorage({ key: 'apollo-endpoint' }) === 'https://hashed.systems/alpha-trace-test/graphql'
+    },
+    async searchOnDgraph () {
+      const docInterface = this.getLocalStorage('documentInterface')
+      const documentID = this.search
+      const data = await this.getDocumentsByDocId({
+        byElement: documentID,
+        type: 'Document',
+        props: '',
+        docInterface: docInterface,
+        isHashed: this.isHashed
+      })
+      var _documents = []
+      for (const doc of data.queryDocument) {
+        let typeSchema = await this.getPropsType({
+          type: doc['__typename']
+        })
+        let _props = typeSchema['__type'].fields
+        const found = _props.find(element => element.name === 'system_nodeLabel_s')
+        // const found = true
+        if (found) {
+          let byElement = doc.docId
+          if (this.isHashed) {
+            byElement = doc.hash
+          }
+          var query = `... on ${doc.type}{
+            system_nodeLabel_s
+          }`
+          let _isHashed = this.isHashed
+          let response = await this.getDocumentsByDocId({
+            byElement: byElement,
+            props: query,
+            type: doc['__typename'],
+            isHashed: _isHashed
+          })
+          doc['system_nodeLabel_s'] = response[`query${doc['__typename']}`][0]['system_nodeLabel_s']
+          _documents.push(doc)
+        }
+        query = ''
+      }
+      if (_documents.length > 0) {
+        this.showSuccessMsg('Document found')
+        this.documents = _documents
+        return _documents.length
+      } else {
+        await this.loadDocuments()
+        if (this.search !== '') {
+          this.showErrorMsg('Document not found')
+        }
+      }
+    },
+    async searchOnElastic () {
       if (this.search !== '') {
         this.loadingDocs = true
         let response = await this.searchDoc({
@@ -470,6 +520,7 @@ export default {
         this.setIsHashed(true)
         if (index >= 0) {
           this.visibleColumns.splice(index, 1, 'hash')
+          this.$forceUpdate()
         }
       } else {
         this.setIsHashed(false)
@@ -554,12 +605,19 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.badgeColor1
-  background: #1e40af
-.badgeColor2
-  background: #1d4ed8
-.badgeColor3
-  background: #2563eb
+.rowOdd
+  background: $table-content-color-odd
+  color: $table-content-font-odd
+.rowEven
+  background: $table-content-color-even
+  color: $table-content-font-even
+
+.colorPagination
+  color: $table-pagination
+.arrow
+  color: $chip-arrow !important
+.badgeColor
+  background: $chip-highlight !important
 .center
   position: absolute;
   top: 45%;
@@ -570,6 +628,9 @@ export default {
   height: 200px;
 .TailWind
   border-radius: 10px
+.tableColor
+  background : $table-header-color
+  color: $table-header-font
 .btnTailwind
   height: 42px
   width: 135px
