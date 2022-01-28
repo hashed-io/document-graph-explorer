@@ -2,7 +2,7 @@
 .q-py-sm
   TitleContentGroup(
     :isEditSystem="isEditSystem"
-    :isEdit="isEdit"
+    :isEdit="isEditTitle"
     :title="index_content_group"
     @deleteTitle="onDeleteTitle"
     @onSaveTitle="onSaveTitle"
@@ -26,17 +26,20 @@
       q-tr(:props="props")
         template(v-if="editableRow !== props.rowIndex")#ReadMode
           q-td(
+            data-cy='keyRead'
             key="key",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           ) {{ props.row.key }}
           q-td(
+            data-cy="valueRead"
             key="value",
             :props="props",
-            style="word-break: break-all;"
+            style="word-break: break-word;"
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           )
             div(
+              style="overflow-wrap: break-word;"
               v-if="!isIpfs(props.row.value) && !isEncrypt(props.row.value)"
               :inner-html.prop="render(props.row.value, true)"
               @click="seeValue(props.row.value)"
@@ -45,6 +48,7 @@
               v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
               q-chip(
+                data-cy='chipIpfs'
                 :ripple="false"
                 size="12px"
                 clickable
@@ -62,6 +66,7 @@
               v-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
             )
               q-chip(
+                data-cy='chipEncrypt'
                 :ripple="false"
                 size="12px"
                 clickable
@@ -76,11 +81,13 @@
                   content-style="font-size: 12px"
                 ) {{$t('pages.documentExplorer.edit.contentGroup.encrypt')}}
           q-td(
+            data-cy="dataTypeRead"
             key="dataType",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
           ) {{ getDataType(props.row.dataType) }}
           q-td(
+            data-cy="ActionRead"
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
@@ -93,7 +100,7 @@
                     class='text-brand-primary text-capitalize animated-icon'
                     @click='onEditRow(props.row, props.rowIndex )'
                   ) Edit
-                .col-xs-12.col-sm-12.col-md-6(v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'")
+                .col-xs-12.col-sm-12.col-md-6(v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'" )
                   div(
                     data-cy="deleteRowButton"
                     class='text-capitalize animated-icon'
@@ -131,6 +138,9 @@
                 v-model="newData.value",
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
                 :autofocus="isEdit && isEditSystem"
+                :mask="newData.dataType === 't' ? '####-##-## ##:##': ''"
+                :fillMask="newData.dataType === 't'"
+                :hint="newData.dataType === 't' ? 'YYYY-MM-DD HH:MM':''"
                 dense,
                 :rules="getRules(newData.dataType)"
                 :autogrow="getType(newData.dataType) === 'textarea'"
@@ -232,24 +242,43 @@ export default {
     cryptoKey: {
       type: String,
       required: false
+    },
+    keysBackend: {
+      type: Array,
+      required: true
+    },
+    content_group_back: {
+      type: Array,
+      required: false,
+      default: function () {
+        return []
+      }
     }
   },
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit'])
   },
-  mounted () {
+  beforeMount () {
+    this.isEdit = true
+    if (this.keysBackend.length > 0) {
+      this.isEditTitle = !(this.keysBackend.includes(this.index_content_group))
+    }
     if (this.getIsEdit) {
-      this.modifiedData()
+      this.modifiedData({ edit: true })
       this.isEditSystem = false
-      this.isEdit = true
       this.visibleColumns.push('actions')
     } else {
+      this.modifiedData({ edit: false })
       this.isEditSystem = false
       this.isEdit = false
     }
   },
+  mounted () {
+  },
   data () {
     return {
+      isEditTitle: false,
+      isValid: true,
       isEditSystem: false,
       limitChars: 500,
       typeInput: true,
@@ -370,8 +399,8 @@ export default {
         case 'asset':
           rule = 'required'
           break
-        case 'time':
-          rule = 'required'
+        case 'time_point':
+          rule = 'isTimePoint'
           break
         case 'string':
           rule = 'required'
@@ -434,15 +463,22 @@ export default {
         return ipfsString
       }
     },
-    async modifiedData () {
+    async modifiedData (bool) {
+      let filterContentGroup = []
       this.contentGroupCopy.forEach(element => {
-        // element.value = marked(element.value)
-        element.optional = {
-          encrypt: false,
-          ipfs: false,
-          file: undefined
+        // If the value is empty won't show to user in UI
+        if (element.value !== '') {
+          if (bool.edit) {
+            element.optional = {
+              encrypt: false,
+              ipfs: false,
+              file: undefined
+            }
+          }
+          filterContentGroup.push(element)
         }
       })
+      this.contentGroupCopy = filterContentGroup
     },
     getDataType (val) {
       const types = {
@@ -535,7 +571,15 @@ export default {
         this.showErrorMsg('The key is necessary')
       }
     },
-    onAddRow () {
+    async onAddRow () {
+      if (this.$refs.keyForm) {
+        let key = await this.$refs.keyForm.validate()
+        let value = await this.$refs.valueForm.validate()
+        let dataType = await this.$refs.selectTypeForm.validate()
+        if (!key || !value || !dataType) {
+          return this.showErrorMsg('Fill the information')
+        }
+      }
       let emptyObject = {
         optional: {
           encrypt: false,

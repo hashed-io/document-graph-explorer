@@ -13,7 +13,6 @@ export default {
       save: 'Save',
       confirm: 'Confirm',
       download: 'Download',
-      editDao: 'Edit DAO',
       viewData: 'View Data on IPFS',
       see: 'See data',
       extendDoc: 'Extend Document'
@@ -38,17 +37,13 @@ export default {
       tokenDecimals: 'The decimals must be between 2 and 9',
       email: 'Invalid email',
       checksum: 'Invalid checksum. Must contain 64 characters and letters between A to F',
-      eosaccount: 'Invalid Eos account name'
+      eosaccount: 'Invalid Eos account name',
+      invalidTimePoint: 'Invalid time point. format 24hrs',
+      isURL: 'The input must be a valid URL'
     }
   },
   menu: {
-    transfer: 'Transfer',
-    daos: 'DAOS',
-    example: 'Example Dashboard',
-    registerDao: 'Register dao',
-    listDao: 'List Dao',
-    manageContract: 'Manage Contracts',
-    all_daos: 'All DAOs'
+    example: 'Example Dashboard'
   },
   pages: {
     index: {
@@ -65,11 +60,9 @@ export default {
       noAccountsFound: 'No accounts found',
       actions: 'Contracts',
       download: 'Download',
-      dao: 'DAO',
       ipfs: 'IPFS',
       editDao: 'Edit',
-      viewData: 'See data in IPFS',
-      back: 'Back to the list daos'
+      viewData: 'See data in IPFS'
     },
     agent: {
       name: 'Name',
@@ -81,27 +74,10 @@ export default {
       title: 'Select your wallet',
       selectAccount: 'Please select an account'
     },
-    daos: {
-      titleForm: 'DAOs created by your account',
-      createDao: 'Using Wyoming steps',
-      createDaoSimple: 'Basic setup',
-      nodata: 'There aren\'t any DAOs associated with your account',
-      deployDAOFailure: 'Failure on deploy DAO Failure',
-      initDAOFailure: 'Failure on init DAO',
-      daoName: 'Dao Name',
-      creator: 'Creator',
-      goWebsite: 'Go to website',
-      seeDetails: 'See details'
-    },
-    daoSimple: {
-      text: 'Basic setup of the create a DAO LLC '
-    },
-    orderBook: {
-      accountInfoTip: 'Account info'
-    },
     documentExplorer: {
       explorer: {
-        title: 'Explore Document'
+        title: 'Explore Document',
+        noDataOnSearch: 'No documents found for'
       },
       erase: {
         title: 'Erase Document',

@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import ListContentGroup from './list-content-group.vue'
 export default {
-  title: 'Document Explorer/ Content group',
+  title: 'Document Explorer/ Content groups [List]',
   component: ListContentGroup,
   argTypes: {
   }

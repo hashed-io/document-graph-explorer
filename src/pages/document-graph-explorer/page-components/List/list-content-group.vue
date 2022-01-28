@@ -11,6 +11,8 @@ div
   CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
   ContentGroup(
     v-for="(content_group, index) in contents_groups",
+    :keysBackend="keysBackend"
+    :content_group_back="contentGroupInit[index]"
     :content_group_data="content_group",
     ref="content_group"
     :index_content_group="index"
@@ -56,6 +58,10 @@ export default {
     ContentGroup,
     CryptoDialog
   },
+  beforeMount () {
+    this.keysBackend = Object.keys(this.contents_groups)
+    this.contentGroupInit = JSON.parse(JSON.stringify(this.contents_groups))
+  },
   mounted () {
     if (this.getIsEdit) {
       this.isEdit = true
@@ -68,6 +74,8 @@ export default {
   },
   data () {
     return {
+      contentGroupInit: undefined,
+      keysBackend: [],
       isEdit: false,
       openCryptoDialog: false,
       keyToEncrypt: undefined,
@@ -108,12 +116,12 @@ export default {
     },
     onAddContentGroup () {
       this.contents_groups['Content_group'] = [
-        {
-          title: 'content_group',
-          key: 'Key',
-          value: 'Value',
-          dataType: 's'
-        }
+        // {
+        //   title: 'content_group',
+        //   key: 'Key',
+        //   value: 'Value',
+        //   dataType: 's'
+        // }
       ]
       this.$forceUpdate()
     },

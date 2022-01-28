@@ -28,7 +28,7 @@ div
           data-cy='search'
           v-model='search'
           dense
-          debounce='500'
+          debounce='750'
           @update="onSearchDoc"
           placeholder='Search'
         )
@@ -38,6 +38,7 @@ div
       binary-state-sort
       :loading="loadingDocs"
       :data="documents"
+      :dense="$q.screen.sm"
       :grid="$q.screen.xs"
       :columns="columns"
       card-class="bg-grey-1"
@@ -64,7 +65,15 @@ div
             :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
             @click='seeDocument(props.row)'
           )
-            div(style='color: grey') {{ col.value }}
+            div(v-if="col.name !== 'highlight'" style='color: grey') {{ col.value }}
+            div(class="text-left" v-else)
+              div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
+                q-badge(rounded class="badgeColor1") {{getContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" color="indigo")
+                q-badge(rounded class="badgeColor2") {{getNameContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" color="indigo")
+                q-badge(rounded class="badgeColor3")
+                  div(v-html="item[0]")
       template(v-slot:pagination="scope")
         q-btn(
             v-if="scope.pagesNumber > 2"
@@ -134,6 +143,13 @@ div
                 div(:class="props.row.hasOwnProperty('hash') ? 'col-4' : 'col-8'")
                   strong CREATED AT
                   div {{ props.row.createdDate }}
+      template(v-slot:no-data="{ icon, message }")
+        .full-width.row.flex-center.q-gutter-sm
+          div(v-if="search" style="width: 20px; height: 20px;")
+            svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 10 10" fill="currentColor")
+              path(fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd")
+          .text-caption.text-grey.text-bold
+            | {{ search ? $t('pages.documentExplorer.explorer.noDataOnSearch')+' \"' + search +'\"' : message }}
 </template>
 
 <script>
@@ -154,6 +170,12 @@ export default {
       search: undefined,
       prevDoc: undefined,
       loadingDocs: undefined,
+      paramsElastic: {
+        from: 0,
+        size: 10,
+        fields: ['*'],
+        fuzziness: 'auto'
+      },
       pagination: {
         sortBy: 'desc',
         descending: false,
@@ -161,7 +183,7 @@ export default {
         rowsPerPage: 5,
         rowsNumber: 6
       },
-      visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid', 'system'],
+      visibleColumns: ['creator', 'type', 'createdDate', 'docid', 'system'],
       columns: [
         {
           name: 'docid',
@@ -216,20 +238,31 @@ export default {
           format: (val, row) => {
             return this.dateToString(val)
           }
-        }
-      ],
-      endpoints: [
-        {
-          label: 'Hypha',
-          value: 'https://alpha-st.tekit.io/graphql'
         },
         {
-          label: 'Cannabis',
-          value: 'https://hashed.systems/alpha-trace-test/graphql'
+          name: 'score',
+          label: 'Score',
+          headerStyle: ' font-size:14px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          style: 'color: rgb(107,114,128)',
+          field: (row) => row.score
         },
         {
-          label: 'Social',
-          value: 'https://hashed.systems/alpha-dge-test/graphql'
+          name: 'highlight',
+          label: 'Highlight',
+          headerStyle: ' font-size:14px;',
+          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          style: 'color: rgb(107,114,128)',
+          field: (row) => row.highlight
+          // format: (val, row) => {
+          //   let rowHighlight = row.highlight
+          //   for (const key in rowHighlight) {
+          //     const splitKey = key.split('_')
+          //     text += splitKey[0] + ' > ' + splitKey[1] + ' > '
+          //     text += rowHighlight[key][0] + '<br>'
+          //   }
+          //   return text
+          // }
         }
       ]
     }
@@ -278,59 +311,70 @@ export default {
     }
   },
   methods: {
+    ...mapActions('elasticSearch', ['searchDoc']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    getContentGroup (row) {
+      let contentGroup = row.split('_')
+      return contentGroup[0]
+    },
+    getNameContentGroup (row) {
+      let contentGroup = row.split('_')
+      return contentGroup[1]
+    },
     async onSearchDoc () {
-      const docInterface = this.getLocalStorage('documentInterface')
-      const documentID = this.search
-      const data = await this.getDocumentsByDocId({
-        byElement: documentID,
-        type: 'Document',
-        props: '',
-        docInterface: docInterface,
-        isHashed: this.isHashed
-      })
-      var _documents = []
-      for (const doc of data.queryDocument) {
-        let typeSchema = await this.getPropsType({
-          type: doc['__typename']
+      if (this.search !== '') {
+        this.loadingDocs = true
+        let response = await this.searchDoc({
+          search: this.search,
+          params: this.paramsElastic
         })
-        let _props = typeSchema['__type'].fields
-        const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        // const found = true
-        if (found) {
-          let byElement = doc.docId
-          if (this.isHashed) {
-            byElement = doc.hash
-          }
-          var query = `... on ${doc.type}{
-            system_nodeLabel_s
-          }`
-          let _isHashed = this.isHashed
-          let response = await this.getDocumentsByDocId({
-            byElement: byElement,
-            props: query,
-            type: doc['__typename'],
-            isHashed: _isHashed
+        response = response.hits.hits.length > 0 ? response.hits.hits : undefined
+        if (response) {
+          var docsArr = []
+          response.forEach(element => {
+            let _element = element._source
+            let obj = {
+              contract: _element.contract,
+              createdDate: _element.createdDate,
+              creator: _element.creator,
+              docId: _element.docId,
+              docId_i: _element.docId_i,
+              system_nodeLabel_s: _element.system_nodeLabel_s,
+              type: _element.type,
+              updatedDate: _element.updatedDate,
+              __typename: _element.type,
+              score: element._score.toString(),
+              highlight: element.highlight
+            }
+            docsArr.push(obj)
           })
-          doc['system_nodeLabel_s'] = response[`query${doc['__typename']}`][0]['system_nodeLabel_s']
-          _documents.push(doc)
+          this.documents = docsArr
+          this.visibleColumns.push('score')
+          this.visibleColumns.push('highlight')
+        } else {
+          this.documents = []
+          this.clearElasticColumns()
         }
-        query = ''
-      }
-      if (_documents.length > 0) {
-        this.showSuccessMsg('Document found')
-        this.documents = _documents
-        return _documents.length
+        this.loadingDocs = false
       } else {
+        this.loadingDocs = true
+        this.clearElasticColumns()
         await this.loadDocuments()
-        if (this.search !== '') {
-          this.showErrorMsg('Document not found')
-        }
+        this.loadingDocs = false
+      }
+    },
+    clearElasticColumns () {
+      const existScore = (element) => element === 'score'
+      let index = this.visibleColumns.findIndex(existScore)
+      if (index >= 0) {
+        this.visibleColumns.pop()
+        this.visibleColumns.pop()
       }
     },
     async onRequest (props) {
       this.loadingDocs = true
+      this.clearElasticColumns()
       const { page, rowsPerPage, sortBy, descending, rowsNumber } = props.pagination
       let offset = (page - 1) * rowsPerPage
       let limit = rowsPerPage
@@ -425,7 +469,7 @@ export default {
       if (!flag) {
         this.setIsHashed(true)
         if (index >= 0) {
-          this.visibleColumns.splice(index, 1)
+          this.visibleColumns.splice(index, 1, 'hash')
         }
       } else {
         this.setIsHashed(false)
@@ -510,6 +554,12 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.badgeColor1
+  background: #1e40af
+.badgeColor2
+  background: #1d4ed8
+.badgeColor3
+  background: #2563eb
 .center
   position: absolute;
   top: 45%;
