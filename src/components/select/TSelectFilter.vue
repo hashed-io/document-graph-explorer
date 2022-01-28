@@ -8,7 +8,6 @@ div
     dense
     v-model="content",
     use-input,
-    color="indigo-8"
     :placeholder="placeholder"
     :input-debounce="debounce",
     :options="options",
