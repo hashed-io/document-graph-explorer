@@ -23,7 +23,7 @@ export const utils = {
       }
     },
     showNotification (message, type = 'success') {
-      const color = type.toLowerCase() === 'success' ? 'green' : 'red'
+      const color = type.toLowerCase() === 'success' ? 'green' : 'negative'
       const icon = type.toLowerCase() === 'success' ? 'done' : 'error'
       const timeOut = type.toLowerCase() === 'success' ? 5000 : 10000
       this.$q.notify({
@@ -67,6 +67,9 @@ export const utils = {
       } else {
         return false
       }
+    },
+    isHashedSystems (hashedReturn, TelosReturn) {
+      return window.location.host.includes('hashed.systems') ? hashedReturn : TelosReturn
     }
   }
 }

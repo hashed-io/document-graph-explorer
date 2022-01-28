@@ -74,9 +74,6 @@ class ApolloApi extends BaseEosApi {
       }
     `
     const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
-    console.log('data----------------------')
-    console.log(data)
-    console.log('data----------------------')
     return data
   }
   async getAllDocuments ({ type }) {

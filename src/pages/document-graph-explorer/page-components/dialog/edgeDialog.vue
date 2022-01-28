@@ -1,8 +1,10 @@
 <template lang="pug">
 q-card.cardTailWind
-  q-toolbar
-    q-toolbar-title New Edge
+  q-toolbar.modalTitle
+    | {{$t('pages.documentExplorer.edges.create')}}
+    q-toolbar-title
     q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
+  q-separator
   q-card-section
     q-form(ref='edgeForm' @submit="addEdge").q-px-md
       Tinput(
@@ -75,6 +77,10 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.modalTitle
+  color:black
+  font-weight: bolder
+  background: #F6F8FA
 @media screen and (max-width: 319px) and (min-width: 30px)
   .cardTailWind
     border-radius: 10px !important

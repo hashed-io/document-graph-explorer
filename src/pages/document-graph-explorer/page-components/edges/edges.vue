@@ -233,18 +233,6 @@ export default {
     }
   },
   methods: {
-    calculateSizeEdges (edgesLength, resultQueryLength) {
-      if (edgesLength > 0 && resultQueryLength > 0) {
-        let pixels = parseInt(resultQueryLength) * 75
-        if (pixels > 600) {
-          return 'height:' + '600' + 'px'
-        } else {
-          return 'height:' + pixels.toString() + 'px'
-        }
-      } else {
-        return 'height: 0px'
-      }
-    },
     onPrevNode (edgeData) {
       /**
        * This sends the row information to backward navigation

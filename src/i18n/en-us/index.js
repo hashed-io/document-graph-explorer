@@ -75,6 +75,9 @@ export default {
       selectAccount: 'Please select an account'
     },
     documentExplorer: {
+      certify: {
+        title: 'Certify Form'
+      },
       explorer: {
         title: 'Explore Document',
         noDataOnSearch: 'No documents found for'
@@ -109,6 +112,7 @@ export default {
         }
       },
       edges: {
+        create: 'New Edge',
         noEdges: 'This document does not contain edges',
         extend: 'Add edges using the button below',
         title: 'Edges',

@@ -2,7 +2,7 @@
 div
   div(v-show="loading" class="center")
     q-spinner-tail(
-      color="indigo"
+      class="text-brand-primary"
       size="1.5em"
     )
 
@@ -96,12 +96,14 @@ export default {
     ...mapMutations('documentGraph', ['setContractInfo']),
     ...mapActions('documentGraph', ['deleteDoc']),
     navigateToEdge (edgeData) {
-      this.setDocument(edgeData)
       let data = JSON.parse(JSON.stringify(this.documentInfo))
-      delete data.creator
+      console.log('-------------')
+      console.log(data)
+      console.log('-------------')
       delete data.system_nodeLabel_s
       delete data.updatedDate
       this.pushDocNavigation(data)
+      this.setDocument(edgeData)
       this.addInformation({
         label: 'edgeName',
         value: edgeData.edgeName
