@@ -27,6 +27,12 @@ export default {
     },
     openUrl (url) {
       window.open(url)
+    },
+    getSource () {
+      return this.isHashedSystems('statics/icons/hashedLogin.png', 'statics/icons/TelosKitchenAvatar2.png')
+    },
+    getSize () {
+      return this.isHashedSystems('50%', '30%')
     }
   },
   async mounted () {
@@ -38,7 +44,7 @@ export default {
 <template lang="pug">
 div.q-mb-xl
   .flex.flex-center.q-mb-md
-    img.logo(src="statics/icons/hashedLogin.png")
+    q-img.logo(:src="getSource()" :width="getSize()")
   q-card.cardSize
     q-card-section
       .flex.flex-center
@@ -60,7 +66,7 @@ div.q-mb-xl
               avatar
               @click="onLogin(idx)"
             )
-              img(
+              q-img(
                 :src="wallet.getStyle().icon"
                 width="30"
               )
@@ -107,7 +113,7 @@ div.q-mb-xl
 
 <style lang="stylus" scoped>
 .logo
-  max-height: 100px
+  max-height: 150px
   max-width: 300px
 .titleLogin
   font-size:30px !important
@@ -123,6 +129,5 @@ div.q-mb-xl
   font-size:16px
   color:black
   width: 15rem
-  background: white
-  color: black
+  color: $text
 </style>

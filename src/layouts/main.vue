@@ -10,11 +10,17 @@ q-layout(view="hHh Lpr lFf").bg-layout
         svg.h-5.w-5(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 20 20" fill="currentColor")
           path(fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd")
       q-toolbar-title.flex.items-center
-        img.logo(
+        q-img(
           data-cy='menu'
-          src="statics/icons/hashed.png"
+          :src="getSource()"
+          :width="getSize()"
           @click="menu = !menu"
         )
+          template(v-slot:loading)
+            q-spinner-tail(
+              class="text-white center"
+              size="2.5rem"
+            )
       right-menu-authenticated(v-if="isAuthenticated")
       right-menu-guest(v-if="!isAuthenticated")
   q-drawer(
@@ -96,6 +102,12 @@ export default {
       this.menu = false
       this.clearStack()
       this.setEndpoint(endpoint)
+    },
+    getSource () {
+      return this.isHashedSystems('statics/icons/hashed.png', 'statics/icons/TelosKitchen.png')
+    },
+    getSize () {
+      return this.isHashedSystems('10%', '50px')
     }
   }
 }
