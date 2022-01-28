@@ -205,7 +205,11 @@ export const documentExplorer = {
       let label = 'system'
       let systemElement = res[label]
       let newObj = {}
-      this.documentInfo.systemNodeLabel = res[label][0].value
+      const nodeLabel = res[label].find(element => element.key === 'nodeLabel')
+      if (!nodeLabel) {
+        this.showErrorMsg('The document do not has nodeLabel')
+      }
+      this.documentInfo.systemNodeLabel = nodeLabel.value
       newObj[label] = systemElement
       for (const key in res) {
         if (key !== label) {
