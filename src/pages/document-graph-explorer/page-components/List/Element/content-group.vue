@@ -14,11 +14,11 @@
     :row-key="(row) => row.label",
     :pagination="initialPagination",
     clearable,
-    no-data-label="There arent content_group",
+    no-data-label="There arent content group",
     ref="table",
     hide-bottom,
     separator="none",
-    table-header-class="hdTable"
+    card-class="tableColor"
     :visible-columns="visibleColumns"
     wrap-cells
   )
@@ -29,14 +29,14 @@
             data-cy='keyRead'
             key="key",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           ) {{ props.row.key }}
           q-td(
             data-cy="valueRead"
             key="value",
             :props="props",
             style="word-break: break-word;"
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             div(
               style="overflow-wrap: break-word;"
@@ -84,34 +84,34 @@
             data-cy="dataTypeRead"
             key="dataType",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           ) {{ getDataType(props.row.dataType) }}
           q-td(
             data-cy="ActionRead"
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             template
               .row.justify-center.q-col-gutter-md
                 .col-xs-12.col-sm-12.col-md-6
                   div(
                     data-cy="editRowButton"
-                    class='text-brand-primary text-capitalize animated-icon'
+                    class='actionsButton text-capitalize animated-icon'
                     @click='onEditRow(props.row, props.rowIndex )'
                   ) Edit
-                .col-xs-12.col-sm-12.col-md-6(v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'" )
+                .col-xs-12.col-sm-12.col-md-6
                   div(
+                    v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'"
                     data-cy="deleteRowButton"
-                    class='text-capitalize animated-icon'
-                    style='color: #DC2626'
-                    @click='onEraseRow(props.rowIndex )'
+                    class='text-capitalize deleteButton animated-icon'
+                    @click='onEraseRow(props.rowIndex)'
                   ) Delete
         template(v-else)#EditMode
           q-td(
             key="key",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             template(
               v-if="isEdit && !isEditSystem && props.row.key === 'nodeLabel'"
@@ -130,7 +130,7 @@
             key="value",
             style="word-break: break-all;",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             q-form(ref='valueForm')
               TInput(
@@ -167,7 +167,7 @@
           q-td(
             key="dataType",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             template(
               v-if="isEdit && isEditSystem"
@@ -186,26 +186,26 @@
           q-td(
             v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex",
             key='Save',
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             .row.q-col-gutter-md.q-pb-md
               .col-xs-12.col-sm-12.col-md-6
                 div(
                   data-cy='saveEdit'
-                  class='text-capitalize animated-icon text-brand-primary'
+                  class='text-capitalize animated-icon actionsButton'
                   @click='onSave(props.rowIndex, props.row)'
                 ) Save
               .col-xs-12.col-sm-12.col-md-6
                 div(
                   data-cy='cancelEdit'
-                  class='text-capitalize animated-icon text-brand-primary'
+                  class='text-capitalize animated-icon actionsButton'
                   @click='onCancel(props.rowIndex, props.row)'
                 ) Cancel
   .row.justify-end
     q-icon(
         data-cy='addRowButton'
         v-if='isEdit'
-        class='text-brand-primary q-py-sm animated-icon',
+        class='text-brand-primary q-py-sm cursor-pointer',
         size="2rem",
         @click="onAddRow()"
       )
@@ -336,8 +336,7 @@ export default {
           label: 'Key',
           align: 'left',
           headerStyle: 'width:15%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.key,
           sortable: true
         },
@@ -346,8 +345,7 @@ export default {
           label: 'Value',
           align: 'left',
           headerStyle: 'width:55%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2   text-uppercase',
           field: (row) => row.value,
           sortable: true
         },
@@ -356,8 +354,7 @@ export default {
           label: 'Data Type',
           align: 'left',
           headerStyle: 'width:10%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2  text-uppercase ',
           field: (row) => row.dataType,
           sortable: true
         },
@@ -366,8 +363,7 @@ export default {
           label: 'Actions',
           align: 'justify',
           headerStyle: 'width:10%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2   text-uppercase',
           sortable: false
         }
       ]
@@ -606,12 +602,27 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.colorEncrypt
-  color: #059669
+.actionsButton
+  color: $positive
+.deleteButton
+  color: $delete-button !important
+.tableColor
+  background : $table-header-color !important
+  color: $table-header-font !important
+.rowOdd
+  background: $table-content-color-odd
+  color: $table-content-font-odd
+.rowEven
+  background: $table-content-color-even
+  color: $table-content-font-even
+.q-chip
+  background: $chip-bg
+  margin: 0px
+  color: $chip-font
 .topAlign
   padding-top: 0.1rem
 .titleClass
-  color: rgb(107, 114, 128);
+  color: $title-content-group !important
 .cardTailWind
   border-radius: 50px !important
   width: 500px !important
