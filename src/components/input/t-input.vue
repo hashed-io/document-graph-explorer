@@ -3,7 +3,6 @@ div
   .text-subtitle3.text-capitalize.colorTailwind {{label}}
   q-input(
     outlined
-    color="indigo-8"
     v-model="content"
     :placeholder="placeholder"
     :debounce="debounce"

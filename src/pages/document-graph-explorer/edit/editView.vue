@@ -2,7 +2,7 @@
 div
   div(v-if="loading" class="center")
     q-spinner-tail(
-      color="indigo"
+      class="text-brand-primary"
       size="1.5em"
     )
 
@@ -132,7 +132,6 @@ export default {
           contentGroup = []
         }
         this.callEditAction(contentGroups)
-        console.log(contentGroups)
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to format the content groups ' + error)
       }
@@ -162,7 +161,6 @@ export default {
       let toNode = form.direction
       let edgeName = form.edgeName
       let creator = this.account
-      console.log({ fromNode, toNode, edgeName, creator })
       await this.ActionsApi.createEdge({ fromNode, toNode, edgeName, creator })
       this.showDialogEdge = false
       this.$q.loading.show({

@@ -74,9 +74,6 @@ class ApolloApi extends BaseEosApi {
       }
     `
     const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
-    console.log('data----------------------')
-    console.log(data)
-    console.log('data----------------------')
     return data
   }
   async getAllDocuments ({ type }) {
@@ -131,10 +128,12 @@ class ApolloApi extends BaseEosApi {
         eosEndpoint
         documentsTable
         edgesTable
+        elasticApiKey
+        elasticEndpoint
       }
     }
     `
-    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
+    const { data } = await this.apollo.query({ query, errorPolicy: 'all', fetchPolicy: 'no-cache' })
     return data
   }
   async getAllTypes () {

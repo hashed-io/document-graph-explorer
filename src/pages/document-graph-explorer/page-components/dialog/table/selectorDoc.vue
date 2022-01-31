@@ -28,7 +28,7 @@ div
       )
       q-inner-loading(showing)
         q-spinner-tail(
-          color="indigo"
+          class="text-brand-primary"
           size="1.5em"
         )
     template(v-slot:pagination="scope")
@@ -101,7 +101,7 @@ div
 </template>
 <script>
 import TInput from '~/components/input/t-input.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'selectorDoc',
   components: { TInput },
@@ -115,7 +115,9 @@ export default {
         from: 0,
         size: 10,
         fields: ['*'],
-        fuzziness: 'auto'
+        fuzziness: 'auto',
+        endpoint: undefined,
+        apikey: undefined
       },
       columns: [
         {
@@ -182,10 +184,13 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapState('documentGraph', ['contractInfo'])
+  },
   methods: {
     ...mapActions('elasticSearch', ['searchDoc']),
+    ...mapActions('documentGraph', ['getLocalStorage', 'getDocumentsByDocId', 'getPropsType']),
     getContentGroup (row) {
-      console.log(row)
       let contentGroup = row.split('_')
       return contentGroup[0]
     },
@@ -194,8 +199,78 @@ export default {
       return contentGroup[1]
     },
     async onSearch () {
+      if (await this.getEnpointToSearch()) {
+        await this.searchOnElastic()
+      } else {
+        await this.searchOnDgraph()
+      }
+    },
+    async getEnpointToSearch () {
+      // TODO: [document selector] identify if the current DGraph endpoint has elastic search endpoint.
+      return await this.getLocalStorage({ key: 'apollo-endpoint' }) === 'https://hashed.systems/alpha-trace-test/graphql'
+    },
+    async searchOnDgraph () {
+      this.loadingDocs = true
+      const docInterface = this.getLocalStorage('documentInterface')
+      const documentID = this.search
+      const data = await this.getDocumentsByDocId({
+        byElement: documentID,
+        type: 'Document',
+        props: '',
+        docInterface: docInterface,
+        isHashed: this.isHashed
+      })
+      var _documents = []
+      for (const doc of data.queryDocument) {
+        let typeSchema = await this.getPropsType({
+          type: doc['__typename']
+        })
+        let _props = typeSchema['__type'].fields
+        const found = _props.find(element => element.name === 'system_nodeLabel_s')
+        // const found = true
+        if (found) {
+          let byElement = doc.docId
+          if (this.isHashed) {
+            byElement = doc.hash
+          }
+          var query = `... on ${doc.type}{
+            system_nodeLabel_s
+          }`
+          let _isHashed = this.isHashed
+          let response = await this.getDocumentsByDocId({
+            byElement: byElement,
+            props: query,
+            type: doc['__typename'],
+            isHashed: _isHashed
+          })
+          doc['system_nodeLabel_s'] = response[`query${doc['__typename']}`][0]['system_nodeLabel_s']
+          _documents.push(doc)
+        }
+        query = ''
+      }
+      if (_documents.length > 0) {
+        this.showSuccessMsg('Document found')
+        this.documents = _documents
+        this.loadingDocs = false
+        return _documents.length
+      } else {
+        if (this.search !== '') {
+          this.showErrorMsg('Document not found')
+        }
+      }
+      this.loadingDocs = false
+    },
+    async getElasticSearchCredentials () {
+      const endpoint = 'elasticEndpoint'
+      const apikey = 'elasticApiKey'
+      return { endpoint: this.contractInfo[endpoint], apikey: this.contractInfo[apikey] }
+    },
+    async searchOnElastic () {
       this.loadingDocs = true
       if (this.search !== '') {
+        let credentialsObj = await this.getElasticSearchCredentials()
+        this.paramsElastic.endpoint = credentialsObj.endpoint
+        this.paramsElastic.apikey = credentialsObj.apikey
         let response = await this.searchDoc({
           search: this.search,
           params: this.paramsElastic
@@ -245,7 +320,7 @@ export default {
 .selectColor
   background: #e2e8f0
 .badgeColor
-  background: #a1a1aa
+  background: $secondary
 .TailWind
   border-radius: 10px !important
 </style>

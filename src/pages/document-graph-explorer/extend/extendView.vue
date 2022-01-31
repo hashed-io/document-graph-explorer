@@ -165,7 +165,6 @@ export default {
           contentGroup = []
         }
         this.callExtendAction(contentGroups)
-        console.log(contentGroups)
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to format the content groups ' + error)
       }

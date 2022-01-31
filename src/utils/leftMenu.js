@@ -1,4 +1,30 @@
-export default {
+export const leftMenuTelosKitchen = {
+  tlos: {
+    selected: undefined,
+    logo: 'telos.png',
+    name: 'Telos',
+    color: '#571BFE',
+    endpoint: undefined,
+    options: [
+      {
+        label: 'Hypha',
+        value: 'https://alpha-st.tekit.io/graphql',
+        color: 'black'
+      },
+      {
+        label: 'Social',
+        value: 'https://hashed.systems/alpha-dge-test/graphql',
+        color: 'black'
+      },
+      {
+        label: 'Cacao',
+        value: 'https://hashed.systems/alpha-trace-test/graphql',
+        color: 'black'
+      }
+    ]
+  }
+}
+export const leftMenuHashed = {
   tlos: {
     selected: undefined,
     logo: 'telos.png',
@@ -119,5 +145,4 @@ export default {
       }
     ]
   }
-
 }

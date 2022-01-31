@@ -1,15 +1,18 @@
 <template lang="pug">
 q-card.signDialog
-  q-toolbar
-    q-toolbar-title Certify Form
+  q-toolbar.modalTitle
+    | {{$t('pages.documentExplorer.certify.title')}}
+    q-toolbar-title
       template(v-if="cryptoKey" )
         svg(xmlns="http://www.w3.org/2000/svg" class="keyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor")
           path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z")
     q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
+  q-separator
   q-card-section
-    q-form(ref='certifyForm' @submit="signDoc").q-px-md
+    q-form(ref='certifyForm').q-px-md
       Tinput(
         data-cy="signature"
+        label="Signature"
         class="q-pt-md"
         v-model="form.signature.data"
         placeholder='Signature'
@@ -34,6 +37,7 @@ q-card.signDialog
         @input='onIpfsSignature'
       )
       Tinput(
+        label="Notes"
         data-cy='notes'
         class="q-pt-md"
         v-model="form.notes.data"
@@ -103,20 +107,17 @@ export default {
     onEncryptSignature () {
       if (!this.cryptoKey) {
         this.cryptoDialog = true
-      } else {
-        let value = this.form.signature.data
-        this.form.signature.data = Encrypt.encryptText(value, this.cryptoKey)
       }
     },
     onEncryptNotes () {
       if (!this.cryptoKey) {
         this.cryptoDialog = true
-      } else {
-        let value = this.form.signature.data
-        this.form.notes.data = Encrypt.encryptText(value, this.cryptoKey)
       }
     },
     async onIpfsSignature () {
+      if (!this.form.signature.data || this.form.signature.data === '') {
+        return this.showErrorMsg('Write a value to save in IPFS')
+      }
       this.$q.loading.show({
         message: 'Saving in IPFS...'
       })
@@ -131,6 +132,9 @@ export default {
       this.form.signature.data = ipfsString
     },
     async onIpfsNotes () {
+      if (!this.form.notes.data || this.form.notes.data === '') {
+        return this.showErrorMsg('Write a value to save in IPFS')
+      }
       this.$q.loading.show({
         message: 'Saving in IPFS...'
       })
@@ -147,16 +151,17 @@ export default {
     onCryptoKey (key) {
       this.cryptoKey = key
       this.cryptoDialog = false
-      if (this.form.signature.encrypt) {
-        this.onEncryptSignature()
-        this.$nextTick()
-      } else {
-        this.onEncryptNotes()
-        this.$nextTick()
-      }
     },
     async onCertify () {
       if (await this.$refs.certifyForm.validate()) {
+        if (this.form.signature.encrypt && !this.isEncrypt(this.form.signature.data)) {
+          let value = this.form.signature.data
+          this.form.signature.data = Encrypt.encryptText(value, this.cryptoKey)
+        }
+        if (this.form.notes.encrypt && !this.isEncrypt(this.form.notes.data)) {
+          let value = this.form.signature.data
+          this.form.notes.data = Encrypt.encryptText(value, this.cryptoKey)
+        }
         let dataToSave = {
           signature: this.form.signature.data,
           notes: this.form.notes.data
@@ -168,6 +173,10 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.modalTitle
+  color:black
+  font-weight: bolder
+  background: #F6F8FA
 .keyIcon
   width: 16px
   height: 16px

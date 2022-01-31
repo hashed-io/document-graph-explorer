@@ -97,8 +97,8 @@ export default {
         this.contents_groups[current] = this.contents_groups[prev]
         delete this.contents_groups[prev]
       } else if (count === 0 && prev === 'content_group') {
-        this.contents_groups[current] = this.contents_groups['Content_group']
-        delete this.contents_groups['Content_group']
+        this.contents_groups[current] = this.contents_groups['content group']
+        delete this.contents_groups['content group']
       } else {
         this.showErrorMsg('Label duplicated')
         return false
@@ -115,7 +115,7 @@ export default {
       this.openCryptoDialog = bool
     },
     onAddContentGroup () {
-      this.contents_groups['Content_group'] = [
+      this.contents_groups['content group'] = [
         // {
         //   title: 'content_group',
         //   key: 'Key',
@@ -137,5 +137,5 @@ export default {
   width: 170px !important
 .keyIcon
   font-size: 24px
-  color: #4338CA !important
+  color: $primary
 </style>

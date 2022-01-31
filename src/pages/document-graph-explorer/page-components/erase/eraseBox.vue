@@ -23,16 +23,18 @@ q-card.text-white(flat).eraseDialog
       | {{$t('pages.documentExplorer.erase.typeMsgContinue')}}
     TInput(data-cy='deleteInput' focus label="", dense v-model="eraseInput", color="white" @input='verifyWrite' debounce="500")
   .row.justify-center.q-pb-md
-    q-btn(data-cy='confirmDeleteButton' @click='onErase' no-caps outlined  flat :disable='verifyWrite' :label="$t('pages.documentExplorer.erase.btnErase')", style=" color:red")
+    q-btn(data-cy='confirmDeleteButton' class="eraseButton" @click='onErase' no-caps outlined  flat :disable='verifyWrite' :label="$t('pages.documentExplorer.erase.btnErase')")
 </template>
 <style lang='stylus' scoped>
+.eraseButton
+  color: $negative
 .modalTitle
   color:black
   font-weight: bolder
   background: #F6F8FA
 .modalWarning
   color: black
-  background: #FFF8C5
+  background: $warning
 .svg
   width: 5%
 @media screen and (max-width: 319px) and (min-width: 30px)

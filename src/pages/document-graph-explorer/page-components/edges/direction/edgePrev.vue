@@ -16,12 +16,6 @@
                   q-icon(style="width: 40px; height:40px" class="cursor-pointer text-brand-primary")
                     svg(xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor")
                       path(fill-rule="evenodd" d="M15.707 15.707a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 010 1.414zm-6 0a1 1 0 01-1.414 0l-5-5a1 1 0 010-1.414l5-5a1 1 0 011.414 1.414L5.414 10l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd")
-                template(v-if="isEdit" id='delete')
-                  div(
-                    class='text-capitalize animated-icon'
-                    style='color: #DC2626'
-                    @click='removeEdge(item)'
-                  ) Delete
               .col-xs-6.col-sm-7.col-md-10
                 template(id='edgeInfo')
                   div
@@ -101,17 +95,17 @@ export default {
   methods: {
     showTooltip (item) {
       if (this.isHashed) {
-        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.hash
+        return item.system_nodeLabel_s !== '' ? item.systemNodeLabel : item.hash
       } else {
-        return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+        return item.system_nodeLabel_s !== '' ? item.systemNodeLabel : item.docId
       }
     },
     showEdgeInfo (item) {
       let len
       if (this.isHashed) {
-        len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.hash.length
+        len = item.system_nodeLabel_s !== '' ? item.systemNodeLabel.length : item.hash.length
       } else {
-        len = item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s.length : item.docId.length
+        len = item.system_nodeLabel_s !== '' ? item.systemNodeLabel.length : item.docId.length
       }
       if (item.system_nodeLabel_s !== '' && len > 60) {
         return item.system_nodeLabel_s.substring(0, 60) + '...'
@@ -123,9 +117,9 @@ export default {
         }
       } else {
         if (this.isHashed) {
-          return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.hash
+          return item.system_nodeLabel_s !== '' ? item.systemNodeLabel : item.hash
         } else {
-          return item.system_nodeLabel_s !== '' ? item.system_nodeLabel_s : item.docId
+          return item.system_nodeLabel_s !== '' ? item.systemNodeLabel : item.docId
         }
       }
     },

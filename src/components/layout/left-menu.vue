@@ -1,7 +1,7 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import Tinput from '../input/t-input.vue'
-import leftMenu from '~/utils/leftMenu'
+import { leftMenuTelosKitchen, leftMenuHashed } from '~/utils/leftMenu'
 import { validation } from '~/mixins/validation'
 export default {
   name: 'left-menu-authenticated',
@@ -9,7 +9,7 @@ export default {
   data () {
     return {
       validCustom: undefined,
-      blockchains: leftMenu,
+      blockchains: undefined,
       custom: {
         selected: undefined,
         logo: undefined,
@@ -18,6 +18,9 @@ export default {
         options: undefined
       }
     }
+  },
+  mounted () {
+    this.blockchains = this.isHashedSystems(leftMenuHashed, leftMenuTelosKitchen)
   },
   computed: {
     ...mapGetters('accounts', ['isAuthenticated'])
@@ -97,22 +100,24 @@ div(class="q-pa-md" style="max-width: 350px")
         @show="showMenu(blockchain.name)"
       )
         template(v-slot:header)
-          .row.q-gutter-lg
-            q-avatar(size='md')
-              img(:src="'statics/blockchains/'+blockchain.logo")
-            div.header {{blockchain.name}}
-        q-card(class="cardTailwind box" :style="{ borderColor: blockchain.color +'!important'}")
-          q-card-section
-            .row.justify-start
-              q-option-group(
-                keep-color
-                data-cy='endpointOptions'
-                :options="blockchain.options"
-                type='radio'
-                :style="{ color: blockchain.color +'!important'}"
-                v-model='blockchain.endpoint'
-                @input="sendSelected()"
-              )
+            q-item-section(avatar)
+              q-avatar(size='md')
+                q-img(:src="'statics/blockchains/'+blockchain.logo")
+            q-item-section
+              div.header {{blockchain.name}}
+        div.alignPadding
+          q-card(flat class="box" :style="{ borderColor: blockchain.color +'!important'}")
+            q-card-section
+              .row.justify-start
+                q-option-group(
+                  keep-color
+                  class="radioButton"
+                  data-cy='endpointOptions'
+                  :options="blockchain.options"
+                  type='radio'
+                  v-model='blockchain.endpoint'
+                  @input="sendSelected()"
+                )
     q-expansion-item(
       data-cy='customEndpoint'
       class="q-pt-sm"
@@ -121,9 +126,10 @@ div(class="q-pa-md" style="max-width: 350px")
       @show="showMenu('custom')"
     )
       template(v-slot:header)
-        .row.q-gutter-lg
+        q-item-section(avatar)
           q-avatar(size='md')
-            img(:src="'statics/blockchains/gear.png'")
+            q-img(:src="'statics/blockchains/gear.png'")
+        q-item-section
           div.header Development
       q-card
         q-card-section
@@ -137,7 +143,7 @@ div(class="q-pa-md" style="max-width: 350px")
               dense
             )
             template(v-if="isSelected() && validCustom ")
-              .row.rowHover(@click="sendSelected()" data-cy="switchButton")
+              div(@click="sendSelected()" data-cy="switchButton" class="flex flex-center")
                 q-icon(
                   style="width:12px; height:24px;"
                   class="cursor-pointer q-px-sm"
@@ -148,20 +154,22 @@ div(class="q-pa-md" style="max-width: 350px")
 </template>
 
 <style lang="stylus" scoped>
-.rowHover:hover
-  background: white
-  border-color: black
-  border-radius: 10px
+.radioButton
+  color: $table-content-font-odd
+  font-size: 16px !important
+.alignPadding
+  padding-left: 30px
 .q-radio__innner
   color: rgba(0,0,0,0) !important
 .cardTailwind
   border-radius: 10px !important
 .box
   border-left: 0.25rem solid transparent
-  border-radius: 0.25rem
+  border-radius: 0
   border-color:#571BFE !important
 .header
   font-size: 16px !important
   font-weight: 600
   padding-top: 5px
+
 </style>
