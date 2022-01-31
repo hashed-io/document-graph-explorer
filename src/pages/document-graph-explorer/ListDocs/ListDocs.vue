@@ -171,7 +171,9 @@ export default {
         from: 0,
         size: 10,
         fields: ['*'],
-        fuzziness: 'auto'
+        fuzziness: 'auto',
+        endpoint: undefined,
+        apikey: undefined
       },
       pagination: {
         sortBy: 'desc',
@@ -275,7 +277,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['isHashed', 'documentInterface']),
+    ...mapState('documentGraph', ['isHashed', 'documentInterface', 'contractInfo']),
     ...mapState('documentGraph', ['endpointApollo']),
     ...mapState('accounts', ['account']),
     Endpoint () {
@@ -372,9 +374,17 @@ export default {
         }
       }
     },
+    async getElasticSearchCredentials () {
+      const endpoint = 'elasticEndpoint'
+      const apikey = 'elasticApiKey'
+      return { endpoint: this.contractInfo[endpoint], apikey: this.contractInfo[apikey] }
+    },
     async searchOnElastic () {
       if (this.search !== '') {
         this.loadingDocs = true
+        let credentialsObj = await this.getElasticSearchCredentials()
+        this.paramsElastic.endpoint = credentialsObj.endpoint
+        this.paramsElastic.apikey = credentialsObj.apikey
         let response = await this.searchDoc({
           search: this.search,
           params: this.paramsElastic

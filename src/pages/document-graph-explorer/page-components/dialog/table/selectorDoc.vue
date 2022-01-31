@@ -101,7 +101,7 @@ div
 </template>
 <script>
 import TInput from '~/components/input/t-input.vue'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 export default {
   name: 'selectorDoc',
   components: { TInput },
@@ -115,7 +115,9 @@ export default {
         from: 0,
         size: 10,
         fields: ['*'],
-        fuzziness: 'auto'
+        fuzziness: 'auto',
+        endpoint: undefined,
+        apikey: undefined
       },
       columns: [
         {
@@ -181,6 +183,9 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    ...mapState('documentGraph', ['contractInfo'])
   },
   methods: {
     ...mapActions('elasticSearch', ['searchDoc']),
@@ -255,9 +260,17 @@ export default {
       }
       this.loadingDocs = false
     },
+    async getElasticSearchCredentials () {
+      const endpoint = 'elasticEndpoint'
+      const apikey = 'elasticApiKey'
+      return { endpoint: this.contractInfo[endpoint], apikey: this.contractInfo[apikey] }
+    },
     async searchOnElastic () {
       this.loadingDocs = true
       if (this.search !== '') {
+        let credentialsObj = await this.getElasticSearchCredentials()
+        this.paramsElastic.endpoint = credentialsObj.endpoint
+        this.paramsElastic.apikey = credentialsObj.apikey
         let response = await this.searchDoc({
           search: this.search,
           params: this.paramsElastic

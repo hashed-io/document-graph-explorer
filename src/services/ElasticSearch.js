@@ -24,7 +24,7 @@ class ElasticSearchApi {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Credentials': '*',
-        'Authorization': `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`,
+        'Authorization': `ApiKey ${params.apikey}`,
         'Content-Type': 'application/json'
       },
       mode: 'no-cors',
@@ -33,7 +33,7 @@ class ElasticSearchApi {
       data: data
     }
     try {
-      responseElastic = await axios.post(process.env.ELASTICSEARCH_ENDPOINT, data, config)
+      responseElastic = await axios.post(params.endpoint, data, config)
       return responseElastic.data
     } catch (e) {
       throw new Error(e)
