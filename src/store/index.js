@@ -2,12 +2,10 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import accounts from './accounts'
-import dao from './DAO'
-import documents from './documents'
-import documentsGeneral from './documentsGeneral'
 import transfers from './transfers'
 import general from './general'
-import apollo from './apollo'
+import documentGraph from './documentGraph'
+import elasticSearch from './elasticSearch'
 
 Vue.use(Vuex)
 Vue.config.devtools = true
@@ -21,11 +19,9 @@ export default function (/* { ssrContext } */) {
     modules: {
       accounts,
       transfers,
-      dao,
-      documents,
-      documentsGeneral,
       general,
-      apollo
+      documentGraph,
+      elasticSearch
     },
 
     // enable strict mode (adds overhead!)

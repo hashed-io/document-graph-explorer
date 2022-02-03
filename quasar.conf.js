@@ -33,9 +33,6 @@ module.exports = function (ctx) {
       'fontawesome-v5',
       // 'eva-icons',
       // 'themify',
-      // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
-
-      // 'roboto-font', // optional, you are not bound to it
       'material-icons' // optional, you are not bound to it
     ],
 
@@ -99,6 +96,7 @@ module.exports = function (ctx) {
         'QSpinner',
         'QSpinnerComment',
         'QSpinnerDots',
+        'QScrollArea',
         'QTime',
         'QToggle',
         'QToolbar',
@@ -117,19 +115,19 @@ module.exports = function (ctx) {
       ],
 
       // Quasar plugins
-      plugins: ['Notify', 'Loading']
+      plugins: ['Notify', 'Loading', 'Dialog']
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie
     supportIE: false,
-
+    externals: {
+      sharp: 'commonjs sharp'
+    },
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
       env: {
         APP_NAME: process.env.APP_NAME, // Used by scatter
         NETWORK_PROTOCOL: process.env.NETWORK_PROTOCOL,
-        CONTRACT_DAO: process.env.CONTRACT_DAO,
-        CONTRACT_DOC: process.env.CONTRACT_DOC,
         NETWORK_HOST: process.env.NETWORK_HOST,
         NETWORK_PORT: process.env.NETWORK_PORT,
         NETWORK_CHAIN_ID: process.env.NETWORK_CHAIN_ID,
@@ -138,9 +136,9 @@ module.exports = function (ctx) {
         BLOCKCHAIN_EXPLORER: process.env.BLOCKCHAIN_EXPLORER,
         GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
         IPFS_URL: process.env.IPFS_URL,
-        CODE_CONTRACT_URL: process.env.CODE_CONTRACT_URL,
-        ABI_CONTRACT_URL: process.env.ABI_CONTRACT_URL,
-        APOLLO_URL: process.env.APOLLO_URL
+        APOLLO_URL: process.env.APOLLO_URL,
+        ELASTICSEARCH_API_KEY: process.env.ELASTICSEARCH_API_KEY,
+        ELASTICSEARCH_ENDPOINT: process.env.ELASTICSEARCH_ENDPOINT
       },
       scopeHoisting: true,
       vueRouterMode: 'history',

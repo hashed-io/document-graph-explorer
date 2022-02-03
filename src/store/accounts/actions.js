@@ -27,14 +27,14 @@ export const login = async function ({ commit, dispatch }, { idx, account, retur
       this.$type = 'ual'
       const accountName = await users[0].getAccountName()
       commit('setAccount', accountName)
-      const defaultReturnUrl = localStorage.getItem('returning') ? '/home' : '/home'
+      const defaultReturnUrl = localStorage.getItem('returning') ? '/list-docs' : '/list-docs'
       localStorage.setItem('autoLogin', authenticator.constructor.name)
       localStorage.setItem('account', accountName)
       localStorage.setItem('returning', true)
       console.log('returnUrl', returnUrl)
       console.log('defaultReturnUrl', defaultReturnUrl)
       // this.$router.push({ path: '/home' })
-      this.$router.push({ path: returnUrl || defaultReturnUrl })
+      // this.$router.push({ path: returnUrl || defaultReturnUrl })
       return this.$ualUser
     }
   } catch (e) {
@@ -65,7 +65,7 @@ export const logout = async function ({ commit }) {
   } catch (error) {
     console.log('Authenticator logout error', error)
   }
-  commit('profiles/setProfile', undefined, { root: true })
+  // commit('profiles/setProfile', undefined, { root: true })
   commit('setAccount')
   localStorage.removeItem('autoLogin')
   this.$api = null

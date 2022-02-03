@@ -1,65 +1,175 @@
 <script>
-import { mapGetters } from 'vuex'
-
+import { mapGetters, mapMutations } from 'vuex'
+import Tinput from '../input/t-input.vue'
+import { leftMenuTelosKitchen, leftMenuHashed } from '~/utils/leftMenu'
+import { validation } from '~/mixins/validation'
 export default {
   name: 'left-menu-authenticated',
+  mixins: [validation],
+  data () {
+    return {
+      validCustom: undefined,
+      blockchains: undefined,
+      custom: {
+        selected: undefined,
+        logo: undefined,
+        name: 'custom',
+        endpoint: undefined,
+        options: undefined
+      }
+    }
+  },
+  mounted () {
+    this.blockchains = this.isHashedSystems(leftMenuHashed, leftMenuTelosKitchen)
+  },
   computed: {
     ...mapGetters('accounts', ['isAuthenticated'])
-  }
+  },
+  methods: {
+    ...mapMutations('documentGraph', ['clearStack']),
+    async catchEndpoint () {
+      await this.showMenu(undefined)
+      this.validCustom = await this.$refs.customEndpointForm.validate()
+    },
+    clearStoreAndGo () {
+      this.clearStack()
+      this.$router.push({ name: 'listDocs' })
+    },
+    async isSelected () {
+      for (const blockchain in this.blockchains) {
+        if (this.blockchains[blockchain].endpoint !== undefined) {
+          return true
+        }
+      }
+      if (this.custom.endpoint) {
+        return true
+      } else {
+        return false
+      }
+    },
+    showMenu (name) {
+      if (name !== undefined && this.custom.endpoint) {
+        this.custom.selected = false
+        this.custom.endpoint = undefined
+      }
+      for (const blockchain in this.blockchains) {
+        this.blockchains[blockchain].selected = (name === this.blockchains[blockchain].name)
+        if (name !== this.blockchains[blockchain].name) {
+          this.blockchains[blockchain].endpoint = undefined
+        }
+      }
+    },
+    async sendSelected () {
+      var selected
+      for (const key in this.blockchains) {
+        if (this.blockchains[key].endpoint !== undefined) {
+          selected = this.blockchains[key].endpoint
+        }
+      }
+      if (!selected && this.custom.endpoint) {
+        selected = this.custom.endpoint
+      }
+      /**
+       * This send the endpoint selected to parent component [main.vue]
+       */
+      this.$emit('switch', selected)
+    }
+  },
+  components: { Tinput }
 }
-</script>
-
-<template lang="pug">
-q-scroll-area.fit
-  q-list
-    q-item(
-      to="/home"
-      clickable
-      v-ripple
+</script><template lang="pug">
+div(class="q-pa-md" style="max-width: 350px")
+  q-list()
+    .row.justify-end.q-gutter-md.q-pt-xs
+      q-btn(
+        data-cy='closeButton'
+        icon='close'
+        round
+        color="red"
+        outline
+        size='xs'
+        @click="$emit('close')"
+      )
+    template(v-for="(blockchain) in blockchains")
+      q-expansion-item(
+        data-cy='listBlockchains'
+        v-model='blockchain.selected'
+        class="q-pt-sm"
+        expand-icon-toggle
+        dense-toggle
+        @show="showMenu(blockchain.name)"
+      )
+        template(v-slot:header)
+            q-item-section(avatar)
+              q-avatar(size='md')
+                q-img(:src="'statics/blockchains/'+blockchain.logo")
+            q-item-section
+              div.header {{blockchain.name}}
+        div.alignPadding
+          q-card(flat class="box" :style="{ borderColor: blockchain.color +'!important'}")
+            q-card-section
+              .row.justify-start
+                q-option-group(
+                  keep-color
+                  class="radioButton"
+                  data-cy='endpointOptions'
+                  :options="blockchain.options"
+                  type='radio'
+                  v-model='blockchain.endpoint'
+                  @input="sendSelected()"
+                )
+    q-expansion-item(
+      data-cy='customEndpoint'
+      class="q-pt-sm"
+      v-model="custom.selected"
+      dense-toggle
+      @show="showMenu('custom')"
     )
-      q-item-section(avatar)
-        q-icon(name="business")
-      q-item-section {{ $t('menu.daos') }}
-    q-item(
-      to="/daos"
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="list")
-      q-item-section {{ $t('menu.all_daos') }}
-    q-item(
-      to="/order-book"
-      data-cy='menuOrderBook'
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="info")
-      q-item-section
-        div Order Book
-    q-item(
-      to="/document-graph-explorer"
-      data-cy='DGE'
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="assignment")
-      q-item-section
-        div Document Graph Explorer
-    q-item(
-      to="/timeline"
-      data-cy='timeLine'
-      clickable
-      v-ripple
-    )
-      q-item-section(avatar)
-        q-icon(name="timeline")
-      q-item-section
-        div Time Line
+      template(v-slot:header)
+        q-item-section(avatar)
+          q-avatar(size='md')
+            q-img(:src="'statics/blockchains/gear.png'")
+        q-item-section
+          div.header Development
+      q-card
+        q-card-section
+          q-form(ref="customEndpointForm")
+            Tinput(
+              data-cy='customEndpointField'
+              v-model='custom.endpoint'
+              :rules="[rules.isURL]"
+              label='Custom Endpoint'
+              @update="catchEndpoint"
+              dense
+            )
+            template(v-if="isSelected() && validCustom ")
+              div(@click="sendSelected()" data-cy="switchButton" class="flex flex-center")
+                q-icon(
+                  style="width:12px; height:24px;"
+                  class="cursor-pointer q-px-sm"
+                )
+                  svg(width="16" height="16" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg")
+                    path(d="M440.65 12.57l4 82.77A247.16 247.16 0 0 0 255.83 8C134.73 8 33.91 94.92 12.29 209.82A12 12 0 0 0 24.09 224h49.05a12 12 0 0 0 11.67-9.26 175.91 175.91 0 0 1 317-56.94l-101.46-4.86a12 12 0 0 0-12.57 12v47.41a12 12 0 0 0 12 12H500a12 12 0 0 0 12-12V12a12 12 0 0 0-12-12h-47.37a12 12 0 0 0-11.98 12.57zM255.83 432a175.61 175.61 0 0 1-146-77.8l101.8 4.87a12 12 0 0 0 12.57-12v-47.4a12 12 0 0 0-12-12H12a12 12 0 0 0-12 12V500a12 12 0 0 0 12 12h47.35a12 12 0 0 0 12-12.6l-4.15-82.57A247.17 247.17 0 0 0 255.83 504c121.11 0 221.93-86.92 243.55-201.82a12 12 0 0 0-11.8-14.18h-49.05a12 12 0 0 0-11.67 9.26A175.86 175.86 0 0 1 255.83 432z" fill="black")
+                div(class="cursor-pointer q-pr-sm") switch
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
+.radioButton
+  color: $table-content-font-odd
+  font-size: 16px !important
+.alignPadding
+  padding-left: 30px
+.q-radio__innner
+  color: rgba(0,0,0,0) !important
+.cardTailwind
+  border-radius: 10px !important
+.box
+  border-left: 0.25rem solid transparent
+  border-radius: 0
+  border-color:#571BFE !important
+.header
+  font-size: 16px !important
+  font-weight: 600
+  padding-top: 5px
 
 </style>

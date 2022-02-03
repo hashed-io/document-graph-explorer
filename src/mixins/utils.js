@@ -1,4 +1,5 @@
 import { mapMutations } from 'vuex'
+import customRegex from '~/const/customRegex.js'
 export const utils = {
   methods: {
     ...mapMutations('general', ['setErrorMsg', 'setSuccessMsg', 'setIsLoading']),
@@ -22,7 +23,7 @@ export const utils = {
       }
     },
     showNotification (message, type = 'success') {
-      const color = type.toLowerCase() === 'success' ? 'green' : 'red'
+      const color = type.toLowerCase() === 'success' ? 'green' : 'negative'
       const icon = type.toLowerCase() === 'success' ? 'done' : 'error'
       const timeOut = type.toLowerCase() === 'success' ? 5000 : 10000
       this.$q.notify({
@@ -30,6 +31,7 @@ export const utils = {
         textColor: 'white',
         message: message,
         icon: icon,
+        position: 'top-right',
         timeout: timeOut,
         actions: [{ label: 'Close', color: 'white' }]
       })
@@ -42,6 +44,32 @@ export const utils = {
     },
     showIsLoading (state) {
       this.setIsLoading(state)
+    },
+    dateToString (_date) {
+      if (!_date) return _date
+      var date = new Date(_date.replace(/ /g, 'T'))
+      return date.getDate() + ' ' + [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+        'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ][date.getMonth()] + ' ' + date.getFullYear()
+    },
+    isEncrypt (value) {
+      if (value && typeof (value) === 'string') {
+        return value.substring(0, 2) === 'U2'
+      } else {
+        return false
+      }
+    },
+    isIpfs (value) {
+      if (value) {
+        var regexIPFS = new RegExp(customRegex.IPFS)
+        return regexIPFS.test(value)
+      } else {
+        return false
+      }
+    },
+    isHashedSystems (hashedReturn, TelosReturn) {
+      return window.location.host.includes('hashed.systems') ? hashedReturn : TelosReturn
     }
   }
 }

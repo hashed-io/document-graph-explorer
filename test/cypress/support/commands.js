@@ -25,6 +25,19 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 import Faker from 'faker'
 import 'cypress-file-upload'
+Cypress.Commands.add('listDocs', (endpoint, search) => {
+  // 'https://alpha-st.tekit.io/graphql'
+  // 'https://hashed.systems/alpha-dge-test/graphql'
+  // 'https://hashed.systems/alpha-trace-test/graphql'
+  let endpoints = ['https://alpha-st.tekit.io/graphql', 'https://hashed.systems/alpha-dge-test/graphql', 'https://hashed.systems/alpha-trace-test/graphql']
+  if (endpoint) {
+    cy.visit('/?endpoint=' + endpoints[endpoint])
+  }
+  if (search) {
+    cy.dataCy('search')
+      .type(search)
+  }
+})
 Cypress.Commands.add('SaveBlockChain', () => {
   cy.dataCy('saveDataButton')
     .click()
@@ -51,10 +64,6 @@ Cypress.Commands.add('fillCryptoDialog', (key) => {
     }
   })
 })
-Cypress.Commands.add('dateTimeInput', (dataCy, date, time) => {
-  cy.dataCy(dataCy)
-    .type(date + ' ' + time)
-})
 /**
    * @param {string} dataCy
    * @param {boolean} encrypt?
@@ -63,7 +72,7 @@ Cypress.Commands.add('dateTimeInput', (dataCy, date, time) => {
    * @param {boolean} isEdit?
 */
 Cypress.Commands.add('stringLabelFill', (dataCy, encrypt, ipfs, fakeValue, isEdit) => {
-  const dataCyIpfs = 'checkboxIPFS'
+  const dataCyIpfs = 'ipfsToggle'
 
   if (ipfs) {
     cy.dataCy(dataCyIpfs)
@@ -99,86 +108,67 @@ Cypress.Commands.add('fileLabelFill', (fileName, encrypt) => {
     })
   }
 })
-Cypress.Commands.add('addNewLabel', (typeLabelNumber, withCheckBox) => {
-  let fakeValue
-  let dataCy
-  let fieldName = Faker.name.findName()
-  // Open modal to create new Label
-  cy.get('#addFieldButton')
-    .click()
-  // Fill field name input
-  cy.dataCy('FieldNameInput')
-    .type(fieldName)
-    // Open selector in the modal
-  cy.dataCy('typeInput')
-    .click()
-    .get('.q-item__label')
-    .eq(typeLabelNumber)
-    .click()
-  switch (typeLabelNumber) {
+/**
+ *  key String
+ *  Value String
+ *  dataType Int []
+ */
+Cypress.Commands.add('fillRow', (keyValue, dataType, obj) => {
+  if (obj.isFirst) {
+    switch (dataType) {
+      // String
+      case 0:
+        // cy.log('String Label')
+        cy.dataCy('keyField')
+          .type('L')
+          .clear()
+          .type(Faker.lorem.sentence())
+        cy.dataCy('valueField')
+          .type('L')
+          .clear()
+          .type(Faker.lorem.sentence())
+        break
+    }
+  }
+})
+Cypress.Commands.add('fillRowEdit', (dataType) => {
+  cy.log(typeof dataType + '||' + dataType)
+  switch (dataType) {
     // String
-    case 0:
-      cy.log('String Label')
-      dataCy = 'stringInput'
-      let encrypt = true
-      let ipfs = Faker.datatype.boolean()
-      let isEdit = false
-      fakeValue = Faker.name.findName()
-      cy.stringLabelFill(dataCy, encrypt, ipfs, fakeValue, isEdit)
+    case 'string':
+      // cy.log('String Label')
+      cy.dataCy('keyField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      cy.dataCy('valueField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
       break
-      // Asset
-    case 1:
-      dataCy = 'assetInput'
-      fakeValue = Faker.finance.amount() + ' TLOS'
-      cy.dataCy(dataCy)
-        .type(fakeValue)
+    case 'int64':
+      cy.dataCy('keyField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      cy.dataCy('valueField')
+        .type('0')
+        .clear()
+        .type(Faker.datatype.number)
       break
-      // Name
-    case 2:
-      dataCy = 'nameInput'
-      fakeValue = 'alejandroga1'
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // Int 64
-    case 3:
-      dataCy = 'inputLabel'
-      fakeValue = Faker.datatype.number()
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // Time point
-    case 4:
-      dataCy = 'timePointInput'
-      let date = '2021-10-16'
-      let time = '14:04'
-      cy.dateTimeInput(dataCy, date, time)
-      // fakeValue = Faker.datatype.datetime()
-      break
-      // Checksum
-    case 5:
-      dataCy = 'checkSumInput'
-      fakeValue = 'Bdf12Fcb73D8eF8Ba771fbAC5B274D29DA12aa2CBEaacB7Da1239884e1174B8c'
-      cy.dataCy(dataCy)
-        .type(fakeValue)
-      break
-      // File
-    case 6:
-      // Files must exist inside of folder /fixture
-      let fileName = 'pdf-test.pdf'
-      let encryptFile = Faker.datatype.boolean()
-      cy.fileLabelFill(fileName, encryptFile)
+    case 'name':
+      cy.dataCy('keyField')
+        .type('L')
+        .clear()
+        .type(Faker.lorem.sentence())
+      cy.dataCy('valueField')
+        .type('0')
+        .clear()
+        .type(Faker.lorem.word())
       break
   }
-
-  // Click in add field Button
-  cy.dataCy('addFieldButton')
-    .click()
 })
-Cypress.Commands.add('deleteLabel', () => {
-
-})
-Cypress.Commands.add('editLabel', () => {
+Cypress.Commands.add('addNewContent', () => {
 
 })
 Cypress.Commands.add('qSelect', (dataCy, element) => {
@@ -189,10 +179,10 @@ Cypress.Commands.add('qSelect', (dataCy, element) => {
     .click()
 })
 Cypress.Commands.add('loginAnchor', () => {
-  window.localStorage.setItem('anchor-link--alejandroga1@active-1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f', '{"type":"channel","data":{"identifier":"DAO LLC","chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f","auth":{"actor":"alejandroga1","permission":"active"},"publicKey":"PUB_K1_6i2Q4Lwa4H75PtTZ9jWaFXVDywLjG7Qt8vqMsW2u4FefNHWLvV","channel":{"url":"https://cb.anchor.link/d7823778-be21-4948-8045-750deb6e0017","key":"PUB_K1_8JsjM2qx7nU56FHpAvP8eJ6EyggcV9yMvaWwuscTkoB4eRnmTS","name":"Anchor Desktop"},"requestKey":"PVT_K1_2eLwYYJrCqbYjoFcce7p6R1sfiuUHC6sbtpC9kX6AdRefuXNwP"},"metadata":{"sameDevice":true,"timeout":120000,"name":"Anchor Desktop","request_key":"PUB_K1_6nyys4e9AzGhFDnJ7aBBo1Nuyk642PpVxCw5ncKVQu7gLVYtud"}}')
-  window.localStorage.setItem('account', 'alejandroga1')
+  window.localStorage.setItem('anchor-link--tlaclocmant2@active-1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f', '{"type":"channel","data":{"identifier":"DAO LLC","chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f","auth":{"actor":"tlaclocmant2","permission":"active"},"publicKey":"PUB_K1_52qknGJh69NqfFL2sZfiuNtSYrR41B38w18gX1rbaoPFdgBmjx","channel":{"url":"https://cb.anchor.link/d7823778-be21-4948-8045-750deb6e0017","key":"PUB_K1_8JsjM2qx7nU56FHpAvP8eJ6EyggcV9yMvaWwuscTkoB4eRnmTS","name":"Anchor Desktop"},"requestKey":"PVT_K1_2EskFCrXf8gLoH98dJRVC2Dp2bNSwnNAkTk9SNwhXMinpxVDP6"},"metadata":{"sameDevice":true,"timeout":120000,"name":"Anchor Desktop","request_key":"PUB_K1_5opVQfy7TG4R4ifuX7yR8PX6AhCaQ6T8nyQHaZ1wDYzMUH9z92"}}')
+  window.localStorage.setItem('account', 'tlaclocmant2')
   window.localStorage.setItem('autoLogin', 'Anchor')
-  window.localStorage.setItem('anchor-link--list', '[{"auth":{"actor":"alejandroga1","permission":"active"},"chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"}]')
+  window.localStorage.setItem('anchor-link--list', '[{"auth":{"actor":"tlaclocmant2","permission":"active"},"chainId":"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"}]')
   window.localStorage.setItem('returning', true)
 })
 Cypress.Commands.add('logoutAnchor', () => {

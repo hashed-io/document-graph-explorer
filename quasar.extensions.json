@@ -4,23 +4,16 @@
     "minify_build": "zopfli",
     "cordova": {
       "background_color": "#000074",
-      "splashscreen_type": "pure"
+      "splashscreen_type": "overlay"
     },
-    "build_always": false,
+    "build_always": true,
     "__internal": {
       "dev": {
         "spa": {
           "iconHash": "2cd6dd911b93ebdded1d984d7976a9bf"
-        },
-        "pwa": {
-          "iconHash": "2cd6dd911b93ebdded1d984d7976a9bf"
         }
       },
-      "build": {
-        "spa": {
-          "iconHash": "2cd6dd911b93ebdded1d984d7976a9bf"
-        }
-      }
+      "build": {}
     }
   },
   "@quasar/testing-e2e-cypress": {

@@ -1,30 +1,36 @@
 <template lang='pug'>
 div
-  .text-subtitle1 {{label}}
+  .text-subtitle3.text-capitalize.colorTailwind {{label}}
   q-input(
     outlined
-    color='indigo-6'
     v-model="content"
-    :placeholder="value"
-    :rules="[rules.required]"
+    :placeholder="placeholder"
+    :debounce="debounce"
+    :type="type"
+    :autofocus="autofocus"
+    :dense='dense'
+    :rules="rules"
+    :autogrow='autogrow'
+    :mask="mask"
+    :fill-mask="fillMask"
+    :hint='hint'
     @input="$emit('update', content)"
   )
+    slot(name='append' class="centerIcon")
 </template>
 
 <script>
-import { validation } from '~/mixins/validation'
 
 export default {
   name: 'Tinput',
-  props: ['value', 'label'],
-  mixins: [validation],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus', 'mask', 'fillMask', 'hint'],
   model: {
     prop: 'value',
     event: 'update'
   },
   data () {
     return {
-      content: undefined
+      content: this.value
     }
   },
   methods: {
@@ -32,6 +38,15 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="stylus">
+.q-field--outlined .q-field__control
+  border-width: 0.8px
+  border-color: rgba(209,213,219,1)
+  background-color: #FFF
+  border-radius: 10px
+.q-field__marginal
+  font-size:16px
+.colorTailwind
+  color: #374157
 
 </style>

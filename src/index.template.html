@@ -9,16 +9,24 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (htmlWebpackPlugin.options.ctx.mode.cordova || htmlWebpackPlugin.options.ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>">
 
-    <link rel="icon" type="image/png" href="statics/app-logo-128x128.png">
+    <!-- <link rel="icon" type="image/png" href="statics/app-logo-128x128.png">
     <link rel="icon" type="image/png" sizes="16x16" href="statics/icons/TK_256.png">
     <link rel="icon" type="image/png" sizes="32x32" href="statics/icons/TK_256.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="statics/icons/TK_256.png">
-    <link rel="icon" type="image/ico" href="statics/icons/TK_256.ico">
-
-    <link rel="stylesheet" href="https://use.typekit.net/uif6miu.css">
+    <link rel="icon" type="image/png" sizes="96x96" href="statics/icons/TK_256.png"> -->
+    <!-- <link rel="icon" type="image/ico" href="statics/icons/Hashed_Symbol_White.ico"> -->
   </head>
   <body>
     <!-- DO NOT touch the following DIV -->
     <div id="q-app"></div>
   </body>
 </html>
+<script>
+  var link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
+    let host = window.location.host;
+      link.href = host.includes('hashed.systems') ? 'statics/icons/Hashed_Symbol_White.ico' : 'statics/icons/TK_256.ico'
+</script>

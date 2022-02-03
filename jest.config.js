@@ -3,7 +3,6 @@ const esModules = ['quasar/lang', 'lodash-es'].join('|')
 module.exports = {
   globals: {
     __DEV__: true,
-    // TODO: Remove if resolved natively https://github.com/vuejs/vue-jest/issues/175
     'vue-jest': {
       pug: { doctype: 'html' }
     }
@@ -47,7 +46,7 @@ module.exports = {
   transform: {
     '.*\\.vue$': 'vue-jest',
     '.*\\.js$': 'babel-jest',
-    '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$':
+    '.+\\.(css|styl|less|scss|svg|png|jpg|ttf|woff|woff2)$':
       'jest-transform-stub'
     // use these if NPM is being flaky, care as hosting could interfere with these
     // '.*\\.vue$': '@quasar/quasar-app-extension-testing-unit-jest/node_modules/vue-jest',

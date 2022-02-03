@@ -1,5 +1,5 @@
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import appIcons from '~/utils/app-icons'
 
 export default {
@@ -33,6 +33,9 @@ export default {
       }
     }
   },
+  async mounted () {
+    await this.loadCatalog()
+  },
   created () {
     this.$q.iconMapFn = (iconName) => {
       const icon = appIcons[iconName]
@@ -40,14 +43,24 @@ export default {
         return { icon }
       }
     }
+  },
+  methods: {
+    ...mapActions('documentGraph', ['getSchema', 'changeEndpoint', 'setLocalStorage']),
+    ...mapMutations('documentGraph', ['setCatalog', 'setTypesWithSystemNode']),
+    async loadCatalog () {
+      this.setLocalStorage({
+        key: 'apollo-endpoint',
+        value: process.env.APOLLO_URL
+      })
+    }
   }
 }
 </script>
 
 <template lang="pug">
-  .q-app
-    component(:is="layout")
-      router-view
-    q-inner-loading(:showing="isAutoLoading")
-      q-spinner(size="3em")
+.q-app
+  component(:is="layout")
+    router-view
+  q-inner-loading(:showing="isAutoLoading")
+    q-spinner(size="3em")
 </template>
