@@ -1,5 +1,5 @@
 <template lang="pug">
-.fixed-center.text-center
+.absolute-center.text-center
   div(class=" text-caption text-brand-primary text-bold error") 404 ERROR
   div(class="h1 notFound") Page not found
   div(class="message") Sorry, we couldn’t find the page you’re looking for.

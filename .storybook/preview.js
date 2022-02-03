@@ -47,7 +47,7 @@ export const decorators = [
 ];
 
 export const parameters = {
-  actions: { 
+  actions: {
     argTypesRegex: '^on[A-Z].*',
     handles: ['mouseover', 'click .btn'],
  },

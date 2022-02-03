@@ -1,4 +1,44 @@
 <style lang='stylus' scoped>
+:root{
+  --q-color-primary:    #140727 !important;
+  --q-color-secondary:  #9ca3af !important;
+  --q-color-accent:     #B1B1B1 !important;
+  --q-color-positive:   #1e40af !important;
+  --q-color-negative:   #dc2626 !important;
+  --q-color-info:        yellow !important;
+  --q-color-warning:    #FFF8C5 !important;
+  --table-content-color-odd  : white !important;
+  --table-content-color-even : #fafafa !important;
+  --table-content-font-odd   : #7C7C7C !important;
+  --table-content-font-even  : #7C7C7C !important;
+  --table-header-color       : #fafafa !important;
+  --table-header-font        : #7C7C7C !important;
+  --chip-bg        : #D1FAE5 !important;
+  --chip-font      : #065F46 !important;
+  --chip-highlight : #6b7280 !important;
+  --chip-arrow     : #52525b !important;
+}
+.eraseButton{
+  color: var(--q-color-negative)
+}
+.tableColor{
+  background : white !important;
+  color: var(--table-header-font) !important;
+}
+.actionsButton{
+  color: var(--q-color-positive)
+}
+.deleteButton{
+  color: var(--q-color-negative)
+}
+.rowOdd{
+  background: var(--table-content-color-odd) !important;
+  color: var(--table-content-font-odd) !important;
+}
+.rowEven{
+  background: var(--table-content-color-even) !important;
+  color: var(--table-content-font-even) !important;
+}
 @import url('https://rsms.me/inter/inter.css');
 html { font-family: 'Inter', sans-serif; }
 @supports (font-variation-settings: normal) {
@@ -16,7 +56,7 @@ body{
   font-family: 'Inter var', 'sans-serif' !important;
   font-weight: 400;
   font-size: 14px;
-  background-color:#F3F4F6;
+  background-color: #F3F4F6 !important;
 }
 .animated-icon{
   transition: all 0.2s;
@@ -32,14 +72,14 @@ body{
   font-weight: 500;
   font-size: 14px;
   color: white;
-  background-color: #4F46E5;
+  background-color: var(--q-color-primary);
 }
 .btnTailwind:hover{
-  box-shadow: blue;
+  box-shadow: var(--q-color-primary);
 }
 .btnTailWindLogin{
   background: white;
-  color: #4338CA;
+  color: var(--q-color-primary);
   height: 38px;
   width: 108px;
   font-weight: 600;
@@ -47,7 +87,7 @@ body{
 }
 .btnTailWindLogout{
   background: white;
-  color: #4338CA;
+  color: var(--q-color-primary);
   border-radius: 10px;
   height: 38px;
   width: 108px;
@@ -55,7 +95,7 @@ body{
   font-size: 14px;
 }
 .btnTailwindIndex{
-  background:#4338CA;
+  background: var(--q-color-primary);
   color: white;
   height: 50px;
   width: 138px;
@@ -66,14 +106,14 @@ body{
   margin-top:10px;
   border-radius:10px;
   color: white;
-  background-color: #4338CA;
+  background-color: var(--q-color-primary);
 }
 .q-notification{
   border-radius: 10px;
   top:10px;
 }
 .q-toggle__inner--truthy{
-  color: #4338CA !important;
+  color: var(--q-color-primary) !important;
 }
 p{
   margin: 0 !important;
@@ -90,5 +130,52 @@ p{
 .q-item__section--side > .q-icon{
   font-size: 15px !important;
 }
-
+.column-responsive{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+.btn-primary{
+  background: var(--q-color-primary);
+  color: white;
+}
+.bg-brand-primary{
+  background:var(--q-color-primary);
+}
+.text-brand-primary{
+  color: var(--q-color-primary);
+}
+.docInfoInside{
+  font-size: 13px;
+}
+.headerField{
+  color: #6B7280;
+}
+.headerTitle{
+  color: #616161;
+  font-weight: 500;
+}
+.documentHeader{
+  font-size: 16px;
+  color: #6B7280;
+}
+.modalTitle{
+  color:black;
+  font-weight: bolder;
+  background: #F6F8FA;
+}
+.modalWarning{
+  color: black;
+  background: #FFF8C5;
+}
+.bg-layout{
+  background-color: background-page;
+}
+.q-table__bottom-item{
+  color: #686E7C;
+}
+.bg-background{
+  background: background-page;
+}
 </style>
