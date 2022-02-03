@@ -85,12 +85,9 @@ describe('Add new content group', () => {
 })
 describe('Fill new content group with labels', () => {
   it('Fill string label [Encrypt]', () => {
-    cy.dataCy('editRowButton').then(($el) => {
-      var itemCount = Cypress.$($el).length - 1
-      cy.dataCy('editRowButton')
-        .eq(itemCount)
-        .click()
-    })
+    cy.dataCy('addRowButton')
+      .eq(1)
+      .click()
     // Key value fill
     cy.dataCy('keyField')
       .type('{selectall}{backspace}')
@@ -204,11 +201,9 @@ describe('Fill new content group with labels', () => {
       .eq(2)
       .click()
     // Value fill
-    let date = Faker.datatype.number({ min: 2000, max: 2050 }) +
-    '-' + Faker.datatype.number({ min: 1, max: 12 }) +
-    '-' + Faker.datatype.number({ min: 1, max: 12 })
+    let date = Faker.datatype.number({ min: 2000, max: 2025 }) + '-12' + '-12'
     cy.dataCy('valueField')
-      .type(date + '01:30', { delay: 0 })
+      .type(date + '11:30', { delay: 0 })
     // save the value edited
     cy.dataCy('saveEdit')
       .click()
@@ -216,7 +211,7 @@ describe('Fill new content group with labels', () => {
     cy.dataCy('valueRead')
       .last()
       .should(($div) => {
-        expect($div.text()).to.eq(date + '01:30' + '\n')
+        expect($div.text()).to.eq(date + ' 11:30' + '\n')
       })
     // add new Row
     cy.dataCy('addRowButton')
@@ -237,7 +232,7 @@ describe('Fill new content group with labels', () => {
     // Value fill
     let numberRandom = Faker.datatype.number()
     cy.dataCy('valueField')
-      .type(numberRandom + 'USD')
+      .type(numberRandom + ' USD')
     // save the value edited
     cy.dataCy('saveEdit')
       .click()
@@ -245,7 +240,7 @@ describe('Fill new content group with labels', () => {
     cy.dataCy('valueRead')
       .last()
       .should(($div) => {
-        expect($div.text()).to.eq(numberRandom + 'USD' + '\n')
+        expect($div.text()).to.eq(numberRandom + ' USD' + '\n')
       })
     // add new Row
     cy.dataCy('addRowButton')
@@ -261,7 +256,7 @@ describe('Fill new content group with labels', () => {
       .click()
     cy.get('.q-virtual-scroll__content')
       .children()
-      .eq(4)
+      .eq(5)
       .click()
     // Value fill
     let numberRandom = Faker.datatype.number({ min: 1000, max: 2000 })
@@ -278,13 +273,16 @@ describe('Fill new content group with labels', () => {
       })
   })
 })
-// describe('Create new document [Select type]', () => {
-// // TODO: check all different types
-// // TODO: in string [encrypt & ipfs]
-// })
-// describe('Save doc', () => {
-//   it('Saving using Anchor', () => {
-//     cy.dataCy('saveDoc')
-//       .click()
-//   })
-// })
+describe('Assert the transaction', () => {
+  it('Click on save button', () => {
+    cy.dataCy('saveDoc')
+      .click()
+  })
+  it('Assert the correct transaction', () => {
+    cy.get('[class=anchor-link-manual]')
+      .invoke('text')
+      .should('be.equal', 'Sign manually or with another device')
+    cy.get('[class=anchor-link-close]')
+      .click()
+  })
+})

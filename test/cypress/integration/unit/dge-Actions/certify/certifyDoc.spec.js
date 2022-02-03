@@ -35,11 +35,9 @@ describe('Certify the Document', () => {
   })
   it('Fill notes', () => {
     cy.dataCy('notes')
-      .type(Faker.lorem.sentence() + '\n')
-      .type(Faker.lorem.sentence() + '\n')
-      .type(Faker.lorem.sentence() + '\n')
-    cy.dataCy('encryptNotesToggle')
-      .click()
+      .type(Faker.lorem.sentence())
+    // cy.dataCy('encryptNotesToggle')
+    //   .click()
     cy.dataCy('ipfsNotesToggle')
       .click()
   })
@@ -48,6 +46,13 @@ describe('Certify the Document', () => {
 describe('Sign transaction', () => {
   it('Saving using Anchor', () => {
     cy.dataCy('certifyActionButton')
+      .click()
+  })
+  it('Assert the correct transaction', () => {
+    cy.get('[class=anchor-link-manual]')
+      .invoke('text')
+      .should('be.equal', 'Sign manually or with another device')
+    cy.get('[class=anchor-link-close]')
       .click()
   })
 })
