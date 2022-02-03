@@ -2,6 +2,7 @@
 div
   div(v-if="loading" class="center")
     q-spinner-tail(
+      data-cy="spinner"
       class="text-brand-primary"
       size="1.5em"
     )

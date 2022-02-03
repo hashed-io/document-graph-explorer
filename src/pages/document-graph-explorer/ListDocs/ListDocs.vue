@@ -1,6 +1,7 @@
 <template lang="pug">
 div
   q-spinner-tail(
+    data-cy="spinner"
     class="text-brand-primary center"
     size="1.5em"
     v-if="loadingData"
@@ -68,8 +69,8 @@ div
               div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
                 q-badge(rounded class="badgeColor") {{getContentGroup(index)}}
                 q-icon(size="1.5em" name="chevron_right" class="arrow")
-                q-badge(rounded class="badgeColor") {{getNameContentGroup(index)}}
-                q-icon(size="1.5em" name="chevron_right" class="arrow")
+                q-badge(rounded class="badgeColor" v-if="getNameContentGroup(index)") {{getNameContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" class="arrow" v-if="getNameContentGroup(index)")
                 q-badge(rounded class="badgeColor")
                   div(v-html="item[0]")
       template(v-slot:pagination="scope")
@@ -286,6 +287,7 @@ export default {
   },
   watch: {
     async Endpoint (newValue, oldValue) {
+      this.documents = []
       this.loadingData = true
       this.endpoint = newValue
       this.pagination.page = 1
@@ -322,8 +324,7 @@ export default {
       }
     },
     async getEndpointToSearch () {
-      // TODO: identify if the current DGraph endpoint has elastic search endpoint.
-      return await this.getLocalStorage({ key: 'apollo-endpoint' }) === 'https://hashed.systems/alpha-trace-test/graphql'
+      return this.contractInfo ? this.contractInfo.hasOwnProperty('elasticEndpoint') : false
     },
     async searchOnDgraph () {
       const docInterface = this.getLocalStorage('documentInterface')
@@ -475,7 +476,6 @@ export default {
         })
         let _props = typeSchema['__type'].fields
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        // const found = true
         if (found) {
           let byElement = doc.docId
           if (this.isHashed) {
@@ -509,7 +509,7 @@ export default {
       if (contractInfo) {
         this.setContractInfo(contractInfo.queryDoccacheConfig[0])
       } else {
-        this.setContractInfo('Default contract information')
+        this.setContractInfo(undefined)
       }
     },
     async getDocInterface () {
@@ -517,7 +517,7 @@ export default {
         type: 'Document'
       })
       let interfaceString = ''
-      let flag
+      let flag = 0
       docInterface['__type'].fields.forEach(element => {
         if (element.name === 'docId') {
           flag = 1
