@@ -1,4 +1,4 @@
-name: DAO LLC WebApp
+name: DGE WebApp
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
     outputs:
       branch: ${{steps.output-branch-name.outputs.branch}}
   deploy:
-    name: Deploy DAO LLC WebApp
+    name: Deploy DGE WebApp
     needs: extract-branch
     runs-on: ubuntu-latest
     defaults:
@@ -53,39 +53,41 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '15'
+          node-version: '14'
       - name: Install WebApp dependencies
         run: yarn install
       - name: Build for staging
         run: yarn build
         if: env.BRANCH_NAME == 'staging'
         env:
-          APP_NAME: '"DAO LLC Staging"'
+          APP_NAME: '"DGE Staging"'
           NETWORK_CHAIN_ID: '"1eaa0824707c8c16bd25145493bf062aecddfeb56c736f6ba6397f3195f33c9f"'
           NETWORK_HOST: '"test.telos.kitchen"'
           NETWORK_PORT: '443'
           NETWORK_PROTOCOL: '"https"'
           BLOCKCHAIN_EXPLORER: '"https://telos-test.bloks.io"'
-          CONTRACT_DAO: "'daoregistry1'"
-          CONTRACT_DOC: "'daoinfor1111'"
+          WEBSERVICES_URL: '"https://bqmc4sh9fe.execute-api.us-east-1.amazonaws.com/dev"'
+          WEBSERVICES_API_KEY: '"XXX"'
           IPFS_URL: '"https://ipfs.infura.io:5001"'
-          CODE_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1krXIiI6qiKhq1F-kZyd7dZZvRpNJp4Sn"'
-          ABI_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1L9A1PZFqSATiKwLathsEpOIvU31WmW8A"'
+          APOLLO_URL: '"https://hashed.systems/alpha-trace-test/graphql"'
+          ELASTICSEARCH_API_KEY: '"${{ secrets.ELASTICSEARCH_API_KEY }}"'
+          ELASTICSEARCH_ENDPOINT: '"https://traceability.es.us-east4.gcp.elastic-cloud.com:9243/traceability-documents/_search"'
       - name: Build for prod
         run: yarn build
         if: env.BRANCH_NAME == 'production'
         env:
-          APP_NAME: '"DAO LLC"'
+          APP_NAME: '"DGE"'
           NETWORK_CHAIN_ID: '"4667b205c6838ef70ff7988f6e8257e8be0e1284a2f59699054a018f743b1d11"'
           NETWORK_HOST: '"telos.caleos.io"'
           NETWORK_PORT: '443'
           NETWORK_PROTOCOL: '"https"'
           BLOCKCHAIN_EXPLORER: '"https://telos.bloks.io"'
-          CONTRACT_DAO: "'daollc.tk'"
-          CONTRACT_DOC: "'daoinfor1111'"
+          WEBSERVICES_URL: '"https://bqmc4sh9fe.execute-api.us-east-1.amazonaws.com/dev"'
+          WEBSERVICES_API_KEY: '"XXX"'
           IPFS_URL: '"https://ipfs.infura.io:5001"'
-          CODE_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1krXIiI6qiKhq1F-kZyd7dZZvRpNJp4Sn"'
-          ABI_CONTRACT_URL: '"https://drive.google.com/uc?export=view&id=1L9A1PZFqSATiKwLathsEpOIvU31WmW8A"'
+          APOLLO_URL: '"https://hashed.systems/alpha-dg-mainnet/graphql"'
+          ELASTICSEARCH_API_KEY: '"${{ secrets.ELASTICSEARCH_API_KEY }}"'
+          ELASTICSEARCH_ENDPOINT: '"https://traceability.es.us-east4.gcp.elastic-cloud.com:9243/traceability-documents/_search"'
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
@@ -101,4 +103,3 @@ jobs:
         run: gcloud compute url-maps invalidate-cdn-cache $URL_MAP_NAME --path=/*
         env:
           URL_MAP_NAME: ${{secrets[format('URL_MAP_{0}',steps.branch-name.outputs.uppercase)]}}
-          
