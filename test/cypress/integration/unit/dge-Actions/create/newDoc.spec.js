@@ -1,6 +1,6 @@
 import Faker from 'faker'
 const endpoints = ['https://alpha-st.tekit.io/graphql', 'https://hashed.systems/alpha-dge-test/graphql', 'https://hashed.systems/alpha-trace-test/graphql']
-const endpointSelect = 1
+const endpointSelect = 2
 before(() => {
   cy.loginAnchor()
   cy.visit('/?endpoint=' + endpoints[endpointSelect])
