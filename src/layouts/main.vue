@@ -107,7 +107,7 @@ export default {
       return this.isHashedSystems('statics/icons/hashed.png', 'statics/icons/TelosKitchen.png')
     },
     getSize () {
-      return this.isHashedSystems('10%', '50px')
+      return this.isHashedSystems('80px', '60px')
     }
   }
 }
