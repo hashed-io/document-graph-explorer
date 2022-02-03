@@ -1,5 +1,5 @@
 import { Api, JsonRpc } from 'eosjs'
-import { ApolloApi, ActionsApi } from '~/services'
+import { ApolloApi, ActionsApi, ElasticSearchApi } from '~/services'
 const signTransaction = async function (actions) {
   actions.forEach(action => {
     if (!action.authorization || !action.authorization.length) {
@@ -61,8 +61,11 @@ export default ({ store }) => {
     mEosApi
   })
 
+  const elasticSearchApi = new ElasticSearchApi()
+
   store['$api'] = api
   store['$apiMethods'] = api
   store['$apolloApi'] = apolloApi
   store['$actionsApi'] = actionsApi
+  store['$elasticSearchApi'] = elasticSearchApi
 }

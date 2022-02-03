@@ -8,6 +8,8 @@ describe('Visualize doc', () => {
     cy.dataCy('rowDoc')
       .eq(0)
       .click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2500)
     cy.get(`[data-cy='eraseButton']`).should('not.exist')
   })
 })
@@ -17,9 +19,13 @@ describe('Visualize doc', () => {
     cy.visit('/?endpoint=' + endpoints[endpointSelect])
     cy.dataCy('loginButton')
       .click()
+    cy.dataCy('accountName')
+      .should('exist')
     cy.dataCy('rowDoc')
       .eq(1)
       .click()
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(2500)
     cy.get(`[data-cy='eraseButton']`).should('exist')
   })
 })

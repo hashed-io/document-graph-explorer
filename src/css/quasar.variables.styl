@@ -11,59 +11,69 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
+:root
+  --q-color-primary: #140727
+  --q-color-secondary: #9ca3af
+  --q-color-accent: #B1B1B1
+  --q-color-positive: #1e40af
+  --q-color-negative: #dc2626
+  --q-color-info: yellow
+  --q-color-warning: #FFF8C5
 
-$primary   : #4338CA !important
-$secondary : #ADA8B6
-$accent    : #B1B1B1
+$background-page = #f3f4f6
+$primary   = #140727
+$secondary = #9ca3af
+$accent    = #B1B1B1
 
-$dark      : #010035
+$text      = #FFFFFF
 
-$positive  : #55c3b3
-$negative  : #ff422a
-$info      : #dfdfed
-$warning   : #F2C037
+$dark      = #010035
 
+$positive  = #1e40af
+$negative  = #dc2626
+$info      = yellow
+$warning   = #FFF8C5
+// CUSTOM
+// content groups
+$chip-bg        = #D1FAE5
+$chip-font      = #065F46
+// List docs
+$chip-highlight = #6b7280
+$chip-arrow     = #52525b
+// Table header
+$table-header-color       = #fafafa
+$table-header-font        = #7C7C7C
+// Table pagination
+$table-pagination         = #7C7C7C
+// Table content
+// $table-content-color-odd  = #FFFF
+$table-content-color-odd  = white
+$table-content-color-even = #fafafa
+$table-content-font-odd   = #7C7C7C
+$table-content-font-even  = #7C7C7C
+
+$delete-button            = #DC2626
+// title content group
+$title-content-group      = rgb(107, 114, 128)
 // Set the default font-family
 $typography-font-family = "Inter var", "sans-serif"
 
-// Column Table Responsive
+
+// Column Table Responsive [✅]
 .column-responsive
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
   max-width: 300px
-.column-order-book
-  white-space: nowrap
-  overflow: hidden
-  text-overflow: ellipsis
-  max-width: 225px
-// General classes
+// General classes ✅
 .btn-primary
-  background: #4338CA
+  background: $--q-color-primary
   color: white
-.btn-secondary
-  background: #1F2937
-  color: white
-.btn-accent
-  background: #F9FAFC
-  color: black
 .bg-brand-primary
-  background: #4338CA
-.bg-brand-secondary
-  background: #1F2937
-.bg-brand-accent
-  background: #F9FAFC
+  background: $--q-color-primary
 .text-brand-primary
-  color: #4338CA
-.text-brand-secondary
-  color: #32E4B6
-.text-brand-3
-  color: #FFFFFF00
-.bg-title-table
-  background: #FAFAFA
+  color: $--q-color-primary
 // Document info component
-.docInfoTitle
-  font-size: 14px
 .docInfoInside
   font-size: 13px
 .headerField
@@ -82,13 +92,10 @@ $typography-font-family = "Inter var", "sans-serif"
 .modalWarning
   color: black
   background: #FFF8C5
-.modalInfo
-  color: black
-  background: #7dd3fc
 .bg-layout
-  background-color: #F3F4F6
+  background-color: $background-page
 .q-table__bottom-item
   color: #686E7C
 // LOGIN
 .bg-background
-  background: #F9FAFB
+  background: $background-page

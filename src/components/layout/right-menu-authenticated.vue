@@ -13,7 +13,7 @@ export default {
 
 <template lang="pug">
 .row.q-gutter-md
-  span.q-pt-sm.text-white {{account}}
+  span.q-pt-sm.text-white(data-cy='accountName') {{account}}
   q-btn(
     :label="$t('common.buttons.logout')"
     @click="logout"

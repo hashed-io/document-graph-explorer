@@ -3,7 +3,7 @@ export default () => ({
   document: undefined,
   typeCatalog: undefined,
   isEdit: false,
-  isHashed: false,
+  isHashed: undefined,
   typesWithSystemNode: undefined,
   contractInfo: undefined,
   documentInterface: undefined,

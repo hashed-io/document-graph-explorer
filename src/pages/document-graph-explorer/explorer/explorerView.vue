@@ -2,7 +2,8 @@
 div
   div(v-show="loading" class="center")
     q-spinner-tail(
-      color="indigo"
+      data-cy="spinner"
+      class="text-brand-primary"
       size="1.5em"
     )
 
@@ -96,12 +97,11 @@ export default {
     ...mapMutations('documentGraph', ['setContractInfo']),
     ...mapActions('documentGraph', ['deleteDoc']),
     navigateToEdge (edgeData) {
-      this.setDocument(edgeData)
       let data = JSON.parse(JSON.stringify(this.documentInfo))
-      delete data.creator
       delete data.system_nodeLabel_s
       delete data.updatedDate
       this.pushDocNavigation(data)
+      this.setDocument(edgeData)
       this.addInformation({
         label: 'edgeName',
         value: edgeData.edgeName
@@ -137,7 +137,7 @@ export default {
         await this.newInstance()
         let docID = this.document.docId
         await this.ActionsApi.deleteDoc({ documentID: docID })
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await new Promise(resolve => setTimeout(resolve, 2000))
         this.$router.push({ name: 'listDocs' })
         this.showSuccessMsg('The document was erase')
       } catch (error) {

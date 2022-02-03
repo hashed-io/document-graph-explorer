@@ -3,7 +3,6 @@ div
   .text-subtitle3.text-capitalize.colorTailwind {{label}}
   q-input(
     outlined
-    color="indigo-8"
     v-model="content"
     :placeholder="placeholder"
     :debounce="debounce"
@@ -12,6 +11,9 @@ div
     :dense='dense'
     :rules="rules"
     :autogrow='autogrow'
+    :mask="mask"
+    :fill-mask="fillMask"
+    :hint='hint'
     @input="$emit('update', content)"
   )
     slot(name='append' class="centerIcon")
@@ -21,7 +23,7 @@ div
 
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus', 'mask', 'fillMask', 'hint'],
   model: {
     prop: 'value',
     event: 'update'

@@ -11,6 +11,8 @@ div
   CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
   ContentGroup(
     v-for="(content_group, index) in contents_groups",
+    :keysBackend="keysBackend"
+    :content_group_back="contentGroupInit[index]"
     :content_group_data="content_group",
     ref="content_group"
     :index_content_group="index"
@@ -56,6 +58,10 @@ export default {
     ContentGroup,
     CryptoDialog
   },
+  beforeMount () {
+    this.keysBackend = Object.keys(this.contents_groups)
+    this.contentGroupInit = JSON.parse(JSON.stringify(this.contents_groups))
+  },
   mounted () {
     if (this.getIsEdit) {
       this.isEdit = true
@@ -68,6 +74,8 @@ export default {
   },
   data () {
     return {
+      contentGroupInit: undefined,
+      keysBackend: [],
       isEdit: false,
       openCryptoDialog: false,
       keyToEncrypt: undefined,
@@ -89,8 +97,8 @@ export default {
         this.contents_groups[current] = this.contents_groups[prev]
         delete this.contents_groups[prev]
       } else if (count === 0 && prev === 'content_group') {
-        this.contents_groups[current] = this.contents_groups['Content_group']
-        delete this.contents_groups['Content_group']
+        this.contents_groups[current] = this.contents_groups['content group']
+        delete this.contents_groups['content group']
       } else {
         this.showErrorMsg('Label duplicated')
         return false
@@ -107,13 +115,13 @@ export default {
       this.openCryptoDialog = bool
     },
     onAddContentGroup () {
-      this.contents_groups['Content_group'] = [
-        {
-          title: 'content_group',
-          key: 'Key',
-          value: 'Value',
-          dataType: 's'
-        }
+      this.contents_groups['content group'] = [
+        // {
+        //   title: 'content_group',
+        //   key: 'Key',
+        //   value: 'Value',
+        //   dataType: 's'
+        // }
       ]
       this.$forceUpdate()
     },
@@ -129,5 +137,5 @@ export default {
   width: 170px !important
 .keyIcon
   font-size: 24px
-  color: #4338CA !important
+  color: $primary
 </style>

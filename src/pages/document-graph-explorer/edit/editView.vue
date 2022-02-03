@@ -2,7 +2,8 @@
 div
   div(v-if="loading" class="center")
     q-spinner-tail(
-      color="indigo"
+      data-cy="spinner"
+      class="text-brand-primary"
       size="1.5em"
     )
 
@@ -11,7 +12,11 @@ div
     q-form(ref='contentGroup')
       ListContentGroup(:contents_groups="contentsGroups")
     Edges(:edges="edges" @showModal="openModal")
-    q-dialog(v-model='showDialogEdge')
+    q-dialog(
+      v-model='showDialogEdge'
+      transition-show="fade"
+      transition-hide="fade"
+    )
       EdgeDialog(@EdgeData='addNewEdge')
     #BtnSection
     .row.q-gutter-md.q-py-md
@@ -128,7 +133,6 @@ export default {
           contentGroup = []
         }
         this.callEditAction(contentGroups)
-        console.log(contentGroups)
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to format the content groups ' + error)
       }
@@ -141,7 +145,7 @@ export default {
         this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
-        await new Promise(resolve => setTimeout(resolve, 500))
+        await new Promise(resolve => setTimeout(resolve, 1500))
         await this.showSuccessMsg('The changes was saved')
         this.loadData()
         // this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
@@ -158,7 +162,6 @@ export default {
       let toNode = form.direction
       let edgeName = form.edgeName
       let creator = this.account
-      console.log({ fromNode, toNode, edgeName, creator })
       await this.ActionsApi.createEdge({ fromNode, toNode, edgeName, creator })
       this.showDialogEdge = false
       this.$q.loading.show({

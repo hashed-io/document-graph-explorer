@@ -4,7 +4,6 @@ div
   q-select(
     data-cy='selectDocType'
     outlined
-    color='indigo-6'
     v-model="content"
     :placeholder="value"
     :options="options"

@@ -2,7 +2,7 @@
 .q-py-sm
   TitleContentGroup(
     :isEditSystem="isEditSystem"
-    :isEdit="isEdit"
+    :isEdit="isEditTitle"
     :title="index_content_group"
     @deleteTitle="onDeleteTitle"
     @onSaveTitle="onSaveTitle"
@@ -14,11 +14,11 @@
     :row-key="(row) => row.label",
     :pagination="initialPagination",
     clearable,
-    no-data-label="There arent content_group",
+    no-data-label="There arent content group",
     ref="table",
     hide-bottom,
     separator="none",
-    table-header-class="hdTable"
+    card-class="tableColor"
     :visible-columns="visibleColumns"
     wrap-cells
   )
@@ -26,17 +26,20 @@
       q-tr(:props="props")
         template(v-if="editableRow !== props.rowIndex")#ReadMode
           q-td(
+            data-cy='keyRead'
             key="key",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           ) {{ props.row.key }}
           q-td(
+            data-cy="valueRead"
             key="value",
             :props="props",
-            style="word-break: break-all;"
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            style="word-break: break-word;"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             div(
+              style="overflow-wrap: break-word;"
               v-if="!isIpfs(props.row.value) && !isEncrypt(props.row.value)"
               :inner-html.prop="render(props.row.value, true)"
               @click="seeValue(props.row.value)"
@@ -45,6 +48,7 @@
               v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
               q-chip(
+                data-cy='chipIpfs'
                 :ripple="false"
                 size="12px"
                 clickable
@@ -62,6 +66,7 @@
               v-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
             )
               q-chip(
+                data-cy='chipEncrypt'
                 :ripple="false"
                 size="12px"
                 clickable
@@ -76,35 +81,37 @@
                   content-style="font-size: 12px"
                 ) {{$t('pages.documentExplorer.edit.contentGroup.encrypt')}}
           q-td(
+            data-cy="dataTypeRead"
             key="dataType",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           ) {{ getDataType(props.row.dataType) }}
           q-td(
+            data-cy="ActionRead"
             v-if="isEdit  && editableRow !== props.rowIndex"
             key='Actions',
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             template
               .row.justify-center.q-col-gutter-md
                 .col-xs-12.col-sm-12.col-md-6
                   div(
                     data-cy="editRowButton"
-                    class='text-brand-primary text-capitalize animated-icon'
+                    class='actionsButton text-capitalize animated-icon'
                     @click='onEditRow(props.row, props.rowIndex )'
                   ) Edit
-                .col-xs-12.col-sm-12.col-md-6(v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'")
+                .col-xs-12.col-sm-12.col-md-6
                   div(
+                    v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'"
                     data-cy="deleteRowButton"
-                    class='text-capitalize animated-icon'
-                    style='color: #DC2626'
-                    @click='onEraseRow(props.rowIndex )'
+                    class='text-capitalize deleteButton animated-icon'
+                    @click='onEraseRow(props.rowIndex)'
                   ) Delete
         template(v-else)#EditMode
           q-td(
             key="key",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             template(
               v-if="isEdit && !isEditSystem && props.row.key === 'nodeLabel'"
@@ -123,7 +130,7 @@
             key="value",
             style="word-break: break-all;",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             q-form(ref='valueForm')
               TInput(
@@ -131,6 +138,9 @@
                 v-model="newData.value",
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
                 :autofocus="isEdit && isEditSystem"
+                :mask="newData.dataType === 't' ? '####-##-## ##:##': ''"
+                :fillMask="newData.dataType === 't'"
+                :hint="newData.dataType === 't' ? 'YYYY-MM-DD HH:MM':''"
                 dense,
                 :rules="getRules(newData.dataType)"
                 :autogrow="getType(newData.dataType) === 'textarea'"
@@ -157,7 +167,7 @@
           q-td(
             key="dataType",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             template(
               v-if="isEdit && isEditSystem"
@@ -176,26 +186,26 @@
           q-td(
             v-show="isEdit && editableRow !== undefined && editableRow === props.rowIndex",
             key='Save',
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
           )
             .row.q-col-gutter-md.q-pb-md
               .col-xs-12.col-sm-12.col-md-6
                 div(
                   data-cy='saveEdit'
-                  class='text-capitalize animated-icon text-brand-primary'
+                  class='text-capitalize animated-icon actionsButton'
                   @click='onSave(props.rowIndex, props.row)'
                 ) Save
               .col-xs-12.col-sm-12.col-md-6
                 div(
                   data-cy='cancelEdit'
-                  class='text-capitalize animated-icon text-brand-primary'
+                  class='text-capitalize animated-icon actionsButton'
                   @click='onCancel(props.rowIndex, props.row)'
                 ) Cancel
   .row.justify-end
     q-icon(
         data-cy='addRowButton'
         v-if='isEdit'
-        class='text-brand-primary q-py-sm animated-icon',
+        class='text-brand-primary q-py-sm cursor-pointer',
         size="2rem",
         @click="onAddRow()"
       )
@@ -232,24 +242,43 @@ export default {
     cryptoKey: {
       type: String,
       required: false
+    },
+    keysBackend: {
+      type: Array,
+      required: true
+    },
+    content_group_back: {
+      type: Array,
+      required: false,
+      default: function () {
+        return []
+      }
     }
   },
   computed: {
     ...mapGetters('documentGraph', ['getIsEdit'])
   },
-  mounted () {
+  beforeMount () {
+    this.isEdit = true
+    if (this.keysBackend.length > 0) {
+      this.isEditTitle = !(this.keysBackend.includes(this.index_content_group))
+    }
     if (this.getIsEdit) {
-      this.modifiedData()
+      this.modifiedData({ edit: true })
       this.isEditSystem = false
-      this.isEdit = true
       this.visibleColumns.push('actions')
     } else {
+      this.modifiedData({ edit: false })
       this.isEditSystem = false
       this.isEdit = false
     }
   },
+  mounted () {
+  },
   data () {
     return {
+      isEditTitle: false,
+      isValid: true,
       isEditSystem: false,
       limitChars: 500,
       typeInput: true,
@@ -307,8 +336,7 @@ export default {
           label: 'Key',
           align: 'left',
           headerStyle: 'width:15%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.key,
           sortable: true
         },
@@ -317,8 +345,7 @@ export default {
           label: 'Value',
           align: 'left',
           headerStyle: 'width:55%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2   text-uppercase',
           field: (row) => row.value,
           sortable: true
         },
@@ -327,8 +354,7 @@ export default {
           label: 'Data Type',
           align: 'left',
           headerStyle: 'width:10%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase ',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2  text-uppercase ',
           field: (row) => row.dataType,
           sortable: true
         },
@@ -337,8 +363,7 @@ export default {
           label: 'Actions',
           align: 'justify',
           headerStyle: 'width:10%; font-size:12px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8  text-uppercase',
-          style: 'color: rgb(107,114,128);',
+          headerClasses: 'tableColor text-subtitle2   text-uppercase',
           sortable: false
         }
       ]
@@ -370,8 +395,8 @@ export default {
         case 'asset':
           rule = 'required'
           break
-        case 'time':
-          rule = 'required'
+        case 'time_point':
+          rule = 'isTimePoint'
           break
         case 'string':
           rule = 'required'
@@ -392,7 +417,7 @@ export default {
         let md = DOMPurify.sanitize(marked(value))
         this.$q.dialog({
           title: 'Complete value',
-          style: 'border-radius:10px;',
+          style: 'border-radius:10px; width:auto',
           position: 'standard',
           seamless: false,
           transitionShow: 'fade',
@@ -434,15 +459,22 @@ export default {
         return ipfsString
       }
     },
-    async modifiedData () {
+    async modifiedData (bool) {
+      let filterContentGroup = []
       this.contentGroupCopy.forEach(element => {
-        // element.value = marked(element.value)
-        element.optional = {
-          encrypt: false,
-          ipfs: false,
-          file: undefined
+        // If the value is empty won't show to user in UI
+        if (element.value !== '') {
+          if (bool.edit) {
+            element.optional = {
+              encrypt: false,
+              ipfs: false,
+              file: undefined
+            }
+          }
+          filterContentGroup.push(element)
         }
       })
+      this.contentGroupCopy = filterContentGroup
     },
     getDataType (val) {
       const types = {
@@ -535,7 +567,15 @@ export default {
         this.showErrorMsg('The key is necessary')
       }
     },
-    onAddRow () {
+    async onAddRow () {
+      if (this.$refs.keyForm) {
+        let key = await this.$refs.keyForm.validate()
+        let value = await this.$refs.valueForm.validate()
+        let dataType = await this.$refs.selectTypeForm.validate()
+        if (!key || !value || !dataType) {
+          return this.showErrorMsg('Fill the information')
+        }
+      }
       let emptyObject = {
         optional: {
           encrypt: false,
@@ -562,12 +602,27 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.colorEncrypt
-  color: #059669
+.actionsButton
+  color: $positive
+.deleteButton
+  color: $delete-button !important
+.tableColor
+  background : $table-header-color !important
+  color: $table-header-font !important
+.rowOdd
+  background: $table-content-color-odd
+  color: $table-content-font-odd
+.rowEven
+  background: $table-content-color-even
+  color: $table-content-font-even
+.q-chip
+  background: $chip-bg
+  margin: 0px
+  color: $chip-font
 .topAlign
   padding-top: 0.1rem
 .titleClass
-  color: rgb(107, 114, 128);
+  color: $title-content-group !important
 .cardTailWind
   border-radius: 50px !important
   width: 500px !important

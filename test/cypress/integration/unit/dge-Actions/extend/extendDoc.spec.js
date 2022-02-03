@@ -35,6 +35,8 @@ describe('Extend the Document', () => {
       .type(fakeValue)
     cy.dataCy('saveEdit')
       .click()
+    cy.dataCy('addRowButton')
+      .click()
   })
 })
 describe('Extend document [For]', () => {
@@ -54,12 +56,9 @@ describe('Extend document [For]', () => {
         .type(Faker.name.findName())
       cy.dataCy('saveTitleButton')
         .click()
-      cy.dataCy('editRowButton').then(($el) => {
-        var itemCount = Cypress.$($el).length - 1
-        cy.dataCy('editRowButton')
-          .eq(itemCount)
-          .click()
-      })
+      cy.dataCy('addRowButton')
+        .last()
+        .click()
       let keyValue = Faker.company.companyName() + k
       let dataType = 0
       cy.fillRow(keyValue, dataType, { isFirst: true, isEncrypt: false, isIPFS: false })
@@ -71,6 +70,13 @@ describe('Extend document [For]', () => {
 describe('Save doc', () => {
   it('Saving using Anchor', () => {
     cy.dataCy('saveDoc')
+      .click()
+  })
+  it('Assert the correct transaction', () => {
+    cy.get('[class=anchor-link-manual]')
+      .invoke('text')
+      .should('be.equal', 'Sign manually or with another device')
+    cy.get('[class=anchor-link-close]')
       .click()
   })
 })

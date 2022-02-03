@@ -29,12 +29,10 @@ describe('Edit the Document', () => {
         if (k > 0) {
           cy.dataCy('selectType').then(($b) => {
             cy.dataCy('keyField')
-              .type('L')
-              .clear()
+              .type('{selectall}{backspace}')
               .type(Faker.lorem.sentence())
             cy.dataCy('valueField')
-              .type(0)
-              .clear()
+              .type('{selectall}{backspace}')
               .type(Faker.datatype.number())
             cy.log('👌')
             cy.dataCy('saveEdit')
@@ -43,8 +41,7 @@ describe('Edit the Document', () => {
         } else {
           fakeValue = Faker.lorem.words()
           cy.dataCy('valueField')
-            .type('L')
-            .clear()
+            .type('{selectall}{backspace}')
             .type(fakeValue)
           cy.dataCy('saveEdit')
             .click()
@@ -87,6 +84,15 @@ describe('Edit the Document', () => {
 describe('Save doc', () => {
   it('Saving using Anchor', () => {
     cy.dataCy('saveDoc')
+      .click()
+  })
+})
+describe('Assert the transaction', () => {
+  it('Assert the correct transaction', () => {
+    cy.get('[class=anchor-link-manual]')
+      .invoke('text')
+      .should('be.equal', 'Sign manually or with another device')
+    cy.get('[class=anchor-link-close]')
       .click()
   })
 })

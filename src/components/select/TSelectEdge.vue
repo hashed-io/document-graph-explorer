@@ -3,7 +3,6 @@ div
   .text-subtitle3 {{label}}
   q-select(
     outlined
-    color='indigo-6'
     v-model="content"
     :placeholder="value"
     :options="options"

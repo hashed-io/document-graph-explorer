@@ -1,9 +1,9 @@
 <template lang="pug">
 div
   q-spinner-tail(
-    color="indigo"
+    data-cy="spinner"
+    class="text-brand-primary center"
     size="1.5em"
-    class="center"
     v-if="loadingData"
   )
   div(v-if="!loadingData")
@@ -13,10 +13,9 @@ div
           | {{$t('pages.documentExplorer.listDocs.title')}}
     .row.q-pb-sm.justify-between
       .col-4
-        div
+        div(v-show="account")
           q-btn(
               data-cy="newDocButton"
-              v-if="account"
               label='New Document'
               @click='newDoc'
               unelevated
@@ -28,7 +27,7 @@ div
           data-cy='search'
           v-model='search'
           dense
-          debounce='500'
+          debounce='750'
           @update="onSearchDoc"
           placeholder='Search'
         )
@@ -38,9 +37,10 @@ div
       binary-state-sort
       :loading="loadingDocs"
       :data="documents"
+      :dense="$q.screen.sm"
       :grid="$q.screen.xs"
       :columns="columns"
-      card-class="bg-grey-1"
+      card-class="tableColor"
       :visible-columns='visibleColumns'
     ).TailWind
       template(v-slot:loading)
@@ -51,7 +51,7 @@ div
         )
         q-inner-loading(showing)
           q-spinner-tail(
-            color="indigo"
+            class="text-brand-primary"
             size="1.5em"
           )
       template(v-slot:body="props")
@@ -61,15 +61,23 @@ div
             v-for="col in props.cols",
             :key="col.name",
             :props="props",
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-1'"
+            :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
             @click='seeDocument(props.row)'
           )
-            div(style='color: grey') {{ col.value }}
+            div(v-if="col.name !== 'highlight'") {{ col.value }}
+            div(class="text-left" v-else)
+              div(v-for="(item, index) in col.value" :key="props.rowIndex+' '+index")
+                q-badge(rounded class="badgeColor") {{getContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" class="arrow")
+                q-badge(rounded class="badgeColor" v-if="getNameContentGroup(index)") {{getNameContentGroup(index)}}
+                q-icon(size="1.5em" name="chevron_right" class="arrow" v-if="getNameContentGroup(index)")
+                q-badge(rounded class="badgeColor")
+                  div(v-html="item[0]")
       template(v-slot:pagination="scope")
         q-btn(
+            class="colorPagination"
             v-if="scope.pagesNumber > 2"
             icon="first_page"
-            color="grey-8"
             round
             dense
             flat
@@ -77,8 +85,8 @@ div
             @click="scope.firstPage"
         )
         q-btn(
+            class="colorPagination"
             icon="chevron_left"
-            color="grey-8"
             round
             dense
             flat
@@ -86,9 +94,9 @@ div
             @click="scope.prevPage"
         )
         q-btn(
+            class="colorPagination"
             data-cy="nextPage"
             icon="chevron_right"
-            color="grey-8"
             round
             dense
             flat
@@ -96,10 +104,10 @@ div
             @click="scope.nextPage"
         )
         q-btn(
+            class="colorPagination"
             data-cy="lastPage"
             v-if="scope.pagesNumber > 2"
             icon="last_page"
-            color="grey-8"
             round
             dense
             flat
@@ -110,7 +118,6 @@ div
         .q-pa-xs.col-xs-12.col-sm-6.col-md-4
           q-card(
             @click="seeDocument(props.row)"
-            :class="props.rowIndex % 2 === 0 ? 'bg-white' : 'bg-grey-2'"
           )
             q-card-section.text-justify
               br
@@ -134,6 +141,13 @@ div
                 div(:class="props.row.hasOwnProperty('hash') ? 'col-4' : 'col-8'")
                   strong CREATED AT
                   div {{ props.row.createdDate }}
+      template(v-slot:no-data="{ icon, message }")
+        .full-width.row.flex-center.q-gutter-sm
+          div(v-if="search" style="width: 20px; height: 20px;")
+            svg(xmlns="http://www.w3.org/2000/svg" viewbox="0 0 10 10" fill="currentColor")
+              path(fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd")
+          .text-caption.text-grey.text-bold
+            | {{ search ? $t('pages.documentExplorer.explorer.noDataOnSearch')+' \"' + search +'\"' : message }}
 </template>
 
 <script>
@@ -154,6 +168,14 @@ export default {
       search: undefined,
       prevDoc: undefined,
       loadingDocs: undefined,
+      paramsElastic: {
+        from: 0,
+        size: 10,
+        fields: ['*'],
+        fuzziness: 'auto',
+        endpoint: undefined,
+        apikey: undefined
+      },
       pagination: {
         sortBy: 'desc',
         descending: false,
@@ -161,75 +183,79 @@ export default {
         rowsPerPage: 5,
         rowsNumber: 6
       },
-      visibleColumns: ['creator', 'type', 'hash', 'createdDate', 'docid', 'system'],
+      visibleColumns: ['creator', 'type', 'createdDate', 'docid', 'system'],
       columns: [
         {
           name: 'docid',
           label: 'Doc id',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.docId
         },
         {
           name: 'creator',
           label: 'Creator',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128);',
           field: (row) => row.creator
         },
         {
           name: 'system',
           label: 'Node Label',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128);',
           field: (row) => row.system_nodeLabel_s
         },
         {
           name: 'type',
           label: 'Type',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128)',
           field: (row) => row.type
         },
         {
           name: 'hash',
           label: 'Hash',
           headerStyle: 'font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           align: 'left',
-          style: 'color: rgb(107,114,128)',
           field: (row) => row.hash
         },
         {
           name: 'createdDate',
           label: 'Created Date',
           headerStyle: ' font-size:14px;',
-          headerClasses: 'bg-grey-1 text-subtitle2 text-grey-8 text-uppercase',
-          style: 'color: rgb(107,114,128)',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
           field: (row) => row.createdDate,
           format: (val, row) => {
             return this.dateToString(val)
           }
-        }
-      ],
-      endpoints: [
-        {
-          label: 'Hypha',
-          value: 'https://alpha-st.tekit.io/graphql'
         },
         {
-          label: 'Cannabis',
-          value: 'https://hashed.systems/alpha-trace-test/graphql'
+          name: 'score',
+          label: 'Score',
+          headerStyle: ' font-size:14px;',
+          headerClasses: 'tableColor text-subtitle2 text-uppercase',
+          field: (row) => row.score
         },
         {
-          label: 'Social',
-          value: 'https://hashed.systems/alpha-dge-test/graphql'
+          name: 'highlight',
+          label: 'Highlight',
+          headerStyle: ' font-size:14px;',
+          headerClasses: 'tableColor text-subtitle2 text-grey-8 text-uppercase',
+          field: (row) => row.highlight
+          // format: (val, row) => {
+          //   let rowHighlight = row.highlight
+          //   for (const key in rowHighlight) {
+          //     const splitKey = key.split('_')
+          //     text += splitKey[0] + ' > ' + splitKey[1] + ' > '
+          //     text += rowHighlight[key][0] + '<br>'
+          //   }
+          //   return text
+          // }
         }
       ]
     }
@@ -252,7 +278,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('documentGraph', ['isHashed', 'documentInterface']),
+    ...mapState('documentGraph', ['isHashed', 'documentInterface', 'contractInfo']),
     ...mapState('documentGraph', ['endpointApollo']),
     ...mapState('accounts', ['account']),
     Endpoint () {
@@ -261,6 +287,7 @@ export default {
   },
   watch: {
     async Endpoint (newValue, oldValue) {
+      this.documents = []
       this.loadingData = true
       this.endpoint = newValue
       this.pagination.page = 1
@@ -278,9 +305,28 @@ export default {
     }
   },
   methods: {
+    ...mapActions('elasticSearch', ['searchDoc']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
     ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    getContentGroup (row) {
+      let contentGroup = row.split('_')
+      return contentGroup[0]
+    },
+    getNameContentGroup (row) {
+      let contentGroup = row.split('_')
+      return contentGroup[1]
+    },
     async onSearchDoc () {
+      if (await this.getEndpointToSearch()) {
+        await this.searchOnElastic()
+      } else {
+        await this.searchOnDgraph()
+      }
+    },
+    async getEndpointToSearch () {
+      return this.contractInfo ? this.contractInfo.hasOwnProperty('elasticEndpoint') : false
+    },
+    async searchOnDgraph () {
       const docInterface = this.getLocalStorage('documentInterface')
       const documentID = this.search
       const data = await this.getDocumentsByDocId({
@@ -329,8 +375,67 @@ export default {
         }
       }
     },
+    async getElasticSearchCredentials () {
+      const endpoint = 'elasticEndpoint'
+      const apikey = 'elasticApiKey'
+      return { endpoint: this.contractInfo[endpoint], apikey: this.contractInfo[apikey] }
+    },
+    async searchOnElastic () {
+      if (this.search !== '') {
+        this.loadingDocs = true
+        let credentialsObj = await this.getElasticSearchCredentials()
+        this.paramsElastic.endpoint = credentialsObj.endpoint
+        this.paramsElastic.apikey = credentialsObj.apikey
+        let response = await this.searchDoc({
+          search: this.search,
+          params: this.paramsElastic
+        })
+        response = response.hits.hits.length > 0 ? response.hits.hits : undefined
+        if (response) {
+          var docsArr = []
+          response.forEach(element => {
+            let _element = element._source
+            let obj = {
+              contract: _element.contract,
+              createdDate: _element.createdDate,
+              creator: _element.creator,
+              docId: _element.docId,
+              docId_i: _element.docId_i,
+              system_nodeLabel_s: _element.system_nodeLabel_s,
+              type: _element.type,
+              updatedDate: _element.updatedDate,
+              __typename: _element.type,
+              score: element._score.toString(),
+              highlight: element.highlight
+            }
+            docsArr.push(obj)
+          })
+          this.documents = docsArr
+          this.visibleColumns.push('score')
+          this.visibleColumns.push('highlight')
+        } else {
+          this.documents = []
+          this.clearElasticColumns()
+        }
+        this.loadingDocs = false
+      } else {
+        this.loadingDocs = true
+        this.clearElasticColumns()
+        await this.loadDocuments()
+        this.loadingDocs = false
+      }
+    },
+    clearElasticColumns () {
+      const existScore = (element) => element === 'score'
+      let index = this.visibleColumns.findIndex(existScore)
+      if (index >= 0) {
+        this.visibleColumns.pop()
+        this.visibleColumns.pop()
+      }
+    },
     async onRequest (props) {
       this.loadingDocs = true
+      this.clearElasticColumns()
       const { page, rowsPerPage, sortBy, descending, rowsNumber } = props.pagination
       let offset = (page - 1) * rowsPerPage
       let limit = rowsPerPage
@@ -371,7 +476,6 @@ export default {
         })
         let _props = typeSchema['__type'].fields
         const found = _props.find(element => element.name === 'system_nodeLabel_s')
-        // const found = true
         if (found) {
           let byElement = doc.docId
           if (this.isHashed) {
@@ -405,7 +509,7 @@ export default {
       if (contractInfo) {
         this.setContractInfo(contractInfo.queryDoccacheConfig[0])
       } else {
-        this.setContractInfo('Default contract information')
+        this.setContractInfo(undefined)
       }
     },
     async getDocInterface () {
@@ -413,7 +517,7 @@ export default {
         type: 'Document'
       })
       let interfaceString = ''
-      let flag
+      let flag = 0
       docInterface['__type'].fields.forEach(element => {
         if (element.name === 'docId') {
           flag = 1
@@ -425,7 +529,8 @@ export default {
       if (!flag) {
         this.setIsHashed(true)
         if (index >= 0) {
-          this.visibleColumns.splice(index, 1)
+          this.visibleColumns.splice(index, 1, 'hash')
+          this.$forceUpdate()
         }
       } else {
         this.setIsHashed(false)
@@ -510,6 +615,19 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.rowOdd
+  background: $table-content-color-odd
+  color: $table-content-font-odd
+.rowEven
+  background: $table-content-color-even
+  color: $table-content-font-even
+
+.colorPagination
+  color: $table-pagination
+.arrow
+  color: $chip-arrow !important
+.badgeColor
+  background: $chip-highlight !important
 .center
   position: absolute;
   top: 45%;
@@ -520,6 +638,9 @@ export default {
   height: 200px;
 .TailWind
   border-radius: 10px
+.tableColor
+  background : $table-header-color
+  color: $table-header-font
 .btnTailwind
   height: 42px
   width: 135px

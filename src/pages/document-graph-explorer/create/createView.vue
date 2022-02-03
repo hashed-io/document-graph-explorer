@@ -6,6 +6,7 @@ div
   .row
     q-form(ref='docTypeSelect').col-4
       TSelectFilter(
+        data-cy='docTypeName'
         :rules="[rules.required]"
         v-model='documentType'
         :debounce="0"
