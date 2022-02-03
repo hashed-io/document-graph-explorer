@@ -12,13 +12,18 @@ export const leftMenuTelosKitchen = {
         color: 'black'
       },
       {
-        label: 'Social',
+        label: 'Demo - Social',
         value: 'https://hashed.systems/alpha-dge-test/graphql',
         color: 'black'
       },
       {
-        label: 'Cacao',
+        label: 'Demo - Cacao',
         value: 'https://hashed.systems/alpha-trace-test/graphql',
+        color: 'black'
+      },
+      {
+        label: 'Public',
+        value: 'https://hashed.systems/alpha-dg-mainnet/graphql',
         color: 'black'
       }
     ]
