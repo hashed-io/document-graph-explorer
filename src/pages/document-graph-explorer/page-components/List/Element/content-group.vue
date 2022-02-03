@@ -417,7 +417,7 @@ export default {
         let md = DOMPurify.sanitize(marked(value))
         this.$q.dialog({
           title: 'Complete value',
-          style: 'border-radius:10px;',
+          style: 'border-radius:10px; width:auto',
           position: 'standard',
           seamless: false,
           transitionShow: 'fade',

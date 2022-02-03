@@ -20,7 +20,7 @@ export const documentExplorer = {
         type: 'Document',
         props: '',
         docInterface: docInterface,
-        isHashed: !(queryParams.hasOwnProperty('document_id'))
+        isHashed: this.isHashed
       })
       this.setDocument(response.queryDocument[0])
       this.setIsEdit(false)
