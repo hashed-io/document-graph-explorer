@@ -206,8 +206,7 @@ export default {
       }
     },
     async getEnpointToSearch () {
-      // TODO: [document selector] identify if the current DGraph endpoint has elastic search endpoint.
-      return await this.getLocalStorage({ key: 'apollo-endpoint' }) === 'https://hashed.systems/alpha-trace-test/graphql'
+      return this.contractInfo ? this.contractInfo.hasOwnProperty('elasticEndpoint') : false
     },
     async searchOnDgraph () {
       this.loadingDocs = true

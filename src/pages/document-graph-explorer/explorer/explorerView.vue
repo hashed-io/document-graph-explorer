@@ -2,6 +2,7 @@
 div
   div(v-show="loading" class="center")
     q-spinner-tail(
+      data-cy="spinner"
       class="text-brand-primary"
       size="1.5em"
     )
@@ -97,9 +98,6 @@ export default {
     ...mapActions('documentGraph', ['deleteDoc']),
     navigateToEdge (edgeData) {
       let data = JSON.parse(JSON.stringify(this.documentInfo))
-      console.log('-------------')
-      console.log(data)
-      console.log('-------------')
       delete data.system_nodeLabel_s
       delete data.updatedDate
       this.pushDocNavigation(data)
