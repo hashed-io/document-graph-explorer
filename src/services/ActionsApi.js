@@ -30,8 +30,6 @@ class ActionsApi extends BaseEosApi {
    * @param {*} param0
    */
   async certifyDoc ({ documentID, certifier, signature, notes }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'certify',
@@ -40,11 +38,7 @@ class ActionsApi extends BaseEosApi {
         document_id: documentID,
         signature: signature,
         notes: notes
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
+      }
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
@@ -54,19 +48,13 @@ class ActionsApi extends BaseEosApi {
    * @param {*} param0
    */
   async editDoc ({ documentID, contentGroups }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'editdoc',
       data: {
         documentID: documentID,
         content_groups: contentGroups
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
+      }
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
@@ -77,18 +65,12 @@ class ActionsApi extends BaseEosApi {
    * @returns transaction
    */
   async deleteDoc ({ documentID }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'deletedoc',
       data: {
         documentID: documentID
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
+      }
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
@@ -102,8 +84,6 @@ class ActionsApi extends BaseEosApi {
    * @returns transaction
    */
   async deleteEdge ({ fromNode, toNode, edgeName }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'deleteedge',
@@ -111,11 +91,7 @@ class ActionsApi extends BaseEosApi {
         fromNode: fromNode,
         toNode: toNode,
         edgeName: edgeName
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
+      }
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
@@ -130,8 +106,6 @@ class ActionsApi extends BaseEosApi {
    * @returns transaction
    */
   async createEdge ({ creator, fromNode, toNode, edgeName }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'createedge',
@@ -140,11 +114,7 @@ class ActionsApi extends BaseEosApi {
         fromNode: fromNode,
         toNode: toNode,
         edgeName: edgeName
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
+      }
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
@@ -155,26 +125,18 @@ class ActionsApi extends BaseEosApi {
    * @returns transaction
    */
   async createDoc ({ creator, contentGroups }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'createdoc',
       data: {
         creator: creator,
         content_groups: contentGroups
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
+      }
     }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
   async extendDoc ({ creator, fromNode, edgeName, contentGroups }) {
-    var authorization = `${this.contractAccount}@active`
-    let [actor, permission] = authorization.split('@')
     const actions = [{
       account: this.contractAccount,
       name: 'extenddoc',
@@ -183,29 +145,8 @@ class ActionsApi extends BaseEosApi {
         fromNode: fromNode,
         edgeName: edgeName,
         content_groups: contentGroups
-      },
-      authorization: [{
-        actor,
-        permission
-      }]
-    }]
-    console.log('actions: ', actions)
-    return this.eosApi.signTransaction(actions)
-  }
-  /**
-   *
-   * @param {  }
-   * @returns
-   */
-  async Reset () {
-    const actions = [
-      {
-        account: this.account,
-        name: 'reset',
-        data: {
-        }
       }
-    ]
+    }]
     console.log('actions: ', actions)
     return this.eosApi.signTransaction(actions)
   }
