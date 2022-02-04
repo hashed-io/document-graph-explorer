@@ -44,8 +44,11 @@
               :inner-html.prop="render(props.row.value, true)"
               @click="seeValue(props.row.value)"
             )
+            div(v-if="props.row.dataType === 'sd'")
+              q-chip(
+              ) File
             div(
-              v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
+              v-else-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
               q-chip(
                 data-cy='chipIpfs'
@@ -63,7 +66,7 @@
                   content-style="font-size: 12px"
                 ) {{$t('pages.documentExplorer.edit.contentGroup.ipfs')}}
             div(
-              v-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
+              v-else-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
             )
               q-chip(
                 data-cy='chipEncrypt'
@@ -134,6 +137,7 @@
           )
             q-form(ref='valueForm')
               TInput(
+                v-if="newData.dataType !== 'sd'"
                 data-cy="valueField"
                 v-model="newData.value",
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
@@ -148,6 +152,10 @@
                 class="verticalCenter",
                 placeholder="Enter the value"
               )
+              TFile(
+                v-else
+                label='Upload file to IPFS'
+                )
             .row(v-if="newData.dataType === 's'")
               q-toggle(
                 data-cy='encryptToggle'
@@ -223,13 +231,15 @@ import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
 import { mapGetters } from 'vuex'
 import TitleContentGroup from './titleContentGroup.vue'
+import TFile from '~/components/file/t-file.vue'
 export default {
   name: 'ContentGroup',
   mixins: [validation],
   components: {
     TInput,
     TSelect,
-    TitleContentGroup
+    TitleContentGroup,
+    TFile
   },
   props: {
     content_group_data: {
@@ -311,6 +321,10 @@ export default {
         {
           label: 'Int64',
           value: 'i'
+        },
+        {
+          label: 'File',
+          value: 'sd'
         }
       ],
       newData: {
@@ -468,7 +482,8 @@ export default {
             element.optional = {
               encrypt: false,
               ipfs: false,
-              file: undefined
+              file: undefined,
+              loadingFile: undefined
             }
           }
           filterContentGroup.push(element)
@@ -483,7 +498,8 @@ export default {
         a: 'asset',
         t: 'time_point',
         s: 'string',
-        i: 'int64'
+        i: 'int64',
+        sd: 'File'
       }
       return types[val]
     },
@@ -580,7 +596,8 @@ export default {
         optional: {
           encrypt: false,
           ipfs: false,
-          file: undefined
+          file: undefined,
+          loadingFile: undefined
         },
         title: this.index_content_group,
         key: '',

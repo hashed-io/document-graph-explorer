@@ -100,7 +100,8 @@ export default {
           a: 'asset',
           t: 'time_point',
           s: 'string',
-          i: 'int64'
+          i: 'int64',
+          sd: 'string'
         }
         var contentGroups = []
         var contentGroup = []
