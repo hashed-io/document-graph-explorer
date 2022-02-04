@@ -571,8 +571,8 @@ export default {
     async loadFromEndpoint () {
       this.loadingData = true
       try {
-        this.modifyApolloEndpoint()
         this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+        this.modifyApolloEndpoint()
         await this.loadDocuments()
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
