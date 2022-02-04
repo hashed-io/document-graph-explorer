@@ -143,7 +143,6 @@ export default {
         await this.newInstance()
         let documentID = this.documentInfo.docId
         await this.ActionsApi.editDoc({ documentID, contentGroups })
-        this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
         await new Promise(resolve => setTimeout(resolve, 1500))
