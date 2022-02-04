@@ -5,12 +5,12 @@ import ApolloClient from 'apollo-boost'
 export const documentExplorer = {
   async mounted () {
     let queryParams = this.$route.query
-    await this.getContractInfo()
     if (queryParams.hasOwnProperty('endpoint')) {
       this.endpoint = queryParams.endpoint
       this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
       await this.loadFromEndpoint()
     }
+    await this.getContractInfo()
     if ((queryParams.hasOwnProperty('document_id') || queryParams.hasOwnProperty('hash')) && this.document === undefined) {
       await this.getDocInterface()
       const docInterface = this.documentInterface
@@ -58,7 +58,8 @@ export const documentExplorer = {
   },
   computed: {
     ...mapState('documentGraph', ['stackNavigation', 'isHashed', 'documentInterface', 'document']),
-    ...mapState('documentGraph', ['contractInfo'])
+    ...mapState('documentGraph', ['contractInfo']),
+    ...mapState('accounts', 'account')
   },
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
@@ -115,8 +116,8 @@ export const documentExplorer = {
     },
     async loadFromEndpoint () {
       try {
-        this.modifyApolloEndpoint()
         this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
+        this.modifyApolloEndpoint()
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to retrieve the documents. Loading from previous endpoint')
         let previousEndpoint = this.getLocalStorage({ key: 'apollo-endpoint' })

@@ -21,6 +21,7 @@ q-layout(view="hHh Lpr lFf").bg-layout
               class="text-white center"
               size="2.5rem"
             )
+        .q-px-md.title Document Graph Explorer
       right-menu-authenticated(v-if="isAuthenticated")
       right-menu-guest(v-if="!isAuthenticated")
   q-drawer(
@@ -38,6 +39,9 @@ q-layout(view="hHh Lpr lFf").bg-layout
 </template>
 
 <style lang="stylus" scoped>
+.title
+  font-size: 14px !important
+  color: white
 .sizeIcon
   width: 20px
   height: 20px
@@ -107,7 +111,7 @@ export default {
       return this.isHashedSystems('statics/icons/hashed.png', 'statics/icons/TelosKitchen.png')
     },
     getSize () {
-      return this.isHashedSystems('10%', '50px')
+      return this.isHashedSystems('80px', '60px')
     }
   }
 }
