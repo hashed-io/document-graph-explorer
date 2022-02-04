@@ -8,7 +8,6 @@ import documentGraph from './documentGraph'
 import elasticSearch from './elasticSearch'
 
 Vue.use(Vuex)
-Vue.config.devtools = true
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation
