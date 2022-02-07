@@ -1,7 +1,7 @@
 <template lang="pug">
 .q-py-md.row.q-gutter-md
   q-btn(
-    v-if="docInfo.creator === account"
+    v-if="account"
     data-cy="extendButton"
     @click="extendDocument()",
     class='text-white btnTailwind'
