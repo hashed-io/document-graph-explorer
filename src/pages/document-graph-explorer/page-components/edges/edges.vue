@@ -200,9 +200,13 @@ export default {
             })
           }
         }
-        return filter
+        return filter.slice().sort(function (a, b) {
+          return (a.createdDate < b.createdDate) ? 1 : -1
+        })
       } else {
-        return this.edges
+        return this.edges.slice().sort(function (a, b) {
+          return (a.createdDate < b.createdDate) ? 1 : -1
+        })
       }
     }
   },
