@@ -46,7 +46,7 @@
             )
             div(v-if="props.row.dataType === 'sd'")
               q-chip(
-              ) File
+              ) FILE
             div(
               v-else-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
@@ -56,7 +56,7 @@
                 size="12px"
                 clickable
                 @click="openIPFS(props.row.value)"
-              ) IPFS
+              ) {{props.row.value.substring(0,7) === 'ipfs://' ? 'IPFS' : 'FILE'}}
                 q-tooltip(
                   content-class='bg-black'
                   transition-show="fade"
@@ -155,6 +155,7 @@
               TFile(
                 v-else
                 label='Upload file to IPFS'
+                @update='getFile'
                 )
             .row(v-if="newData.dataType === 's'")
               q-toggle(
@@ -331,7 +332,8 @@ export default {
         optional: {
           encrypt: false,
           ipfs: false,
-          file: undefined
+          file: undefined,
+          loadingFile: undefined
         },
         title: undefined,
         key: undefined,
@@ -384,6 +386,9 @@ export default {
     }
   },
   methods: {
+    getFile (file) {
+      this.newData.value = file.cid
+    },
     async verifyValue () {
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
@@ -421,10 +426,20 @@ export default {
       }
       return [this.rules[rule]]
     },
-    openIPFS (cid) {
-      cid.substring(0, 7) === 'ipfs://'
-        ? window.open(`https://ipfs.io/ipfs/${cid.substring(7)}`, '_blank')
-        : window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+    async openIPFS (cid) {
+      if (cid.substring(7).includes(':')) {
+        const file = await BrowserIpfs.retrieve(cid.substring(7))
+        var blob = new Blob([file.payload], { type: file.type })
+        var url = window.URL.createObjectURL(blob)
+        var a = document.createElement('a')
+        a.href = url
+        a.target = '_blank'
+        a.click()
+      } else {
+        cid.substring(0, 7) === 'ipfs://'
+          ? window.open(`https://ipfs.io/ipfs/${cid.substring(7)}`, '_blank')
+          : window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+      }
     },
     seeValue (value) {
       if (value.length > this.limitChars) {
