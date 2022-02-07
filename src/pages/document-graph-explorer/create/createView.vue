@@ -157,10 +157,12 @@ export default {
           }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
-            contentGroup.push({
-              label: key,
-              value: [types[element.dataType], element.value]
-            })
+            if (element.value !== '') {
+              contentGroup.push({
+                label: key,
+                value: [types[element.dataType], element.value]
+              })
+            }
           })
           contentGroups.push(contentGroup)
           contentGroup = []
