@@ -139,7 +139,8 @@ export default {
           a: 'asset',
           t: 'time_point',
           s: 'string',
-          i: 'int64'
+          i: 'int64',
+          sd: 'string'
         }
         var contentGroups = []
         var contentGroup = []
@@ -156,10 +157,12 @@ export default {
           }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
-            contentGroup.push({
-              label: key,
-              value: [types[element.dataType], element.value]
-            })
+            if (element.value !== '') {
+              contentGroup.push({
+                label: key,
+                value: [types[element.dataType], element.value]
+              })
+            }
           })
           contentGroups.push(contentGroup)
           contentGroup = []

@@ -42,7 +42,7 @@ class ApolloApi extends BaseEosApi {
       }
     }
     `
-    const { data } = await this.apollo.query({ query: query, errorPolicy: 'ignore', fetchPolicy: 'no-cache' })
+    const { data } = await this.apollo.query({ query: query, errorPolicy: 'ignore' })
     return data
   }
   async getDocumentsByDocId ({ byElement, props, type, docInterface, isHashed }) {
@@ -117,7 +117,7 @@ class ApolloApi extends BaseEosApi {
         }
       }
     `
-    const { data } = await this.apollo.query({ query, fetchPolicy: 'no-cache' })
+    const { data } = await this.apollo.query({ query })
     return data
   }
   async getContractInfo () {

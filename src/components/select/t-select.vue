@@ -43,7 +43,8 @@ export default {
         a: 'Asset',
         t: 'Time',
         s: 'String',
-        i: 'Int64'
+        i: 'Int64',
+        sd: 'File'
       }
       return types[val]
     }

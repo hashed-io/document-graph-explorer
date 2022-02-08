@@ -139,7 +139,8 @@ export default {
           a: 'asset',
           t: 'time_point',
           s: 'string',
-          i: 'int64'
+          i: 'int64',
+          sd: 'string'
         }
         var contentGroups = []
         var contentGroup = []
@@ -156,10 +157,12 @@ export default {
           }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
-            contentGroup.push({
-              label: key,
-              value: [types[element.dataType], element.value]
-            })
+            if (element.value !== '') {
+              contentGroup.push({
+                label: key,
+                value: [types[element.dataType], element.value]
+              })
+            }
           })
           contentGroups.push(contentGroup)
           contentGroup = []
@@ -194,11 +197,13 @@ export default {
       await this.$nextTick()
       this.showDialogEdge = false
     },
-    onCancel () {
+    async onCancel () {
       this.openDialog = true
       this.setIsEdit(false)
       this.$forceUpdate()
-      this.$router.push({ name: 'DocumentExplorer' })
+      let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
+      this.currentEndpoint = apiEndpoint
+      this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
     },
     onCancelModal () {
       this.openDialog = false

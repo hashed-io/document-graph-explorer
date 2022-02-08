@@ -48,7 +48,9 @@
                       transition-show="fade"
                       transition-hide="fade"
                     ) {{ showTooltip(item) }}
-                  .text-caption.text-grey-6
+                  .text-caption.text-grey-6(
+                    data-cy='createdDate'
+                  )
                     | {{ item.type+' | ' }}
                     | {{ dateToString(item.createdDate)}}
               .col-xs-6.col-sm-3.col-md-2
