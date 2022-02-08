@@ -114,163 +114,186 @@ describe('Fill new content group with labels', () => {
       .last()
       .click()
   })
-  it('Fill string label [IPFS]', () => {
-    // Fill the key & value
+  // it('Fill string label [IPFS]', () => {
+  //   // Fill the key & value
+  //   cy.dataCy('keyField')
+  //     .type(Faker.lorem.word() + ' 1')
+  //   cy.dataCy('valueField')
+  //     .type('Lorem')
+  //   cy.intercept('POST', 'https://ipfs.infura.io:5001/api/v0/add?raw-leaves=true&pin=true').as('ipfs')
+  //   cy.dataCy('ipfsToggle')
+  //     .click()
+  //     // save the value edited
+  //   cy.dataCy('saveEdit')
+  //     .click()
+  //   cy.wait('@ipfs')
+  //   // Assert chip IPFS exist
+  //   cy.dataCy('chipIpfs')
+  //     .should('exist')
+  //   // add new Row
+  //   cy.dataCy('addRowButton')
+  //     .last()
+  //     .click()
+  // })
+  // it('Fill checksum label', () => {
+  //   // Key value fill
+  //   cy.dataCy('keyField')
+  //     .type(Faker.lorem.word() + ' 2')
+  //   // changing the data type to checksum
+  //   cy.dataCy('selectType')
+  //     .click()
+  //   cy.get('.q-virtual-scroll__content')
+  //     .children()
+  //     .eq(0)
+  //     .click()
+  //   // Value fill
+  //   cy.dataCy('valueField')
+  //     .type('abc67abc78ac78b789b8a90b8a90c890ca890808d980d890d8908b89089b0898', { delay: 0 })
+  //   // save the value edited
+  //   cy.dataCy('saveEdit')
+  //     .click()
+  //   cy.dataCy('valueRead')
+  //     .last()
+  //     .should(($div) => {
+  //       expect($div.text()).to.eq('abc67abc78ac78b789b8a90b8a90c890ca890808d980d890d8908b89089b0898' + '\n')
+  //     })
+  //   // add new Row
+  //   cy.dataCy('addRowButton')
+  //     .last()
+  //     .click()
+  // })
+  // it('Fill name label', () => {
+  //   // Key value fill
+  //   cy.dataCy('keyField')
+  //     .type(Faker.lorem.word() + ' 3')
+  //   // changing the data type to checksum
+  //   cy.dataCy('selectType')
+  //     .click()
+  //   cy.get('.q-virtual-scroll__content')
+  //     .children()
+  //     .eq(1)
+  //     .click()
+  //   // Value fill
+  //   cy.dataCy('valueField')
+  //     .type('alejandroga1')
+  //   // save the value edited
+  //   cy.dataCy('saveEdit')
+  //     .click()
+  //   cy.dataCy('valueRead')
+  //     .last()
+  //     .should(($div) => {
+  //       expect($div.text()).to.eq('alejandroga1' + '\n')
+  //     })
+  //   // add new Row
+  //   cy.dataCy('addRowButton')
+  //     .last()
+  //     .click()
+  // })
+  // it('Fill time label', () => {
+  //   // Key value fill
+  //   cy.dataCy('keyField')
+  //     .type(Faker.lorem.word() + ' 4')
+  //   // changing the data type to checksum
+  //   cy.dataCy('selectType')
+  //     .click()
+  //   cy.get('.q-virtual-scroll__content')
+  //     .children()
+  //     .eq(2)
+  //     .click()
+  //   // Value fill
+  //   let date = Faker.datatype.number({ min: 2000, max: 2025 }) + '-12' + '-12'
+  //   cy.dataCy('valueField')
+  //     .type(date + '11:30', { delay: 0 })
+  //   // save the value edited
+  //   cy.dataCy('saveEdit')
+  //     .click()
+  //   // Assert
+  //   cy.dataCy('valueRead')
+  //     .last()
+  //     .should(($div) => {
+  //       expect($div.text()).to.eq(date + ' 11:30' + '\n')
+  //     })
+  //   // add new Row
+  //   cy.dataCy('addRowButton')
+  //     .last()
+  //     .click()
+  // })
+  // it('Fill asset label', () => {
+  //   // Key value fill
+  //   cy.dataCy('keyField')
+  //     .type(Faker.lorem.word() + ' 5')
+  //   // changing the data type to checksum
+  //   cy.dataCy('selectType')
+  //     .click()
+  //   cy.get('.q-virtual-scroll__content')
+  //     .children()
+  //     .eq(4)
+  //     .click()
+  //   // Value fill
+  //   let numberRandom = Faker.datatype.number()
+  //   cy.dataCy('valueField')
+  //     .type(numberRandom + ' USD')
+  //   // save the value edited
+  //   cy.dataCy('saveEdit')
+  //     .click()
+  //   // Assert
+  //   cy.dataCy('valueRead')
+  //     .last()
+  //     .should(($div) => {
+  //       expect($div.text()).to.eq(numberRandom + ' USD' + '\n')
+  //     })
+  //   // add new Row
+  //   cy.dataCy('addRowButton')
+  //     .last()
+  //     .click()
+  // })
+  // it('Fill int64 label', () => {
+  //   // Key value fill
+  //   cy.dataCy('keyField')
+  //     .type(Faker.lorem.word() + ' 6')
+  //   // changing the data type to checksum
+  //   cy.dataCy('selectType')
+  //     .click()
+  //   cy.get('.q-virtual-scroll__content')
+  //     .children()
+  //     .eq(5)
+  //     .click()
+  //   // Value fill
+  //   let numberRandom = Faker.datatype.number({ min: 1000, max: 2000 })
+  //   cy.dataCy('valueField')
+  //     .type(numberRandom)
+  //   // save the value edited
+  //   cy.dataCy('saveEdit')
+  //     .click()
+  //   // Assert
+  //   cy.dataCy('valueRead')
+  //     .last()
+  //     .should(($div) => {
+  //       expect($div.text()).to.eq(numberRandom + '\n')
+  //     })
+  // })
+  it('Load File', () => {
+    const fixtureFile = 'pdf-test.pdf'
+    // Key value fill
     cy.dataCy('keyField')
-      .type(Faker.lorem.word() + ' 1')
-    cy.dataCy('valueField')
-      .type('Lorem')
-    cy.intercept('POST', 'https://ipfs.infura.io:5001/api/v0/add?raw-leaves=true&pin=true').as('ipfs')
-    cy.dataCy('ipfsToggle')
+      .type(Faker.lorem.word() + ' 7')
+    // changing the data type to File
+    cy.dataCy('selectType')
       .click()
-      // save the value edited
+    cy.get('.q-virtual-scroll__content')
+      .children()
+      .eq(6)
+      .click()
+    // Value fill
+    cy.intercept('POST', 'https://ipfs.infura.io:5001/api/v0/add?raw-leaves=true&pin=true').as('IPFS')
+    cy.dataCy('fileInput')
+      .attachFile(fixtureFile)
+    cy.wait('@IPFS')
     cy.dataCy('saveEdit')
       .click()
-    cy.wait('@ipfs')
-    // Assert chip IPFS exist
-    cy.dataCy('chipIpfs')
+    // Assert
+    cy.dataCy('FileChip')
       .should('exist')
-    // add new Row
-    cy.dataCy('addRowButton')
-      .last()
-      .click()
-  })
-  it('Fill checksum label', () => {
-    // Key value fill
-    cy.dataCy('keyField')
-      .type(Faker.lorem.word() + ' 2')
-    // changing the data type to checksum
-    cy.dataCy('selectType')
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(0)
-      .click()
-    // Value fill
-    cy.dataCy('valueField')
-      .type('abc67abc78ac78b789b8a90b8a90c890ca890808d980d890d8908b89089b0898', { delay: 0 })
-    // save the value edited
-    cy.dataCy('saveEdit')
-      .click()
-    cy.dataCy('valueRead')
-      .last()
-      .should(($div) => {
-        expect($div.text()).to.eq('abc67abc78ac78b789b8a90b8a90c890ca890808d980d890d8908b89089b0898' + '\n')
-      })
-    // add new Row
-    cy.dataCy('addRowButton')
-      .last()
-      .click()
-  })
-  it('Fill name label', () => {
-    // Key value fill
-    cy.dataCy('keyField')
-      .type(Faker.lorem.word() + ' 3')
-    // changing the data type to checksum
-    cy.dataCy('selectType')
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(1)
-      .click()
-    // Value fill
-    cy.dataCy('valueField')
-      .type('alejandroga1')
-    // save the value edited
-    cy.dataCy('saveEdit')
-      .click()
-    cy.dataCy('valueRead')
-      .last()
-      .should(($div) => {
-        expect($div.text()).to.eq('alejandroga1' + '\n')
-      })
-    // add new Row
-    cy.dataCy('addRowButton')
-      .last()
-      .click()
-  })
-  it('Fill time label', () => {
-    // Key value fill
-    cy.dataCy('keyField')
-      .type(Faker.lorem.word() + ' 4')
-    // changing the data type to checksum
-    cy.dataCy('selectType')
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(2)
-      .click()
-    // Value fill
-    let date = Faker.datatype.number({ min: 2000, max: 2025 }) + '-12' + '-12'
-    cy.dataCy('valueField')
-      .type(date + '11:30', { delay: 0 })
-    // save the value edited
-    cy.dataCy('saveEdit')
-      .click()
-    // Assert
-    cy.dataCy('valueRead')
-      .last()
-      .should(($div) => {
-        expect($div.text()).to.eq(date + ' 11:30' + '\n')
-      })
-    // add new Row
-    cy.dataCy('addRowButton')
-      .last()
-      .click()
-  })
-  it('Fill asset label', () => {
-    // Key value fill
-    cy.dataCy('keyField')
-      .type(Faker.lorem.word() + ' 5')
-    // changing the data type to checksum
-    cy.dataCy('selectType')
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(4)
-      .click()
-    // Value fill
-    let numberRandom = Faker.datatype.number()
-    cy.dataCy('valueField')
-      .type(numberRandom + ' USD')
-    // save the value edited
-    cy.dataCy('saveEdit')
-      .click()
-    // Assert
-    cy.dataCy('valueRead')
-      .last()
-      .should(($div) => {
-        expect($div.text()).to.eq(numberRandom + ' USD' + '\n')
-      })
-    // add new Row
-    cy.dataCy('addRowButton')
-      .last()
-      .click()
-  })
-  it('Fill int64 label', () => {
-    // Key value fill
-    cy.dataCy('keyField')
-      .type(Faker.lorem.word() + ' 6')
-    // changing the data type to checksum
-    cy.dataCy('selectType')
-      .click()
-    cy.get('.q-virtual-scroll__content')
-      .children()
-      .eq(5)
-      .click()
-    // Value fill
-    let numberRandom = Faker.datatype.number({ min: 1000, max: 2000 })
-    cy.dataCy('valueField')
-      .type(numberRandom)
-    // save the value edited
-    cy.dataCy('saveEdit')
-      .click()
-    // Assert
-    cy.dataCy('valueRead')
-      .last()
-      .should(($div) => {
-        expect($div.text()).to.eq(numberRandom + '\n')
-      })
   })
 })
 describe('Assert the transaction', () => {

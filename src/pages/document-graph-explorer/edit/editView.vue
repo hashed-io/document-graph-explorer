@@ -100,7 +100,8 @@ export default {
           a: 'asset',
           t: 'time_point',
           s: 'string',
-          i: 'int64'
+          i: 'int64',
+          sd: 'string'
         }
         var contentGroups = []
         var contentGroup = []
@@ -117,12 +118,7 @@ export default {
           }
           contentgroups[title].forEach(element => {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
-            if (types[element.dataType] === 'int64' && !element.value) {
-              contentGroup.push({
-                label: key,
-                value: [types[element.dataType], 0]
-              })
-            } else {
+            if (element.value !== '') {
               contentGroup.push({
                 label: key,
                 value: [types[element.dataType], element.value]
@@ -145,9 +141,10 @@ export default {
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
         await new Promise(resolve => setTimeout(resolve, 1500))
+        this.setIsEdit(false)
         await this.showSuccessMsg('The changes was saved')
         this.loadData()
-        // this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
+        this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
       }
@@ -170,9 +167,11 @@ export default {
       this.loadData()
       this.$q.loading.hide()
     },
-    onCancel () {
-      this.$router.push({ name: 'DocumentExplorer' })
+    async onCancel () {
       this.setIsEdit(false)
+      let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
+      this.currentEndpoint = apiEndpoint
+      this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
       // this.openDialog = !this.openDialog
       // this.$forceUpdate()
     },

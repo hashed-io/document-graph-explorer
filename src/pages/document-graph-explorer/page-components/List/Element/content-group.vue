@@ -44,8 +44,12 @@
               :inner-html.prop="render(props.row.value, true)"
               @click="seeValue(props.row.value)"
             )
+            div(v-if="props.row.dataType === 'sd'")
+              q-chip(
+                data-cy="FileChip"
+              ) FILE
             div(
-              v-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
+              v-else-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
               q-chip(
                 data-cy='chipIpfs'
@@ -53,7 +57,7 @@
                 size="12px"
                 clickable
                 @click="openIPFS(props.row.value)"
-              ) IPFS
+              ) {{props.row.value.substring(0,7) === 'ipfs://' ? 'IPFS' : 'FILE'}}
                 q-tooltip(
                   content-class='bg-black'
                   transition-show="fade"
@@ -63,7 +67,7 @@
                   content-style="font-size: 12px"
                 ) {{$t('pages.documentExplorer.edit.contentGroup.ipfs')}}
             div(
-              v-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
+              v-else-if="!isIpfs(props.row.value) && isEncrypt(props.row.value)"
             )
               q-chip(
                 data-cy='chipEncrypt'
@@ -134,6 +138,7 @@
           )
             q-form(ref='valueForm')
               TInput(
+                v-if="newData.dataType !== 'sd'"
                 data-cy="valueField"
                 v-model="newData.value",
                 :style="newData.dataType !== 's' ? 'padding-bottom: 1.8rem;' : ''"
@@ -148,6 +153,11 @@
                 class="verticalCenter",
                 placeholder="Enter the value"
               )
+              TFile(
+                v-else
+                label='Upload file to IPFS'
+                @update='getFile'
+                )
             .row(v-if="newData.dataType === 's'")
               q-toggle(
                 data-cy='encryptToggle'
@@ -223,13 +233,15 @@ import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
 import { mapGetters } from 'vuex'
 import TitleContentGroup from './titleContentGroup.vue'
+import TFile from '~/components/file/t-file.vue'
 export default {
   name: 'ContentGroup',
   mixins: [validation],
   components: {
     TInput,
     TSelect,
-    TitleContentGroup
+    TitleContentGroup,
+    TFile
   },
   props: {
     content_group_data: {
@@ -311,13 +323,18 @@ export default {
         {
           label: 'Int64',
           value: 'i'
+        },
+        {
+          label: 'File',
+          value: 'sd'
         }
       ],
       newData: {
         optional: {
           encrypt: false,
           ipfs: false,
-          file: undefined
+          file: undefined,
+          loadingFile: undefined
         },
         title: undefined,
         key: undefined,
@@ -370,6 +387,9 @@ export default {
     }
   },
   methods: {
+    getFile (file) {
+      this.newData.value = file.cid
+    },
     async verifyValue () {
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
@@ -407,10 +427,20 @@ export default {
       }
       return [this.rules[rule]]
     },
-    openIPFS (cid) {
-      cid.substring(0, 7) === 'ipfs://'
-        ? window.open(`https://ipfs.io/ipfs/${cid.substring(7)}`, '_blank')
-        : window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+    async openIPFS (cid) {
+      if (cid.substring(7).includes(':')) {
+        const file = await BrowserIpfs.retrieve(cid.substring(7))
+        var blob = new Blob([file.payload], { type: file.type })
+        var url = window.URL.createObjectURL(blob)
+        var a = document.createElement('a')
+        a.href = url
+        a.target = '_blank'
+        a.click()
+      } else {
+        cid.substring(0, 7) === 'ipfs://'
+          ? window.open(`https://ipfs.io/ipfs/${cid.substring(7)}`, '_blank')
+          : window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+      }
     },
     seeValue (value) {
       if (value.length > this.limitChars) {
@@ -468,7 +498,8 @@ export default {
             element.optional = {
               encrypt: false,
               ipfs: false,
-              file: undefined
+              file: undefined,
+              loadingFile: undefined
             }
           }
           filterContentGroup.push(element)
@@ -483,7 +514,8 @@ export default {
         a: 'asset',
         t: 'time_point',
         s: 'string',
-        i: 'int64'
+        i: 'int64',
+        sd: 'File'
       }
       return types[val]
     },
@@ -580,7 +612,8 @@ export default {
         optional: {
           encrypt: false,
           ipfs: false,
-          file: undefined
+          file: undefined,
+          loadingFile: undefined
         },
         title: this.index_content_group,
         key: '',
