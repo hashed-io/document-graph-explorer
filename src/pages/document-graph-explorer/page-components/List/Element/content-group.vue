@@ -46,6 +46,7 @@
             )
             div(v-if="props.row.dataType === 'sd'")
               q-chip(
+                data-cy="FileChip"
               ) FILE
             div(
               v-else-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"

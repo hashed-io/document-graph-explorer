@@ -32,6 +32,7 @@ div.q-pt-xs
     :data="resultQuery"
     hide-header,
     dense
+    data-cy='edgeTable'
     :columns="columns"
     card-class="bg-grey-1"
     class="cardTailWind"
