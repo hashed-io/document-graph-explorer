@@ -205,9 +205,13 @@ export default {
           return (a.createdDate < b.createdDate) ? 1 : -1
         })
       } else {
-        return this.edges.slice().sort(function (a, b) {
+        let edgesCopy = JSON.parse(JSON.stringify(this.edges))
+        let firstElement = edgesCopy.shift()
+        edgesCopy.slice().sort(function (a, b) {
           return (a.createdDate < b.createdDate) ? 1 : -1
         })
+        edgesCopy.unshift(firstElement)
+        return edgesCopy
       }
     }
   },
