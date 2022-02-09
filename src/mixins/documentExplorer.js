@@ -241,7 +241,15 @@ export const documentExplorer = {
           edges.push({ edge: element.name, direction: 'next', type: 'LIST', typeDoc: element.type.name })
         }
       })
+      edges = this.moveVoteBegin(edges)
       return { contentGroups, edges }
+    },
+    moveVoteBegin (edges) {
+      let obj = edges.pop()
+      if (obj) {
+        edges.unshift(obj)
+      }
+      return edges
     },
     async retrieveDoc (byElement, docType, contentGroups, isHashed) {
       const response = await this.getDocumentsByDocId({
@@ -325,11 +333,16 @@ export const documentExplorer = {
       var query = ''
       var docInterface = this.documentInterface
       for (const element of edges) {
-        let _props = await this.getPropsType({
-          type: element.typeDoc
-        })
-        _props = await _props['__type']['fields']
-        const found = _props.find(element => element.name === 'system_nodeLabel_s')
+        console.log(element)
+        if (element.typeDoc !== 'Document') {
+          let _props = await this.getPropsType({
+            type: element.typeDoc
+          })
+          _props = await _props['__type']['fields']
+          var found = _props.find(element => element.name === 'system_nodeLabel_s')
+        } else {
+          found = false
+        }
         if (element.type === 'LIST') {
           if (found) {
             query += `${element.edge}{

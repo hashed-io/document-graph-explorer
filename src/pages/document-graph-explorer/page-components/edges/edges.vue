@@ -32,6 +32,7 @@ div.q-pt-xs
     :data="resultQuery"
     hide-header,
     dense
+    data-cy='edgeTable'
     :columns="columns"
     card-class="bg-grey-1"
     class="cardTailWind"
@@ -200,9 +201,17 @@ export default {
             })
           }
         }
-        return filter
+        return filter.slice().sort(function (a, b) {
+          return (a.createdDate < b.createdDate) ? 1 : -1
+        })
       } else {
-        return this.edges
+        let edgesCopy = JSON.parse(JSON.stringify(this.edges))
+        let firstElement = edgesCopy.shift()
+        edgesCopy.slice().sort(function (a, b) {
+          return (a.createdDate < b.createdDate) ? 1 : -1
+        })
+        edgesCopy.unshift(firstElement)
+        return edgesCopy
       }
     }
   },
