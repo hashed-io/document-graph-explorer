@@ -16,7 +16,7 @@ div
         TInput(
           data-cy='edgeNameInput'
           placeholder='Edge name'
-          :rules="[rules.required]"
+          :rules="[rules.required, rules.isEosAccount, rules.notAllowedTwoDotsConsecutively]"
           v-model='form.edgeName'
           :dense='true'
         )
@@ -147,7 +147,7 @@ export default {
         for (let title in contentgroups) {
           contentGroup.push({
             label: 'content_group_label',
-            value: ['string', title]
+            value: ['string', this.replaceWhiteSpace(title, '_')]
           })
           if (title === 'system') {
             contentGroup.push({
@@ -159,7 +159,7 @@ export default {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             if (element.value !== '') {
               contentGroup.push({
-                label: key,
+                label: this.replaceWhiteSpace(key, '_'),
                 value: [types[element.dataType], element.value]
               })
             }
@@ -180,7 +180,7 @@ export default {
         let creator = this.account
         await this.ActionsApi.extendDoc({ creator, edgeName, fromNode, contentGroups })
         await new Promise(resolve => setTimeout(resolve, 1500))
-        this.showSuccessMsg('The document was extended correctly')
+        await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
         this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint

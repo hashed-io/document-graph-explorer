@@ -70,6 +70,17 @@ export const utils = {
     },
     isHashedSystems (hashedReturn, TelosReturn) {
       return window.location.host.includes('hashed.systems') ? hashedReturn : TelosReturn
+    },
+    replaceWhiteSpace (string, toReplace) {
+      const regex = / /g
+      return string.replace(regex, toReplace)
+    },
+    camelCaseToFormat (string) {
+      // camel case to snake case
+      let snakeCase = string.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase() })
+      // replace underscore to space
+      console.log(snakeCase.replace(/_/g, ' '))
+      return snakeCase.replace(/_/g, ' ')
     }
   }
 }

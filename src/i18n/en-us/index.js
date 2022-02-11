@@ -39,7 +39,10 @@ export default {
       checksum: 'Invalid checksum. Must contain 64 characters and letters between A to F',
       eosaccount: 'Invalid Eos account name',
       invalidTimePoint: 'Invalid time point. format 24hrs',
-      isURL: 'The input must be a valid URL'
+      isURL: 'The input must be a valid URL',
+      invalidContent: 'The value must not start a word with a number',
+      contentLegth: 'Please use maximum 25 characters',
+      notAllowedTwoDotsConsecutively: 'Only one dot (.) is allowed between words'
     }
   },
   menu: {

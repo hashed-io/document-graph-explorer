@@ -108,7 +108,7 @@ export default {
         for (let title in contentgroups) {
           contentGroup.push({
             label: 'content_group_label',
-            value: ['string', title]
+            value: ['string', this.replaceWhiteSpace(title, '_')]
           })
           if (title === 'system') {
             contentGroup.push({
@@ -120,7 +120,7 @@ export default {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             if (element.value !== '') {
               contentGroup.push({
-                label: key,
+                label: this.replaceWhiteSpace(key, '_'),
                 value: [types[element.dataType], element.value]
               })
             }
@@ -142,7 +142,7 @@ export default {
         this.currentEndpoint = apiEndpoint
         await new Promise(resolve => setTimeout(resolve, 1500))
         this.setIsEdit(false)
-        await this.showSuccessMsg('The changes was saved')
+        await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
         this.loadData()
         this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
       } catch (error) {

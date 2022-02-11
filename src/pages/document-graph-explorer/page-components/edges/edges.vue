@@ -207,11 +207,18 @@ export default {
       } else {
         let edgesCopy = JSON.parse(JSON.stringify(this.edges))
         let firstElement = edgesCopy.shift()
-        edgesCopy.slice().sort(function (a, b) {
-          return (a.createdDate < b.createdDate) ? 1 : -1
-        })
-        edgesCopy.unshift(firstElement)
-        return edgesCopy
+        if (firstElement.direction === 'prev') {
+          let edgesSorted = edgesCopy.slice().sort(function (a, b) {
+            return (a.createdDate < b.createdDate) ? 1 : -1
+          })
+          edgesSorted.unshift(firstElement)
+          return edgesSorted
+        } else {
+          edgesCopy.unshift(firstElement)
+          return edgesCopy.slice().sort(function (a, b) {
+            return (a.createdDate < b.createdDate) ? 1 : -1
+          })
+        }
       }
     }
   },

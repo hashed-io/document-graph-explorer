@@ -30,7 +30,7 @@
             key="key",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
-          ) {{ props.row.key }}
+          ) {{ camelCaseToFormat(props.row.key).toLowerCase() }}
           q-td(
             data-cy="valueRead"
             key="value",
@@ -56,8 +56,8 @@
                 :ripple="false"
                 size="12px"
                 clickable
-                @click="openIPFS(props.row.value)"
-              ) {{props.row.value.substring(0,7) === 'ipfs://' ? 'IPFS' : 'FILE'}}
+                @click="openIPFS(props.row.value, props.rowIndex)"
+              ) {{verifyTypeIPFS(props.row.value)}}
                 q-tooltip(
                   content-class='bg-black'
                   transition-show="fade"
@@ -122,9 +122,11 @@
             ) {{ props.row.key }}
             q-form(ref='keyForm')
               TInput(
-                :rules="[rules.required]"
+                :rules="[rules.required, rules.validContent, rules.contentLength]"
+                :inputFormatting="true"
                 data-cy='keyField'
                 autofocus
+                :debounce="1000"
                 v-model="newData.key",
                 v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'"
                 dense,
@@ -387,6 +389,14 @@ export default {
     }
   },
   methods: {
+    verifyTypeIPFS (value) {
+      let str = value.substring(0, 7)
+      if (str.includes('://')) {
+        return 'FILE'
+      } else {
+        return 'IPFS'
+      }
+    },
     getFile (file) {
       this.newData.value = file.cid
     },
@@ -427,7 +437,7 @@ export default {
       }
       return [this.rules[rule]]
     },
-    async openIPFS (cid) {
+    async openIPFS (cid, rowIndex) {
       if (cid.substring(7).includes(':')) {
         const file = await BrowserIpfs.retrieve(cid.substring(7))
         var blob = new Blob([file.payload], { type: file.type })
@@ -437,9 +447,8 @@ export default {
         a.target = '_blank'
         a.click()
       } else {
-        cid.substring(0, 7) === 'ipfs://'
-          ? window.open(`https://ipfs.io/ipfs/${cid.substring(7)}`, '_blank')
-          : window.open(`https://ipfs.io/ipfs/${cid}`, '_blank')
+        let data = await BrowserIpfs.getFromJson(cid)
+        this.contentGroupCopy[rowIndex].value = data.data
       }
     },
     seeValue (value) {
