@@ -137,8 +137,8 @@ export default {
         await this.newInstance()
         let docID = this.document.docId
         await this.ActionsApi.deleteDoc({ documentID: docID })
-        await new Promise(resolve => setTimeout(resolve, 1500))
         await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+        await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_AWAIT))
         this.$router.push({ name: 'listDocs' })
         this.showSuccessMsg('The document was erase')
       } catch (error) {
@@ -157,8 +157,8 @@ export default {
           signature: objDialog.signature,
           notes: objDialog.notes
         })
-        await new Promise(resolve => setTimeout(resolve, 1500))
-        this.showSuccessMsg('The document was certify correctly')
+        await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+        await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_AWAIT))
         await this.loadData()
         this.signDocument = false
       } catch (error) {

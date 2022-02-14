@@ -179,8 +179,8 @@ export default {
         let edgeName = this.form.edgeName
         let creator = this.account
         await this.ActionsApi.extendDoc({ creator, edgeName, fromNode, contentGroups })
-        await new Promise(resolve => setTimeout(resolve, 1500))
         await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+        await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_AWAIT))
         this.setIsEdit(false)
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint

@@ -178,8 +178,8 @@ export default {
         let creator = this.account
         await this.ActionsApi.createDoc({ creator, contentGroups })
         this.setIsEdit(false)
-        await new Promise(resolve => setTimeout(resolve, 1250))
         await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+        await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_AWAIT))
         this.$router.push({ name: 'listDocs' })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
