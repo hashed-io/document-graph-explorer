@@ -554,6 +554,7 @@ export default {
     onEditRow (row, rowIndex) {
       if (row) {
         this.newData = JSON.parse(JSON.stringify(row))
+        this.newData.key = this.camelCaseToFormat(this.newData.key)
       }
       this.editableRow = rowIndex
       // this.openCryptoDialog = true
