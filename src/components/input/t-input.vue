@@ -14,16 +14,14 @@ div
     :mask="mask"
     :fill-mask="fillMask"
     :hint='hint'
-    @input="$emit('update', content)"
   )
     slot(name='append' class="centerIcon")
 </template>
 
 <script>
-
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus', 'mask', 'fillMask', 'hint'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus', 'mask', 'fillMask', 'hint', 'inputFormatting'],
   model: {
     prop: 'value',
     event: 'update'
@@ -33,7 +31,29 @@ export default {
       content: this.value
     }
   },
+  watch: {
+    content: function (newVal, oldVal) {
+      if (!this.inputFormatting) {
+        this.$emit('update', this.content)
+      } else {
+        this.$emit('update', this.formatContent(this.content, oldVal))
+      }
+    }
+  },
   methods: {
+    formatContent (content, oldVal) {
+      const regex = /^[a-zA-Z0-9\s]+$/
+      if (regex.test(content)) {
+        if (content === ' ') {
+          return this.content.toLowerCase()
+        }
+        const regex2 = /^[a-z\s]+\s\d\w+$/
+        return !(regex2.test(content)) ? this.content.toLowerCase() : this.showErrorMsg('Only alphanumeric characters are allowed')
+      } else {
+        this.showErrorMsg('Only alphanumeric characters')
+        return oldVal
+      }
+    }
   }
 }
 </script>

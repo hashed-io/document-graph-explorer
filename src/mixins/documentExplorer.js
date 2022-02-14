@@ -244,10 +244,14 @@ export const documentExplorer = {
       edges = this.moveVoteBegin(edges)
       return { contentGroups, edges }
     },
-    moveVoteBegin (edges) {
-      let obj = edges.pop()
-      if (obj) {
-        edges.unshift(obj)
+    async moveVoteBegin (edges) {
+      let endpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
+      // GraphQL problem [solution meanwhile sebs find solution]
+      if (endpoint !== 'https://hashed.systems/alpha-dge-test/graphql') {
+        let obj = edges.pop()
+        if (obj) {
+          edges.unshift(obj)
+        }
       }
       return edges
     },
@@ -333,7 +337,6 @@ export const documentExplorer = {
       var query = ''
       var docInterface = this.documentInterface
       for (const element of edges) {
-        console.log(element)
         if (element.typeDoc !== 'Document') {
           let _props = await this.getPropsType({
             type: element.typeDoc

@@ -12,7 +12,7 @@ q-card.cardTailWind
         v-model="form.edgeName"
         placeholder='Edge'
         dense
-        :rules="[rules.required]"
+        :rules="[rules.required, rules.isEosAccount, rules.notAllowedTwoDotsConsecutively]"
       )
       SelectorDoc(
         class="q-mt-md"

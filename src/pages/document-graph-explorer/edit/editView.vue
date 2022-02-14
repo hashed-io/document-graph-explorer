@@ -108,7 +108,7 @@ export default {
         for (let title in contentgroups) {
           contentGroup.push({
             label: 'content_group_label',
-            value: ['string', title]
+            value: ['string', this.replaceWhiteSpace(title, '_')]
           })
           if (title === 'system') {
             contentGroup.push({
@@ -120,7 +120,7 @@ export default {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             if (element.value !== '') {
               contentGroup.push({
-                label: key,
+                label: this.replaceWhiteSpace(key, '_'),
                 value: [types[element.dataType], element.value]
               })
             }
@@ -140,9 +140,9 @@ export default {
         await this.ActionsApi.editDoc({ documentID, contentGroups })
         let apiEndpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
         this.currentEndpoint = apiEndpoint
-        await new Promise(resolve => setTimeout(resolve, 1500))
+        await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+        await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_AWAIT))
         this.setIsEdit(false)
-        await this.showSuccessMsg('The changes was saved')
         this.loadData()
         this.$router.push({ name: 'DocumentExplorer', query: { document_id: this.documentInfo.docId, endpoint: this.currentEndpoint } })
       } catch (error) {
@@ -160,12 +160,9 @@ export default {
       let creator = this.account
       await this.ActionsApi.createEdge({ fromNode, toNode, edgeName, creator })
       this.showDialogEdge = false
-      this.$q.loading.show({
-        message: 'Waiting doc cache'
-      })
-      await new Promise(resolve => setTimeout(resolve, 1250))
+      await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+      await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_ACTION))
       this.loadData()
-      this.$q.loading.hide()
     },
     async onCancel () {
       this.setIsEdit(false)
