@@ -33,7 +33,6 @@ export default {
   },
   watch: {
     content: function (newVal, oldVal) {
-      console.log({ newVal, oldVal })
       if (!this.inputFormatting) {
         this.$emit('update', this.content)
       } else {
