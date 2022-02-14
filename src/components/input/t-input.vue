@@ -26,6 +26,7 @@ export default {
     prop: 'value',
     event: 'update'
   },
+  emits: ['update'],
   data () {
     return {
       content: this.value
@@ -33,25 +34,18 @@ export default {
   },
   watch: {
     content: function (newVal, oldVal) {
-      if (!this.inputFormatting) {
-        this.$emit('update', this.content)
-      } else {
-        this.$emit('update', this.formatContent(this.content, oldVal))
+      if (this.inputFormatting) {
+        this.formatContent(this.content, oldVal, newVal)
       }
+      this.$emit('update', this.content)
     }
   },
   methods: {
-    formatContent (content, oldVal) {
-      const regex = /^[a-zA-Z0-9\s]+$/
-      if (regex.test(content)) {
-        if (content === ' ') {
-          return this.content.toLowerCase()
-        }
-        const regex2 = /^[a-z\s]+\s\d\w+$/
-        return !(regex2.test(content)) ? this.content.toLowerCase() : this.showErrorMsg('Only alphanumeric characters are allowed')
+    formatContent (content, oldVal, newVal) {
+      if (newVal.match(/[^a-zA-Z0-9\s]/g)) {
+        this.content = oldVal
       } else {
-        this.showErrorMsg('Only alphanumeric characters')
-        return oldVal
+        this.content = this.content.toLowerCase()
       }
     }
   }

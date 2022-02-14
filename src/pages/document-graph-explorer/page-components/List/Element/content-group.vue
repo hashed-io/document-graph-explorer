@@ -126,7 +126,6 @@
                 :inputFormatting="true"
                 data-cy='keyField'
                 autofocus
-                :debounce="1000"
                 v-model="newData.key",
                 v-if="isEdit && !isEditSystem && props.row.key !== 'nodeLabel'"
                 dense,
