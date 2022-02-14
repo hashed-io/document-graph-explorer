@@ -70,8 +70,7 @@ jobs:
           WEBSERVICES_API_KEY: '"XXX"'
           IPFS_URL: '"https://ipfs.infura.io:5001"'
           APOLLO_URL: '"https://hashed.systems/alpha-trace-test/graphql"'
-          ELASTICSEARCH_API_KEY: '"${{ secrets.ELASTICSEARCH_API_KEY }}"'
-          ELASTICSEARCH_ENDPOINT: '"https://traceability.es.us-east4.gcp.elastic-cloud.com:9243/traceability-documents/_search"'
+          TIMEOUT_AWAIT: '1500'
       - name: Build for prod
         run: yarn build
         if: env.BRANCH_NAME == 'production'
@@ -86,8 +85,7 @@ jobs:
           WEBSERVICES_API_KEY: '"XXX"'
           IPFS_URL: '"https://ipfs.infura.io:5001"'
           APOLLO_URL: '"https://hashed.systems/alpha-dg-mainnet/graphql"'
-          ELASTICSEARCH_API_KEY: '"${{ secrets.ELASTICSEARCH_API_KEY }}"'
-          ELASTICSEARCH_ENDPOINT: '"https://traceability.es.us-east4.gcp.elastic-cloud.com:9243/traceability-documents/_search"'
+          TIMEOUT_AWAIT: '1500'
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@master
         with:
