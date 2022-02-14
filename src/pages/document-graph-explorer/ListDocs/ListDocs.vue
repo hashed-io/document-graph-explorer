@@ -386,10 +386,15 @@ export default {
         let credentialsObj = await this.getElasticSearchCredentials()
         this.paramsElastic.endpoint = credentialsObj.endpoint
         this.paramsElastic.apikey = credentialsObj.apikey
-        let response = await this.searchDoc({
-          search: this.search,
-          params: this.paramsElastic
-        })
+        try {
+          var response = await this.searchDoc({
+            search: this.search,
+            params: this.paramsElastic
+          })
+        } catch (error) {
+          this.showErrorMsg('An error ocurred while trying to search document ' + error)
+          console.log(error)
+        }
         response = response.hits.hits.length > 0 ? response.hits.hits : undefined
         if (response) {
           var docsArr = []

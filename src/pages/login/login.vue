@@ -19,8 +19,7 @@ export default {
   methods: {
     ...mapActions('accounts', ['login', 'autoLogin']),
     async onLogin (idx) {
-      this.idx = idx
-      await this.login({ idx: this.idx, returnUrl: '/' })
+      this.$router.push({ name: 'listDocs' })
     },
     async onAccountEntered (account) {
       await this.login({ idx: this.idx, account, returnUrl: this.$route.query.returnUrl })

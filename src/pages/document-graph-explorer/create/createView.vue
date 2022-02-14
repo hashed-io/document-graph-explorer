@@ -7,7 +7,7 @@ div
     q-form(ref='docTypeSelect').col-4
       TSelectFilter(
         data-cy='docTypeName'
-        :rules="[rules.required]"
+        :rules="[rules.required, rules.isEosAccount, rules.notAllowedTwoDotsConsecutively]"
         v-model='documentType'
         :debounce="0"
         message='Choose document type and press enter'
@@ -147,7 +147,7 @@ export default {
         for (let title in contentgroups) {
           contentGroup.push({
             label: 'content_group_label',
-            value: ['string', title]
+            value: ['string', this.replaceWhiteSpace(title, '_')]
           })
           if (title === 'system') {
             contentGroup.push({
@@ -159,7 +159,7 @@ export default {
             let key = (element.key === 'nodeLabel') ? 'node_label' : element.key
             if (element.value !== '') {
               contentGroup.push({
-                label: key,
+                label: this.replaceWhiteSpace(key, '_'),
                 value: [types[element.dataType], element.value]
               })
             }
@@ -178,11 +178,8 @@ export default {
         let creator = this.account
         await this.ActionsApi.createDoc({ creator, contentGroups })
         this.setIsEdit(false)
-        this.$q.loading.show({
-          message: 'Refresh cache'
-        })
-        await new Promise(resolve => setTimeout(resolve, 1250))
-        this.$q.loading.hide()
+        await this.showSuccessMsg('Transaction successful. Local data will be refreshed after the block is finalized.')
+        await new Promise(resolve => setTimeout(resolve, process.env.TIMEOUT_AWAIT))
         this.$router.push({ name: 'listDocs' })
       } catch (error) {
         this.showErrorMsg('An error ocurred while trying to edit the doc ' + error)
