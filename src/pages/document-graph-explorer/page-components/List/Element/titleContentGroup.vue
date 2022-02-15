@@ -20,7 +20,6 @@ div(v-if="isEdit")
           autofocus
           dense
           :inputFormatting="true"
-          :debounce="200"
           :rules="[rules.required, rules.validContent, rules.contentLength]"
         ).q-pr-md
       .col-xs-12.col-sm-5

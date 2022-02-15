@@ -26,7 +26,7 @@ describe('Edge Name', () => {
 })
 describe('Extend the Document', () => {
   it('Fill system node label table', () => {
-    let fakeValue = Faker.lorem.sentence()
+    let fakeValue = Faker.lorem.word()
     cy.dataCy('editRowButton')
       .click()
     cy.dataCy('valueField')
