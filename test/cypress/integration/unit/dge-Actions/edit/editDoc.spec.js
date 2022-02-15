@@ -30,7 +30,7 @@ describe('Edit the Document', () => {
           cy.dataCy('selectType').then(($b) => {
             cy.dataCy('keyField')
               .type('{selectall}{backspace}')
-              .type(Faker.lorem.sentence())
+              .type(Faker.lorem.word())
             cy.dataCy('valueField')
               .type('{selectall}{backspace}')
               .type(Faker.datatype.number())

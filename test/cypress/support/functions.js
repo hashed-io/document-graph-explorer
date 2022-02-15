@@ -6,7 +6,7 @@
 //   })
 //   return t
 // }
-import rulesi18n from '/home/edwin/Documentos/m1ghty/DAO-LLC-WEBAPP/src/i18n/en-us/index.js'
+import rulesi18n from '/src/i18n/en-us/index.js'
 cy.$t = async (msg) => {
   let labels = msg.split('.')
   var prevValue = rulesi18n
