@@ -19,7 +19,8 @@ div(v-if="isEdit")
           v-model='titleContent'
           autofocus
           dense
-          :rules="[rules.required]"
+          :inputFormatting="true"
+          :rules="[rules.required, rules.validContent, rules.contentLength]"
         ).q-pr-md
       .col-xs-12.col-sm-5
         .row.q-col-gutter-md
@@ -38,7 +39,7 @@ div(v-if="isEdit")
 div(
   v-else
   class="q-pb-md q-pl-md fontSize titleClass"
-  ) {{title}}
+  ) {{this.camelCaseToFormat(title).toLowerCase()}}
 </template>
 <script>
 import { validation } from '~/mixins/validation'
@@ -69,6 +70,7 @@ export default {
     }
   },
   methods: {
+    // TODO: Apply lower case & underscore
     onSaveTitle () {
       let bool = this.$parent.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.titleContent })
       if (bool) {

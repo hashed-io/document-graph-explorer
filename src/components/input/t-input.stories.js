@@ -15,6 +15,10 @@ export default {
     dense: {
       options: ['true', 'false'],
       control: { type: 'radio' }
+    },
+    inputFormatting: {
+      options: ['true', 'false'],
+      control: { type: 'radio' }
     }
   },
   decorators: [() => ({ template: '<div style="margin: 3em;"><story /></div>' })]
@@ -36,7 +40,8 @@ Example.args = {
   autogrow: false,
   placeholder: '',
   rules: ["val => !!val || this.$t('forms.errors.required')"],
-  label: 'Lorem ipsum'
+  label: 'Lorem ipsum',
+  inputFormatting: true
 }
 
 export const Base = Template.bind({})

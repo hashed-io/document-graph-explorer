@@ -19,7 +19,7 @@ export const validation = {
         isEqual: value => val => val === value || this.$t('forms.errors.positiveInteger', { value }),
         isEmail: val => /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(val.toLowerCase()) || this.$t('forms.errors.email'),
         isChecksum: val => /(^[a-f0-9A-F]{64}$)/.test(val.toLowerCase()) || this.$t('forms.errors.checksum'),
-        isEosAccount: val => /(^[a-z1-5]{0,12}$)/.test(val) || this.$t('forms.errors.eosaccount'),
+        isEosAccount: val => /^([a-z1-5]|.){0,12}$/.test(val) || this.$t('forms.errors.eosaccount'),
         isTimePoint: val => {
           let flagDate, flagTime
           let arr = val.split(' ')
@@ -30,7 +30,10 @@ export const validation = {
           flagTime = timeArr[0] < 24 && timeArr[1] < 60
           return flagTime && flagDate ? true : this.$t('forms.errors.invalidTimePoint')
         },
-        isURL: val => /^https?:\/\/[a-z]*.*\/(graphql){1}$/.test(val) || this.$t('forms.errors.isURL')
+        isURL: val => /^https?:\/\/[a-z]*.*\/(graphql){1}$/.test(val) || this.$t('forms.errors.isURL'),
+        validContent: val => !(/(([a-z])\w+ +([0-9]){1,}([a-z]))|\s{2,}|([0-9]){1,}([a-z])/.test(val.toLowerCase())) || this.$t('forms.errors.invalidContent'),
+        contentLength: val => val.length <= 25 || this.$t('forms.errors.contentLegth'),
+        notAllowedTwoDotsConsecutively: val => !(/\.\.{1,}/.test(val)) || this.$t('forms.errors.notAllowedTwoDotsConsecutively')
       }
     }
   },

@@ -137,8 +137,7 @@ module.exports = function (ctx) {
         GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
         IPFS_URL: process.env.IPFS_URL,
         APOLLO_URL: process.env.APOLLO_URL,
-        ELASTICSEARCH_API_KEY: process.env.ELASTICSEARCH_API_KEY,
-        ELASTICSEARCH_ENDPOINT: process.env.ELASTICSEARCH_ENDPOINT
+        TIMEOUT_AWAIT: process.env.TIMEOUT_AWAIT
       },
       scopeHoisting: true,
       vueRouterMode: 'history',

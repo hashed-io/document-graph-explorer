@@ -14,26 +14,40 @@ div
     :mask="mask"
     :fill-mask="fillMask"
     :hint='hint'
-    @input="$emit('update', content)"
   )
     slot(name='append' class="centerIcon")
 </template>
 
 <script>
-
 export default {
   name: 'Tinput',
-  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus', 'mask', 'fillMask', 'hint'],
+  props: ['value', 'label', 'dense', 'color', 'debounce', 'rules', 'placeholder', 'type', 'autogrow', 'autofocus', 'mask', 'fillMask', 'hint', 'inputFormatting'],
   model: {
     prop: 'value',
     event: 'update'
   },
+  emits: ['update'],
   data () {
     return {
       content: this.value
     }
   },
+  watch: {
+    content: function (newVal, oldVal) {
+      if (this.inputFormatting) {
+        this.formatContent(this.content, oldVal, newVal)
+      }
+      this.$emit('update', this.content)
+    }
+  },
   methods: {
+    formatContent (content, oldVal, newVal) {
+      if (newVal.match(/[^a-zA-Z0-9\s]/g)) {
+        this.content = oldVal
+      } else {
+        this.content = this.content.toLowerCase()
+      }
+    }
   }
 }
 </script>
