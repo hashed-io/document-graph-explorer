@@ -22,13 +22,13 @@ describe('Any user can navigate through the Graph', () => {
     cy.dataCy('nextPage')
       .click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(2000)
+    cy.wait(4000)
     cy.get('td')
       .should('exist')
     cy.dataCy('nextPage')
       .click()
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000)
+    cy.wait(4000)
     cy.get('tr')
       .eq(1)
       .then((values) => {
