@@ -235,6 +235,9 @@ import { marked } from 'marked'
 import { mapGetters } from 'vuex'
 import TitleContentGroup from './titleContentGroup.vue'
 import TFile from '~/components/file/t-file.vue'
+import axios from 'axios'
+import mime from 'mime-types'
+
 export default {
   name: 'ContentGroup',
   mixins: [validation],
@@ -438,16 +441,25 @@ export default {
     },
     async openIPFS (cid, rowIndex) {
       if (cid.substring(7).includes(':')) {
-        const file = await BrowserIpfs.retrieve(cid.substring(7))
-        var blob = new Blob([file.payload], { type: file.type })
+        const _cid = cid.substring(7).split(':')
+        const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${_cid[0]}`)
+        // const file = await BrowserIpfs.retrieve(cid.substring(7))
+        const text = response.data
+        const buffer = new ArrayBuffer(text.length)
+        const view = new Uint8Array(buffer)
+        for (let i = 0; i < text.length; i++) {
+          view[i] = text.charCodeAt(i)
+        }
+
+        var blob = new Blob([view], { type: mime.lookup(_cid[1]) })
         var url = window.URL.createObjectURL(blob)
         var a = document.createElement('a')
         a.href = url
         a.target = '_blank'
         a.click()
       } else {
-        let data = await BrowserIpfs.getFromJson(cid)
-        this.contentGroupCopy[rowIndex].value = data.data
+        const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${cid}`)
+        this.contentGroupCopy[rowIndex].value = response.data.data
       }
     },
     seeValue (value) {
