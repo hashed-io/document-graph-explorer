@@ -22,8 +22,20 @@ q-layout(view="hHh Lpr lFf").bg-layout
               size="2.5rem"
             )
         .q-px-md.title Document Graph Explorer
+      .row.q-gutter-md
+        div(v-bind:class="{'q-pt-sm': !isAuthenticated, 'q-mr-sm': isAuthenticated}" @click="toDocumentation" style="cursor: pointer; width: 24px; height: 24px;")
+          q-tooltip(
+            content-class='bg-black'
+            transition-show="fade"
+            transition-hide="fade"
+            anchor="bottom middle"
+            self="top middle"
+            content-style="font-size: 12px"
+          ) Documentation
+          svg(xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z")
+        right-menu-guest(v-if="!isAuthenticated")
       right-menu-authenticated(v-if="isAuthenticated")
-      right-menu-guest(v-if="!isAuthenticated")
   q-drawer(
     v-model="menu"
     side="left"
@@ -112,6 +124,9 @@ export default {
     },
     getSize () {
       return this.isHashedSystems('80px', '60px')
+    },
+    toDocumentation () {
+      window.open('https://hashed-io.github.io/document-graph-book/background/introduction.html', '_blank')
     }
   }
 }
