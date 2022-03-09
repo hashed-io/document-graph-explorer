@@ -23,7 +23,16 @@ q-layout(view="hHh Lpr lFf").bg-layout
             )
         .q-px-md.title Document Graph Explorer
       right-menu-authenticated(v-if="isAuthenticated")
-      right-menu-guest(v-if="!isAuthenticated")
+      .row
+        right-menu-guest(v-if="!isAuthenticated")
+        q-btn(
+          label="Documentation"
+          class='docButton btnTailWindLogin'
+          rounded
+          @click="toDocumentation"
+          no-caps
+          v-bind:class="{'q-ml-sm': isAuthenticated}"
+        )
   q-drawer(
     v-model="menu"
     side="left"
@@ -39,6 +48,10 @@ q-layout(view="hHh Lpr lFf").bg-layout
 </template>
 
 <style lang="stylus" scoped>
+.docButton
+  font-color: black
+  font-size: 14px !important
+  width: 135px !important
 .title
   font-size: 14px !important
   color: white
@@ -55,6 +68,9 @@ q-layout(view="hHh Lpr lFf").bg-layout
 .badge-left
   left: -5px
   right: auto
+.btnTailwind
+  width: 180px
+  font-size: 14px !important
 @media screen and (max-width: 319px) and (min-width: 30px)
   .contentContainer
     padding: 0rem
@@ -112,6 +128,9 @@ export default {
     },
     getSize () {
       return this.isHashedSystems('80px', '60px')
+    },
+    toDocumentation () {
+      window.open('https://hashed-io.github.io/document-graph-book/background/introduction.html', '_blank')
     }
   }
 }
