@@ -156,7 +156,7 @@
               )
               TFile(
                 v-else
-                label='Upload file to IPFS'
+                :label="getLabelFile()"
                 @update='getFile'
                 )
             .row(v-if="newData.dataType === 's'")
@@ -402,6 +402,16 @@ export default {
     getFile (file) {
       this.newData.value = file.cid
     },
+    getLabelFile () {
+      // newData.value.substring(0,7).includes('file://') ?  : 'Upload file to IPFS'
+      let prefix = this.newData.value.substring(0, 7).toString()
+      if (prefix.includes('file://')) {
+        let cid = this.newData.value.substring(7).split(':')
+        return cid[0]
+      } else {
+        return 'Upload file to IPFS'
+      }
+    },
     async verifyValue () {
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
@@ -514,10 +524,13 @@ export default {
       this.contentGroupCopy.forEach(element => {
         // If the value is empty won't show to user in UI
         if (element.value !== '') {
+          if (element.value.substring(0, 7).includes('file://')) {
+            element.dataType = 'sd'
+          }
           if (bool.edit) {
             element.optional = {
-              encrypt: false,
-              ipfs: false,
+              encrypt: this.isEncrypt(element.value),
+              ipfs: this.isIpfs(element.value),
               file: undefined,
               loadingFile: undefined
             }
