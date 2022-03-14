@@ -22,12 +22,25 @@ div
           path(
             d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
           )
+  q-toggle(
+    data-cy='encryptToggle'
+    size='xs',
+    no-hover,
+    v-model='file.encrypt',
+    label='Encrypt',
+    @input='onEncrypt()'
+  )
 </template>
 <script>
+import { mapMutations, mapState } from 'vuex'
 import BrowserIpfs from '~/services/BrowserIpfs.js'
+import Encrypt from '~/utils/EncryptUtil'
 export default {
   name: 'TFile',
   props: ['title', 'label', 'size'],
+  computed: {
+    ...mapState('documentGraph', ['keyToEncrypt'])
+  },
   data () {
     return {
       file: {
@@ -40,6 +53,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('documentGraph', ['setCryptoDialogState', 'setKeyToEncrypt']),
     checkFileSize (files) {
       return files.filter((file) => file.size < 1024000 * 500)
     },
@@ -50,6 +64,7 @@ export default {
       var self = this
       self.file.loading = true
       try {
+        if (this.file.encrypt) e = await Encrypt.encryptFile(e, this.keyToEncrypt, e.name.split('.')[1])
         this.loading = true
         var typeCid = await BrowserIpfs.store(e)
       } catch (e) {
@@ -62,6 +77,14 @@ export default {
         self.file.cid = 'file://' + typeCid
       }
       this.$emit('update', self.file)
+    },
+    async onEncrypt () {
+      if (!this.keyToEncrypt) {
+        this.setCryptoDialogState(true)
+        this.showErrorMsg('You need to set a key to encrypt')
+      } else {
+        this.handleFileUpload(this.file.data)
+      }
     }
   }
 }
