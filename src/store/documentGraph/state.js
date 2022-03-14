@@ -7,5 +7,8 @@ export default () => ({
   typesWithSystemNode: undefined,
   contractInfo: undefined,
   documentInterface: undefined,
-  endpointApollo: undefined
+  endpointApollo: undefined,
+  openCryptoDialog: undefined,
+  keyToEncrypt: undefined,
+  loadingFromEndpoint: false
 })
