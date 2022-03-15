@@ -116,6 +116,7 @@ export default {
       this.setCryptoDialogState(bool)
     },
     onAddContentGroup () {
+      this.showSuccessMsg('Click on the edit to change the label')
       this.contents_groups['content group'] = [
         // {
         //   title: 'content_group',
