@@ -76,7 +76,6 @@ export default {
       /**
        * This send the endpoint selected to parent component [main.vue]
        */
-      console.log(this.loadingFromEndpoint)
       if (!this.loadingFromEndpoint) {
         this.setLoadingFromEndpoint(true)
         this.$emit('switch', selected)

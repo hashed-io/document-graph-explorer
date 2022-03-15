@@ -392,7 +392,6 @@ export default {
             search: this.search,
             params: this.paramsElastic
           })
-          console.log(response)
         } catch (error) {
           this.showErrorMsg('An error ocurred while trying to search document ' + error)
           console.log(error)

@@ -625,7 +625,6 @@ export default {
     async onEncrypt (rowIndex, value) {
       value.value = this.newData.value
       await this.$forceUpdate()
-      console.log(value.optional)
       if (!this.cryptoKey && value.optional.encrypt) {
         this.$emit('openDialog', true)
       }
