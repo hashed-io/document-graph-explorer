@@ -8,7 +8,6 @@ export const documentExplorer = {
     if (queryParams.hasOwnProperty('endpoint')) {
       this.endpoint = queryParams.endpoint
       this.setLocalStorage({ key: 'apollo-endpoint', value: this.endpoint })
-      this.setEndpoint(queryParams.endpoint)
       await this.loadFromEndpoint()
     }
     await this.getContractInfo()

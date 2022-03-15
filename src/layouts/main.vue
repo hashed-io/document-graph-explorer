@@ -23,7 +23,7 @@ q-layout(view="hHh Lpr lFf").bg-layout
             )
         .flex(v-if="!$q.screen.xs")
           .q-px-md.title Document Graph Explorer
-          .q-pl-md.text-caption Current Graph: {{endpoint}}
+          .q-pl-md.text-caption Current Graph: {{endpoint || 'Public'}}
       right-menu-authenticated(v-if="isAuthenticated")
       right-menu-guest(v-if="!isAuthenticated")
       q-btn(
@@ -115,7 +115,7 @@ export default {
       }
     }
   },
-  mounted () {
+  updated: function () {
     this.getCurrentEndpoint()
   },
   data () {
