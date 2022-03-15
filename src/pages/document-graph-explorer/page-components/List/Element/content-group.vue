@@ -44,10 +44,6 @@
               :inner-html.prop="render(props.row.value, true)"
               @click="seeValue(props.row.value)"
             )
-            div(v-if="props.row.dataType === 'sd'")
-              q-chip(
-                data-cy="FileChip"
-              ) FILE
             div(
               v-else-if="isIpfs(props.row.value) && !isEncrypt(props.row.value)"
             )
@@ -58,6 +54,13 @@
                 clickable
                 @click="openIPFS(props.row.value, props.rowIndex)"
               ) {{verifyTypeIPFS(props.row.value)}}
+                q-spinner(
+                  v-if="isLoadingIPFS === props.rowIndex"
+                  class="q-ml-xs"
+                  :size="16"
+                  color="primary"
+                  :thickness="2"
+                )
                 q-tooltip(
                   content-class='bg-black'
                   transition-show="fade"
@@ -156,7 +159,8 @@
               )
               TFile(
                 v-else
-                label='Upload file to IPFS'
+                class="verticalCenter",
+                :label="getLabelFile()"
                 @update='getFile'
                 )
             .row(v-if="newData.dataType === 's'")
@@ -232,7 +236,7 @@ import Encrypt from '~/utils/EncryptUtil'
 import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import TitleContentGroup from './titleContentGroup.vue'
 import TFile from '~/components/file/t-file.vue'
 import axios from 'axios'
@@ -293,6 +297,7 @@ export default {
   },
   data () {
     return {
+      isLoadingIPFS: undefined,
       isEditTitle: false,
       isValid: true,
       isEditSystem: false,
@@ -391,6 +396,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('documentGraph', ['setCryptoDialogState']),
     verifyTypeIPFS (value) {
       let str = value.substring(0, 7)
       if (str.includes('://')) {
@@ -401,6 +407,16 @@ export default {
     },
     getFile (file) {
       this.newData.value = file.cid
+    },
+    getLabelFile () {
+      // newData.value.substring(0,7).includes('file://') ?  : 'Upload file to IPFS'
+      let prefix = this.newData.value.substring(0, 7).toString()
+      if (prefix.includes('file://')) {
+        let cid = this.newData.value.substring(7).split(':')
+        return cid[0]
+      } else {
+        return 'Upload file to IPFS'
+      }
     },
     async verifyValue () {
       await this.$refs.valueForm.validate()
@@ -439,27 +455,63 @@ export default {
       }
       return [this.rules[rule]]
     },
+    async strToUint8Array (text) {
+      const buffer = new ArrayBuffer(text.length)
+      const view = new Uint8Array(buffer)
+      for (let i = 0; i < text.length; i++) {
+        view[i] = text.charCodeAt(i)
+      }
+      return view
+    },
     async openIPFS (cid, rowIndex) {
-      if (cid.substring(7).includes(':')) {
-        const _cid = cid.substring(7).split(':')
-        const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${_cid[0]}`)
-        // const file = await BrowserIpfs.retrieve(cid.substring(7))
-        const text = response.data
-        const buffer = new ArrayBuffer(text.length)
-        const view = new Uint8Array(buffer)
-        for (let i = 0; i < text.length; i++) {
-          view[i] = text.charCodeAt(i)
+      try {
+        this.isLoadingIPFS = rowIndex
+        if (cid.substring(7).includes(':')) {
+          const _cid = cid.substring(7).split(':')
+          const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${_cid[0]}`)
+          // response is a String (base64)
+          let text = response.data
+          // Convert Base64 to a blob object [ArrayBuffer]
+          let uint8Array = await this.strToUint8Array(text)
+          // Blob object [Encrypted?]
+          if (await this.isEncrypt(text)) {
+            if (!this.cryptoKey) {
+              this.showSuccessMsg('Write the key to decrypt the file')
+              this.setCryptoDialogState(true)
+              return
+            } else {
+              try {
+                let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
+                // Send blob to decrypt [Decrypt Text fails with message: Malformed UTF-8 data]
+                text = await Encrypt.decryptFile(blob, this.cryptoKey)
+                blob = new Blob([text], { type: mime.lookup(_cid[1]) })
+                // filereader to read as string
+                let url = window.URL.createObjectURL(blob)
+                let a = document.createElement('a')
+                a.href = url
+                a.target = '_blank'
+                a.click()
+              } catch (error) {
+                this.showErrorMsg('An error occurred while decrypting the file ' + error)
+              }
+            }
+          } else {
+            let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
+            let url = window.URL.createObjectURL(blob)
+            let a = document.createElement('a')
+            a.href = url
+            a.target = '_blank'
+            a.click()
+          }
+        } else {
+          const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${cid}`)
+          this.contentGroupCopy[rowIndex].value = response.data.data
         }
-
-        var blob = new Blob([view], { type: mime.lookup(_cid[1]) })
-        var url = window.URL.createObjectURL(blob)
-        var a = document.createElement('a')
-        a.href = url
-        a.target = '_blank'
-        a.click()
-      } else {
-        const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${cid}`)
-        this.contentGroupCopy[rowIndex].value = response.data.data
+      } catch (error) {
+        this.showErrorMsg('An error occurred while opening the file ' + error)
+        console.log('An error occurred while opening the file ' + error)
+      } finally {
+        this.isLoadingIPFS = undefined
       }
     },
     seeValue (value) {
@@ -514,10 +566,13 @@ export default {
       this.contentGroupCopy.forEach(element => {
         // If the value is empty won't show to user in UI
         if (element.value !== '') {
+          if (element.value.toString().substring(0, 7).includes('file://')) {
+            element.dataType = 'sd'
+          }
           if (bool.edit) {
             element.optional = {
-              encrypt: false,
-              ipfs: false,
+              encrypt: this.isEncrypt(element.value),
+              ipfs: this.isIpfs(element.value),
               file: undefined,
               loadingFile: undefined
             }
@@ -546,8 +601,17 @@ export default {
     },
     decryptValue (value, row, rowIndex) {
       if (this.cryptoKey) {
-        row.value = (Encrypt.decryptText(value, this.cryptoKey))
-        this.contentGroupCopy.splice(rowIndex, row)
+        try {
+          let decrypted = Encrypt.decryptText(value, this.cryptoKey)
+          if (decrypted) {
+            row.value = decrypted
+            this.contentGroupCopy.splice(rowIndex, row)
+          } else {
+            throw new Error('Decrypt failed')
+          }
+        } catch (error) {
+          this.showErrorMsg('Wrong key to decrypt the file')
+        }
       } else {
         this.$emit('openDialog', true)
       }
@@ -615,6 +679,8 @@ export default {
     },
     async onCancel (index, row) {
       if (await this.$refs.keyForm.validate()) {
+        row.key = JSON.parse(JSON.stringify(this.newData.key))
+        this.contentGroupCopy.splice(index, 1, row)
         this.editableRow = undefined
       } else {
         this.showErrorMsg('The key is necessary')

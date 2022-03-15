@@ -21,18 +21,20 @@ q-layout(view="hHh Lpr lFf").bg-layout
               class="text-white center"
               size="2.5rem"
             )
-        .q-px-md.title Document Graph Explorer
+        .flex(v-if="!$q.screen.xs")
+          .q-px-md.title Document Graph Explorer
+          .q-pl-md.text-caption Current Graph: {{endpoint}}
       right-menu-authenticated(v-if="isAuthenticated")
-      .row
-        right-menu-guest(v-if="!isAuthenticated")
-        q-btn(
-          label="Documentation"
-          class='docButton btnTailWindLogin'
-          rounded
-          @click="toDocumentation"
-          no-caps
-          v-bind:class="{'q-ml-sm': isAuthenticated}"
-        )
+      right-menu-guest(v-if="!isAuthenticated")
+      q-btn(
+        v-if="!$q.screen.xs"
+        label="Documentation"
+        class='docButton btnTailWindLogin'
+        rounded
+        @click="toDocumentation"
+        no-caps
+        v-bind:class="{'q-ml-sm': isAuthenticated}"
+      )
   q-drawer(
     v-model="menu"
     side="left"
@@ -93,10 +95,11 @@ q-layout(view="hHh Lpr lFf").bg-layout
 </style>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
 import LeftMenu from '~/components/layout/left-menu'
 import RightMenuAuthenticated from '~/components/layout/right-menu-authenticated'
 import RightMenuGuest from '~/components/layout/right-menu-guest'
+import { leftMenuTelosKitchen, leftMenuHashed } from '~/utils/leftMenu'
 export default {
   name: 'layout-auth',
   components: {
@@ -104,24 +107,47 @@ export default {
     RightMenuAuthenticated,
     RightMenuGuest
   },
+  // watcher endpointApollo
+  watch: {
+    endpointApollo: function (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.getCurrentEndpoint()
+      }
+    }
+  },
+  mounted () {
+    this.getCurrentEndpoint()
+  },
   data () {
     return {
       menu: false,
       right: false,
-      miniState: true
+      miniState: true,
+      endpoint: undefined
     }
   },
   computed: {
-    ...mapGetters('accounts', ['isAuthenticated'])
+    ...mapGetters('accounts', ['isAuthenticated']),
+    ...mapState('documentGraph', ['endpointApollo'])
   },
   methods: {
     ...mapActions('accounts', ['autoLogin']),
     ...mapMutations('documentGraph', ['setEndpoint']),
     ...mapMutations('documentGraph', ['clearStack']),
+    ...mapActions('documentGraph', ['getLocalStorage']),
     async saveEndpoint (endpoint) {
       this.menu = false
       this.clearStack()
       this.setEndpoint(endpoint)
+    },
+    async getCurrentEndpoint () {
+      let blockchains = await this.isHashedSystems(leftMenuHashed, leftMenuTelosKitchen)
+      let endpoint = this.endpointApollo
+      if (!endpoint) {
+        endpoint = await this.getLocalStorage({ key: 'apollo-endpoint' })
+      }
+      let currentEndpoint = await blockchains.tlos.options.find(blockchain => blockchain.value === endpoint)
+      this.endpoint = currentEndpoint.label
     },
     getSource () {
       return this.isHashedSystems('statics/icons/hashed.png', 'statics/icons/TelosKitchen.png')

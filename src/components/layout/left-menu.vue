@@ -1,5 +1,5 @@
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import Tinput from '../input/t-input.vue'
 import { leftMenuTelosKitchen, leftMenuHashed } from '~/utils/leftMenu'
 import { validation } from '~/mixins/validation'
@@ -23,10 +23,11 @@ export default {
     this.blockchains = this.isHashedSystems(leftMenuHashed, leftMenuTelosKitchen)
   },
   computed: {
-    ...mapGetters('accounts', ['isAuthenticated'])
+    ...mapGetters('accounts', ['isAuthenticated']),
+    ...mapState('documentGraph', ['loadingFromEndpoint'])
   },
   methods: {
-    ...mapMutations('documentGraph', ['clearStack']),
+    ...mapMutations('documentGraph', ['clearStack', 'setLoadingFromEndpoint']),
     async catchEndpoint () {
       await this.showMenu(undefined)
       this.validCustom = await this.$refs.customEndpointForm.validate()
@@ -46,6 +47,9 @@ export default {
       } else {
         return false
       }
+    },
+    toDocumentation () {
+      window.open('https://hashed-io.github.io/document-graph-book/background/introduction.html', '_blank')
     },
     showMenu (name) {
       if (name !== undefined && this.custom.endpoint) {
@@ -72,7 +76,13 @@ export default {
       /**
        * This send the endpoint selected to parent component [main.vue]
        */
-      this.$emit('switch', selected)
+      console.log(this.loadingFromEndpoint)
+      if (!this.loadingFromEndpoint) {
+        this.setLoadingFromEndpoint(true)
+        this.$emit('switch', selected)
+      } else {
+        this.showErrorMsg('Please wait until the current process is finished')
+      }
     }
   },
   components: { Tinput }
@@ -90,6 +100,23 @@ div(class="q-pa-md" style="max-width: 350px")
         size='xs'
         @click="$emit('close')"
       )
+    q-expansion-item(
+      v-if="$q.screen.xs"
+      v-mode=""
+      class='q-pt-md'
+      @click="toDocumentation"
+      dense-toggle
+    )
+      template(v-slot:header)
+        q-item-section(avatar)
+          q-icon(
+            class="q-ml-xs"
+            style='width: 24px; height: 24px;'
+          )
+            svg(xmlns='http://www.w3.org/2000/svg' fill='none' viewbox='0 0 24 24' stroke='currentColor' stroke-width='2')
+              path(stroke-linecap='round' stroke-linejoin='round' d='M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253')
+        q-item-section
+          div.header Documentation
     template(v-for="(blockchain) in blockchains")
       q-expansion-item(
         data-cy='listBlockchains'
@@ -154,6 +181,10 @@ div(class="q-pa-md" style="max-width: 350px")
 </template>
 
 <style lang="stylus" scoped>
+.docButton
+  font-color: black
+  font-size: 14px !important
+  width: 135px !important
 .radioButton
   color: $table-content-font-odd
   font-size: 16px !important
