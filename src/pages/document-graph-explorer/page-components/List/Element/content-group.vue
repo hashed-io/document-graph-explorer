@@ -168,16 +168,16 @@
                 data-cy='encryptToggle'
                 size='xs',
                 no-hover,
-                v-model='props.row.optional.encrypt',
+                v-model='newData.optional.encrypt',
                 label='Encrypt',
-                @input='onEncrypt(props.rowIndex,props.row)'
+                @input='onEncrypt(props.rowIndex,newData)'
               )
               q-toggle(
                 data-cy='ipfsToggle'
                 size='xs',
-                v-model='props.row.optional.ipfs',
+                v-model='newData.optional.ipfs',
                 label='IPFS',
-                @input='onIpfs(props.row.value,props.row.optional.ipfs)'
+                @input='onIpfs(props.row.value,newData.optional.ipfs)'
               )
           q-td(
             key="dataType",
@@ -419,6 +419,12 @@ export default {
       }
     },
     async verifyValue () {
+      if (this.newData.dataType === 'a') {
+        this.showSuccessMsg('Asset example: 1 USD')
+      }
+      this.newData.value = ''
+      this.newData.optional.encrypt = false
+      this.newData.optional.ipfs = false
       await this.$refs.valueForm.validate()
       this.$forceUpdate()
     },
@@ -619,7 +625,7 @@ export default {
     async onEncrypt (rowIndex, value) {
       value.value = this.newData.value
       await this.$forceUpdate()
-      if (!this.cryptoKey) {
+      if (!this.cryptoKey && value.optional.encrypt) {
         this.$emit('openDialog', true)
       }
     },
@@ -649,7 +655,7 @@ export default {
           this.showErrorMsg('Fill the Key value')
           return
         }
-        let obj = row.optional
+        let obj = this.newData.optional
         if (obj.encrypt && !obj.ipfs) {
           this.newData.optional.encrypt = true
           this.newData.optional.ipfs = false

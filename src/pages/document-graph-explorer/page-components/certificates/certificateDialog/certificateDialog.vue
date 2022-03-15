@@ -147,16 +147,13 @@ export default {
       let formData = this.form[type]
       if (formData.encrypt) {
         data = await this.encryptData(formData.data)
-        console.log('encrypted data ', data)
       }
       if (formData.ipfs) {
         let dataToSave = formData.encrypt ? data : formData.data
         data = await this.saveInIPFS(dataToSave)
-        console.log('saved in IPFS ', data)
       }
       if (!formData.encrypt && !formData.ipfs) {
         data = formData.data
-        console.log('no encryption & no IPFS ', data)
       }
       return data
     }

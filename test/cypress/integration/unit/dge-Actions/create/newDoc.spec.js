@@ -292,7 +292,7 @@ describe('Fill new content group with labels', () => {
     cy.dataCy('saveEdit')
       .click()
     // Assert
-    cy.dataCy('FileChip')
+    cy.dataCy('chipIpfs')
       .should('exist')
   })
 })
