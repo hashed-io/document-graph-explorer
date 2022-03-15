@@ -149,8 +149,8 @@ export const documentExplorer = {
           this.documentInfo.docId = selectDocument.docId
         }
         this.documentInfo.type = selectDocument.type
-        this.documentInfo.createdDate = selectDocument.updatedDate
-        this.documentInfo.updatedDate = selectDocument.createdDate
+        this.documentInfo.createdDate = selectDocument.createdDate
+        this.documentInfo.updatedDate = selectDocument.updatedDate
       }
     },
     async loadData () {
