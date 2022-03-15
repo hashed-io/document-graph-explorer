@@ -122,7 +122,7 @@ Cypress.Commands.add('fillRow', (keyValue, dataType, obj) => {
         cy.dataCy('keyField')
           .type('L')
           .clear()
-          .type(Faker.lorem.sentence())
+          .type(keyValue)
         cy.dataCy('valueField')
           .type('L')
           .clear()
