@@ -38,7 +38,6 @@ div
       :loading="loadingDocs"
       :data="documents"
       :dense="$q.screen.sm"
-      :grid="$q.screen.xs"
       :columns="columns"
       card-class="tableColor"
       :visible-columns='visibleColumns'
@@ -274,6 +273,7 @@ export default {
     } catch (e) {
       this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
     } finally {
+      this.setLoadingFromEndpoint(false)
       this.loadingData = false
     }
   },
@@ -300,6 +300,7 @@ export default {
       } catch (e) {
         this.showErrorMsg('An Error occured while trying to retrieve the documents; ' + e)
       } finally {
+        this.setLoadingFromEndpoint(false)
         this.loadingData = false
       }
     }
@@ -307,7 +308,7 @@ export default {
   methods: {
     ...mapActions('elasticSearch', ['searchDoc']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getDocInterface', 'getPropsType', 'getDocuments', 'changeEndpoint', 'getSchema', 'getLocalStorage', 'setLocalStorage']),
-    ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog']),
+    ...mapMutations('documentGraph', ['setIsHashed', 'setContractInfo', 'setDocInterface', 'setDocument', 'setIsEdit', 'pushDocNavigation', 'popDocNavigation', 'setTypesWithSystemNode', 'setCatalog', 'setLoadingFromEndpoint']),
     getContentGroup (row) {
       let contentGroup = row.split('_')
       return contentGroup[0]
@@ -585,6 +586,7 @@ export default {
         await this.modifyApolloEndpoint(previousEndpoint)
         await this.loadDocuments()
       } finally {
+        this.setLoadingFromEndpoint(false)
         this.loadingData = false
       }
     },

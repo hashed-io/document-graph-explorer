@@ -33,6 +33,7 @@ q-dialog(v-model="openDialog" persistent)
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { validation } from '~/mixins/validation'
 import TInput from './input/t-input.vue'
 
@@ -48,6 +49,12 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  beforeMount () {
+    this.cryptoKey = this.keyToEncrypt
+  },
+  computed: {
+    ...mapState('documentGraph', ['keyToEncrypt'])
   },
   data () {
     return {

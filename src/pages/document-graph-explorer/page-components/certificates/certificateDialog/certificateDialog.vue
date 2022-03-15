@@ -3,9 +3,13 @@ q-card.signDialog
   q-toolbar.modalTitle
     | {{$t('pages.documentExplorer.certify.title')}}
     q-toolbar-title
-      template(v-if="cryptoKey" )
-        svg(xmlns="http://www.w3.org/2000/svg" class="keyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor")
-          path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z")
+      q-icon(
+        @click="setCryptoDialogState(true)"
+        class="cursor-pointer"
+      )
+        template(v-if="keyToEncrypt" )
+          svg(xmlns="http://www.w3.org/2000/svg" class="keyIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z")
     q-btn(flat, round, dense, icon="close", unelevated v-close-popup)
   q-separator
   q-card-section
@@ -34,7 +38,6 @@ q-card.signDialog
         size='xs',
         v-model='form.signature.ipfs',
         label='IPFS',
-        @input='onIpfsSignature'
       )
       Tinput(
         label="Notes"
@@ -60,7 +63,6 @@ q-card.signDialog
         size='xs',
         v-model='form.notes.ipfs',
         label='IPFS',
-        @input='onIpfsNotes'
       )
       CryptoDialog(:openDialog="cryptoDialog" @close-dialog="onCryptoKey")
   q-card-actions
@@ -80,10 +82,14 @@ import Encrypt from '~/utils/EncryptUtil'
 import { validation } from '~/mixins/validation'
 import Tinput from '~/components/input/t-input.vue'
 import CryptoDialog from '~/pages/document-graph-explorer/page-components/List/Element/crypto-dialog.vue'
+import { mapMutations, mapState } from 'vuex'
 export default {
   name: 'CertificateDialog',
   mixins: [validation],
   components: { Tinput, CryptoDialog },
+  computed: {
+    ...mapState('documentGraph', ['keyToEncrypt'])
+  },
   data () {
     return {
       form: {
@@ -104,70 +110,52 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('documentGraph', ['setCryptoDialogState', 'setKeyToEncrypt']),
     onEncryptSignature () {
-      if (!this.cryptoKey) {
+      if (!this.keyToEncrypt) {
         this.cryptoDialog = true
       }
     },
     onEncryptNotes () {
-      if (!this.cryptoKey) {
+      if (!this.keyToEncrypt) {
         this.cryptoDialog = true
       }
     },
-    async onIpfsSignature () {
-      if (!this.form.signature.data || this.form.signature.data === '') {
-        return this.showErrorMsg('Write a value to save in IPFS')
-      }
-      this.$q.loading.show({
-        message: 'Saving in IPFS...'
-      })
-      try {
-        let value = this.form.signature.data
-        var ipfsString = await BrowserIpfs.addAsJson({ data: value })
-      } catch (e) {
-        this.showErrorMsg('Error occurred while data was saving in IPFS. ' + e)
-      } finally {
-        this.$q.loading.hide()
-      }
-      this.form.signature.data = ipfsString
-    },
-    async onIpfsNotes () {
-      if (!this.form.notes.data || this.form.notes.data === '') {
-        return this.showErrorMsg('Write a value to save in IPFS')
-      }
-      this.$q.loading.show({
-        message: 'Saving in IPFS...'
-      })
-      try {
-        let value = this.form.notes.data
-        var ipfsString = await BrowserIpfs.addAsJson({ data: value })
-      } catch (e) {
-        this.showErrorMsg('Error occurred while data was saving in IPFS. ' + e)
-      } finally {
-        this.$q.loading.hide()
-      }
-      this.form.notes.data = ipfsString
-    },
     onCryptoKey (key) {
-      this.cryptoKey = key
+      this.setKeyToEncrypt(key)
       this.cryptoDialog = false
+    },
+    async encryptData (data) {
+      return Encrypt.encryptText(data, this.keyToEncrypt)
+    },
+    async saveInIPFS (data) {
+      return BrowserIpfs.addAsJson({ data: data })
     },
     async onCertify () {
       if (await this.$refs.certifyForm.validate()) {
-        if (this.form.signature.encrypt && !this.isEncrypt(this.form.signature.data)) {
-          let value = this.form.signature.data
-          this.form.signature.data = Encrypt.encryptText(value, this.cryptoKey)
-        }
-        if (this.form.notes.encrypt && !this.isEncrypt(this.form.notes.data)) {
-          let value = this.form.signature.data
-          this.form.notes.data = Encrypt.encryptText(value, this.cryptoKey)
-        }
+        this.form.signature.data = await this.processData('signature')
+        this.form.notes.data = await this.processData('notes')
         let dataToSave = {
           signature: this.form.signature.data,
           notes: this.form.notes.data
         }
         this.$emit('onCertify', dataToSave)
       }
+    },
+    async processData (type) {
+      let data
+      let formData = this.form[type]
+      if (formData.encrypt) {
+        data = await this.encryptData(formData.data)
+      }
+      if (formData.ipfs) {
+        let dataToSave = formData.encrypt ? data : formData.data
+        data = await this.saveInIPFS(dataToSave)
+      }
+      if (!formData.encrypt && !formData.ipfs) {
+        data = formData.data
+      }
+      return data
     }
   }
 }

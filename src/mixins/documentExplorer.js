@@ -64,7 +64,7 @@ export const documentExplorer = {
   methods: {
     ...mapGetters('documentGraph', ['getDocument', 'getCatalog', 'getTypesWithSystemNode']),
     ...mapActions('documentGraph', ['getContractInformation', 'getDocumentsByDocId', 'getPropsType', 'setLocalStorage', 'getLocalStorage', 'changeEndpoint', 'getCertificate']),
-    ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed']),
+    ...mapMutations('documentGraph', ['setContractInfo', 'setDocument', 'setIsEdit', 'addInformation', 'setDocInterface', 'setIsHashed', 'setEndpoint']),
     /**
      *
      * @returns The data is in documentExplorer. this.actionsApi is the instance
@@ -149,7 +149,7 @@ export const documentExplorer = {
           this.documentInfo.docId = selectDocument.docId
         }
         this.documentInfo.type = selectDocument.type
-        this.documentInfo.createdDate = selectDocument.createdDate
+        this.documentInfo.createdDate = selectDocument.updatedDate
         this.documentInfo.updatedDate = selectDocument.createdDate
       }
     },
@@ -178,7 +178,7 @@ export const documentExplorer = {
     },
     async getContentGroup () {
       let typeSchema = await this.getSchemaOfType()
-      let { contentGroups, edges } = this.filterPropsAndEdges(typeSchema)
+      let { contentGroups, edges } = await this.filterPropsAndEdges(typeSchema)
       // console.log('-------------------------')
       // console.log({ contentGroups, edges })
       // console.log('-------------------------')
@@ -228,7 +228,7 @@ export const documentExplorer = {
       })
       return typeSchema['__type'].fields
     },
-    filterPropsAndEdges (typeSchema) {
+    async filterPropsAndEdges (typeSchema) {
       let contentGroups = ''
       let edges = []
       typeSchema.forEach(element => {

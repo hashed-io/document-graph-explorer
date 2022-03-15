@@ -35,3 +35,12 @@ export const setIsHashed = (state, bool) => {
 export const setEndpoint = (state, endpoint) => {
   state.endpointApollo = endpoint
 }
+export const setCryptoDialogState = (state, cryptoDialog) => {
+  state.openCryptoDialog = cryptoDialog
+}
+export const setKeyToEncrypt = (state, key) => {
+  state.keyToEncrypt = key
+}
+export const setLoadingFromEndpoint = (state, bool) => {
+  state.loadingFromEndpoint = bool
+}
