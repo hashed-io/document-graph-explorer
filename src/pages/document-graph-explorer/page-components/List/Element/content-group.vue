@@ -610,7 +610,6 @@ export default {
       if (this.keyToEncrypt) {
         try {
           let decrypted = Encrypt.decryptText(value, this.keyToEncrypt)
-          console.log(decrypted)
           if (decrypted) {
             row.value = decrypted
             this.contentGroupCopy.splice(rowIndex, row)
