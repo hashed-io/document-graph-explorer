@@ -7,7 +7,7 @@ before(() => {
 describe('Search the root node', () => {
   var sucessSearch = '0'
   it('Success search', () => {
-    cy.intercept('POST', 'https://traceability.es.us-east4.gcp.elastic-cloud.com:9243/traceability-documents/_search').as('elasticSearch')
+    cy.intercept('POST', 'https://hypha.es.eu-west-1.aws.found.io:9243/traceability-documents/_search').as('elasticSearch')
     cy.listDocs(2, sucessSearch)
     cy.wait('@elasticSearch')
     cy.get('td')

@@ -3,9 +3,10 @@ div
   .row.justify-start
       div.text-h6.q-py-md.q-pr-md Content Groups
       q-icon(
-        class="keyIcon q-py-md"
+        class="keyIcon q-py-md cursor-pointer"
+        @click="setCryptoDialogState(true)"
       )
-        template(v-if="keyToEncrypt")
+        template(v-if="keyToEncrypt" )
           svg(xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor")
             path(stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z")
   CryptoDialog(:openDialog="openCryptoDialog" @close-dialog="onCloseDialog")
@@ -35,7 +36,7 @@ div
 
 <script>
 import ContentGroup from './Element/content-group.vue'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import CryptoDialog from './Element/crypto-dialog.vue'
 export default {
   name: 'ListContentsGroup',
@@ -70,20 +71,20 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('documentGraph', ['getIsEdit'])
+    ...mapGetters('documentGraph', ['getIsEdit']),
+    ...mapState('documentGraph', ['openCryptoDialog', 'keyToEncrypt'])
   },
   data () {
     return {
       contentGroupInit: undefined,
       keysBackend: [],
       isEdit: false,
-      openCryptoDialog: false,
-      keyToEncrypt: undefined,
       textEncrypted: undefined,
       fileNotEncrypted: undefined
     }
   },
   methods: {
+    ...mapMutations('documentGraph', ['setCryptoDialogState', 'setKeyToEncrypt']),
     onChange (obj) {
       let key = obj.key
       this.contents_groups[key] = obj.data
@@ -112,9 +113,10 @@ export default {
       this.$forceUpdate()
     },
     onOpenDialog (bool) {
-      this.openCryptoDialog = bool
+      this.setCryptoDialogState(bool)
     },
     onAddContentGroup () {
+      this.showSuccessMsg('Click on the edit to change the label')
       this.contents_groups['content group'] = [
         // {
         //   title: 'content_group',
@@ -126,8 +128,9 @@ export default {
       this.$forceUpdate()
     },
     onCloseDialog (cryptoKey) {
-      this.openCryptoDialog = false
-      this.keyToEncrypt = cryptoKey
+      // this.openCryptoDialog = false
+      this.setCryptoDialogState(false)
+      this.setKeyToEncrypt(cryptoKey)
     }
   }
 }

@@ -51,15 +51,16 @@ describe('Extend document [For]', () => {
           .click()
       })
       cy.dataCy('titleInput')
+        .first()
         .type('L')
         .clear()
-        .type(Faker.name.findName())
+        .type(Faker.lorem.word())
       cy.dataCy('saveTitleButton')
         .click()
       cy.dataCy('addRowButton')
         .last()
         .click()
-      let keyValue = Faker.company.companyName() + k
+      let keyValue = Faker.lorem.word() + k
       let dataType = 0
       cy.fillRow(keyValue, dataType, { isFirst: true, isEncrypt: false, isIPFS: false })
       cy.dataCy('saveEdit')

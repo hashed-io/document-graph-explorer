@@ -12,16 +12,17 @@ div(v-if="isEdit")
           ) Edit
     .row.q-py-lg(v-if="editableTitle")
       .col-xs-12.col-sm-6
-        TInput(
-          data-cy='titleInput'
-          label='Title'
-          placeholder="Enter the title"
-          v-model='titleContent'
-          autofocus
-          dense
-          :inputFormatting="true"
-          :rules="[rules.required, rules.validContent, rules.contentLength]"
-        ).q-pr-md
+        q-form(ref='titleInputRef')
+          TInput(
+            data-cy='titleInput'
+            label='Title'
+            placeholder="Enter the title"
+            v-model='titleContent'
+            autofocus
+            dense
+            :inputFormatting="true"
+            :rules="[rules.required, rules.validContent, rules.contentLength]"
+          ).q-pr-md
       .col-xs-12.col-sm-5
         .row.q-col-gutter-md
           .col-xs-6.col-sm-2.col-md-2
@@ -71,12 +72,19 @@ export default {
   },
   methods: {
     // TODO: Apply lower case & underscore
-    onSaveTitle () {
-      let bool = this.$parent.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.titleContent })
-      if (bool) {
-        this.editableTitle = false
+    async onSaveTitle () {
+      try {
+        let validate = await this.$refs.titleInputRef.validate()
+        if (validate) {
+          let bool = this.$parent.$parent.titleIsRepeated({ prev: this.previousTitle, current: this.titleContent })
+          if (bool) {
+            this.editableTitle = false
+            this.$forceUpdate()
+          }
+        }
+      } catch (error) {
+        console.log(error)
       }
-      this.$forceUpdate()
     },
     onDeleteTitle () {
       this.$emit('deleteTitle', this.titleContent)
