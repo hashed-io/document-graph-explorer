@@ -236,7 +236,7 @@ import Encrypt from '~/utils/EncryptUtil'
 import DOMPurify from 'dompurify'
 import { validation } from '~/mixins/validation'
 import { marked } from 'marked'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import TitleContentGroup from './titleContentGroup.vue'
 import TFile from '~/components/file/t-file.vue'
 import axios from 'axios'
@@ -276,7 +276,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('documentGraph', ['getIsEdit'])
+    ...mapGetters('documentGraph', ['getIsEdit']),
+    ...mapState('documentGraph', ['keyToEncrypt'])
   },
   beforeMount () {
     this.isEdit = true
@@ -481,7 +482,7 @@ export default {
           let uint8Array = await this.strToUint8Array(text)
           // Blob object [Encrypted?]
           if (await this.isEncrypt(text)) {
-            if (!this.cryptoKey) {
+            if (!this.keyToEncrypt) {
               this.showSuccessMsg('Write the key to decrypt the file')
               this.setCryptoDialogState(true)
               return
@@ -489,7 +490,7 @@ export default {
               try {
                 let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
                 // Send blob to decrypt [Decrypt Text fails with message: Malformed UTF-8 data]
-                text = await Encrypt.decryptFile(blob, this.cryptoKey)
+                text = await Encrypt.decryptFile(blob, this.keyToEncrypt)
                 blob = new Blob([text], { type: mime.lookup(_cid[1]) })
                 // filereader to read as string
                 let url = window.URL.createObjectURL(blob)
@@ -600,15 +601,15 @@ export default {
       }
       return types[val]
     },
-    encryptValue (value) {
-      if (this.cryptoKey) {
-        return Encrypt.encryptText(value, this.cryptoKey)
+    async encryptValue (value) {
+      if (this.keyToEncrypt) {
+        return Encrypt.encryptText(value, this.keyToEncrypt)
       }
     },
     decryptValue (value, row, rowIndex) {
-      if (this.cryptoKey) {
+      if (this.keyToEncrypt) {
         try {
-          let decrypted = Encrypt.decryptText(value, this.cryptoKey)
+          let decrypted = Encrypt.decryptText(value, this.keyToEncrypt)
           if (decrypted) {
             row.value = decrypted
             this.contentGroupCopy.splice(rowIndex, row)
@@ -625,7 +626,7 @@ export default {
     async onEncrypt (rowIndex, value) {
       value.value = this.newData.value
       await this.$forceUpdate()
-      if (!this.cryptoKey && value.optional.encrypt) {
+      if (!this.keyToEncrypt && value.optional.encrypt) {
         this.$emit('openDialog', true)
       }
     },

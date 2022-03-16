@@ -173,6 +173,7 @@ export default {
   },
   mixins: [validation],
   computed: {
+    ...mapState('documentGraph', ['contractInfo']),
     ...mapGetters('documentGraph', ['getIsEdit']),
     ...mapState('documentGraph', ['isHashed', 'document']),
     ...mapState('accounts', ['account']),
@@ -263,13 +264,20 @@ export default {
     },
     async removeEdge (item, index) {
       try {
-        let _contractAccount = this.account
+        var _contractAccount
+        if (typeof (this.contractInfo) === 'object') {
+          _contractAccount = this.contractInfo.contract
+        } else {
+          _contractAccount = this.account
+        }
         let _api = this.$store.$apiMethods
         let mEosApi = this.$store.$defaultApi
+        this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
         this.ActionsApi = await new ActionsApi({ eosApi: _api, mEosApi }, _contractAccount)
         let fromNode = this.document.docId
         let toNode = item.docId
         let edgeName = item.edgeName
+        edgeName = edgeName.replace(/([A-Z])/g, '.$1').toLowerCase()
         await this.ActionsApi.deleteEdge({ fromNode, toNode, edgeName })
         this.edges.splice(index, 1)
       } catch (error) {

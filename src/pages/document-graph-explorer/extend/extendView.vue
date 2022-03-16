@@ -16,7 +16,7 @@ div
         TInput(
           data-cy='edgeNameInput'
           placeholder='Edge name'
-          :rules="[rules.required, rules.isEosAccount, rules.notAllowedTwoDotsConsecutively]"
+          :rules="[rules.required, rules.isEosAccount, rules.notAllowedTwoDotsConsecutively, rules.validContent, rules.contentLength]"
           v-model='form.edgeName'
           :dense='true'
         )
