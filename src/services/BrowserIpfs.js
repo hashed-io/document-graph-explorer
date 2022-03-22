@@ -36,10 +36,8 @@ class BrowserIpfs extends BaseIpfs {
    * @returns {File} file identified by the cid
    */
   async getFile (cid, name, type) {
-    const data = await this.get(cid)
-    return new File([data], name, {
-      type
-    })
+    const data = await this.cat(cid)
+    return new File([data], name, { type })
   }
 }
 
