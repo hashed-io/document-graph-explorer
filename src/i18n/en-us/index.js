@@ -125,6 +125,9 @@ export default {
       },
       listDocs: {
         title: 'Documents in the Graph'
+      },
+      file: {
+        hint: 'The file must be less than 500MB'
       }
     }
   }

@@ -1,9 +1,12 @@
-import IpfsClient from 'nano-ipfs-store'
+// import IpfsClient from 'nano-ipfs-store'
+import { create } from 'ipfs-http-client'
+import all from 'it-all'
+import { concat as uint8ArrayConcat } from 'uint8arrays/concat'
 import mime from 'mime-types'
 
 class BaseIpfs {
   constructor () {
-    this.client = IpfsClient.at(process.env.IPFS_URL)
+    this.client = create(new URL(process.env.IPFS_URL))
   }
 
   async store (payload) {
@@ -46,7 +49,8 @@ class BaseIpfs {
    */
   async addAsJson (data) {
     const json = JSON.stringify(data)
-    return this.add(json)
+    let response = await this.add(json)
+    return response.path
   }
 
   /**
@@ -55,7 +59,7 @@ class BaseIpfs {
    */
   async getFromJson (cid) {
     const data = await this.cat(cid)
-    return JSON.parse(data)
+    return JSON.parse(new TextDecoder('utf-8').decode(data))
   }
 
   /**
@@ -71,9 +75,8 @@ class BaseIpfs {
    * @returns {String} data identified by the cid
    */
   async cat (cid) {
-    return this.client.cat(cid)
+    return uint8ArrayConcat(await all(this.client.cat(cid)))
   }
-
   /**
    * @param {String} cid of the data that is wanted
    * @returns {Uint8Array} data identified by the cid
@@ -89,7 +92,7 @@ class BaseIpfs {
    */
   getTypeCid (cid, extensionType) {
     let extension = extensionType.indexOf('/') > -1 ? mime.extension(extensionType) : extensionType
-    return `${cid}:${extension}`
+    return `${cid.path}:${extension}`
   }
 
   /**

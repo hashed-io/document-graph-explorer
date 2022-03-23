@@ -9,8 +9,9 @@ div
     bottom-slots,
     dense,
     :filter="checkFileSize",
+    :rules="rules",
     @rejected="onRejected",
-    @input="e => handleFileUpload(e)"
+    @input="e => handleFile(e)"
   )
     template(v-slot:before)
       div(style="width: 20px; height: 20px")
@@ -22,6 +23,7 @@ div
           path(
             d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
           )
+    template(v-slot:hint) {{$t('pages.documentExplorer.file.hint')}}
   q-toggle(
     data-cy='encryptToggle'
     size='xs',
@@ -37,9 +39,21 @@ import BrowserIpfs from '~/services/BrowserIpfs.js'
 import Encrypt from '~/utils/EncryptUtil'
 export default {
   name: 'TFile',
-  props: ['title', 'label', 'size'],
+  props: ['title', 'label', 'size', 'rules', 'encrypted'],
+  watch: {
+    uploadFile: async function (newVal) {
+      if (newVal) {
+        await this.uploadFileToIpfs()
+      }
+    }
+  },
+  beforeMount () {
+    if (this.encrypted.substring(0, 8) === 'eFile://') {
+      this.file.encrypt = true
+    }
+  },
   computed: {
-    ...mapState('documentGraph', ['keyToEncrypt'])
+    ...mapState('documentGraph', ['keyToEncrypt', 'uploadFile'])
   },
   data () {
     return {
@@ -53,37 +67,45 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('documentGraph', ['setCryptoDialogState', 'setKeyToEncrypt']),
+    ...mapMutations('documentGraph', ['setCryptoDialogState', 'setKeyToEncrypt', 'setUploadFile']),
     checkFileSize (files) {
       return files.filter((file) => file.size < 1024000 * 500)
     },
     onRejected (rejectedEntries) {
       this.showErrorMsg(`The file need to be less than 500MB`)
     },
-    async handleFileUpload (e) {
+    async handleFile (e) {
+      this.file.data = e
+    },
+    async uploadFileToIpfs () {
       var self = this
       self.file.loading = true
+      let file = this.file.data
       try {
-        if (this.file.encrypt) e = await Encrypt.encryptFile(e, this.keyToEncrypt, e.name.split('.')[1])
+        if (!this.keyToEncrypt && this.file.encrypt) {
+          this.setCryptoDialogState(true)
+          return
+        }
+        if (this.file.encrypt) file = await Encrypt.encryptFile(file, this.keyToEncrypt, file.name.split('.')[1])
         this.loading = true
-        var typeCid = await BrowserIpfs.store(e)
-      } catch (e) {
-        self.showErrorMsg('Error ocurred while file was uploaded. ' + e)
-        console.error(e)
-      } finally {
+        var typeCid = await BrowserIpfs.store(file)
         self.showSuccessMsg('File uploaded success')
+        self.file.name = file
+        self.file.cid = this.file.encrypt ? 'eFile://' + typeCid : 'File://' + typeCid
+        self.setUploadFile(false)
+        self.$emit('update', self.file.cid)
+      } catch (error) {
+        self.showErrorMsg('Error ocurred while file was uploaded. ' + error)
+        console.error(error)
+      } finally {
         self.file.loading = false
-        self.file.name = e
-        self.file.cid = 'file://' + typeCid
       }
-      this.$emit('update', self.file)
     },
     async onEncrypt () {
       if (!this.keyToEncrypt) {
+        this.file.encrypt = false
         this.setCryptoDialogState(true)
         this.showErrorMsg('You need to set a key to encrypt')
-      } else {
-        this.handleFileUpload(this.file.data)
       }
     }
   }
