@@ -61,6 +61,7 @@ export const utils = {
       }
     },
     isIpfs (value) {
+      if (this.isEncrypt(value)) return false
       if (value) {
         var regexIPFS = new RegExp(customRegex.IPFS)
         return regexIPFS.test(value)

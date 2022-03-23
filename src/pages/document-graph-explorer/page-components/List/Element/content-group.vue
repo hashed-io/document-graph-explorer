@@ -30,7 +30,7 @@
             key="key",
             :props="props",
             :class="props.rowIndex % 2 === 0 ? 'rowOdd' : 'rowEven'"
-          ) {{ camelCaseToFormat(props.row.key).toLowerCase() }}
+          ) {{ camelCaseToFormat(props.row.key).toLowerCase()}}
           q-td(
             data-cy="valueRead"
             key="value",
@@ -161,6 +161,8 @@
                 v-else
                 class="verticalCenter",
                 :label="getLabelFile()"
+                :encrypted="newData.value"
+                :rules="[rules.required]"
                 @update='getFile'
                 )
             .row(v-if="newData.dataType === 's'")
@@ -397,23 +399,35 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('documentGraph', ['setCryptoDialogState']),
+    ...mapMutations('documentGraph', ['setCryptoDialogState', 'setUploadFile']),
     verifyTypeIPFS (value) {
       let str = value.substring(0, 7)
-      if (str.includes('://')) {
-        return 'FILE'
-      } else {
-        return 'IPFS'
+      switch (str) {
+        case 'file://':
+          return 'File'
+        case 'File://':
+          return 'File'
+        case 'eFile:/':
+          return 'File encrypted'
+        default:
+          return 'IPFS'
       }
     },
-    getFile (file) {
-      this.newData.value = file.cid
+    async getFile (cid) {
+      this.newData.value = cid
+      if (await this.$refs.keyForm.validate() && await this.$refs.valueForm.validate() && await this.$refs.selectTypeForm.validate()) {
+        this.contentGroupCopy.splice(this.editableRow, 1, this.newData)
+        this.$emit('elementChanged', { data: this.contentGroupCopy, key: this.index_content_group })
+        this.editableRow = undefined
+      }
     },
     getLabelFile () {
-      // newData.value.substring(0,7).includes('file://') ?  : 'Upload file to IPFS'
       let prefix = this.newData.value.substring(0, 7).toString()
-      if (prefix.includes('file://')) {
+      if (prefix === 'file://' || prefix === 'File://') {
         let cid = this.newData.value.substring(7).split(':')
+        return cid[0]
+      } else if (prefix === 'eFile:/') {
+        let cid = this.newData.value.substring(8).split(':')
         return cid[0]
       } else {
         return 'Upload file to IPFS'
@@ -473,52 +487,109 @@ export default {
     async openIPFS (cid, rowIndex) {
       try {
         this.isLoadingIPFS = rowIndex
-        if (cid.substring(7).includes(':')) {
-          const _cid = cid.substring(7).split(':')
-          const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${_cid[0]}`)
-          // response is a String (base64)
-          let text = response.data
-          // Convert Base64 to a blob object [ArrayBuffer]
-          let uint8Array = await this.strToUint8Array(text)
-          // Blob object [Encrypted?]
-          if (await this.isEncrypt(text)) {
-            if (!this.keyToEncrypt) {
-              this.showSuccessMsg('Write the key to decrypt the file')
-              this.setCryptoDialogState(true)
-              return
-            } else {
-              try {
-                let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
-                // Send blob to decrypt [Decrypt Text fails with message: Malformed UTF-8 data]
-                text = await Encrypt.decryptFile(blob, this.keyToEncrypt)
-                blob = new Blob([text], { type: mime.lookup(_cid[1]) })
-                // filereader to read as string
-                let url = window.URL.createObjectURL(blob)
-                let a = document.createElement('a')
-                a.href = url
-                a.target = '_blank'
-                a.click()
-              } catch (error) {
-                this.showErrorMsg('An error occurred while decrypting the file ' + error)
-              }
-            }
-          } else {
-            let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
-            let url = window.URL.createObjectURL(blob)
-            let a = document.createElement('a')
-            a.href = url
-            a.target = '_blank'
-            a.click()
-          }
+        const prefixfile = cid.substring(0, 7)
+        const prefixefile = cid.substring(0, 8)
+        const File = prefixfile === 'File://'
+        const file = prefixfile === 'file://'
+        const eFile = prefixefile === 'eFile://'
+        if (file) {
+          await this.openFilePrev(cid)
+        } else if (File) {
+          await this.openFileNew(cid)
+        } else if (eFile) {
+          await this.openEncryptedFile(cid)
         } else {
-          const response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${cid}`)
-          this.contentGroupCopy[rowIndex].value = response.data.data
+          await this.openStringIPFS(cid, rowIndex)
         }
       } catch (error) {
         this.showErrorMsg('An error occurred while opening the file ' + error)
         console.log('An error occurred while opening the file ' + error)
       } finally {
         this.isLoadingIPFS = undefined
+      }
+    },
+    async openEncryptedFile (cid) {
+      if (!this.cryptoKey) {
+        this.setCryptoDialogState(true)
+        return
+      }
+      try {
+        let file = await BrowserIpfs.retrieve(cid.substring(8))
+        var blobEncrypted = new Blob([file.payload], { type: file.type })
+        let text = await Encrypt.decryptFile(blobEncrypted, this.keyToEncrypt)
+        var blobDecrypted = new Blob([text], { type: file.type })
+        let url = window.URL.createObjectURL(blobDecrypted)
+        let a = document.createElement('a')
+        a.href = url
+        a.target = '_blank'
+        a.click()
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while retrieving the file ' + error)
+        console.log('An error ocurred while retrieving the file ' + error)
+      }
+    },
+    async openFileNew (cid) {
+      try {
+        let file = await BrowserIpfs.retrieve(cid.substring(7))
+        var blob = new Blob([file.payload], { type: file.type })
+        let url = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.href = url
+        a.target = '_blank'
+        a.click()
+      } catch (error) {
+        this.showErrorMsg('An error occured while retrieving the file ' + error)
+        console.log('An error occured while retrieving the file ' + error)
+      }
+    },
+    async openFilePrev (cid) {
+      const _cid = cid.substring(7).split(':')
+      try {
+        var response = await axios.post(`${process.env.IPFS_URL}/api/v0/cat?arg=${_cid[0]}`)
+      } catch (error) {
+        this.showErrorMsg('An error ocurred while retrieving the file')
+      }
+      // response is a String (base64)
+      let text = response.data
+      // Convert Base64 to a blob object [ArrayBuffer]
+      let uint8Array = await this.strToUint8Array(text)
+      // Blob object [Encrypted?]
+      if (await this.isEncrypt(text)) {
+        if (!this.keyToEncrypt) {
+          this.showSuccessMsg('Write the key to decrypt the file')
+          this.setCryptoDialogState(true)
+        } else {
+          try {
+            let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
+            // Send blob to decrypt [Decrypt Text fails with message: Malformed UTF-8 data]
+            text = await Encrypt.decryptFile(blob, this.keyToEncrypt)
+            blob = new Blob([text], { type: mime.lookup(_cid[1]) })
+            // filereader to read as string
+            let url = window.URL.createObjectURL(blob)
+            let a = document.createElement('a')
+            a.href = url
+            a.target = '_blank'
+            a.click()
+          } catch (error) {
+            this.showErrorMsg('An error occurred while decrypting the file ' + error)
+          }
+        }
+      } else {
+        let blob = new Blob([uint8Array], { type: mime.lookup(_cid[1]) })
+        let url = window.URL.createObjectURL(blob)
+        let a = document.createElement('a')
+        a.href = url
+        a.target = '_blank'
+        a.click()
+      }
+    },
+    async openStringIPFS (cid, rowIndex) {
+      try {
+        const response = await BrowserIpfs.getFromJson(cid)
+        this.contentGroupCopy[rowIndex].value = response.data
+      } catch (error) {
+        this.showErrorMsg('An error occurred while retrieving the IPFS data')
+        console.log('An error occurred while retrieving the IPFS data')
       }
     },
     seeValue (value) {
@@ -573,7 +644,10 @@ export default {
       this.contentGroupCopy.forEach(element => {
         // If the value is empty won't show to user in UI
         if (element.value !== '') {
-          if (element.value.toString().substring(0, 7).includes('file://')) {
+          const prefix = element.value.toString().substring(0, 7)
+          const file = prefix.includes('file:/')
+          const File = prefix.includes('File:/')
+          if (file || File) {
             element.dataType = 'sd'
           }
           if (bool.edit) {
@@ -647,6 +721,11 @@ export default {
     },
     async onSave (rowIndex, row) {
       if (await this.$refs.keyForm.validate() && await this.$refs.valueForm.validate() && await this.$refs.selectTypeForm.validate()) {
+        if (this.newData.dataType === 'sd') {
+          // Change Vuex state to save the file
+          this.setUploadFile(true)
+          return
+        }
         let count = this.contentGroupCopy.filter((obj) => obj.key === this.newData.key).length
         if (count > 0 && row.key !== this.newData.key) {
           this.showErrorMsg('The key value is repeated.')

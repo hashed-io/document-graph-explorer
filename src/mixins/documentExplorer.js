@@ -142,15 +142,15 @@ export const documentExplorer = {
         if (!selectDocument) {
           this.$router.push({ name: 'listDocs' })
         }
-        this.documentInfo.name = selectDocument.creator
-        this.documentInfo.hash = selectDocument.hash
-        this.documentInfo.creator = selectDocument.creator
+        this.documentInfo.name = selectDocument?.creator
+        this.documentInfo.hash = selectDocument?.hash
+        this.documentInfo.creator = selectDocument?.creator
         if (selectDocument.hasOwnProperty('docId')) {
-          this.documentInfo.docId = selectDocument.docId
+          this.documentInfo.docId = selectDocument?.docId
         }
-        this.documentInfo.type = selectDocument.type
-        this.documentInfo.createdDate = selectDocument.createdDate
-        this.documentInfo.updatedDate = selectDocument.updatedDate
+        this.documentInfo.type = selectDocument?.type
+        this.documentInfo.createdDate = selectDocument?.createdDate
+        this.documentInfo.updatedDate = selectDocument?.updatedDate
       }
     },
     async loadData () {
