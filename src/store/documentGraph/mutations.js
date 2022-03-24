@@ -44,3 +44,6 @@ export const setKeyToEncrypt = (state, key) => {
 export const setLoadingFromEndpoint = (state, bool) => {
   state.loadingFromEndpoint = bool
 }
+export const setUploadFile = (state, bool) => {
+  state.uploadFile = bool
+}

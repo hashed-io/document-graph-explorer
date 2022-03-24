@@ -9,6 +9,10 @@ export default () => ({
   documentInterface: undefined,
   endpointApollo: undefined,
   openCryptoDialog: undefined,
+  // Key to encrypt the document
   keyToEncrypt: undefined,
-  loadingFromEndpoint: false
+  // To prevent the user changing the endpoint quickly
+  loadingFromEndpoint: false,
+  // To trigger the upload of the document
+  uploadFile: false
 })
