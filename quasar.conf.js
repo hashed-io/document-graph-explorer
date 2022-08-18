@@ -137,7 +137,9 @@ module.exports = function (ctx) {
         GOOGLE_ANALYTICS: process.env.GOOGLE_ANALYTICS,
         IPFS_URL: process.env.IPFS_URL,
         APOLLO_URL: process.env.APOLLO_URL,
-        TIMEOUT_AWAIT: process.env.TIMEOUT_AWAIT
+        TIMEOUT_AWAIT: process.env.TIMEOUT_AWAIT,
+        IPFS_PROJECT_ID: process.env.IPFS_PROJECT_ID,
+        IPFS_PROJECT_SECRET: process.env.IPFS_PROJECT_SECRET
       },
       scopeHoisting: true,
       vueRouterMode: 'history',
