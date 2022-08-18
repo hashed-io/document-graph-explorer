@@ -8,6 +8,7 @@ class BaseIpfs {
   constructor () {
     // const auth = 'Basic ' + Buffer.from(process.env.IPFS_PROJECT_ID + ':' + process.env.IPFS_PROJECT_SECRET).toString('base64')
     const auth = 'Basic ' + Buffer.from(process.env.IPFS_PROJECT_ID + ':' + process.env.IPFS_PROJECT_SECRET).toString('base64')
+
     this.client = create({
       // host: process.env.IPFS_URL,
       host: 'ipfs.infura.io',
