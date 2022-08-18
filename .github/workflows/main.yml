@@ -71,7 +71,7 @@ jobs:
           IPFS_URL: '"https://ipfs.infura.io:5001"'
           APOLLO_URL: '"https://hashed.systems/alpha-trace-test/graphql"'
           TIMEOUT_AWAIT: '1500'
-          PFS_PROJECT_ID: '${{ secrets.IPFS_PROJECT_ID }}'
+          IPFS_PROJECT_ID: '${{ secrets.IPFS_PROJECT_ID }}'
           IPFS_PROJECT_SECRET: '${{ secrets.IPFS_PROJECT_SECRET }}'
       - name: Build for prod
         run: yarn build
@@ -88,7 +88,7 @@ jobs:
           IPFS_URL: '"https://ipfs.infura.io:5001"'
           APOLLO_URL: '"https://hashed.systems/alpha-dg-mainnet/graphql"'
           TIMEOUT_AWAIT: '1500'
-          PFS_PROJECT_ID: '${{ secrets.IPFS_PROJECT_ID }}'
+          IPFS_PROJECT_ID: '${{ secrets.IPFS_PROJECT_ID }}'
           IPFS_PROJECT_SECRET: '${{ secrets.IPFS_PROJECT_SECRET }}'
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
